@@ -11,6 +11,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
     console.warn("Airtable API key or base ID not provided. Using mock data.");
+  } else {
+    console.log("Airtable credentials detected. Attempting to sync data...");
+    try {
+      await storage.syncFromAirtable(AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
+      console.log("Initial Airtable sync completed successfully.");
+    } catch (error) {
+      console.error("Failed to perform initial Airtable sync:", error);
+    }
   }
 
   // Get all apps

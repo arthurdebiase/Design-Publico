@@ -70,11 +70,22 @@ export class MemStorage implements IStorage {
 
   async createApp(insertApp: InsertApp): Promise<App> {
     const id = this.appIdCounter++;
-    const now = new Date().toISOString();
+    const now = new Date();
     
+    // Ensure all required fields have appropriate values
     const app: App = {
-      ...insertApp,
       id,
+      name: insertApp.name,
+      description: insertApp.description,
+      thumbnailUrl: insertApp.thumbnailUrl,
+      logo: insertApp.logo ?? null,
+      type: insertApp.type,
+      category: insertApp.category,
+      platform: insertApp.platform,
+      language: insertApp.language ?? null,
+      screenCount: insertApp.screenCount ?? 0,
+      url: insertApp.url ?? null,
+      airtableId: insertApp.airtableId,
       createdAt: now,
       updatedAt: now,
     };
@@ -94,11 +105,18 @@ export class MemStorage implements IStorage {
 
   async createScreen(insertScreen: InsertScreen): Promise<Screen> {
     const id = this.screenIdCounter++;
-    const now = new Date().toISOString();
+    const now = new Date();
     
+    // Ensure all required fields have appropriate values
     const screen: Screen = {
-      ...insertScreen,
       id,
+      appId: insertScreen.appId,
+      name: insertScreen.name,
+      description: insertScreen.description ?? null,
+      imageUrl: insertScreen.imageUrl,
+      flow: insertScreen.flow ?? null,
+      order: insertScreen.order ?? 0,
+      airtableId: insertScreen.airtableId,
       createdAt: now,
       updatedAt: now,
     };
@@ -118,100 +136,116 @@ export class MemStorage implements IStorage {
   // Airtable Sync
   async syncFromAirtable(apiKey: string, baseId: string): Promise<void> {
     try {
-      // In a real implementation, this would fetch data from Airtable
-      // and update the local data store
-      console.log(`Syncing data from Airtable base ${baseId} with API key ${apiKey.substring(0, 3)}...`);
+      console.log(`Syncing data from Airtable base ${baseId}...`);
       
-      // Example of how the implementation would work:
-      // 1. Fetch apps from Airtable
-      const appsResponse = await axios.get(
-        `https://api.airtable.com/v0/${baseId}/apps`,
-        { headers: { Authorization: `Bearer ${apiKey}` } }
+      // Define the Airtable field mappings
+      const AIRTABLE_TABLE_NAME = "all-screens";
+      const APP_NAME_FIELD = "app-name (from appname)";
+      const ATTACHMENT_FIELD = "images";
+      const SCREEN_NAME_FIELD = "imagetitle";
+      
+      // 1. Fetch all records from the Airtable
+      const response = await axios.get(
+        `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`,
+        { 
+          headers: { 
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          }
+        }
       );
       
-      // 2. Process and store apps
-      for (const record of appsResponse.data.records) {
-        const appData = {
-          name: record.fields.name,
-          description: record.fields.description,
-          thumbnailUrl: record.fields.thumbnailUrl,
-          logo: record.fields.logo,
-          type: record.fields.type,
-          category: record.fields.category,
-          platform: record.fields.platform,
-          language: record.fields.language,
-          screenCount: 0,
-          url: record.fields.url,
-          airtableId: record.id,
-        };
+      console.log(`Fetched ${response.data.records.length} records from Airtable`);
+      
+      // Group records by app name to create distinct apps
+      const appGroups = new Map<string, any[]>();
+      
+      // Process and group records
+      for (const record of response.data.records) {
+        const fields = record.fields;
         
-        // Check if app already exists
-        const existingApp = Array.from(this.apps.values())
-          .find(app => app.airtableId === record.id);
-        
-        if (existingApp) {
-          // Update existing app
-          this.apps.set(existingApp.id, {
-            ...existingApp,
-            ...appData,
-            updatedAt: new Date().toISOString()
-          });
-        } else {
-          // Create new app
-          await this.createApp(appData);
+        // Skip records without required fields
+        if (!fields[APP_NAME_FIELD] || !fields[ATTACHMENT_FIELD]) {
+          continue;
         }
+        
+        // Handle app name which may be an array in Airtable's response
+        const appNameField = fields[APP_NAME_FIELD];
+        const appName = Array.isArray(appNameField) ? appNameField[0] : appNameField;
+        
+        if (!appGroups.has(appName)) {
+          appGroups.set(appName, []);
+        }
+        
+        appGroups.get(appName)?.push(record);
       }
       
-      // 3. Fetch screens from Airtable
-      const screensResponse = await axios.get(
-        `https://api.airtable.com/v0/${baseId}/screens`,
-        { headers: { Authorization: `Bearer ${apiKey}` } }
-      );
+      console.log(`Identified ${appGroups.size} unique apps`);
       
-      // 4. Process and store screens
-      for (const record of screensResponse.data.records) {
-        // Find the app id by airtable id
-        const app = Array.from(this.apps.values())
-          .find(app => app.airtableId === record.fields.appId);
+      // Clear existing data before importing new data
+      this.apps.clear();
+      this.screens.clear();
+      this.appIdCounter = 1;
+      this.screenIdCounter = 1;
+      
+      // 2. Process each app group
+      for (const [appName, records] of appGroups.entries()) {
+        // Use first record to get app metadata
+        const firstRecord = records[0];
+        const fields = firstRecord.fields;
         
-        if (app) {
-          const screenData = {
+        // Extract the first image to use as app thumbnail
+        const thumbnailAttachment = fields[ATTACHMENT_FIELD] && fields[ATTACHMENT_FIELD][0];
+        const thumbnailUrl = thumbnailAttachment ? thumbnailAttachment.url : "https://via.placeholder.com/500x300";
+        
+        // Create app with default values and override with actual data if available
+        const appData: InsertApp = {
+          name: appName,
+          description: fields.description || `Collection of design screens from ${appName}`,
+          thumbnailUrl: thumbnailUrl,
+          logo: thumbnailUrl || null, // Use same image for logo or null
+          type: fields.type || "Federal", // Default type
+          category: fields.category || "Government", // Default category
+          platform: fields.platform || "iOS", // Default platform
+          language: fields.language || null, // Default language can be null
+          screenCount: records.length,
+          url: fields.url || null, // No external URL by default
+          airtableId: firstRecord.id,
+        };
+        
+        // Create the app
+        const app = await this.createApp(appData);
+        console.log(`Created app: ${app.name} with ${records.length} screens`);
+        
+        // 3. Process screens for this app
+        for (let i = 0; i < records.length; i++) {
+          const record = records[i];
+          const fields = record.fields;
+          
+          // Skip records without attachments
+          if (!fields[ATTACHMENT_FIELD] || !fields[ATTACHMENT_FIELD].length) {
+            continue;
+          }
+          
+          const attachment = fields[ATTACHMENT_FIELD][0];
+          const screenName = fields[SCREEN_NAME_FIELD] || `Screen ${i + 1}`;
+          
+          const screenData: InsertScreen = {
             appId: app.id,
-            name: record.fields.name,
-            description: record.fields.description || "",
-            imageUrl: record.fields.imageUrl,
-            flow: record.fields.flow,
-            order: record.fields.order || 0,
+            name: screenName,
+            description: fields.description || null,
+            imageUrl: attachment.url,
+            flow: fields.flow || null,
+            order: i,
             airtableId: record.id,
           };
           
-          // Check if screen already exists
-          const existingScreen = Array.from(this.screens.values())
-            .find(screen => screen.airtableId === record.id);
-          
-          if (existingScreen) {
-            // Update existing screen
-            this.screens.set(existingScreen.id, {
-              ...existingScreen,
-              ...screenData,
-              updatedAt: new Date().toISOString()
-            });
-          } else {
-            // Create new screen
-            await this.createScreen(screenData);
-          }
+          // Create the screen
+          await this.createScreen(screenData);
         }
       }
       
-      // 5. Update screen counts for all apps
-      for (const [id, app] of this.apps.entries()) {
-        const screensCount = Array.from(this.screens.values())
-          .filter(screen => screen.appId === app.id)
-          .length;
-        
-        app.screenCount = screensCount;
-        this.apps.set(id, app);
-      }
+      console.log("Airtable sync completed successfully");
       
     } catch (error) {
       console.error("Error syncing from Airtable:", error);
@@ -306,11 +340,21 @@ export class MemStorage implements IStorage {
     // Create sample apps
     sampleApps.forEach(app => {
       const id = this.appIdCounter++;
-      const now = new Date().toISOString();
+      const now = new Date();
       
       this.apps.set(id, {
-        ...app,
         id,
+        name: app.name,
+        description: app.description,
+        thumbnailUrl: app.thumbnailUrl,
+        logo: app.logo ?? null,
+        type: app.type,
+        category: app.category,
+        platform: app.platform,
+        language: app.language ?? null,
+        screenCount: app.screenCount ?? 0,
+        url: app.url ?? null,
+        airtableId: app.airtableId,
         createdAt: now,
         updatedAt: now,
       });
@@ -332,7 +376,7 @@ export class MemStorage implements IStorage {
     
     screenTypes.forEach((screenType, index) => {
       const id = this.screenIdCounter++;
-      const now = new Date().toISOString();
+      const now = new Date();
       
       this.screens.set(id, {
         id,
@@ -361,7 +405,7 @@ export class MemStorage implements IStorage {
     
     ctpsScreenTypes.forEach((screenType, index) => {
       const id = this.screenIdCounter++;
-      const now = new Date().toISOString();
+      const now = new Date();
       
       this.screens.set(id, {
         id,
