@@ -140,12 +140,13 @@ export class MemStorage implements IStorage {
       
       // Define the Airtable field mappings
       const AIRTABLE_TABLE_NAME = "all-screens";
+      const APPS_TABLE_NAME = "all-apps";
       const APP_NAME_FIELD = "app-name (from appname)";
       const ATTACHMENT_FIELD = "images";
       const SCREEN_NAME_FIELD = "imagetitle";
       
-      // 1. Fetch all records from the Airtable
-      const response = await axios.get(
+      // 1. Fetch all records from the Airtable screens table
+      const screensResponse = await axios.get(
         `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`,
         { 
           headers: { 
@@ -155,13 +156,40 @@ export class MemStorage implements IStorage {
         }
       );
       
-      console.log(`Fetched ${response.data.records.length} records from Airtable`);
+      console.log(`Fetched ${screensResponse.data.records.length} screen records from Airtable`);
       
-      // Group records by app name to create distinct apps
+      // 2. Fetch all records from the Airtable apps table
+      const appsResponse = await axios.get(
+        `https://api.airtable.com/v0/${baseId}/${APPS_TABLE_NAME}`,
+        { 
+          headers: { 
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      
+      console.log(`Fetched ${appsResponse.data.records.length} app records from Airtable`);
+      
+      // Create a map of app names to their logo URLs
+      const appLogosMap = new Map<string, string>();
+      
+      // Process app records to extract logos
+      for (const record of appsResponse.data.records) {
+        const fields = record.fields;
+        if (fields && fields["app-name"] && fields.logo && fields.logo.length > 0) {
+          const appName = fields["app-name"];
+          const logoAttachment = fields.logo[0];
+          appLogosMap.set(appName, logoAttachment.url);
+          console.log(`Found logo for app: ${appName}`);
+        }
+      }
+      
+      // Group screen records by app name to create distinct apps
       const appGroups = new Map<string, any[]>();
       
-      // Process and group records
-      for (const record of response.data.records) {
+      // Process and group screen records
+      for (const record of screensResponse.data.records) {
         const fields = record.fields;
         
         // Skip records without required fields
@@ -188,7 +216,7 @@ export class MemStorage implements IStorage {
       this.appIdCounter = 1;
       this.screenIdCounter = 1;
       
-      // 2. Process each app group
+      // 3. Process each app group
       for (const [appName, records] of appGroups.entries()) {
         // Use first record to get app metadata
         const firstRecord = records[0];
@@ -198,12 +226,15 @@ export class MemStorage implements IStorage {
         const thumbnailAttachment = fields[ATTACHMENT_FIELD] && fields[ATTACHMENT_FIELD][0];
         const thumbnailUrl = thumbnailAttachment ? thumbnailAttachment.url : "https://via.placeholder.com/500x300";
         
+        // Check if we have a logo for this app from the apps table
+        const logoUrl = appLogosMap.get(appName);
+        
         // Create app with default values and override with actual data if available
         const appData: InsertApp = {
           name: appName,
           description: fields.description || `Collection of design screens from ${appName}`,
           thumbnailUrl: thumbnailUrl,
-          logo: thumbnailUrl || null, // Use same image for logo or null
+          logo: logoUrl || null, // Use logo from apps table if available
           type: fields.type || "Federal", // Default type
           category: fields.category || "Government", // Default category
           platform: fields.platform || "iOS", // Default platform
@@ -215,9 +246,9 @@ export class MemStorage implements IStorage {
         
         // Create the app
         const app = await this.createApp(appData);
-        console.log(`Created app: ${app.name} with ${records.length} screens`);
+        console.log(`Created app: ${app.name} with ${records.length} screens${logoUrl ? ' and logo' : ''}`);
         
-        // 3. Process screens for this app
+        // 4. Process screens for this app
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
           const fields = record.fields;
