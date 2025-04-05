@@ -67,7 +67,7 @@ export default function AppDetail() {
   if (!match) return null;
   
   return (
-    <div className="container mx-auto px-4 md:px-6 py-6">
+    <div className="container mx-auto px-4 md:px-6 py-6 pb-0">
       {isLoading ? (
         <AppDetailSkeleton />
       ) : error ? (
