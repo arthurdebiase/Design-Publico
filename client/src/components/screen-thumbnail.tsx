@@ -50,10 +50,7 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
           </div>
         </div>
       </div>
-      <div className="mt-2">
-        <h3 className="text-sm font-medium">{screen.name}</h3>
-        <p className="text-xs text-gray-500">{screen.description}</p>
-      </div>
+      {/* Image title removed */}
     </div>
   );
 }
