@@ -64,7 +64,28 @@ export function ScreenModal({
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col relative" hideCloseButton={true}>
+        {screens.length > 1 && (
+          <>
+            <Button 
+              variant="secondary" 
+              size="icon" 
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md z-50" 
+              onClick={handlePrevious}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            
+            <Button 
+              variant="secondary" 
+              size="icon" 
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md z-50" 
+              onClick={handleNext}
+            >
+              <ChevronRight className="h-5 w-5" />
+            </Button>
+          </>
+        )}
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
             <div className="w-10 h-10 flex items-center justify-center mr-3">
@@ -99,46 +120,6 @@ export function ScreenModal({
               alt={currentScreen.name} 
               className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
             />
-            
-            {screens.length > 1 && (
-              <>
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
-                  onClick={handlePrevious}
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </Button>
-                
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
-                  onClick={handleNext}
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-        
-        <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <span className="text-sm text-gray-500">
-              Screen {localIndex + 1} of {screens.length}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {app.url && (
-              <Button asChild>
-                <a href={app.url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  <span>Visit App</span>
-                </a>
-              </Button>
-            )}
           </div>
         </div>
       </DialogContent>
