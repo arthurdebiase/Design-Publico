@@ -190,7 +190,6 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           <img 
             src={screen.imageUrl} 
             alt={screen.name || `Screen from ${screen.app?.name || 'app'}`}
-            title={screen.name || ''}
             className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
@@ -206,13 +205,30 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           </div>
         </div>
       </div>
-      <div className="mt-2">
-        <h3 className="text-sm font-medium">{screen.name || 'Untitled Screen'}</h3>
+      <div className="mt-2 flex items-center gap-2">
         {screen.app && (
-          <p className="text-xs text-gray-500">
-            {screen.app.name}
-          </p>
+          <div className="flex-shrink-0 w-6 h-6 rounded-sm border border-gray-200 flex items-center justify-center">
+            {screen.app.logo ? (
+              <img 
+                src={screen.app.logo} 
+                alt={`${screen.app.name} Logo`} 
+                className="w-4 h-4"
+              />
+            ) : (
+              <div className="w-4 h-4 flex items-center justify-center">
+                <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+              </div>
+            )}
+          </div>
         )}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-sm font-medium truncate">{screen.name || 'Untitled Screen'}</h3>
+          {screen.app && (
+            <p className="text-xs text-gray-500 truncate">
+              {screen.app.name}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
