@@ -82,9 +82,9 @@ export default function AppDetail() {
             <div className="bg-white p-6 relative">
               <div className="flex flex-col md:flex-row md:items-start">
                 <div className="flex-shrink-0 mr-6 mb-4 md:mb-0">
-                  <div className="w-20 h-20 rounded-2xl border border-gray-200 flex items-center justify-center bg-white">
+                  <div className="w-20 h-20 flex items-center justify-center bg-white">
                     {app.logo ? (
-                      <img src={app.logo} alt={`${app.name} logo`} className="w-14 h-14" />
+                      <img src={app.logo} alt={`${app.name} logo`} className="w-20 h-20" />
                     ) : (
                       <AppIconPlaceholder app={app} />
                     )}
