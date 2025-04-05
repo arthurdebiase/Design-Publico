@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertAppSchema, insertScreenSchema } from "@shared/schema";
 import { z } from "zod";
+import { subscribeToNewsletter, getNewsletterSubscribers } from "./newsletter";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Airtable API key
@@ -116,6 +117,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to create screen" });
     }
   });
+
+  // Newsletter subscription endpoints
+  app.post("/api/newsletter/subscribe", subscribeToNewsletter);
+  app.get("/api/newsletter/subscribers", getNewsletterSubscribers);
 
   const httpServer = createServer(app);
   return httpServer;
