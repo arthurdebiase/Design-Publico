@@ -31,14 +31,17 @@ export default function Header() {
       <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="h-10 w-10 flex items-center justify-center">
+            <div className="h-8 w-8 flex items-center justify-center">
               <img 
                 src={symbolLogo} 
                 alt="Design Público Logo" 
                 className="h-full w-auto rounded-md"
               />
             </div>
-            <span className="text-lg font-semibold tracking-wider">DESIGN PÚBLICO</span>
+            <span className="flex items-center">
+              <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900 }}>DESIGN</span>
+              <span style={{ fontFamily: 'Arial', fontWeight: 700 }} className="ml-1">PÚBLICO</span>
+            </span>
           </Link>
         </div>
         
