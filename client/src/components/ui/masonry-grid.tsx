@@ -6,6 +6,10 @@ interface MasonryGridProps {
   gap?: number;
 }
 
+interface ColumnWrapper {
+  [key: string]: React.ReactNode[];
+}
+
 export function MasonryGrid({ 
   children, 
   columns = 3, 
@@ -14,8 +18,8 @@ export function MasonryGrid({
   const childrenArray = React.Children.toArray(children);
   
   // Create columns based on the number specified
-  const columnWrapper = {};
-  const result = [];
+  const columnWrapper: ColumnWrapper = {};
+  const result: React.ReactNode[] = [];
   
   // Create column arrays
   for (let i = 0; i < columns; i++) {
@@ -26,7 +30,7 @@ export function MasonryGrid({
   for (let i = 0; i < childrenArray.length; i++) {
     const columnIndex = i % columns;
     columnWrapper[`column${columnIndex}`].push(
-      <div key={i} className={i > 0 ? `pt-${gap}` : ""}>
+      <div key={i} className={i > 0 ? `mt-${gap}` : ""}>
         {childrenArray[i]}
       </div>
     );
@@ -49,7 +53,7 @@ export function MasonryGrid({
   }
   
   return (
-    <div className="flex w-full">
+    <div className="flex w-full justify-center">
       {result}
     </div>
   );
