@@ -67,11 +67,11 @@ export function ScreenModal({
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mr-3">
+            <div className="w-10 h-10 flex items-center justify-center mr-3">
               {app.logo ? (
-                <img src={app.logo} alt={`${app.name} logo`} className="w-6 h-6" />
+                <img src={app.logo} alt={`${app.name} logo`} className="w-8 h-8" />
               ) : (
-                <div className="text-white font-bold">{app.name.charAt(0)}</div>
+                <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">{app.name.charAt(0)}</div>
               )}
             </div>
             <div>
@@ -92,12 +92,12 @@ export function ScreenModal({
           </div>
         </div>
         
-        <div className="flex-1 overflow-auto p-4 sm:p-6 flex items-center justify-center bg-gray-100">
+        <div className="flex-1 p-4 sm:p-6 flex items-center justify-center">
           <div className="relative max-w-full">
             <img 
               src={currentScreen.imageUrl} 
               alt={currentScreen.name} 
-              className="max-h-[70vh] max-w-full rounded-lg shadow-lg object-contain"
+              className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
             />
             
             {screens.length > 1 && (
@@ -105,7 +105,7 @@ export function ScreenModal({
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -114,7 +114,7 @@ export function ScreenModal({
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handleNext}
                 >
                   <ChevronRight className="h-5 w-5" />
