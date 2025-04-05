@@ -78,12 +78,13 @@ function AppScreenCarousel({ appId }: { appId: string }) {
       <CarouselContent className="-ml-1 h-full">
         {displayScreens.map((screen) => (
           <CarouselItem key={screen.id} className="pl-1 h-full">
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-3">
-              <div className="h-full flex items-center justify-center overflow-hidden rounded-xl shadow-sm" style={{ maxWidth: "85%" }}>
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-2">
+              <div className="flex items-center justify-center" style={{ height: "100%", maxWidth: "90%" }}>
                 <img 
                   src={screen.imageUrl} 
                   alt={screen.name}
-                  className="h-auto max-h-full max-w-full object-contain rounded-lg"
+                  className="w-auto h-auto object-contain rounded-lg shadow-sm"
+                  style={{ maxHeight: "100%", maxWidth: "100%" }}
                 />
               </div>
             </div>
@@ -95,11 +96,11 @@ function AppScreenCarousel({ appId }: { appId: string }) {
         onClick={handleControlClick}
       >
         <CarouselPrevious 
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white z-10" 
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm" 
           variant="outline"
         />
         <CarouselNext 
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white z-10" 
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm" 
           variant="outline"
         />
       </div>
@@ -107,14 +108,14 @@ function AppScreenCarousel({ appId }: { appId: string }) {
       {/* Dots indicator */}
       {displayScreens.length > 1 && (
         <div 
-          className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10"
+          className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10"
           onClick={handleControlClick}
         >
           {displayScreens.map((_, index) => (
             <button
               key={index}
-              className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                index === current ? "bg-white" : "bg-white/50"
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === current ? "bg-black/70" : "bg-black/30"
               }`}
               onClick={() => api?.scrollTo(index)}
               aria-label={`Go to slide ${index + 1}`}
