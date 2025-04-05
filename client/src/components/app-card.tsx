@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { App, Screen } from "@/types";
 import { useQuery } from "@tanstack/react-query";
@@ -25,6 +25,7 @@ function AppScreenCarousel({ appId }: { appId: string }) {
   });
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(0);
+  const [, navigate] = useLocation();
 
   useEffect(() => {
     if (!api) return;
@@ -61,11 +62,18 @@ function AppScreenCarousel({ appId }: { appId: string }) {
     e.stopPropagation();
   };
 
+  // Handle click on the carousel to navigate to app detail
+  const handleCarouselClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/app/${appId}`);
+  };
+
   return (
     <Carousel 
-      className="w-full h-full relative group" 
+      className="w-full h-full relative group cursor-pointer" 
       opts={{ loop: true }} 
       setApi={setApi}
+      onClick={handleCarouselClick}
     >
       <CarouselContent className="-ml-1 h-full">
         {displayScreens.map((screen) => (
@@ -143,9 +151,7 @@ export default function AppCard({ app }: AppCardProps) {
               <p className="text-sm text-gray-500">{app.type}</p>
             </div>
           </div>
-          <p className="text-sm text-gray-600 mt-2">
-            {truncateDescription(app.description)}
-          </p>
+
         </div>
       </div>
     </Link>
