@@ -17,6 +17,9 @@ export interface IStorage {
   getScreensByAppId(appId: number): Promise<Screen[]>;
   createScreen(screen: InsertScreen): Promise<Screen>;
   
+  // Brand
+  getBrandLogo(): Promise<string | null>;
+  
   // Airtable Sync
   syncFromAirtable(apiKey: string, baseId: string): Promise<void>;
 }
@@ -133,6 +136,13 @@ export class MemStorage implements IStorage {
     return screen;
   }
 
+  // Brand
+  private brandLogo: string | null = null;
+
+  async getBrandLogo(): Promise<string | null> {
+    return this.brandLogo;
+  }
+
   // Airtable Sync
   async syncFromAirtable(apiKey: string, baseId: string): Promise<void> {
     try {
@@ -141,6 +151,7 @@ export class MemStorage implements IStorage {
       // Define the Airtable field mappings
       const AIRTABLE_TABLE_NAME = "all-screens";
       const APPS_TABLE_NAME = "all-apps";
+      const BRAND_FILES_TABLE_NAME = "brand-files";
       const APP_NAME_FIELD = "app-name (from appname)";
       const ATTACHMENT_FIELD = "images";
       const SCREEN_NAME_FIELD = "imagetitle";
@@ -198,6 +209,34 @@ export class MemStorage implements IStorage {
       } while (appOffset);
       
       console.log(`Fetched a total of ${allAppRecords.length} app records from Airtable`);
+      
+      // 3. Fetch brand files data
+      try {
+        const brandFilesUrl = `https://api.airtable.com/v0/${baseId}/${BRAND_FILES_TABLE_NAME}`;
+        const brandFilesResponse = await axios.get(brandFilesUrl, {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          }
+        });
+        
+        const brandRecords = brandFilesResponse.data.records || [];
+        console.log(`Fetched ${brandRecords.length} brand files records from Airtable`);
+        
+        // Find the logo-svg file in the brand records
+        for (const record of brandRecords) {
+          const fields = record.fields;
+          if (fields && fields.name === "logo-svg" && fields["brand-file"] && fields["brand-file"].length > 0) {
+            const logoAttachment = fields["brand-file"][0];
+            this.brandLogo = logoAttachment.url;
+            console.log(`Found SVG logo: ${this.brandLogo}`);
+            break;
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching brand files:", error);
+        // Continue with the sync process even if we couldn't fetch the brand logo
+      }
       
       // Create a map of app names to their logo URLs
       const appLogosMap = new Map<string, string>();

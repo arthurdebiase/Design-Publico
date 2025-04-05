@@ -4,23 +4,65 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
+import { useQuery } from "@tanstack/react-query";
+
+interface LogoResponse {
+  url: string;
+}
+
+// Create a dedicated API hook for fetching the logo
+function useBrandLogo() {
+  return useQuery<LogoResponse>({
+    queryKey: ['/api/brand/logo'],
+    // The QueryClient default settings will handle the request
+    retry: false, // Don't retry if it fails
+    enabled: true, // Always try to fetch
+  });
+}
+
+// SVG logo as a React component for fallback use
+function LogoSvg() {
+  return (
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      viewBox="0 0 24 24" 
+      width="32" 
+      height="32" 
+      className="text-white"
+    >
+      <rect width="24" height="24" rx="4" fill="#0066FF" />
+      <g fill="currentColor">
+        <polygon points="12 4 5 7.5 12 11 19 7.5 12 4" />
+        <polyline points="5 15 12 18.5 19 15" strokeWidth="1" stroke="currentColor" fill="none" />
+        <polyline points="5 11 12 14.5 19 11" strokeWidth="1" stroke="currentColor" fill="none" />
+      </g>
+    </svg>
+  );
+}
 
 export default function Header() {
   const [location] = useLocation();
   const { t } = useTranslation();
+  const { data: logoData, isLoading } = useBrandLogo();
   
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
       <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-[#0066FF] rounded-md flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-white">
-                <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                <polyline points="2 17 12 22 22 17" />
-                <polyline points="2 12 12 17 22 12" />
-              </svg>
-            </div>
+            {logoData?.url ? (
+              <div className="h-8 flex items-center">
+                <img 
+                  src={logoData.url} 
+                  alt="DesignGallery Logo" 
+                  className="h-full w-auto"
+                />
+              </div>
+            ) : (
+              <div className="w-8 h-8 flex items-center justify-center">
+                <LogoSvg />
+              </div>
+            )}
             <span className="text-lg font-semibold">DesignGallery</span>
           </Link>
         </div>

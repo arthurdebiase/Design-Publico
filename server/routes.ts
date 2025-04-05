@@ -118,6 +118,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get brand logo
+  app.get("/api/brand/logo", async (req, res) => {
+    try {
+      const logoUrl = await storage.getBrandLogo();
+      if (!logoUrl) {
+        return res.status(404).json({ message: "Logo not found" });
+      }
+      res.json({ url: logoUrl });
+    } catch (error) {
+      console.error("Error fetching brand logo:", error);
+      res.status(500).json({ message: "Failed to fetch brand logo" });
+    }
+  });
+
   // Newsletter subscription endpoints
   app.post("/api/newsletter/subscribe", subscribeToNewsletter);
   app.get("/api/newsletter/subscribers", getNewsletterSubscribers);
