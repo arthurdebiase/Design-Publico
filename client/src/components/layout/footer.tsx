@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Globe, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from "@/components/language-selector";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -142,13 +143,16 @@ export default function Footer() {
           </div>
         </div>
         
-        {/* Bottom section with copyright and social links */}
+        {/* Bottom section with copyright, language selector and social links */}
         <div className="border-t border-gray-200 mt-10 pt-10 pb-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-600 text-sm mb-6 md:mb-0">
-            {t('footer.copyright')}
-          </p>
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <p className="text-gray-600 text-sm mb-2 md:mb-0">
+              {t('footer.copyright')}
+            </p>
+            <LanguageSelector />
+          </div>
           
-          <div className="flex space-x-6">
+          <div className="flex space-x-6 mt-4 md:mt-0">
             <a href="#" className="text-gray-500 hover:text-[#0066FF] transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>

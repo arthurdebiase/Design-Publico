@@ -37,14 +37,12 @@ export default function Header() {
             {t('header.about')}
           </Link>
           <Button className="bg-[#0066FF] hover:bg-blue-700 text-white">
-            {t('header.submitApp')}
+            {t('header.requestApp')}
           </Button>
-          <LanguageSelector />
         </nav>
         
         {/* Mobile Menu */}
         <div className="md:hidden flex items-center space-x-2">
-          <LanguageSelector />
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -63,7 +61,7 @@ export default function Header() {
                   {t('header.about')}
                 </Link>
                 <Button className="bg-[#0066FF] hover:bg-blue-700 text-white mt-4">
-                  {t('header.submitApp')}
+                  {t('header.requestApp')}
                 </Button>
               </div>
             </SheetContent>

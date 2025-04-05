@@ -33,8 +33,8 @@ i18n
         translation: ptTranslation
       }
     },
-    // Set default language based on location
-    lng: isBrazil() ? 'pt' : 'en',
+    // Set Portuguese as default language
+    lng: 'pt',
     fallbackLng: 'pt', // Portuguese as default/fallback
     detection: {
       // Order of language detection methods

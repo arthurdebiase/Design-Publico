@@ -3,7 +3,8 @@
     "apps": "Aplicativos",
     "screens": "Telas",
     "about": "Sobre",
-    "submitApp": "Enviar Aplicativo"
+    "submitApp": "Enviar Aplicativo",
+    "requestApp": "Solicitar Aplicativo"
   },
   "footer": {
     "privacy": "Política de Privacidade",

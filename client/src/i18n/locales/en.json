@@ -3,7 +3,8 @@
     "apps": "Apps",
     "screens": "Screens",
     "about": "About",
-    "submitApp": "Submit App"
+    "submitApp": "Submit App",
+    "requestApp": "Request App"
   },
   "footer": {
     "privacy": "Privacy Policy",

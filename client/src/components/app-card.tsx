@@ -36,12 +36,9 @@ export default function AppCard({ app }: AppCardProps) {
               <p className="text-sm text-gray-500">{app.type}</p>
             </div>
           </div>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">{app.screenCount || 0} screens</span>
-            <Badge variant="outline" className={`text-xs px-2 py-1 ${getPlatformBadgeClass(app.platform)}`}>
-              {app.platform}
-            </Badge>
-          </div>
+          <p className="text-sm text-gray-600 mt-2">
+            {truncateDescription(app.description)}
+          </p>
         </div>
       </div>
     </Link>
