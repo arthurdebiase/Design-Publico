@@ -11,6 +11,7 @@ import { ExternalLink, Bookmark,
          Apple, TabletSmartphone, Globe, Tag, 
          FileText, Smartphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from 'react-i18next';
 
 // Platform badge styling function
 function getPlatformBadgeClass(platform: string): string {
@@ -31,6 +32,7 @@ function getPlatformBadgeClass(platform: string): string {
 export default function AppDetail() {
   const [match, params] = useRoute("/app/:id");
   const appId = params?.id || "";
+  const { t } = useTranslation();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
@@ -77,10 +79,10 @@ export default function AppDetail() {
       ) : app ? (
         <>
           <div className="bg-white rounded-lg overflow-hidden shadow-md mb-8">
-            <div className="bg-gray-800 text-white p-6">
+            <div className="bg-white p-6 relative">
               <div className="flex flex-col md:flex-row md:items-start">
                 <div className="flex-shrink-0 mr-6 mb-4 md:mb-0">
-                  <div className="w-20 h-20 rounded-2xl border border-gray-700 flex items-center justify-center bg-white">
+                  <div className="w-20 h-20 rounded-2xl border border-gray-200 flex items-center justify-center bg-white">
                     {app.logo ? (
                       <img src={app.logo} alt={`${app.name} logo`} className="w-14 h-14" />
                     ) : (
@@ -90,21 +92,10 @@ export default function AppDetail() {
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center mb-2 gap-3">
-                    <h1 className="text-2xl font-bold">{app.name}</h1>
-                    {app.type && (
-                      <Badge className="bg-blue-200 text-blue-800 border-0">
-                        {app.type}
-                      </Badge>
-                    )}
+                    <h1 className="text-2xl font-bold text-gray-900">{app.name}</h1>
                   </div>
-                  <p className="text-gray-300 mb-4">
-                    {app.type}
-                  </p>
+                  
                   <div className="flex flex-wrap gap-3">
-                    <Badge variant="secondary" className={`px-3 py-1.5 rounded flex items-center gap-2 ${getPlatformBadgeClass(app.platform)}`}>
-                      {getPlatformIcon(app.platform)}
-                      <span>{app.platform}</span>
-                    </Badge>
                     {app.language && (
                       <Badge variant="secondary" className="px-3 py-1.5 rounded flex items-center gap-2">
                         <Globe className="h-4 w-4" />
@@ -123,19 +114,28 @@ export default function AppDetail() {
                     </Button>
                   )}
                 </div>
+                
+                {/* iOS badge positioned at top right */}
+                {app.platform && (
+                  <div className="absolute top-6 right-6">
+                    <Badge variant="secondary" className={`px-3 py-1.5 rounded flex items-center gap-2 ${getPlatformBadgeClass(app.platform)}`}>
+                      {getPlatformIcon(app.platform)}
+                      <span>{app.platform}</span>
+                    </Badge>
+                  </div>
+                )}
               </div>
             </div>
             
             <div className="p-6 pt-0">
-              <div className="flex items-center mb-4">
-                <h2 className="text-xl font-semibold">App Screens</h2>
-                {screens && (
-                  <Badge variant="outline" className="ml-3 px-2 py-1 flex items-center">
+              {screens && (
+                <div className="flex items-center mb-4">
+                  <Badge variant="outline" className="px-2 py-1 flex items-center">
                     <Smartphone className="h-4 w-4 mr-1" />
-                    <span>{screens.length} screens</span>
+                    <span>{screens.length} {t('screens.title')}</span>
                   </Badge>
-                )}
-              </div>
+                </div>
+              )}
               
               {isScreensLoading ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -198,28 +198,26 @@ export default function AppDetail() {
 function AppDetailSkeleton() {
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-md mb-8">
-      <div className="bg-gray-800 text-white p-6">
+      <div className="bg-white p-6 relative">
         <div className="flex items-start">
           <Skeleton className="w-16 h-16 rounded-2xl mr-6" />
           <div className="flex-1">
             <Skeleton className="h-8 w-64 mb-2" />
-            <Skeleton className="h-4 w-full mb-2" />
-            <Skeleton className="h-4 w-3/4 mb-4" />
-            <div className="flex gap-3">
-              <Skeleton className="h-8 w-24 rounded-md" />
-              <Skeleton className="h-8 w-24 rounded-md" />
+            <div className="flex gap-3 mt-4">
               <Skeleton className="h-8 w-24 rounded-md" />
             </div>
           </div>
           <div className="flex-shrink-0 flex space-x-2">
             <Skeleton className="h-10 w-24 rounded-md" />
-            <Skeleton className="h-10 w-24 rounded-md" />
+          </div>
+          <div className="absolute top-6 right-6">
+            <Skeleton className="h-8 w-16 rounded-md" />
           </div>
         </div>
       </div>
       
       <div className="p-6">
-        <Skeleton className="h-8 w-36 mb-4" />
+        <Skeleton className="h-6 w-24 mb-4 rounded-md" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
           {[...Array(10)].map((_, i) => (
             <div key={i}>
@@ -241,20 +239,20 @@ function AppIconPlaceholder({ app }: { app: any }) {
     switch (app.category) {
       case 'Healthcare':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
             <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
           </svg>
         );
       case 'Finance':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
             <rect x="2" y="5" width="20" height="14" rx="2"></rect>
             <line x1="2" y1="10" x2="22" y2="10"></line>
           </svg>
         );
       case 'Government':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
             <path d="M2 20h20"></path>
             <path d="M12 4L2 9h20L12 4z"></path>
             <path d="M12 4v16"></path>
@@ -264,7 +262,7 @@ function AppIconPlaceholder({ app }: { app: any }) {
         );
       default:
         return (
-          <div className="text-white text-xl font-bold">{app.name.charAt(0)}</div>
+          <div className="text-[#0066FF] text-xl font-bold">{app.name.charAt(0)}</div>
         );
     }
   };
