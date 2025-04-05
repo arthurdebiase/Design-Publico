@@ -41,12 +41,12 @@ function AppScreenCarousel({ appId }: { appId: string }) {
   }, [api]);
 
   if (isLoading) {
-    return <Skeleton className="w-full aspect-[6/10]" />;
+    return <Skeleton className="w-full h-full" />;
   }
 
   if (error || !screens || screens.length === 0) {
     return (
-      <div className="w-full aspect-[6/10] bg-gray-100 flex items-center justify-center">
+      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
         <p className="text-gray-500 text-sm">No screens available</p>
       </div>
     );
@@ -63,19 +63,21 @@ function AppScreenCarousel({ appId }: { appId: string }) {
 
   return (
     <Carousel 
-      className="w-full relative group" 
+      className="w-full h-full relative group" 
       opts={{ loop: true }} 
       setApi={setApi}
     >
-      <CarouselContent className="-ml-1">
+      <CarouselContent className="-ml-1 h-full">
         {displayScreens.map((screen) => (
-          <CarouselItem key={screen.id} className="pl-1">
-            <div className="w-full aspect-[6/10]">
-              <img 
-                src={screen.imageUrl} 
-                alt={screen.name}
-                className="w-full h-full object-cover"
-              />
+          <CarouselItem key={screen.id} className="pl-1 h-full">
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-1">
+              <div className="h-full flex items-center justify-center overflow-hidden">
+                <img 
+                  src={screen.imageUrl} 
+                  alt={screen.name}
+                  className="h-full max-w-full object-contain"
+                />
+              </div>
             </div>
           </CarouselItem>
         ))}
@@ -119,11 +121,11 @@ function AppScreenCarousel({ appId }: { appId: string }) {
 export default function AppCard({ app }: AppCardProps) {
   return (
     <Link href={`/app/${app.id}`}>
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6">
-        <div className="relative">
+      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 h-[600px] flex flex-col">
+        <div className="relative flex-grow overflow-hidden">
           <AppScreenCarousel appId={app.id.toString()} />
         </div>
-        <div className="p-4">
+        <div className="p-4 flex-shrink-0">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 flex-shrink-0 rounded-lg border border-gray-200 flex items-center justify-center">
               {app.logo ? (
