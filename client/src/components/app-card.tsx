@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { App, Screen } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { fetchScreensByAppId } from "@/lib/airtable";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Carousel, 
   CarouselContent, 
@@ -26,6 +27,7 @@ function AppScreenCarousel({ appId }: { appId: string }) {
   const [api, setApi] = useState<CarouselApi | null>(null);
   const [current, setCurrent] = useState(0);
   const [, navigate] = useLocation();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (!api) return;
@@ -79,12 +81,19 @@ function AppScreenCarousel({ appId }: { appId: string }) {
         {displayScreens.map((screen) => (
           <CarouselItem key={screen.id} className="pl-1 h-full">
             <div className="w-full h-full flex items-center justify-center bg-gray-100 p-2">
-              <div className="flex items-center justify-center" style={{ height: "100%", maxWidth: "90%" }}>
+              <div className="flex items-center justify-center" style={{ 
+                height: "100%", 
+                maxWidth: isMobile ? "95%" : "90%" 
+              }}>
                 <img 
                   src={screen.imageUrl} 
                   alt={screen.name}
                   className="w-auto h-auto object-contain rounded-lg shadow-sm"
-                  style={{ maxHeight: "100%", maxWidth: "100%" }}
+                  style={{ 
+                    maxHeight: "100%", 
+                    maxWidth: "100%",
+                    minHeight: isMobile ? "280px" : "450px"
+                  }}
                 />
               </div>
             </div>
@@ -92,15 +101,15 @@ function AppScreenCarousel({ appId }: { appId: string }) {
         ))}
       </CarouselContent>
       <div 
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        className={`absolute inset-0 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}
         onClick={handleControlClick}
       >
         <CarouselPrevious 
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm" 
+          className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'} bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm`}
           variant="outline"
         />
         <CarouselNext 
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm" 
+          className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'} bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm`}
           variant="outline"
         />
       </div>
@@ -114,7 +123,7 @@ function AppScreenCarousel({ appId }: { appId: string }) {
           {displayScreens.map((_, index) => (
             <button
               key={index}
-              className={`w-2 h-2 rounded-full transition-colors ${
+              className={`${isMobile ? 'w-1.5 h-1.5' : 'w-2 h-2'} rounded-full transition-colors ${
                 index === current ? "bg-black/70" : "bg-black/30"
               }`}
               onClick={() => api?.scrollTo(index)}
@@ -128,20 +137,26 @@ function AppScreenCarousel({ appId }: { appId: string }) {
 }
 
 export default function AppCard({ app }: AppCardProps) {
+  const isMobile = useIsMobile();
+  
+  // Responsive heights for different screen sizes
+  const cardHeight = isMobile ? "h-[400px]" : "h-[600px]";
+  const imageContainerHeight = isMobile ? "h-[340px]" : "h-[540px]";
+  
   return (
     <Link href={`/app/${app.id}`}>
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 h-[600px] flex flex-col">
-        <div className="relative flex-grow overflow-hidden" style={{ height: "540px" }}>
+      <div className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 flex flex-col ${cardHeight}`}>
+        <div className="relative flex-grow overflow-hidden" style={{ height: imageContainerHeight }}>
           <AppScreenCarousel appId={app.id.toString()} />
         </div>
-        <div className="p-4 flex-shrink-0">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 flex-shrink-0 rounded-lg border border-gray-200 flex items-center justify-center p-0">
+        <div className={`${isMobile ? 'p-3' : 'p-4'} flex-shrink-0`}>
+          <div className="flex items-center gap-3">
+            <div className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} flex-shrink-0 rounded-lg border border-gray-200 flex items-center justify-center p-0`}>
               {app.logo ? (
                 <img 
                   src={app.logo} 
                   alt={`${app.name} Logo`} 
-                  className="w-8 h-8"
+                  className={`${isMobile ? 'w-7 h-7' : 'w-8 h-8'}`}
                 />
               ) : (
                 <LogoPlaceholder app={app} />
@@ -152,7 +167,6 @@ export default function AppCard({ app }: AppCardProps) {
               <p className="text-sm text-gray-500">{app.type}</p>
             </div>
           </div>
-
         </div>
       </div>
     </Link>
@@ -165,11 +179,14 @@ function truncateDescription(description: string, maxLength: number = 80): strin
 }
 
 function LogoPlaceholder({ app }: { app: App }) {
+  const isMobile = useIsMobile();
+  const iconSize = isMobile ? "h-4 w-4" : "h-5 w-5";
+  
   const getIconByType = () => {
     switch (app.type) {
       case 'Federal':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconSize} text-gray-600`}>
             <path d="M2 20h20"></path>
             <path d="M12 4L2 9h20L12 4z"></path>
             <path d="M12 4v16"></path>
@@ -179,14 +196,14 @@ function LogoPlaceholder({ app }: { app: App }) {
         );
       case 'Municipal':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconSize} text-gray-600`}>
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
         );
       case 'State':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconSize} text-gray-600`}>
             <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5"></path>
             <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z"></path>
           </svg>
