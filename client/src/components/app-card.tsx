@@ -193,12 +193,12 @@ export default function AppCard({ app }: AppCardProps) {
         </div>
         <div className={`${isMobile ? 'p-3' : 'p-4'} flex-shrink-0`}>
           <div className="flex items-center gap-3">
-            <div className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} flex-shrink-0 rounded-lg border border-gray-200 flex items-center justify-center p-0`}>
+            <div className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} flex-shrink-0 flex items-center justify-center`}>
               {app.logo ? (
                 <img 
                   src={app.logo} 
                   alt={`${app.name} Logo`} 
-                  className={`${isMobile ? 'w-7 h-7' : 'w-8 h-8'}`}
+                  className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} object-contain`}
                 />
               ) : (
                 <LogoPlaceholder app={app} />
