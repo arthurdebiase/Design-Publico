@@ -12,6 +12,22 @@ import { ExternalLink, Bookmark,
          FileText, Smartphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+// Platform badge styling function
+function getPlatformBadgeClass(platform: string): string {
+  switch (platform) {
+    case 'iOS':
+      return 'bg-blue-50 text-blue-600';
+    case 'Android':
+      return 'bg-green-50 text-green-600';
+    case 'Web':
+      return 'bg-orange-50 text-orange-600';
+    case 'Cross-platform':
+      return 'bg-purple-50 text-purple-600';
+    default:
+      return 'bg-gray-50 text-gray-600';
+  }
+}
+
 export default function AppDetail() {
   const [match, params] = useRoute("/app/:id");
   const appId = params?.id || "";
@@ -64,9 +80,9 @@ export default function AppDetail() {
             <div className="bg-gray-800 text-white p-6">
               <div className="flex flex-col md:flex-row md:items-start">
                 <div className="flex-shrink-0 mr-6 mb-4 md:mb-0">
-                  <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center">
+                  <div className="w-20 h-20 rounded-2xl border border-gray-700 flex items-center justify-center bg-white">
                     {app.logo ? (
-                      <img src={app.logo} alt={`${app.name} logo`} className="w-10 h-10" />
+                      <img src={app.logo} alt={`${app.name} logo`} className="w-14 h-14" />
                     ) : (
                       <AppIconPlaceholder app={app} />
                     )}
@@ -82,34 +98,22 @@ export default function AppDetail() {
                     )}
                   </div>
                   <p className="text-gray-300 mb-4">
-                    {app.description}
+                    {app.type}
                   </p>
                   <div className="flex flex-wrap gap-3">
-                    <Badge variant="secondary" className="px-3 py-1.5 rounded flex items-center gap-2">
+                    <Badge variant="secondary" className={`px-3 py-1.5 rounded flex items-center gap-2 ${getPlatformBadgeClass(app.platform)}`}>
                       {getPlatformIcon(app.platform)}
                       <span>{app.platform}</span>
                     </Badge>
-                    {app.category && (
-                      <Badge variant="secondary" className="px-3 py-1.5 rounded flex items-center gap-2">
-                        <Tag className="h-4 w-4" />
-                        <span>{app.category}</span>
-                      </Badge>
-                    )}
                     {app.language && (
                       <Badge variant="secondary" className="px-3 py-1.5 rounded flex items-center gap-2">
                         <Globe className="h-4 w-4" />
                         <span>{app.language}</span>
                       </Badge>
                     )}
-                    {screens && (
-                      <Badge variant="secondary" className="px-3 py-1.5 rounded flex items-center gap-2">
-                        <Smartphone className="h-4 w-4" />
-                        <span>{screens.length} screens</span>
-                      </Badge>
-                    )}
                   </div>
                 </div>
-                <div className="flex-shrink-0 flex space-x-2 mt-4 md:mt-0">
+                <div className="flex-shrink-0 mt-4 md:mt-0">
                   {app.url && (
                     <Button asChild className="bg-[#0066FF] hover:bg-blue-700">
                       <a href={app.url} target="_blank" rel="noopener noreferrer">
@@ -118,16 +122,20 @@ export default function AppDetail() {
                       </a>
                     </Button>
                   )}
-                  <Button variant="secondary" className="bg-gray-700 hover:bg-gray-600 text-white">
-                    <Bookmark className="mr-2 h-4 w-4" />
-                    <span>Save</span>
-                  </Button>
                 </div>
               </div>
             </div>
             
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">App Screens</h2>
+            <div className="p-6 pt-0">
+              <div className="flex items-center mb-4">
+                <h2 className="text-xl font-semibold">App Screens</h2>
+                {screens && (
+                  <Badge variant="outline" className="ml-3 px-2 py-1 flex items-center">
+                    <Smartphone className="h-4 w-4 mr-1" />
+                    <span>{screens.length} screens</span>
+                  </Badge>
+                )}
+              </div>
               
               {isScreensLoading ? (
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
