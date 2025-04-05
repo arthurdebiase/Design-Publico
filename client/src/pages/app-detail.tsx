@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useRoute, Link } from "wouter";
+import { useState, useEffect } from "react";
+import { useRoute, Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAppById, fetchScreensByAppId } from "@/lib/airtable";
 import { ScreenModal } from "@/components/ui/screen-modal";
@@ -33,9 +33,16 @@ export default function AppDetail() {
   const [match, params] = useRoute("/app/:id");
   const appId = params?.id || "";
   const { t } = useTranslation();
+  const [location] = useLocation();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
+  
+  // Extract screenId from URL query parameters
+  const getScreenIdFromUrl = (): string | null => {
+    const url = new URL(window.location.href);
+    return url.searchParams.get('screen');
+  };
   
   const { 
     isLoading: isAppLoading, 
@@ -64,7 +71,27 @@ export default function AppDetail() {
     const index = screens?.findIndex(s => s.id === screen.id) || 0;
     setCurrentScreenIndex(index);
     setIsModalOpen(true);
+    
+    // Update URL with screen ID
+    const url = new URL(window.location.href);
+    url.searchParams.set('screen', screen.id);
+    window.history.replaceState({}, '', url.toString());
   };
+  
+  // Check for screen ID in URL and open modal if found
+  useEffect(() => {
+    if (screens && screens.length > 0) {
+      const screenId = getScreenIdFromUrl();
+      if (screenId) {
+        const screenIndex = screens.findIndex(s => s.id === screenId);
+        if (screenIndex !== -1) {
+          // Open modal with the specified screen
+          setCurrentScreenIndex(screenIndex);
+          setIsModalOpen(true);
+        }
+      }
+    }
+  }, [screens]);
   
   if (!match) return null;
   
@@ -178,10 +205,22 @@ export default function AppDetail() {
           {screens && screens.length > 0 && (
             <ScreenModal
               isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
+              onClose={() => {
+                // Close modal and update URL to remove screen parameter
+                setIsModalOpen(false);
+                const url = new URL(window.location.href);
+                url.searchParams.delete('screen');
+                window.history.replaceState({}, '', url.toString());
+              }}
               screens={screens}
               currentScreenIndex={currentScreenIndex}
-              onScreenChange={setCurrentScreenIndex}
+              onScreenChange={(index) => {
+                // Update URL when screen changes
+                setCurrentScreenIndex(index);
+                const url = new URL(window.location.href);
+                url.searchParams.set('screen', screens[index].id);
+                window.history.replaceState({}, '', url.toString());
+              }}
               app={app}
             />
           )}

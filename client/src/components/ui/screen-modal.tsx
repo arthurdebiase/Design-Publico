@@ -3,7 +3,8 @@ import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogD
 import { Button } from "@/components/ui/button";
 import { Screen, App } from "@/types";
 import { X, Download, Share2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { useToast } from "@/hooks/use-toast";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ export function ScreenModal({
   app,
 }: ScreenModalProps) {
   const [localIndex, setLocalIndex] = useState(currentScreenIndex);
+  const [location] = useLocation();
+  const { toast } = useToast();
   
   useEffect(() => {
     setLocalIndex(currentScreenIndex);
@@ -40,6 +43,32 @@ export function ScreenModal({
     const newIndex = (localIndex + 1) % screens.length;
     setLocalIndex(newIndex);
     onScreenChange(newIndex);
+  };
+  
+  const handleShare = () => {
+    // Create shareable URL with app ID and screen ID
+    const baseUrl = window.location.origin;
+    const shareableUrl = `${baseUrl}/app/${app.id}?screen=${currentScreen.id}`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(shareableUrl)
+      .then(() => {
+        // Show success toast
+        toast({
+          title: "Link copied!",
+          description: "Screen link copied to clipboard",
+          duration: 3000,
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to copy link: ", error);
+        toast({
+          title: "Copy failed",
+          description: "Could not copy link to clipboard",
+          variant: "destructive",
+          duration: 3000,
+        });
+      });
   };
   
   // Keyboard navigation
@@ -92,7 +121,9 @@ export function ScreenModal({
               variant="ghost" 
               size="icon" 
               className="h-9 w-9" 
-              aria-label="Share screen image"
+              aria-label="Share screen link"
+              onClick={handleShare}
+              title="Copy screen link to clipboard"
             >
               <Share2 className="h-4 w-4" aria-hidden="true" />
             </Button>
