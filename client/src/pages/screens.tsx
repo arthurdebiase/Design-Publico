@@ -49,9 +49,12 @@ export default function ScreensPage() {
           }
         }
         
-        // Sort all screens by most recent
+        // Sort all screens alphabetically by screen name
         const sortedScreens = allScreens.sort((a, b) => {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          // Ensure there's a name value to sort by
+          const nameA = a.name?.toLowerCase() || '';
+          const nameB = b.name?.toLowerCase() || '';
+          return nameA.localeCompare(nameB);
         });
         
         setScreens(sortedScreens);
@@ -179,15 +182,19 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         
         {imageError ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-            <span className="text-gray-400">Image not available</span>
+            <span className="text-gray-400">
+              {screen.name ? `${screen.name} image not available` : 'Image not available'}
+            </span>
           </div>
         ) : (
           <img 
             src={screen.imageUrl} 
-            alt={screen.name}
+            alt={screen.name || `Screen from ${screen.app?.name || 'app'}`}
+            title={screen.name || ''}
             className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
+            aria-label={screen.name || `Screen from ${screen.app?.name || 'app'}`}
           />
         )}
         

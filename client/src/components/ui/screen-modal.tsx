@@ -96,8 +96,10 @@ export function ScreenModal({
           <div className="relative max-w-full">
             <img 
               src={currentScreen.imageUrl} 
-              alt={currentScreen.name} 
+              alt={currentScreen.name || `Screen from ${app.name}`} 
+              title={currentScreen.name || ''}
               className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
+              aria-label={currentScreen.name || `Screen from ${app.name}`}
             />
             
             {screens.length > 1 && (
