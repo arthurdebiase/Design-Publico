@@ -2,21 +2,16 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Globe, CheckCircle, XCircle } from "lucide-react";
+import { Globe, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
   const [email, setEmail] = useState("");
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState("pt"); // Default to Portuguese for newsletter
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,13 +37,13 @@ export default function Footer() {
       if (response.ok) {
         if (data.alreadySubscribed) {
           toast({
-            title: "Already subscribed",
+            title: t("newsletter.success"),
             description: "This email is already subscribed to our newsletter.",
             variant: "default",
           });
         } else {
           toast({
-            title: "Successfully subscribed!",
+            title: t("newsletter.success"),
             description: "You'll receive our newsletter updates soon.",
             variant: "default",
           });
@@ -59,7 +54,7 @@ export default function Footer() {
       }
     } catch (error) {
       toast({
-        title: "Subscription failed",
+        title: t("newsletter.error"),
         description: "Please try again later.",
         variant: "destructive",
       });
@@ -67,19 +62,6 @@ export default function Footer() {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleLanguageChange = (value: string) => {
-    setLanguage(value);
-    // In a real app, this would update the app's locale/language state
-    toast({
-      title: "Language changed",
-      description: `Interface language set to ${
-        value === "en" ? "English" : 
-        value === "pt" ? "Portuguese" : 
-        value === "es" ? "Spanish" : "English"
-      }`,
-    });
   };
 
   return (
@@ -100,49 +82,27 @@ export default function Footer() {
             </Link>
             
             <p className="text-gray-600 max-w-md">
-              A comprehensive collection of design examples from real-world applications, 
-              powered by Airtable integration.
+              {t('about.description')}
             </p>
-            
-            {/* Language selector */}
-            <div className="mt-4">
-              <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                <Globe className="h-4 w-4" />
-                <span>Select language:</span>
-              </div>
-              <Select value={language} onValueChange={handleLanguageChange}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select a language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="pt">Portuguese</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
           
           {/* Navigation links grid */}
           <div className="md:col-span-4">
             <div className="grid grid-cols-2 gap-8">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-4">Resources</h3>
+                <h3 className="font-semibold text-gray-900 mb-4">{t('header.apps')}</h3>
                 <ul className="space-y-2">
-                  <li><Link href="/" className="text-gray-600 hover:text-[#0066FF] transition-colors">Gallery</Link></li>
-                  <li><Link href="/collections" className="text-gray-600 hover:text-[#0066FF] transition-colors">Collections</Link></li>
-                  <li><Link href="/categories" className="text-gray-600 hover:text-[#0066FF] transition-colors">Categories</Link></li>
-                  <li><Link href="/platforms" className="text-gray-600 hover:text-[#0066FF] transition-colors">Platforms</Link></li>
+                  <li><Link href="/" className="text-gray-600 hover:text-[#0066FF] transition-colors">{t('header.apps')}</Link></li>
+                  <li><Link href="/screens" className="text-gray-600 hover:text-[#0066FF] transition-colors">{t('header.screens')}</Link></li>
                 </ul>
               </div>
               
               <div>
-                <h3 className="font-semibold text-gray-900 mb-4">Company</h3>
+                <h3 className="font-semibold text-gray-900 mb-4">{t('footer.contact')}</h3>
                 <ul className="space-y-2">
-                  <li><Link href="/about" className="text-gray-600 hover:text-[#0066FF] transition-colors">About</Link></li>
-                  <li><Link href="/contact" className="text-gray-600 hover:text-[#0066FF] transition-colors">Contact</Link></li>
-                  <li><Link href="/privacy" className="text-gray-600 hover:text-[#0066FF] transition-colors">Privacy</Link></li>
-                  <li><Link href="/terms" className="text-gray-600 hover:text-[#0066FF] transition-colors">Terms</Link></li>
+                  <li><Link href="/about" className="text-gray-600 hover:text-[#0066FF] transition-colors">{t('header.about')}</Link></li>
+                  <li><Link href="/privacy" className="text-gray-600 hover:text-[#0066FF] transition-colors">{t('footer.privacy')}</Link></li>
+                  <li><Link href="/terms" className="text-gray-600 hover:text-[#0066FF] transition-colors">{t('footer.terms')}</Link></li>
                 </ul>
               </div>
             </div>
@@ -150,16 +110,16 @@ export default function Footer() {
           
           {/* Newsletter subscription */}
           <div className="md:col-span-4">
-            <h3 className="font-semibold text-gray-900 mb-4">Subscribe to our newsletter</h3>
+            <h3 className="font-semibold text-gray-900 mb-4">{t('newsletter.title')}</h3>
             <p className="text-gray-600 mb-4">
-              Stay updated with the latest design trends and new additions to our gallery.
+              {t('newsletter.subtitle')}
             </p>
             
             <form onSubmit={handleSubscribe} className="space-y-3">
               <div className="flex gap-2">
                 <Input
                   type="email"
-                  placeholder="Your email address"
+                  placeholder={t('newsletter.placeholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="flex-grow"
@@ -170,7 +130,7 @@ export default function Footer() {
                   className="bg-[#0066FF] hover:bg-blue-700"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Subscribing..." : "Subscribe"}
+                  {isSubmitting ? "..." : t('newsletter.button')}
                 </Button>
               </div>
               
@@ -185,7 +145,7 @@ export default function Footer() {
         {/* Bottom section with copyright and social links */}
         <div className="border-t border-gray-200 mt-10 pt-10 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 text-sm mb-6 md:mb-0">
-            © {new Date().getFullYear()} DesignGallery. All rights reserved.
+            {t('footer.copyright')}
           </p>
           
           <div className="flex space-x-6">

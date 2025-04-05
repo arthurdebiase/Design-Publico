@@ -28,7 +28,8 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
       });
     }
 
-    const { email, language = "en", name } = validation.data;
+    // Default to Portuguese (pt) as our application primarily targets Brazilian users
+    const { email, language = "pt", name } = validation.data;
     
     // Check if the email is already subscribed in our local cache
     if (subscribers.has(email)) {

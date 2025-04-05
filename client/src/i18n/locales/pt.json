@@ -1,0 +1,69 @@
+{
+  "header": {
+    "apps": "Aplicativos",
+    "screens": "Telas",
+    "about": "Sobre",
+    "submitApp": "Enviar Aplicativo"
+  },
+  "footer": {
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Serviço",
+    "contact": "Contato",
+    "copyright": "© 2025 Galeria de Design. Todos os direitos reservados."
+  },
+  "home": {
+    "title": "Galeria de Design",
+    "subtitle": "Descubra inspiração de design em aplicativos públicos",
+    "featured": "Aplicativos em Destaque",
+    "viewAll": "Ver Todos"
+  },
+  "filters": {
+    "all": "Todos",
+    "type": "Tipo",
+    "platform": "Plataforma",
+    "category": "Categoria",
+    "sort": "Ordenar",
+    "newest": "Mais recentes",
+    "oldest": "Mais antigos",
+    "alphabetical": "A-Z",
+    "screenCount": "Quantidade de Telas",
+    "layout": "Layout"
+  },
+  "app": {
+    "visit": "Visitar",
+    "appScreens": "Telas do Aplicativo",
+    "noScreens": "Nenhuma tela disponível",
+    "noScreensDesc": "Este aplicativo ainda não possui telas disponíveis.",
+    "notFound": "Aplicativo não encontrado",
+    "notFoundDesc": "O aplicativo que você está procurando pode ter sido removido ou não existe.",
+    "goBack": "Voltar para a galeria",
+    "screens": "telas"
+  },
+  "screens": {
+    "title": "Biblioteca de Telas",
+    "subtitle": "Navegue por telas de design de vários aplicativos"
+  },
+  "about": {
+    "title": "Sobre a Galeria de Design",
+    "description": "A Galeria de Design é uma coleção curada de exemplos de design de aplicativos públicos. Nosso objetivo é fornecer inspiração e referências para designers e desenvolvedores criarem interfaces de usuário bonitas."
+  },
+  "newsletter": {
+    "title": "Assine nossa newsletter",
+    "subtitle": "Receba as últimas atualizações e inspirações de design em seu email",
+    "placeholder": "Digite seu email",
+    "button": "Assinar",
+    "success": "Obrigado por se inscrever!",
+    "error": "Ocorreu um erro. Por favor, tente novamente."
+  },
+  "types": {
+    "Federal": "Federal",
+    "Municipal": "Municipal",
+    "State": "Estadual"
+  },
+  "platforms": {
+    "iOS": "iOS",
+    "Android": "Android",
+    "Web": "Web",
+    "Cross-platform": "Multiplataforma"
+  }
+}

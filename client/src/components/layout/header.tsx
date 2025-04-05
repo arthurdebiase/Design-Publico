@@ -2,9 +2,12 @@ import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { useTranslation } from 'react-i18next';
+import { LanguageSelector } from "@/components/language-selector";
 
 export default function Header() {
   const [location] = useLocation();
+  const { t } = useTranslation();
   
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
@@ -25,41 +28,47 @@ export default function Header() {
         {/* Navigation (Desktop) */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link href="/" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/' ? 'text-[#0066FF]' : ''}`}>
-            Apps
+            {t('header.apps')}
           </Link>
           <Link href="/screens" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/screens' ? 'text-[#0066FF]' : ''}`}>
-            Screens
+            {t('header.screens')}
           </Link>
           <Link href="/about" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/about' ? 'text-[#0066FF]' : ''}`}>
-            About
+            {t('header.about')}
           </Link>
-          <Button className="bg-[#0066FF] hover:bg-blue-700 text-white">Submit App</Button>
+          <Button className="bg-[#0066FF] hover:bg-blue-700 text-white">
+            {t('header.submitApp')}
+          </Button>
+          <LanguageSelector />
         </nav>
         
         {/* Mobile Menu */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <div className="mt-8 flex flex-col space-y-4">
-              <Link href="/" className="text-lg font-medium hover:text-[#0066FF]">
-                Apps
-              </Link>
-              <Link href="/screens" className="text-lg font-medium hover:text-[#0066FF]">
-                Screens
-              </Link>
-              <Link href="/about" className="text-lg font-medium hover:text-[#0066FF]">
-                About
-              </Link>
-              <Button className="bg-[#0066FF] hover:bg-blue-700 text-white mt-4">
-                Submit App
+        <div className="md:hidden flex items-center space-x-2">
+          <LanguageSelector />
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
               </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
+            </SheetTrigger>
+            <SheetContent>
+              <div className="mt-8 flex flex-col space-y-4">
+                <Link href="/" className="text-lg font-medium hover:text-[#0066FF]">
+                  {t('header.apps')}
+                </Link>
+                <Link href="/screens" className="text-lg font-medium hover:text-[#0066FF]">
+                  {t('header.screens')}
+                </Link>
+                <Link href="/about" className="text-lg font-medium hover:text-[#0066FF]">
+                  {t('header.about')}
+                </Link>
+                <Button className="bg-[#0066FF] hover:bg-blue-700 text-white mt-4">
+                  {t('header.submitApp')}
+                </Button>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );

@@ -1,0 +1,69 @@
+{
+  "header": {
+    "apps": "Apps",
+    "screens": "Screens",
+    "about": "About",
+    "submitApp": "Submit App"
+  },
+  "footer": {
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "contact": "Contact",
+    "copyright": "© 2025 Design Gallery. All rights reserved."
+  },
+  "home": {
+    "title": "Design Gallery",
+    "subtitle": "Discover design inspiration from public apps",
+    "featured": "Featured Apps",
+    "viewAll": "View All"
+  },
+  "filters": {
+    "all": "All",
+    "type": "Type",
+    "platform": "Platform",
+    "category": "Category",
+    "sort": "Sort",
+    "newest": "Newest",
+    "oldest": "Oldest",
+    "alphabetical": "A-Z",
+    "screenCount": "Screen Count",
+    "layout": "Layout"
+  },
+  "app": {
+    "visit": "Visit",
+    "appScreens": "App Screens",
+    "noScreens": "No screens available",
+    "noScreensDesc": "This app doesn't have any screens available yet.",
+    "notFound": "Application not found",
+    "notFoundDesc": "The application you're looking for might have been removed or doesn't exist.",
+    "goBack": "Go back to gallery",
+    "screens": "screens"
+  },
+  "screens": {
+    "title": "Screen Library",
+    "subtitle": "Browse design screens from various applications"
+  },
+  "about": {
+    "title": "About Design Gallery",
+    "description": "Design Gallery is a curated collection of design examples from public applications. Our goal is to provide designers and developers with inspiration and references for creating beautiful user interfaces."
+  },
+  "newsletter": {
+    "title": "Subscribe to our newsletter",
+    "subtitle": "Get the latest updates and design inspiration delivered to your inbox",
+    "placeholder": "Enter your email",
+    "button": "Subscribe",
+    "success": "Thank you for subscribing!",
+    "error": "An error occurred. Please try again."
+  },
+  "types": {
+    "Federal": "Federal",
+    "Municipal": "Municipal",
+    "State": "State"
+  },
+  "platforms": {
+    "iOS": "iOS",
+    "Android": "Android",
+    "Web": "Web",
+    "Cross-platform": "Cross-platform"
+  }
+}
