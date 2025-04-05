@@ -28,6 +28,7 @@ function AppScreenCarousel({ appId }: { appId: string }) {
   const [current, setCurrent] = useState(0);
   const [, navigate] = useLocation();
   const isMobile = useIsMobile();
+  const [touchMoved, setTouchMoved] = useState(false);
 
   useEffect(() => {
     if (!api) return;
@@ -67,34 +68,75 @@ function AppScreenCarousel({ appId }: { appId: string }) {
   // Handle click on the carousel to navigate to app detail
   const handleCarouselClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/app/${appId}`);
+    if (!touchMoved) {
+      navigate(`/app/${appId}`);
+    }
+    // Reset the flag
+    setTouchMoved(false);
+  };
+  
+  // Track touch movements to prevent navigating when user is swiping
+  const handleTouchStart = () => {
+    setTouchMoved(false);
+  };
+  
+  const handleTouchMove = () => {
+    setTouchMoved(true);
   };
 
   return (
     <Carousel 
-      className="w-full h-full relative group cursor-pointer" 
-      opts={{ loop: true }} 
+      className="w-full h-full relative group cursor-pointer touch-pan-y" 
+      opts={{ 
+        loop: true,
+        align: "center"
+      }} 
       setApi={setApi}
       onClick={handleCarouselClick}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
     >
       <CarouselContent className="-ml-1 h-full">
         {displayScreens.map((screen) => (
           <CarouselItem key={screen.id} className="pl-1 h-full">
             <div className="w-full h-full flex items-center justify-center bg-gray-100 p-2">
-              <div className="flex items-center justify-center" style={{ 
-                height: "100%", 
-                maxWidth: isMobile ? "95%" : "90%" 
+              <div className="flex items-center justify-center h-full relative group/item" style={{ 
+                width: isMobile ? "95%" : "90%"
               }}>
                 <img 
                   src={screen.imageUrl} 
                   alt={screen.name}
-                  className="w-auto h-auto object-contain rounded-lg shadow-sm"
+                  className="h-full w-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
                   style={{ 
-                    maxHeight: "100%", 
                     maxWidth: "100%",
-                    minHeight: isMobile ? "280px" : "450px"
+                    objectFit: "contain",
+                    objectPosition: "center"
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    navigate(`/app/${appId}`);
                   }}
                 />
+                
+                {/* Clickable overlay for desktop */}
+                {!isMobile && (
+                  <div 
+                    className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-all opacity-0 group-hover/item:opacity-100 flex items-center justify-center rounded-lg cursor-pointer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/app/${appId}`);
+                    }}
+                  >
+                    <div className="bg-black/60 text-white rounded-full p-2 transform scale-90 hover:scale-100 transition-transform">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                        <polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>
+                      </svg>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </CarouselItem>
