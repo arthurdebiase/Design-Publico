@@ -123,24 +123,6 @@ export function ScreenModal({
             )}
           </div>
         </div>
-        
-        <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div>
-            <span className="text-sm text-gray-500">
-              Screen {localIndex + 1} of {screens.length}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {app.url && (
-              <Button asChild>
-                <a href={app.url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  <span>Visit App</span>
-                </a>
-              </Button>
-            )}
-          </div>
-        </div>
       </DialogContent>
     </Dialog>
   );
