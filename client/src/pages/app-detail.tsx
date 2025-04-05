@@ -93,6 +93,11 @@ export default function AppDetail() {
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center mb-2 gap-3">
                     <h1 className="text-2xl font-bold text-gray-900">{app.name}</h1>
+                    {app.platform && (
+                      <Badge variant="secondary" className={`px-3 py-1.5 rounded ${getPlatformBadgeClass(app.platform)}`}>
+                        {app.platform}
+                      </Badge>
+                    )}
                   </div>
                   
                   {/* Add type below app name */}
@@ -122,14 +127,7 @@ export default function AppDetail() {
                   )}
                 </div>
                 
-                {/* iOS badge positioned at top right (without icon) */}
-                {app.platform && (
-                  <div className="absolute top-6 right-6">
-                    <Badge variant="secondary" className={`px-3 py-1.5 rounded ${getPlatformBadgeClass(app.platform)}`}>
-                      {app.platform}
-                    </Badge>
-                  </div>
-                )}
+                {/* Platform badge moved next to app name */}
               </div>
             </div>
             
