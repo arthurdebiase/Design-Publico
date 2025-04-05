@@ -145,37 +145,65 @@ export class MemStorage implements IStorage {
       const ATTACHMENT_FIELD = "images";
       const SCREEN_NAME_FIELD = "imagetitle";
       
-      // 1. Fetch all records from the Airtable screens table
-      const screensResponse = await axios.get(
-        `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`,
-        { 
+      // 1. Fetch all records from the Airtable screens table with pagination
+      let allScreenRecords: any[] = [];
+      let offset: string | undefined = undefined;
+      
+      do {
+        const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
+        const params: any = { pageSize: 100 };
+        if (offset) {
+          params.offset = offset;
+        }
+        
+        const screensResponse = await axios.get(url, { 
           headers: { 
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json"
-          }
+          },
+          params
+        });
+        
+        allScreenRecords = [...allScreenRecords, ...screensResponse.data.records];
+        offset = screensResponse.data.offset;
+        
+        console.log(`Fetched batch of ${screensResponse.data.records.length} screen records from Airtable`);
+      } while (offset);
+      
+      console.log(`Fetched a total of ${allScreenRecords.length} screen records from Airtable`);
+      
+      // 2. Fetch all records from the Airtable apps table with pagination
+      let allAppRecords: any[] = [];
+      let appOffset: string | undefined = undefined;
+      
+      do {
+        const url = `https://api.airtable.com/v0/${baseId}/${APPS_TABLE_NAME}`;
+        const params: any = { pageSize: 100 };
+        if (appOffset) {
+          params.offset = appOffset;
         }
-      );
-      
-      console.log(`Fetched ${screensResponse.data.records.length} screen records from Airtable`);
-      
-      // 2. Fetch all records from the Airtable apps table
-      const appsResponse = await axios.get(
-        `https://api.airtable.com/v0/${baseId}/${APPS_TABLE_NAME}`,
-        { 
+        
+        const appsResponse = await axios.get(url, { 
           headers: { 
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json"
-          }
-        }
-      );
+          },
+          params
+        });
+        
+        allAppRecords = [...allAppRecords, ...appsResponse.data.records];
+        appOffset = appsResponse.data.offset;
+        
+        console.log(`Fetched batch of ${appsResponse.data.records.length} app records from Airtable`);
+      } while (appOffset);
       
-      console.log(`Fetched ${appsResponse.data.records.length} app records from Airtable`);
+      console.log(`Fetched a total of ${allAppRecords.length} app records from Airtable`);
       
       // Create a map of app names to their logo URLs
       const appLogosMap = new Map<string, string>();
       
       // Process app records to extract logos
-      for (const record of appsResponse.data.records) {
+      for (const record of allAppRecords) {
         const fields = record.fields;
         if (fields && fields["app-name"] && fields.logo && fields.logo.length > 0) {
           const appName = fields["app-name"];
@@ -189,7 +217,7 @@ export class MemStorage implements IStorage {
       const appGroups = new Map<string, any[]>();
       
       // Process and group screen records
-      for (const record of screensResponse.data.records) {
+      for (const record of allScreenRecords) {
         const fields = record.fields;
         
         // Skip records without required fields
@@ -217,7 +245,9 @@ export class MemStorage implements IStorage {
       this.screenIdCounter = 1;
       
       // 3. Process each app group
-      for (const [appName, records] of appGroups.entries()) {
+      // Convert Map entries to Array to fix TypeScript error
+      const appGroupsArray = Array.from(appGroups).map(([appName, records]) => ({ appName, records }));
+      for (const { appName, records } of appGroupsArray) {
         // Use first record to get app metadata
         const firstRecord = records[0];
         const fields = firstRecord.fields;
