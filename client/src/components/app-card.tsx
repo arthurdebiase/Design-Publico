@@ -33,7 +33,7 @@ export default function AppCard({ app }: AppCardProps) {
             </div>
             <div>
               <h3 className="font-medium text-[#333333]">{app.name}</h3>
-              <p className="text-sm text-gray-500">{app.category}</p>
+              <p className="text-sm text-gray-500">{app.type}</p>
             </div>
           </div>
           <div className="flex items-center justify-between">
@@ -54,22 +54,9 @@ function truncateDescription(description: string, maxLength: number = 80): strin
 }
 
 function LogoPlaceholder({ app }: { app: App }) {
-  const getIconByCategory = () => {
-    switch (app.category) {
-      case 'Healthcare':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
-            <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
-          </svg>
-        );
-      case 'Finance':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
-            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-            <line x1="2" y1="10" x2="22" y2="10"></line>
-          </svg>
-        );
-      case 'Government':
+  const getIconByType = () => {
+    switch (app.type) {
+      case 'Federal':
         return (
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
             <path d="M2 20h20"></path>
@@ -79,6 +66,20 @@ function LogoPlaceholder({ app }: { app: App }) {
             <path d="M16 9v11"></path>
           </svg>
         );
+      case 'Municipal':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        );
+      case 'State':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-gray-600">
+            <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5"></path>
+            <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z"></path>
+          </svg>
+        );
       default:
         return (
           <div className="text-gray-600 font-bold">{app.name.charAt(0)}</div>
@@ -86,7 +87,7 @@ function LogoPlaceholder({ app }: { app: App }) {
     }
   };
   
-  return getIconByCategory();
+  return getIconByType();
 }
 
 function getBadgeColorClass(type: string): string {
