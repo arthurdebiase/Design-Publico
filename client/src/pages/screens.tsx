@@ -222,9 +222,8 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium truncate">{screen.name || 'Untitled Screen'}</h3>
           {screen.app && (
-            <p className="text-xs text-gray-500 truncate">
+            <p className="text-sm font-medium truncate">
               {screen.app.name}
             </p>
           )}
