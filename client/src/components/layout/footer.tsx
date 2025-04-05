@@ -72,14 +72,14 @@ export default function Footer() {
           {/* Logo and description column */}
           <div className="md:col-span-6 space-y-4">
             <Link href="/" className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-[#0066FF] rounded-md flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6 text-white">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                  <polyline points="2 17 12 22 22 17" />
-                  <polyline points="2 12 12 17 22 12" />
-                </svg>
+              <div className="w-10 h-10 rounded-md flex items-center justify-center">
+                <img 
+                  src="/src/assets/symbol.png" 
+                  alt="Design Público Logo" 
+                  className="h-full w-auto rounded-md"
+                />
               </div>
-              <span className="text-xl font-bold">DesignGallery</span>
+              <span className="text-xl font-bold tracking-wider">DESIGN PÚBLICO</span>
             </Link>
             
             <p className="text-gray-600 max-w-md">
