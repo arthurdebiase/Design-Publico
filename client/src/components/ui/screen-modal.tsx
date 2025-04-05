@@ -64,7 +64,7 @@ export function ScreenModal({
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" closeButton={false}>
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
             <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg flex items-center justify-center mr-3">
@@ -86,13 +86,10 @@ export function ScreenModal({
             <Button variant="ghost" size="icon" className="h-9 w-9">
               <Share2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-9 w-9">
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </div>
         
-        <div className="flex-1 overflow-auto p-6 flex items-center justify-center bg-gray-100">
+        <div className="flex-1 overflow-auto p-6 flex items-center justify-center">
           <div className="relative">
             <img 
               src={currentScreen.imageUrl} 
@@ -105,7 +102,7 @@ export function ScreenModal({
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 -ml-12 bg-white w-10 h-10 rounded-full shadow-md" 
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 ml-1 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -114,7 +111,7 @@ export function ScreenModal({
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 -mr-12 bg-white w-10 h-10 rounded-full shadow-md" 
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 mr-1 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handleNext}
                 >
                   <ChevronRight className="h-5 w-5" />
