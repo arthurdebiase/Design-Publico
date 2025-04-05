@@ -9,7 +9,7 @@ interface AppCardProps {
 export default function AppCard({ app }: AppCardProps) {
   return (
     <Link href={`/app/${app.id}`}>
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer">
+      <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6">
         <div className="relative">
           <img 
             src={app.thumbnailUrl} 
