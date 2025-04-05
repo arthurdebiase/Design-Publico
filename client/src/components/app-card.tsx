@@ -1,9 +1,107 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Badge } from "@/components/ui/badge";
-import { App } from "@/types";
+import { App, Screen } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import { fetchScreensByAppId } from "@/lib/airtable";
+import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselNext, 
+  CarouselPrevious,
+  type CarouselApi
+} from "@/components/ui/carousel";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface AppCardProps {
   app: App;
+}
+
+function AppScreenCarousel({ appId }: { appId: string }) {
+  const { data: screens, isLoading, error } = useQuery({
+    queryKey: [`/api/apps/${appId}/screens`],
+    queryFn: () => fetchScreensByAppId(appId),
+  });
+  const [api, setApi] = useState<CarouselApi | null>(null);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+    
+    const onSelect = () => {
+      setCurrent(api.selectedScrollSnap());
+    };
+
+    api.on("select", onSelect);
+    
+    return () => {
+      api.off("select", onSelect);
+    };
+  }, [api]);
+
+  if (isLoading) {
+    return <Skeleton className="w-full aspect-[3/2]" />;
+  }
+
+  if (error || !screens || screens.length === 0) {
+    return (
+      <div className="w-full aspect-[3/2] bg-gray-100 flex items-center justify-center">
+        <p className="text-gray-500 text-sm">No screens available</p>
+      </div>
+    );
+  }
+
+  // Get first 3 screens
+  const displayScreens = screens.slice(0, Math.min(3, screens.length));
+
+  return (
+    <Carousel 
+      className="w-full relative group" 
+      opts={{ loop: true }} 
+      setApi={setApi}
+    >
+      <CarouselContent className="-ml-1">
+        {displayScreens.map((screen) => (
+          <CarouselItem key={screen.id} className="pl-1">
+            <div className="w-full aspect-[3/2]">
+              <img 
+                src={screen.imageUrl} 
+                alt={screen.name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        <CarouselPrevious 
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white" 
+          variant="outline"
+        />
+        <CarouselNext 
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white" 
+          variant="outline"
+        />
+      </div>
+      
+      {/* Dots indicator */}
+      {displayScreens.length > 1 && (
+        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+          {displayScreens.map((_, index) => (
+            <button
+              key={index}
+              className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                index === current ? "bg-white" : "bg-white/50"
+              }`}
+              onClick={() => api?.scrollTo(index)}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </Carousel>
+  );
 }
 
 export default function AppCard({ app }: AppCardProps) {
@@ -11,12 +109,7 @@ export default function AppCard({ app }: AppCardProps) {
     <Link href={`/app/${app.id}`}>
       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6">
         <div className="relative">
-          <img 
-            src={app.thumbnailUrl} 
-            alt={`${app.name} App`} 
-            className="w-full aspect-[3/2] object-cover"
-          />
-          {/* Federal tag removed */}
+          <AppScreenCarousel appId={app.id.toString()} />
         </div>
         <div className="p-4">
           <div className="flex items-center gap-3 mb-2">
