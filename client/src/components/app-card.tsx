@@ -78,12 +78,12 @@ function AppScreenCarousel({ appId }: { appId: string }) {
       <CarouselContent className="-ml-1 h-full">
         {displayScreens.map((screen) => (
           <CarouselItem key={screen.id} className="pl-1 h-full">
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-1">
-              <div className="h-full flex items-center justify-center overflow-hidden">
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-3">
+              <div className="h-full flex items-center justify-center overflow-hidden rounded-xl shadow-sm" style={{ maxWidth: "85%" }}>
                 <img 
                   src={screen.imageUrl} 
                   alt={screen.name}
-                  className="h-full max-w-full object-contain"
+                  className="h-auto max-h-full max-w-full object-contain rounded-lg"
                 />
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function AppCard({ app }: AppCardProps) {
   return (
     <Link href={`/app/${app.id}`}>
       <div className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 h-[600px] flex flex-col">
-        <div className="relative flex-grow overflow-hidden">
+        <div className="relative flex-grow overflow-hidden" style={{ height: "540px" }}>
           <AppScreenCarousel appId={app.id.toString()} />
         </div>
         <div className="p-4 flex-shrink-0">
