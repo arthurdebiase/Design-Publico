@@ -14,7 +14,7 @@ export default function Home() {
   });
   
   return (
-    <div className="min-h-screen">
+    <div>
       <div className="container mx-auto px-4 md:px-6 pt-6 pb-0">
         <div>
           {isLoading ? (

@@ -59,7 +59,7 @@ export default function ScreensPage() {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center p-4 py-20">
         <Loader2 className="h-12 w-12 text-[#0066FF] animate-spin mb-4" />
         <p className="text-lg text-gray-600">Loading screens...</p>
       </div>
@@ -68,7 +68,7 @@ export default function ScreensPage() {
   
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center p-4 py-20">
         <div className="p-6 bg-red-50 rounded-lg max-w-md">
           <h2 className="text-xl font-semibold text-red-700 mb-2">Error</h2>
           <p className="text-red-600 mb-4">{error}</p>

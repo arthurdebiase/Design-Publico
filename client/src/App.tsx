@@ -23,7 +23,7 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col">
         <Header />
         <main className="flex-grow">
           <Router />
