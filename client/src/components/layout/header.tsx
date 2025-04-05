@@ -1,21 +1,10 @@
-import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Search, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 
 export default function Header() {
   const [location] = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
-  
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Implement search functionality
-    console.log('Searching for:', searchQuery);
-    // Navigate to search results
-    // navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
-  };
   
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
@@ -33,27 +22,13 @@ export default function Header() {
           </Link>
         </div>
         
-        {/* Search Bar (Desktop) */}
-        <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-4">
-          <div className="relative w-full">
-            <Input
-              type="text"
-              placeholder="Search apps or screens..."
-              className="w-full py-2 px-4 bg-[#F5F5F5] border border-gray-200 rounded-md pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-          </div>
-        </form>
-        
         {/* Navigation (Desktop) */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link href="/" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/' ? 'text-[#0066FF]' : ''}`}>
-            Gallery
+            Apps
           </Link>
-          <Link href="/collections" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/collections' ? 'text-[#0066FF]' : ''}`}>
-            Collections
+          <Link href="/screens" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/screens' ? 'text-[#0066FF]' : ''}`}>
+            Screens
           </Link>
           <Link href="/about" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/about' ? 'text-[#0066FF]' : ''}`}>
             About
@@ -71,10 +46,10 @@ export default function Header() {
           <SheetContent>
             <div className="mt-8 flex flex-col space-y-4">
               <Link href="/" className="text-lg font-medium hover:text-[#0066FF]">
-                Gallery
+                Apps
               </Link>
-              <Link href="/collections" className="text-lg font-medium hover:text-[#0066FF]">
-                Collections
+              <Link href="/screens" className="text-lg font-medium hover:text-[#0066FF]">
+                Screens
               </Link>
               <Link href="/about" className="text-lg font-medium hover:text-[#0066FF]">
                 About
@@ -86,20 +61,6 @@ export default function Header() {
           </SheetContent>
         </Sheet>
       </div>
-      
-      {/* Mobile Search Bar */}
-      <form onSubmit={handleSearch} className="md:hidden px-4 pb-4">
-        <div className="relative w-full">
-          <Input
-            type="text"
-            placeholder="Search apps or screens..."
-            className="w-full py-2 px-4 bg-[#F5F5F5] border border-gray-200 rounded-md pl-10"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-        </div>
-      </form>
     </header>
   );
 }
