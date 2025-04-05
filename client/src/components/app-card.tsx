@@ -127,12 +127,12 @@ export default function AppCard({ app }: AppCardProps) {
         </div>
         <div className="p-4 flex-shrink-0">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 flex-shrink-0 rounded-lg border border-gray-200 flex items-center justify-center">
+            <div className="w-10 h-10 flex-shrink-0 rounded-lg border border-gray-200 flex items-center justify-center p-0">
               {app.logo ? (
                 <img 
                   src={app.logo} 
                   alt={`${app.name} Logo`} 
-                  className="w-6 h-6"
+                  className="w-8 h-8"
                 />
               ) : (
                 <LogoPlaceholder app={app} />
