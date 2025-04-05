@@ -1,61 +1,22 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchApps } from "@/lib/airtable";
-import FilterBar from "@/components/layout/filter-bar";
 import { ResponsiveMasonryGrid } from "@/components/ui/masonry-grid";
 import AppCard from "@/components/app-card";
-import { AppType, Platform } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
-  const [filters, setFilters] = useState<{
-    type?: AppType;
-    platform?: Platform;
-    tag?: string;
-  }>({});
-  
-  const [sortOrder, setSortOrder] = useState("newest");
   const [layout, setLayout] = useState<"grid" | "masonry">("masonry");
   
   const { isLoading, error, data: apps } = useQuery({
-    queryKey: ['/api/apps', filters, sortOrder],
-    queryFn: () => fetchApps({
-      type: filters.type,
-      platform: filters.platform,
-      search: filters.tag
-    })
+    queryKey: ['/api/apps'],
+    queryFn: () => fetchApps({})
   });
-  
-  const handleFilterChange = (newFilters: {
-    type?: AppType;
-    platform?: Platform;
-    tag?: string;
-  }) => {
-    setFilters(newFilters);
-  };
-  
-  const handleSortChange = (sort: string) => {
-    setSortOrder(sort);
-  };
-  
-  const handleLayoutChange = (newLayout: "grid" | "masonry") => {
-    setLayout(newLayout);
-  };
   
   return (
     <div className="bg-[#F5F5F5] min-h-screen">
-      <FilterBar
-        onFilterChange={handleFilterChange}
-        onSortChange={handleSortChange}
-        onLayoutChange={handleLayoutChange}
-        activeFilters={filters}
-        activeLayout={layout}
-      />
-      
       <div className="container mx-auto px-4 md:px-6 py-6">
         <div className="mb-8">
-          <h2 className="text-2xl font-semibold mb-6">Featured Applications</h2>
-          
           {isLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
