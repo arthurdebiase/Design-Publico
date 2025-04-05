@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Screen, App } from "@/types";
-import { X, Download, Share2, ChevronLeft, ChevronRight, ExternalLink, List } from "lucide-react";
+import { X, Download, Share2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 
 interface ScreenModalProps {
@@ -75,19 +75,19 @@ export function ScreenModal({
               )}
             </div>
             <div>
-              <h3 className="font-medium">{app.name}</h3>
-              <p className="text-sm text-gray-500">{currentScreen.name}</p>
+              <DialogTitle className="font-medium text-base m-0 p-0">{app.name}</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500 m-0">{currentScreen.name}</DialogDescription>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon">
-              <Download className="h-5 w-5" />
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="icon" className="h-9 w-9">
+              <Download className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon">
-              <Share2 className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-9 w-9">
+              <Share2 className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose}>
-              <X className="h-5 w-5" />
+            <Button variant="ghost" size="icon" onClick={onClose} className="h-9 w-9">
+              <X className="h-4 w-4" />
             </Button>
           </div>
         </DialogHeader>
@@ -105,7 +105,7 @@ export function ScreenModal({
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 -ml-5 bg-white w-10 h-10 rounded-full shadow-md" 
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 -ml-12 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handlePrevious}
                 >
                   <ChevronLeft className="h-5 w-5" />
@@ -114,7 +114,7 @@ export function ScreenModal({
                 <Button 
                   variant="secondary" 
                   size="icon" 
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 -mr-5 bg-white w-10 h-10 rounded-full shadow-md" 
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 -mr-12 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handleNext}
                 >
                   <ChevronRight className="h-5 w-5" />
@@ -131,10 +131,6 @@ export function ScreenModal({
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={onClose}>
-              <List className="mr-2 h-4 w-4" />
-              <span>View All Screens</span>
-            </Button>
             {app.url && (
               <Button asChild>
                 <a href={app.url} target="_blank" rel="noopener noreferrer">
