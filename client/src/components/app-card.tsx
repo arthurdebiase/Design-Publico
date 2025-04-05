@@ -99,25 +99,33 @@ function AppScreenCarousel({ appId }: { appId: string }) {
       <CarouselContent className="-ml-1 h-full">
         {displayScreens.map((screen) => (
           <CarouselItem key={screen.id} className="pl-1 h-full">
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-2">
+            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-1 sm:p-2">
               <div className="flex items-center justify-center h-full relative group/item" style={{ 
-                width: isMobile ? "95%" : "90%"
+                width: isMobile ? "98%" : "95%",
+                height: "100%"
               }}>
-                <img 
-                  src={screen.imageUrl} 
-                  alt={screen.name}
-                  className="h-full w-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
-                  style={{ 
-                    maxWidth: "100%",
-                    objectFit: "contain",
-                    objectPosition: "center"
-                  }}
+                <div 
+                  className="h-full w-full flex items-center justify-center cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     navigate(`/app/${appId}`);
                   }}
-                />
+                >
+                  <img 
+                    src={screen.imageUrl} 
+                    alt={screen.name}
+                    className="max-h-full w-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
+                    style={{ 
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      height: "auto",
+                      width: "auto",
+                      objectFit: "contain",
+                      objectPosition: "center"
+                    }}
+                  />
+                </div>
                 
                 {/* Clickable overlay for desktop */}
                 {!isMobile && (
@@ -182,8 +190,8 @@ export default function AppCard({ app }: AppCardProps) {
   const isMobile = useIsMobile();
   
   // Responsive heights for different screen sizes
-  const cardHeight = isMobile ? "h-[400px]" : "h-[600px]";
-  const imageContainerHeight = isMobile ? "h-[340px]" : "h-[540px]";
+  const cardHeight = isMobile ? "h-[380px]" : "h-[600px]";
+  const imageContainerHeight = isMobile ? "h-[320px]" : "h-[540px]";
   
   return (
     <Link href={`/app/${app.id}`}>
