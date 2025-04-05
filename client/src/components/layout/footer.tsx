@@ -65,7 +65,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-white border-t border-gray-200 py-12">
+    <footer className="bg-white border-t border-gray-200 pt-12 mt-0">
       <div className="container mx-auto px-4 md:px-6">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
           {/* Logo and description column */}
@@ -143,7 +143,7 @@ export default function Footer() {
         </div>
         
         {/* Bottom section with copyright and social links */}
-        <div className="border-t border-gray-200 mt-10 pt-10 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-gray-200 mt-10 pt-10 pb-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 text-sm mb-6 md:mb-0">
             {t('footer.copyright')}
           </p>
