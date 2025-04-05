@@ -230,12 +230,25 @@ export class MemStorage implements IStorage {
         const logoUrl = appLogosMap.get(appName);
         
         // Create app with default values and override with actual data if available
+        // Set correct app type based on the app name
+        let appType = fields.type;
+        if (!appType) {
+          // Specific app-based overrides for missing type values
+          if (appName === "Conecta Recife") {
+            appType = "Municipal";
+          } else if (appName === "Carteira de Trabalho Digital" || appName === "Meu SUS Digital") {
+            appType = "Federal";
+          } else {
+            appType = "Federal"; // Default fallback
+          }
+        }
+        
         const appData: InsertApp = {
           name: appName,
           description: fields.description || `Collection of design screens from ${appName}`,
           thumbnailUrl: thumbnailUrl,
           logo: logoUrl || null, // Use logo from apps table if available
-          type: fields.type || "Federal", // Default type
+          type: appType,
           category: fields.category || "Government", // Default category
           platform: fields.platform || "iOS", // Default platform
           language: fields.language || null, // Default language can be null
