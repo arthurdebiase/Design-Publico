@@ -95,6 +95,13 @@ export default function AppDetail() {
                     <h1 className="text-2xl font-bold text-gray-900">{app.name}</h1>
                   </div>
                   
+                  {/* Add type below app name */}
+                  {app.type && (
+                    <p className="text-gray-500 mb-3">
+                      {app.type}
+                    </p>
+                  )}
+                  
                   <div className="flex flex-wrap gap-3">
                     {app.language && (
                       <Badge variant="secondary" className="px-3 py-1.5 rounded flex items-center gap-2">
@@ -115,12 +122,11 @@ export default function AppDetail() {
                   )}
                 </div>
                 
-                {/* iOS badge positioned at top right */}
+                {/* iOS badge positioned at top right (without icon) */}
                 {app.platform && (
                   <div className="absolute top-6 right-6">
-                    <Badge variant="secondary" className={`px-3 py-1.5 rounded flex items-center gap-2 ${getPlatformBadgeClass(app.platform)}`}>
-                      {getPlatformIcon(app.platform)}
-                      <span>{app.platform}</span>
+                    <Badge variant="secondary" className={`px-3 py-1.5 rounded ${getPlatformBadgeClass(app.platform)}`}>
+                      {app.platform}
                     </Badge>
                   </div>
                 )}
