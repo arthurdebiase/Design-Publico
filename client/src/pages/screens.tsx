@@ -120,13 +120,18 @@ export default function ScreensPage() {
       </div>
       
       {screens.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div 
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
+          role="grid"
+          aria-label={t('screens.allScreens')}
+        >
           {screens.map((screen) => (
-            <ScreenThumbnail 
-              key={screen.id} 
-              screen={screen} 
-              onClick={handleOpenModal}
-            />
+            <div key={screen.id} role="gridcell">
+              <ScreenThumbnail 
+                screen={screen} 
+                onClick={handleOpenModal}
+              />
+            </div>
           ))}
         </div>
       ) : (
@@ -172,35 +177,53 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   };
   
   return (
-    <div className="cursor-pointer hover:opacity-90 transition-all" onClick={() => onClick(screen)}>
+    <div 
+      className="cursor-pointer hover:opacity-90 transition-all" 
+      onClick={() => onClick(screen)}
+      role="button"
+      tabIndex={0}
+      aria-label={`View ${screen.app?.name ? screen.app.name + ': ' : ''}${screen.name} screen details`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick(screen);
+        }
+      }}
+    >
       <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm aspect-[9/16] relative group">
         {!imageLoaded && !imageError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
-            <span className="sr-only">Loading...</span>
+            <span className="sr-only">Loading screen image for {screen.name}</span>
           </div>
         )}
         
         {imageError ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-            <span className="text-gray-400">
+            <span className="text-gray-400" aria-hidden="true">
               {screen.name ? `${screen.name} image not available` : 'Image not available'}
+            </span>
+            <span className="sr-only">
+              Screen image for {screen.app?.name ? screen.app.name + ': ' : ''}{screen.name} is not available
             </span>
           </div>
         ) : (
           <img 
             src={screen.imageUrl} 
-            alt={screen.name || `Screen from ${screen.app?.name || 'app'}`}
+            alt={`${screen.app?.name ? screen.app.name + ': ' : ''}${screen.name} - ${screen.description || 'Screen view'}`}
             className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
-            aria-label={screen.name || `Screen from ${screen.app?.name || 'app'}`}
           />
         )}
         
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all">
-            <button className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center">
-              <Maximize2 className="h-5 w-5" />
+            <button 
+              className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center"
+              aria-label="View fullscreen"
+              tabIndex={-1} 
+            >
+              <Maximize2 className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         </div>

@@ -30,15 +30,18 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
         
         {imageError ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-            <span className="text-gray-400">Image not available</span>
+            <span className="text-gray-400">
+              {screen.name ? `${screen.name} image not available` : 'Image not available'}
+            </span>
           </div>
         ) : (
           <img 
             src={screen.imageUrl} 
-            alt={screen.name}
+            alt={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
             className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
+            aria-label={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
           />
         )}
         

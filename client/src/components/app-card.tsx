@@ -19,7 +19,7 @@ interface AppCardProps {
   app: App;
 }
 
-function AppScreenCarousel({ appId }: { appId: string }) {
+function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string }) {
   const { data: screens, isLoading, error } = useQuery({
     queryKey: [`/api/apps/${appId}/screens`],
     queryFn: () => fetchScreensByAppId(appId),
@@ -111,10 +111,20 @@ function AppScreenCarousel({ appId }: { appId: string }) {
                     e.stopPropagation();
                     navigate(`/app/${appId}`);
                   }}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`View ${appName || 'app'} details`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      navigate(`/app/${appId}`);
+                    }
+                  }}
                 >
                   <img 
                     src={screen.imageUrl} 
-                    alt={screen.name}
+                    alt={`${appName ? appName + ': ' : ''}${screen.name || 'Screen view'} - ${screen.description || 'User interface example'}`}
                     className="max-h-full w-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
                     style={{ 
                       maxWidth: "100%",
@@ -136,9 +146,24 @@ function AppScreenCarousel({ appId }: { appId: string }) {
                       e.stopPropagation();
                       navigate(`/app/${appId}`);
                     }}
+                    role="button"
+                    tabIndex={-1}
+                    aria-hidden="true"
                   >
                     <div className="bg-black/60 text-white rounded-full p-2 transform scale-90 hover:scale-100 transition-transform">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="24" 
+                        height="24" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        className="w-5 h-5"
+                        aria-hidden="true"
+                      >
                         <polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>
                         <line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>
                       </svg>
@@ -157,10 +182,12 @@ function AppScreenCarousel({ appId }: { appId: string }) {
         <CarouselPrevious 
           className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'} bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm`}
           variant="outline"
+          aria-label={`View previous screen for ${appName || 'app'}`}
         />
         <CarouselNext 
           className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'} bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm`}
           variant="outline"
+          aria-label={`View next screen for ${appName || 'app'}`}
         />
       </div>
       
@@ -194,10 +221,17 @@ export default function AppCard({ app }: AppCardProps) {
   const imageContainerHeight = isMobile ? "h-[320px]" : "h-[540px]";
   
   return (
-    <Link href={`/app/${app.id}`}>
-      <div className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 flex flex-col ${cardHeight}`}>
+    <Link 
+      href={`/app/${app.id}`}
+      className="focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-lg"
+    >
+      <div 
+        className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 flex flex-col ${cardHeight}`}
+        role="article"
+        aria-labelledby={`app-name-${app.id}`}
+      >
         <div className="relative flex-grow overflow-hidden" style={{ height: imageContainerHeight }}>
-          <AppScreenCarousel appId={app.id.toString()} />
+          <AppScreenCarousel appId={app.id.toString()} appName={app.name} />
         </div>
         <div className={`${isMobile ? 'p-3' : 'p-4'} flex-shrink-0`}>
           <div className="flex items-center gap-3">
@@ -213,7 +247,7 @@ export default function AppCard({ app }: AppCardProps) {
               )}
             </div>
             <div>
-              <h3 className="font-medium text-[#333333]">{app.name}</h3>
+              <h3 id={`app-name-${app.id}`} className="font-medium text-[#333333]">{app.name}</h3>
               <p className="text-sm text-gray-500">{app.type}</p>
             </div>
           </div>
@@ -236,7 +270,19 @@ function LogoPlaceholder({ app }: { app: App }) {
     switch (app.type) {
       case 'Federal':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconSize} text-gray-600`}>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className={`${iconSize} text-gray-600`}
+            aria-hidden="true"
+            role="img"
+            aria-label={`Federal government icon for ${app.name}`}
+          >
             <path d="M2 20h20"></path>
             <path d="M12 4L2 9h20L12 4z"></path>
             <path d="M12 4v16"></path>
@@ -246,26 +292,59 @@ function LogoPlaceholder({ app }: { app: App }) {
         );
       case 'Municipal':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconSize} text-gray-600`}>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className={`${iconSize} text-gray-600`}
+            aria-hidden="true"
+            role="img"
+            aria-label={`Municipal government icon for ${app.name}`}
+          >
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
         );
       case 'State':
         return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${iconSize} text-gray-600`}>
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className={`${iconSize} text-gray-600`}
+            aria-hidden="true"
+            role="img"
+            aria-label={`State government icon for ${app.name}`}
+          >
             <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5"></path>
             <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z"></path>
           </svg>
         );
       default:
         return (
-          <div className="text-gray-600 font-bold">{app.name.charAt(0)}</div>
+          <div 
+            className="text-gray-600 font-bold"
+            aria-hidden="true"
+          >
+            {app.name.charAt(0)}
+          </div>
         );
     }
   };
   
-  return getIconByType();
+  return (
+    <div role="img" aria-label={`${app.name} logo placeholder`}>
+      {getIconByType()}
+    </div>
+  );
 }
 
 function getBadgeColorClass(type: string): string {

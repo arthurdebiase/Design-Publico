@@ -80,14 +80,30 @@ export function ScreenModal({
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <Download className="h-4 w-4" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-9 w-9" 
+              aria-label="Download screen image"
+            >
+              <Download className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-9 w-9">
-              <Share2 className="h-4 w-4" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-9 w-9" 
+              aria-label="Share screen image"
+            >
+              <Share2 className="h-4 w-4" aria-hidden="true" />
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose} className="h-9 w-9">
-              <X className="h-4 w-4" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={onClose} 
+              className="h-9 w-9" 
+              aria-label="Close modal"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
         </div>
@@ -96,9 +112,9 @@ export function ScreenModal({
           <div className="relative max-w-full">
             <img 
               src={currentScreen.imageUrl} 
-              alt={currentScreen.name || `Screen from ${app.name}`} 
+              alt={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
               className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
-              aria-label={currentScreen.name || `Screen from ${app.name}`}
+              aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
             />
             
             {screens.length > 1 && (
@@ -108,8 +124,10 @@ export function ScreenModal({
                   size="icon" 
                   className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handlePrevious}
+                  aria-label="View previous screen"
+                  title={`View previous screen: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                 </Button>
                 
                 <Button 
@@ -117,8 +135,10 @@ export function ScreenModal({
                   size="icon" 
                   className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
                   onClick={handleNext}
+                  aria-label="View next screen"
+                  title={`View next screen: ${screens[(localIndex + 1) % screens.length].name}`}
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </>
             )}
