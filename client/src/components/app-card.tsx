@@ -41,12 +41,12 @@ function AppScreenCarousel({ appId }: { appId: string }) {
   }, [api]);
 
   if (isLoading) {
-    return <Skeleton className="w-full aspect-[3/2]" />;
+    return <Skeleton className="w-full aspect-[6/10]" />;
   }
 
   if (error || !screens || screens.length === 0) {
     return (
-      <div className="w-full aspect-[3/2] bg-gray-100 flex items-center justify-center">
+      <div className="w-full aspect-[6/10] bg-gray-100 flex items-center justify-center">
         <p className="text-gray-500 text-sm">No screens available</p>
       </div>
     );
@@ -54,6 +54,12 @@ function AppScreenCarousel({ appId }: { appId: string }) {
 
   // Get first 3 screens
   const displayScreens = screens.slice(0, Math.min(3, screens.length));
+
+  // Prevent click events from bubbling up (for navigation buttons)
+  const handleControlClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
 
   return (
     <Carousel 
@@ -64,7 +70,7 @@ function AppScreenCarousel({ appId }: { appId: string }) {
       <CarouselContent className="-ml-1">
         {displayScreens.map((screen) => (
           <CarouselItem key={screen.id} className="pl-1">
-            <div className="w-full aspect-[3/2]">
+            <div className="w-full aspect-[6/10]">
               <img 
                 src={screen.imageUrl} 
                 alt={screen.name}
@@ -74,20 +80,26 @@ function AppScreenCarousel({ appId }: { appId: string }) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        onClick={handleControlClick}
+      >
         <CarouselPrevious 
-          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white" 
+          className="absolute left-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white z-10" 
           variant="outline"
         />
         <CarouselNext 
-          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white" 
+          className="absolute right-2 top-1/2 transform -translate-y-1/2 h-7 w-7 bg-black/25 hover:bg-black/50 border-none text-white z-10" 
           variant="outline"
         />
       </div>
       
       {/* Dots indicator */}
       {displayScreens.length > 1 && (
-        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
+        <div 
+          className="absolute bottom-2 left-0 right-0 flex justify-center gap-1 z-10"
+          onClick={handleControlClick}
+        >
           {displayScreens.map((_, index) => (
             <button
               key={index}
