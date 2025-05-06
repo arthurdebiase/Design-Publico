@@ -153,14 +153,25 @@ export class MemStorage implements IStorage {
       const APPS_TABLE_NAME = "apps";       // Table containing app metadata and logos
       const BRAND_FILES_TABLE_NAME = "brand"; // Table containing global brand assets
       
-      // Field name constants for more flexibility with Airtable structure
+      // Field name constants for more flexibility with Airtable structure - EXACT matches for Airtable columns
       const APP_NAME_FIELD = "appname";    // Field linking screens to apps or containing app name
-      const ATTACHMENT_FIELD = "images";   // Field containing screen images
+      const ATTACHMENT_FIELD = "image";    // Field containing screen images - matching column name in screenshots
       const SCREEN_NAME_FIELD = "imagetitle"; // Field containing screen titles/names
       const APP_LOGO_FIELD = "logo (from appname)"; // Field containing app logos in the screens table
       const APP_TYPE_FIELD = "type (from appname)"; // Field containing app type in the screens table
       const APP_CATEGORY_FIELD = "category (from appname)"; // Field containing app category
       const APP_NAME_FIELD_IN_APPS = "name"; // Field containing app names in the apps table
+      
+      // Print all field mappings for debugging
+      console.log("Airtable Field Mappings:");
+      console.log(`APP_NAME_FIELD: "${APP_NAME_FIELD}"`);
+      console.log(`ATTACHMENT_FIELD: "${ATTACHMENT_FIELD}"`);
+      console.log(`SCREEN_NAME_FIELD: "${SCREEN_NAME_FIELD}"`);
+      console.log(`APP_LOGO_FIELD: "${APP_LOGO_FIELD}"`);
+      console.log(`APP_TYPE_FIELD: "${APP_TYPE_FIELD}"`);
+      console.log(`APP_CATEGORY_FIELD: "${APP_CATEGORY_FIELD}"`);
+      console.log(`APP_NAME_FIELD_IN_APPS: "${APP_NAME_FIELD_IN_APPS}"`);
+      
       
       // 1. Fetch all records from the Airtable screens table with pagination
       let allScreenRecords: any[] = [];
@@ -317,7 +328,9 @@ export class MemStorage implements IStorage {
         "recXnV9THYptJQ1UL": "Receita Federal",
         "recqJwRQQxGxYLnp4": "CAIXA",
         "recKe1q9hB1oEEfn5": "Resultados",
-        "reczpknduWvlL2cey": "Zona Azul Digital Recife"
+        "reczpknduWvlL2cey": "Zona Azul Digital Recife",
+        // Add any missing apps from the Unknown App debug output
+        "recFeNuRH3cMZiM2j": "e-Título"
       };
       
       // Add these mappings to the appIdToNameMap
@@ -329,6 +342,25 @@ export class MemStorage implements IStorage {
       const appGroups = new Map<string, any[]>();
       
       // Process and group screen records
+      // Log a sample record to debug field names
+      if (allScreenRecords.length > 0) {
+        console.log('Sample record field names:', Object.keys(allScreenRecords[0].fields).join(', '));
+        // Log a specific record for PIX to debug
+        const pixRecords = allScreenRecords.filter(record => {
+          const appname = record.fields.appname;
+          if (Array.isArray(appname) && appname.length > 0 && appname[0].id === 'rectunLB0N9QwObTS') {
+            return true;
+          }
+          return false;
+        });
+        if (pixRecords.length > 0) {
+          console.log('PIX record field names:', Object.keys(pixRecords[0].fields).join(', '));
+          console.log('PIX app name from record:', 
+            Array.isArray(pixRecords[0].fields.appname) && pixRecords[0].fields.appname.length > 0 ? 
+            pixRecords[0].fields.appname[0].id : 'Not found');
+        }
+      }
+      
       for (const record of allScreenRecords) {
         const fields = record.fields;
         
@@ -341,6 +373,13 @@ export class MemStorage implements IStorage {
         if (!fields[ATTACHMENT_FIELD] && !fields['image'] && !fields['attachment'] && !fields['images']) {
           console.log('Skipping record without image:', record.id);
           continue;
+        }
+        
+        // Debug for the specific field we need
+        if (record.id === 'recFeNuRH3cMZiM2j') {
+          console.log('DEBUG record fields:', Object.keys(fields));
+          console.log('DEBUG appname field:', JSON.stringify(fields[APP_NAME_FIELD]));
+          console.log('DEBUG image field:', fields[ATTACHMENT_FIELD] ? 'exists' : 'missing');
         }
         
         // Based on the Airtable screenshot, we should be looking for the "appname" field which links to the apps table
@@ -536,6 +575,21 @@ export class MemStorage implements IStorage {
           url: fields.url || null, // No external URL by default
           airtableId: firstRecord.id,
         };
+        
+        // Debug Unknown App
+        if (appName === "Unknown App") {
+          console.log("DEBUG: Unknown App details:");
+          console.log("  - First record ID:", firstRecord.id);
+          console.log("  - App name field:", JSON.stringify(fields[APP_NAME_FIELD]));
+          console.log("  - Field keys:", Object.keys(fields).join(", "));
+          if (fields[APP_NAME_FIELD] && Array.isArray(fields[APP_NAME_FIELD]) && fields[APP_NAME_FIELD].length > 0) {
+            console.log("  - App ID:", fields[APP_NAME_FIELD][0].id);
+          }
+          
+          // Try to find sample screen title to help identify the app
+          const sampleTitle = fields[SCREEN_NAME_FIELD] || "";
+          console.log("  - Sample screen title:", sampleTitle);
+        }
         
         // Create the app
         const app = await this.createApp(appData);
