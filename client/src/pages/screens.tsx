@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, FileText, Maximize2 } from 'lucide-react';
+import { Loader2, FileText, Maximize2, ChevronDown, Filter } from 'lucide-react';
 import { Screen, App } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -7,9 +7,21 @@ import { ScreenModal } from '@/components/ui/screen-modal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'wouter';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuCheckboxItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel
+} from "@/components/ui/dropdown-menu";
 
 export default function ScreensPage() {
-  const [screens, setScreens] = useState<Array<Screen & { app?: App }>>([]);
+  const [allScreens, setAllScreens] = useState<Array<Screen & { app?: App }>>([]);
+  const [filteredScreens, setFilteredScreens] = useState<Array<Screen & { app?: App }>>([]);
+  const [apps, setApps] = useState<App[]>([]);
+  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,22 +31,38 @@ export default function ScreensPage() {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   
+  // Filter screens when selectedAppId changes
+  useEffect(() => {
+    if (allScreens.length === 0) return;
+    
+    if (selectedAppId) {
+      const filtered = allScreens.filter(screen => 
+        screen.app?.id.toString() === selectedAppId
+      );
+      setFilteredScreens(filtered);
+    } else {
+      setFilteredScreens(allScreens);
+    }
+  }, [selectedAppId, allScreens]);
+
   useEffect(() => {
     const fetchAllScreens = async () => {
       setLoading(true);
       try {
         // Fetch all apps
         const appsResponse = await fetch('/api/apps');
-        const apps = await appsResponse.json();
+        const fetchedApps = await appsResponse.json();
         
-        if (!Array.isArray(apps)) {
+        if (!Array.isArray(fetchedApps)) {
           throw new Error('Invalid response format from API');
         }
         
-        // For each app, fetch its screens
-        const allScreens: Array<Screen & { app?: App }> = [];
+        setApps(fetchedApps);
         
-        for (const app of apps) {
+        // For each app, fetch its screens
+        const fetchedScreens: Array<Screen & { app?: App }> = [];
+        
+        for (const app of fetchedApps) {
           const screensResponse = await fetch(`/api/apps/${app.id}/screens`);
           const appScreens = await screensResponse.json();
           
@@ -45,19 +73,20 @@ export default function ScreensPage() {
               app: app
             }));
             
-            allScreens.push(...screensWithAppInfo);
+            fetchedScreens.push(...screensWithAppInfo);
           }
         }
         
         // Sort all screens alphabetically by screen name
-        const sortedScreens = allScreens.sort((a, b) => {
+        const sortedScreens = fetchedScreens.sort((a, b) => {
           // Ensure there's a name value to sort by
           const nameA = a.name?.toLowerCase() || '';
           const nameB = b.name?.toLowerCase() || '';
           return nameA.localeCompare(nameB);
         });
         
-        setScreens(sortedScreens);
+        setAllScreens(sortedScreens);
+        setFilteredScreens(sortedScreens);
       } catch (err) {
         console.error('Error fetching screens:', err);
         setError('Failed to load screens. Please try again later.');
@@ -73,15 +102,19 @@ export default function ScreensPage() {
     if (!screen.app) return;
 
     // Get all screens from the same app
-    const appScreens = screens.filter(s => s.appId === screen.appId);
+    const appScreens = allScreens.filter((s: Screen & { app?: App }) => s.appId === screen.appId);
     
     // Find the index of the current screen
-    const index = appScreens.findIndex(s => s.id === screen.id);
+    const index = appScreens.findIndex((s: Screen & { app?: App }) => s.id === screen.id);
     
     setCurrentAppScreens(appScreens);
     setCurrentApp(screen.app);
     setCurrentScreenIndex(index >= 0 ? index : 0);
     setIsModalOpen(true);
+  };
+  
+  const handleAppFilterChange = (appId: string | null) => {
+    setSelectedAppId(appId);
   };
 
   if (loading) {
@@ -112,20 +145,75 @@ export default function ScreensPage() {
   
   return (
     <div className="container mx-auto px-4 md:px-6 pt-10 pb-0">
-      <div className="mb-10">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">{t('screens.allScreens')}</h1>
         <p className="text-gray-600">
-          {t('screens.browseAll', { count: screens.length })}
+          {t('screens.browseAll', { count: filteredScreens.length })}
         </p>
       </div>
       
-      {screens.length > 0 ? (
+      <div className="mb-6 flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                {selectedAppId 
+                  ? `App: ${apps.find((app: App) => app.id.toString() === selectedAppId)?.name || 'Unknown'}`
+                  : 'Filter by App'}
+                <ChevronDown className="h-4 w-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>Filter by App</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={!selectedAppId ? "bg-accent/50" : ""}
+                onClick={() => handleAppFilterChange(null)}
+              >
+                All Apps
+              </DropdownMenuItem>
+              {apps.map((app: App) => (
+                <DropdownMenuItem
+                  key={app.id}
+                  className={selectedAppId === app.id.toString() ? "bg-accent/50" : ""}
+                  onClick={() => handleAppFilterChange(app.id.toString())}
+                >
+                  <div className="flex items-center gap-2">
+                    {app.logo ? (
+                      <img src={app.logo} alt={`${app.name} logo`} className="w-5 h-5" />
+                    ) : (
+                      <div className="w-5 h-5 bg-gray-100 rounded flex items-center justify-center">
+                        <span className="text-xs">{app.name.charAt(0)}</span>
+                      </div>
+                    )}
+                    <span>{app.name}</span>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          {selectedAppId && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => handleAppFilterChange(null)}
+              className="text-sm"
+            >
+              Clear filter
+            </Button>
+          )}
+        </div>
+      </div>
+      
+      {filteredScreens.length > 0 ? (
         <div 
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
           role="grid"
           aria-label={t('screens.allScreens')}
         >
-          {screens.map((screen) => (
+          {filteredScreens.map((screen: Screen & { app?: App }) => (
             <div key={screen.id} role="gridcell">
               <ScreenThumbnail 
                 screen={screen} 
