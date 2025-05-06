@@ -246,9 +246,10 @@ export default function AppCard({ app }: AppCardProps) {
                 <LogoPlaceholder app={app} />
               )}
             </div>
-            <div>
-              <h3 id={`app-name-${app.id}`} className="font-medium text-[#333333]">{app.name}</h3>
-              <p className="text-sm text-gray-500">{app.type}</p>
+            {/* Logo only, no app name displayed as per requirements */}
+            <div className="sr-only">
+              <h3 id={`app-name-${app.id}`}>{app.name}</h3>
+              <p>{app.type}</p>
             </div>
           </div>
         </div>
