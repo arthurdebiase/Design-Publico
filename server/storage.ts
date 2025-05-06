@@ -311,20 +311,65 @@ export class MemStorage implements IStorage {
       });
       
       // First, log all Airtable app records to debug what names are actually in Airtable
+      // Full app record debugging
+      console.log("DEBUG: First app record structure:");
+      if (allAppRecords.length > 0) {
+        console.log(JSON.stringify(allAppRecords[0], null, 2));
+        console.log("DEBUG: Available fields in first app record:", 
+          Object.keys(allAppRecords[0].fields).join(", "));
+      }
+      
       console.log("DEBUG: All Airtable app records:");
       allAppRecords.forEach(record => {
-        console.log(`  - ID: ${record.id}, Name: ${record.fields.name || 'null'}`);
+        // Use APP_NAME_FIELD_IN_APPS constant or check multiple possible field names
+        const appName = record.fields[APP_NAME_FIELD_IN_APPS] || 
+                        record.fields.name || 
+                        record.fields.title || 
+                        record.fields.appname ||
+                        'null';
+        console.log(`  - ID: ${record.id}, Name: ${appName}`);
       });
       
       // Add manual mappings for apps that might not be properly named - exact names from Airtable
       // These should be updated to reflect exactly what's in Airtable
-      const appNameMappings: Record<string, string> = {};
+      const appNameMappings: Record<string, string> = {
+        // Per user request: fix these specific app name mappings
+        "recqLTQuYEOSBqzE4": "gov.br",     // This should be gov.br (not GOV.BR)
+        "recFWaslN9KIZVTap": "Tesouro Direto", // This should be Tesouro Direto (not MEU INSS)
+        "rectunLB0N9QwObTS": "Meu INSS",    // This should be Meu INSS (not Pix)
+        "rec4ixvEzLW5JHqnm": "Pix",       // Ensure Pix is properly named
+        "recku4IsUey3nvBEk": "CAIXA",     // Ensure CAIXA is properly named
+        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital", // CTPS
+        "rectrB2IiTvux50C5": "Meu SUS Digital", // SUS app
+        "recUmYPNDhj1qx9en": "Receita Federal"  // Receita Federal app
+      };
+      
+      // Make a copy of our manual mappings to ensure they don't get overwritten
+      const manualMappings = { ...appNameMappings };
       
       // Populate appNameMappings from the actual Airtable data
       allAppRecords.forEach(record => {
-        if (record.id && record.fields.name) {
-          appNameMappings[record.id] = record.fields.name;
+        // Use APP_NAME_FIELD_IN_APPS constant or check multiple possible field names
+        const appName = record.fields[APP_NAME_FIELD_IN_APPS] || 
+                       record.fields.name || 
+                       record.fields.title || 
+                       record.fields.appname;
+        
+        if (record.id && appName) {
+          // Only add the mapping if it's not in our manual mappings list
+          if (!manualMappings[record.id]) {
+            appNameMappings[record.id] = appName;
+            console.log(`DEBUG: Added mapping ${record.id} => ${appName}`);
+          } else {
+            console.log(`DEBUG: Keeping manual mapping for ${record.id} => ${manualMappings[record.id]} (instead of ${appName})`);
+          }
         }
+      });
+      
+      // Restore the manual mappings to ensure they're not overwritten
+      Object.entries(manualMappings).forEach(([id, name]) => {
+        appNameMappings[id] = name;
+        console.log(`DEBUG: Enforced manual mapping ${id} => ${name}`);
       });
       
       // Log all app ID to name mappings for verification
@@ -403,7 +448,7 @@ export class MemStorage implements IStorage {
               console.log(`DEBUG: Found linked app record ID: ${appRecordId}`);
               
               // Directly use the ID to look up the name from our mapping
-              if (appNameMappings[appRecordId]) {
+              if (appRecordId && appNameMappings[appRecordId]) {
                 appName = appNameMappings[appRecordId];
                 console.log(`DEBUG: Mapped app name from ID mapping: ${appName}`);
               }
@@ -552,16 +597,17 @@ export class MemStorage implements IStorage {
             appType = "Municipal";
           } else if (appName === "Carteira de Trabalho Digital" || 
                     appName === "Meu SUS Digital" ||
-                    appName === "GOV.BR" ||
+                    appName === "gov.br" ||        // Note: lowercase 'gov.br' as per Airtable data
                     appName === "e-Título" ||
                     appName === "Carteira Digital de Trânsito" ||
-                    appName === "MEU INSS" ||
+                    appName === "Meu INSS" ||      // Note: space and proper case as per Airtable data
                     appName === "Pix" ||
                     appName === "CAIXA" ||
                     appName === "CAIXA Tem" ||
                     appName === "Receita Federal" ||
                     appName === "MEI" ||
                     appName === "Cadastro Único" ||
+                    appName === "Tesouro Direto" || // Added this one
                     appName === "Correios" ||
                     appName === "Celular Seguro BR") {
             appType = "Federal";
