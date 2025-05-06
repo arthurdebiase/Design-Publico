@@ -4,6 +4,23 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
+import { useQuery } from "@tanstack/react-query";
+// Import the symbol image
+import symbolLogo from "@/assets/symbol.png";
+
+interface LogoResponse {
+  url: string;
+}
+
+// Create a dedicated API hook for fetching the logo
+function useBrandLogo() {
+  return useQuery<LogoResponse>({
+    queryKey: ['/api/brand/logo'],
+    // The QueryClient default settings will handle the request
+    retry: false, // Don't retry if it fails
+    enabled: true, // Always try to fetch
+  });
+}
 
 export default function Header() {
   const [location] = useLocation();
@@ -16,9 +33,9 @@ export default function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <div className="h-8 w-8 flex items-center justify-center">
               <img 
-                src="/designpublico-logo.png" 
+                src={symbolLogo} 
                 alt="Design Público Logo" 
-                className="h-full w-auto"
+                className="h-full w-auto rounded-md"
               />
             </div>
             <span className="flex items-center">

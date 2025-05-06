@@ -246,13 +246,13 @@ export class MemStorage implements IStorage {
         const brandRecords = brandFilesResponse.data.records || [];
         console.log(`Fetched ${brandRecords.length} brand files records from Airtable`);
         
-        // Find the logo-png file in the brand records
+        // Find the logo-svg file in the brand records
         for (const record of brandRecords) {
           const fields = record.fields;
-          if (fields && fields.name === "logo-png" && fields["brand-file"] && fields["brand-file"].length > 0) {
+          if (fields && fields.name === "logo-svg" && fields["brand-file"] && fields["brand-file"].length > 0) {
             const logoAttachment = fields["brand-file"][0];
             this.brandLogo = logoAttachment.url;
-            console.log(`Found PNG logo: ${this.brandLogo}`);
+            console.log(`Found SVG logo: ${this.brandLogo}`);
             break;
           }
         }
