@@ -5,8 +5,6 @@ import { Menu } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
 import { useQuery } from "@tanstack/react-query";
-// Import the symbol image
-import symbolLogo from "@/assets/symbol.png";
 
 interface LogoResponse {
   url: string;
@@ -25,6 +23,7 @@ function useBrandLogo() {
 export default function Header() {
   const [location] = useLocation();
   const { t } = useTranslation();
+  const { data: logoData, isLoading: isLogoLoading } = useBrandLogo();
   
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
@@ -32,11 +31,17 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           <Link href="/" className="flex items-center space-x-2">
             <div className="h-8 w-8 flex items-center justify-center">
-              <img 
-                src={symbolLogo} 
-                alt="Design Público Logo" 
-                className="h-full w-auto rounded-md"
-              />
+              {isLogoLoading ? (
+                <div className="h-8 w-8 bg-gray-200 animate-pulse rounded-md"></div>
+              ) : logoData?.url ? (
+                <img 
+                  src={logoData.url} 
+                  alt="Design Público Logo" 
+                  className="h-full w-auto rounded-md"
+                />
+              ) : (
+                <div className="h-8 w-8 bg-gray-300 rounded-md flex items-center justify-center text-gray-600 font-bold">D</div>
+              )}
             </div>
             <span className="flex items-center">
               <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900 }}>DESIGN</span>
