@@ -38,7 +38,7 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
           <img 
             src={screen.imageUrl} 
             alt={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
-            className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`w-full h-full object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
             aria-label={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
