@@ -357,19 +357,22 @@ export class MemStorage implements IStorage {
       // Make a copy of our manual mappings to ensure they don't get overwritten
       const manualMappings = { ...appNameMappings };
       
-      // Directly map the app records we saw in the screenshot
-      // Use the exact app-name field from the Airtable table as shown in the screenshot
+      // Directly use the exact values from the "appname" or "appname (from apps)" columns 
+      // in the "screens" table of Airtable, as shown in the link
       const directAppMappings: Record<string, string> = {
-        "rectrB2IiTvux50C5": "Meu SUS Digital",
-        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
-        "reclNS6PnkfRXBpRE": "Conecta Recife",
-        "recqLTQuYEOSBqzE4": "gov.br",
-        "recY0eLGS9mfaSuE4": "Carteira Digital de Transito",
-        "recFWaslN9KIZVTap": "Tesouro Direto",
-        "rectunLB0N9QwObTS": "Meu INSS"
+        "rectrB2IiTvux50C5": "MEU SUS DIGITAL",
+        "recb065qS5JzHh9Xt": "CARTEIRA DE TRABALHO DIGITAL",
+        "reclNS6PnkfRXBpRE": "CONECTA RECIFE",
+        "recqLTQuYEOSBqzE4": "GOV.BR",
+        "recY0eLGS9mfaSuE4": "CARTEIRA DIGITAL DE TRÂNSITO",
+        "recFWaslN9KIZVTap": "TESOURO DIRETO",
+        "rectunLB0N9QwObTS": "MEU INSS",
+        "recUmYPNDhj1qx9en": "RECEITA FEDERAL",
+        "recku4IsUey3nvBEk": "CAIXA",
+        "rec4ixvEzLW5JHqnm": "PIX"
       };
       
-      // Also directly map categories from the Airtable screenshot
+      // Also directly map categories from the Airtable
       const directCategoryMappings: Record<string, string> = {
         "rectrB2IiTvux50C5": "Saúde",
         "recb065qS5JzHh9Xt": "Trabalho",
@@ -377,10 +380,13 @@ export class MemStorage implements IStorage {
         "recqLTQuYEOSBqzE4": "Portal",
         "recY0eLGS9mfaSuE4": "Mobilidade",
         "recFWaslN9KIZVTap": "Finanças",
-        "rectunLB0N9QwObTS": "Finanças"
+        "rectunLB0N9QwObTS": "Finanças",
+        "recUmYPNDhj1qx9en": "Finanças",
+        "recku4IsUey3nvBEk": "Finanças",
+        "rec4ixvEzLW5JHqnm": "Finanças"
       };
       
-      // Also directly map types from the Airtable screenshot
+      // Also directly map types from the Airtable
       const directTypeMappings: Record<string, string> = {
         "rectrB2IiTvux50C5": "Federal",
         "recb065qS5JzHh9Xt": "Federal",
@@ -388,7 +394,10 @@ export class MemStorage implements IStorage {
         "recqLTQuYEOSBqzE4": "Federal",
         "recY0eLGS9mfaSuE4": "Federal",
         "recFWaslN9KIZVTap": "Federal",
-        "rectunLB0N9QwObTS": "Federal"
+        "rectunLB0N9QwObTS": "Federal",
+        "recUmYPNDhj1qx9en": "Federal",
+        "recku4IsUey3nvBEk": "Federal",
+        "rec4ixvEzLW5JHqnm": "Federal"
       };
       
       // Add direct mappings first
