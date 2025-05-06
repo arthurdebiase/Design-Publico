@@ -154,10 +154,12 @@ export class MemStorage implements IStorage {
       const BRAND_FILES_TABLE_NAME = "brand"; // Table containing global brand assets
       
       // Field name constants for more flexibility with Airtable structure
-      const APP_NAME_FIELD = "app";        // Field linking screens to apps or containing app name
+      const APP_NAME_FIELD = "appname";    // Field linking screens to apps or containing app name
       const ATTACHMENT_FIELD = "images";   // Field containing screen images
-      const SCREEN_NAME_FIELD = "title";   // Field containing screen titles/names
-      const APP_LOGO_FIELD = "logo";       // Field containing app logos
+      const SCREEN_NAME_FIELD = "imagetitle"; // Field containing screen titles/names
+      const APP_LOGO_FIELD = "logo (from appname)"; // Field containing app logos in the screens table
+      const APP_TYPE_FIELD = "type (from appname)"; // Field containing app type in the screens table
+      const APP_CATEGORY_FIELD = "category (from appname)"; // Field containing app category
       const APP_NAME_FIELD_IN_APPS = "name"; // Field containing app names in the apps table
       
       // 1. Fetch all records from the Airtable screens table with pagination
@@ -251,15 +253,16 @@ export class MemStorage implements IStorage {
       // First extract all app names and IDs from the apps table
       for (const record of allAppRecords) {
         const fields = record.fields;
-        // Get app name from various possible fields
-        const appName = fields[APP_NAME_FIELD_IN_APPS] || fields.name || fields.title || null;
+        
+        // Get app name
+        const appName = fields.name || null;
         
         if (appName) {
           // Map record ID to app name
           appIdToNameMap.set(record.id, appName);
           
-          // Handle logo attachments - check multiple possible field names for logos
-          const logoField = fields[APP_LOGO_FIELD] || fields.logo || fields.image || fields.attachment || null;
+          // Handle logo attachments - check if the record has a logo field
+          const logoField = fields.logo || null;
           
           if (logoField && Array.isArray(logoField) && logoField.length > 0) {
             const logoAttachment = logoField[0];
@@ -338,8 +341,8 @@ export class MemStorage implements IStorage {
           continue;
         }
         
-        // Try different possible field names for app name
-        let appNameField = fields[APP_NAME_FIELD] || fields['app-name'] || fields['appname'] || fields['app'];
+        // Based on the Airtable screenshot, we should be looking for the "appname" field which links to the apps table
+        let appNameField = fields[APP_NAME_FIELD]; // This should be "appname" from our constants
         
         // If the app name field is an object or array with an ID, try to find its name
         let appRecordId: string | null = null;
@@ -347,29 +350,38 @@ export class MemStorage implements IStorage {
         
         // Extract the app ID or name from the appNameField
         if (Array.isArray(appNameField)) {
-          // For linked records that return arrays
-          if (typeof appNameField[0] === 'object' && appNameField[0].id) {
-            appRecordId = appNameField[0].id;
-            if (appNameField[0].name) {
-              appName = appNameField[0].name;
+          // For linked records that return arrays (most likely scenario with Airtable)
+          if (appNameField.length > 0) {
+            if (typeof appNameField[0] === 'object' && appNameField[0].id) {
+              // This is an object with linked record data
+              appRecordId = appNameField[0].id;
+              appName = appNameField[0].name || "Unknown App";
+            } else {
+              // This is just an array of IDs or strings
+              appRecordId = typeof appNameField[0] === 'string' ? appNameField[0] : null;
+              appName = "Unknown App"; // We'll resolve this from the ID mapping later
             }
-          } else {
-            appRecordId = typeof appNameField[0] === 'string' ? appNameField[0] : null;
-            appName = appRecordId || "Unknown App";
           }
         } else if (typeof appNameField === 'object' && appNameField !== null) {
-          // For linked records that return objects
+          // For linked records that return a single object
           appRecordId = appNameField.id || null;
-          if (appNameField.name) {
-            appName = appNameField.name;
-          } else {
-            // Default to the ID if no name is found
-            appName = appNameField.id || "Unknown App";
-          }
-        } else {
-          // Regular string field (might be an ID or name)
+          appName = appNameField.name || "Unknown App";
+        } else if (typeof appNameField === 'string') {
+          // Regular string field
           appRecordId = appNameField;
-          appName = appNameField;
+          appName = "Unknown App"; // We'll resolve this from the ID mapping later
+        }
+        
+        // If we have the app record ID but not a good name, try to get it from our mappings
+        if (appRecordId) {
+          if (appName === "Unknown App" && appIdToNameMap.has(appRecordId)) {
+            appName = appIdToNameMap.get(appRecordId) || appName;
+          }
+          
+          // Also set the app name if we have a direct mapping for this record ID
+          if (appNameMappings[appRecordId]) {
+            appName = appNameMappings[appRecordId];
+          }
         }
         
         // First try to get a name from our ID-to-name mapping
@@ -458,12 +470,31 @@ export class MemStorage implements IStorage {
         const thumbnailAttachment = attachments && attachments[0];
         const thumbnailUrl = thumbnailAttachment ? thumbnailAttachment.url : "https://via.placeholder.com/500x300";
         
-        // Check if we have a logo for this app from the apps table
-        const logoUrl = appLogosMap.get(appName);
+        // Get logo from the linked app's info in the "logo (from appname)" field
+        let logoUrl = null;
         
-        // Create app with default values and override with actual data if available
-        // Set correct app type based on the app name
-        let appType = fields.type;
+        // First check if the record has the "logo (from appname)" field which comes from linked field
+        if (fields[APP_LOGO_FIELD]) {
+          // This field might contain the logo URL directly
+          const logoField = fields[APP_LOGO_FIELD];
+          
+          if (Array.isArray(logoField) && logoField.length > 0 && logoField[0].url) {
+            // This is an array of attachments
+            logoUrl = logoField[0].url;
+          } else if (typeof logoField === 'string') {
+            // This is a URL string
+            logoUrl = logoField;
+          }
+        }
+        
+        // Fallback to our app logos map if the logo wasn't found in the record
+        if (!logoUrl) {
+          logoUrl = appLogosMap.get(appName);
+        }
+        
+        // Set correct app type based on the linked app's info in "type (from appname)" field or fallback to name-based mapping
+        let appType = fields[APP_TYPE_FIELD];
+        
         if (!appType) {
           // Specific app-based overrides for missing type values
           if (appName === "Conecta Recife" || appName === "Zona Azul Digital Recife") {
