@@ -35,9 +35,9 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
   const firstScreen = screens[0];
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-100 p-1 sm:p-2">
+    <div className="w-full h-full flex items-center justify-center">
       <div className="flex items-center justify-center h-full relative group/item" style={{ 
-        width: isMobile ? "98%" : "95%",
+        width: "100%",
         height: "100%"
       }}>
         <div 
@@ -55,10 +55,8 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
           <img 
             src={firstScreen.imageUrl} 
             alt={`${appName ? appName + ': ' : ''}${firstScreen.name || 'Screen view'} - ${firstScreen.description || 'User interface example'}`}
-            className="w-auto h-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
+            className="w-full h-full object-contain transition-transform hover:scale-[1.01]"
             style={{ 
-              maxWidth: "100%",
-              maxHeight: "100%",
               objectFit: "contain",
               objectPosition: "center",
               aspectRatio: "9/16"
@@ -66,35 +64,7 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
           />
         </div>
         
-        {/* Clickable overlay for desktop */}
-        {!isMobile && (
-          <div 
-            className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-all opacity-0 group-hover/item:opacity-100 flex items-center justify-center rounded-lg cursor-pointer"
-            onClick={() => navigate(`/app/${appId}`)}
-            role="button"
-            tabIndex={-1}
-            aria-hidden="true"
-          >
-            <div className="bg-black/60 text-white rounded-full p-2 transform scale-90 hover:scale-100 transition-transform">
-              <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                className="w-5 h-5"
-                aria-hidden="true"
-              >
-                <polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>
-                <line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>
-              </svg>
-            </div>
-          </div>
-        )}
+        {/* No hover overlay for a cleaner look */}
       </div>
     </div>
   );
