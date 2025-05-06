@@ -1,5 +1,5 @@
 import { apiRequest } from "./queryClient";
-import { App, Screen, AppType, Platform, AppCategory } from "@/types";
+import { App, Screen, AppType, Platform } from "@/types";
 
 /**
  * Fetch a list of all apps, optionally filtered
@@ -10,8 +10,6 @@ import { App, Screen, AppType, Platform, AppCategory } from "@/types";
 export async function fetchApps(filters?: {
   type?: AppType;
   platform?: Platform;
-  category?: AppCategory;
-  name?: string;
   search?: string;
 }): Promise<App[]> {
   try {
@@ -21,8 +19,6 @@ export async function fetchApps(filters?: {
       const params = new URLSearchParams();
       if (filters.type) params.append("type", filters.type);
       if (filters.platform) params.append("platform", filters.platform);
-      if (filters.category) params.append("category", filters.category);
-      if (filters.name) params.append("name", filters.name);
       if (filters.search) params.append("search", filters.search);
       
       if (params.toString()) {
