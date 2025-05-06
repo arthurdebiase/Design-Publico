@@ -35,13 +35,10 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
   const firstScreen = screens[0];
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="flex items-center justify-center h-full relative group/item" style={{ 
-        width: "100%",
-        height: "100%"
-      }}>
+    <div className="w-full h-full">
+      <div className="h-full w-full relative group/item">
         <div 
-          className="h-full w-full flex items-center justify-center cursor-pointer"
+          className="h-full w-full cursor-pointer p-0 m-0"
           onClick={() => navigate(`/app/${appId}`)}
           role="button"
           tabIndex={0}
@@ -55,11 +52,11 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
           <img 
             src={firstScreen.imageUrl} 
             alt={`${appName ? appName + ': ' : ''}${firstScreen.name || 'Screen view'} - ${firstScreen.description || 'User interface example'}`}
-            className="w-full h-full object-contain transition-transform hover:scale-[1.01]"
+            className="w-full h-full transition-transform hover:scale-[1.01]"
             style={{ 
-              objectFit: "contain",
-              objectPosition: "center",
-              aspectRatio: "9/16"
+              objectFit: "cover",
+              maxWidth: "100%",
+              maxHeight: "100%"
             }}
           />
         </div>
@@ -103,7 +100,7 @@ export default function AppCard({ app }: AppCardProps) {
         role="article"
         aria-labelledby={`app-name-${app.id}`}
       >
-        <div className="relative flex-grow overflow-hidden" style={imageContainerStyle}>
+        <div className="relative flex-grow overflow-hidden p-0 m-0" style={imageContainerStyle}>
           <AppScreenImage appId={app.id.toString()} appName={app.name} />
         </div>
         <div className={`${isMobile ? 'p-2' : 'p-3'} flex-shrink-0`}>
