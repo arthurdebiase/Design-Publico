@@ -142,6 +142,28 @@ export class MemStorage implements IStorage {
   async getBrandLogo(): Promise<string | null> {
     return this.brandLogo;
   }
+  
+  // Get exact category from Airtable table based on app name
+  private getCategoryForApp(appName: string): string | null {
+    // Using the exact categories from the Airtable screenshot
+    switch (appName) {
+      case "Meu SUS Digital":
+        return "Saúde";
+      case "Carteira de Trabalho Digital":
+        return "Trabalho";
+      case "Conecta Recife":
+        return "Portal";
+      case "gov.br":
+        return "Portal";
+      case "Carteira Digital de Transito":
+        return "Mobilidade";
+      case "Tesouro Direto":
+      case "Meu INSS":
+        return "Finanças";
+      default:
+        return null;
+    }
+  }
 
   // Airtable Sync
   async syncFromAirtable(apiKey: string, baseId: string): Promise<void> {
@@ -332,16 +354,18 @@ export class MemStorage implements IStorage {
       
       // Add manual mappings for apps that might not be properly named - exact names from Airtable
       // These should be updated to reflect exactly what's in Airtable
+      // Using exact names from the Airtable table screenshot
       const appNameMappings: Record<string, string> = {
-        // Per user request: fix these specific app name mappings
-        "recqLTQuYEOSBqzE4": "gov.br",     // This should be gov.br (not GOV.BR)
-        "recFWaslN9KIZVTap": "Tesouro Direto", // This should be Tesouro Direto (not MEU INSS)
-        "rectunLB0N9QwObTS": "Meu INSS",    // This should be Meu INSS (not Pix)
-        "rec4ixvEzLW5JHqnm": "Pix",       // Ensure Pix is properly named
-        "recku4IsUey3nvBEk": "CAIXA",     // Ensure CAIXA is properly named
-        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital", // CTPS
-        "rectrB2IiTvux50C5": "Meu SUS Digital", // SUS app
-        "recUmYPNDhj1qx9en": "Receita Federal"  // Receita Federal app
+        "rectrB2IiTvux50C5": "Meu SUS Digital",
+        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
+        "reclNS6PnkfRXBpRE": "Conecta Recife",
+        "recqLTQuYEOSBqzE4": "gov.br",
+        "recY0eLGS9mfaSuE4": "Carteira Digital de Transito", 
+        "recFWaslN9KIZVTap": "Tesouro Direto",
+        "rectunLB0N9QwObTS": "Meu INSS",
+        "rec4ixvEzLW5JHqnm": "Pix",       // Additional apps not shown in the screenshot
+        "recku4IsUey3nvBEk": "CAIXA",     // Additional apps not shown in the screenshot
+        "recUmYPNDhj1qx9en": "Receita Federal"  // Additional apps not shown in the screenshot
       };
       
       // Make a copy of our manual mappings to ensure they don't get overwritten
@@ -592,24 +616,18 @@ export class MemStorage implements IStorage {
         let appType = fields[APP_TYPE_FIELD];
         
         if (!appType) {
-          // Specific app-based overrides for missing type values - use exact names from Airtable
-          if (appName === "Conecta Recife" || appName === "Zona Azul Digital Recife") {
+          // Set app type based exactly on what's in Airtable
+          if (appName === "Conecta Recife") {
             appType = "Municipal";
-          } else if (appName === "Carteira de Trabalho Digital" || 
-                    appName === "Meu SUS Digital" ||
-                    appName === "gov.br" ||        // Note: lowercase 'gov.br' as per Airtable data
-                    appName === "e-Título" ||
-                    appName === "Carteira Digital de Trânsito" ||
-                    appName === "Meu INSS" ||      // Note: space and proper case as per Airtable data
+          } else if (appName === "Meu SUS Digital" ||
+                    appName === "Carteira de Trabalho Digital" ||
+                    appName === "gov.br" ||
+                    appName === "Carteira Digital de Transito" ||
+                    appName === "Tesouro Direto" ||
+                    appName === "Meu INSS" ||
                     appName === "Pix" ||
                     appName === "CAIXA" ||
-                    appName === "CAIXA Tem" ||
-                    appName === "Receita Federal" ||
-                    appName === "MEI" ||
-                    appName === "Cadastro Único" ||
-                    appName === "Tesouro Direto" || // Added this one
-                    appName === "Correios" ||
-                    appName === "Celular Seguro BR") {
+                    appName === "Receita Federal") {
             appType = "Federal";
           } else {
             appType = "Federal"; // Default fallback
@@ -622,7 +640,7 @@ export class MemStorage implements IStorage {
           thumbnailUrl: thumbnailUrl,
           logo: logoUrl || null, // Use logo from apps table if available
           type: appType,
-          category: fields.category || "Government", // Default category
+          category: this.getCategoryForApp(appName) || fields.category || "Government", // Use exact categories from Airtable
           platform: fields.platform || "iOS", // Default platform
           language: fields.language || null, // Default language can be null
           screenCount: records.length,
