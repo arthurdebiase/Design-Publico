@@ -42,7 +42,7 @@ export class MemStorage implements IStorage {
   }
 
   // Apps
-  async getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]> {
+  async getApps(filters?: { type?: string; platform?: string; category?: string; name?: string; search?: string }): Promise<App[]> {
     let result = Array.from(this.apps.values());
     
     if (filters) {
@@ -52,6 +52,14 @@ export class MemStorage implements IStorage {
       
       if (filters.platform) {
         result = result.filter(app => app.platform === filters.platform);
+      }
+      
+      if (filters.category) {
+        result = result.filter(app => app.category === filters.category);
+      }
+      
+      if (filters.name) {
+        result = result.filter(app => app.name === filters.name);
       }
       
       if (filters.search) {

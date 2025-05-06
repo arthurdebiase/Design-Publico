@@ -16,12 +16,13 @@ import {
   LayoutGrid, 
   Grid 
 } from "lucide-react";
-import { AppType, Platform } from "@/types";
+import { AppType, Platform, AppCategory } from "@/types";
 
 interface FilterBarProps {
   onFilterChange: (filters: {
     type?: AppType;
     platform?: Platform;
+    category?: AppCategory;
     tag?: string;
   }) => void;
   onSortChange: (sort: string) => void;
@@ -29,6 +30,7 @@ interface FilterBarProps {
   activeFilters: {
     type?: AppType;
     platform?: Platform;
+    category?: AppCategory;
     tag?: string;
   };
   activeLayout: "grid" | "masonry";
@@ -55,6 +57,12 @@ export default function FilterBar({
     onFilterChange(newFilters);
   };
   
+  const handleCategoryChange = (value: AppCategory | undefined) => {
+    const newFilters = { ...filters, category: value };
+    setFilters(newFilters);
+    onFilterChange(newFilters);
+  };
+  
   const removeTag = () => {
     const newFilters = { ...filters, tag: undefined };
     setFilters(newFilters);
@@ -72,16 +80,27 @@ export default function FilterBar({
           
           <Select onValueChange={(value) => handleTypeChange(value === "all" ? undefined : value as AppType)}>
             <SelectTrigger className="w-[160px] px-3 py-1.5 h-auto bg-[#F5F5F5] border border-gray-200">
+              <SelectValue placeholder="All Types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              <SelectItem value="Federal">Federal</SelectItem>
+              <SelectItem value="State">State</SelectItem>
+              <SelectItem value="Municipal">Municipal</SelectItem>
+            </SelectContent>
+          </Select>
+          
+          <Select onValueChange={(value) => handleCategoryChange(value === "all" ? undefined : value as AppCategory)}>
+            <SelectTrigger className="w-[160px] px-3 py-1.5 h-auto bg-[#F5F5F5] border border-gray-200">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="Healthcare">Healthcare</SelectItem>
-              <SelectItem value="Finance">Finance</SelectItem>
-              <SelectItem value="Government">Government</SelectItem>
-              <SelectItem value="Employment">Employment</SelectItem>
-              <SelectItem value="City Services">City Services</SelectItem>
-              <SelectItem value="Entertainment">Entertainment</SelectItem>
+              <SelectItem value="Saúde">Saúde</SelectItem>
+              <SelectItem value="Trabalho">Trabalho</SelectItem>
+              <SelectItem value="Portal">Portal</SelectItem>
+              <SelectItem value="Mobilidade">Mobilidade</SelectItem>
+              <SelectItem value="Finanças">Finanças</SelectItem>
             </SelectContent>
           </Select>
           
