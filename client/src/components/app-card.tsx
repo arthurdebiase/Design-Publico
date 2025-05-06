@@ -228,7 +228,7 @@ export default function AppCard({ app }: AppCardProps) {
       <div 
         className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 flex flex-col ${cardHeight}`}
         role="article"
-        aria-labelledby={`app-name-${app.id}`}
+        aria-label={`${app.name} app from ${app.type} category`}
       >
         <div className="relative flex-grow overflow-hidden" style={{ height: imageContainerHeight }}>
           <AppScreenCarousel appId={app.id.toString()} appName={app.name} />
@@ -247,7 +247,6 @@ export default function AppCard({ app }: AppCardProps) {
               )}
             </div>
             <div>
-              <h3 id={`app-name-${app.id}`} className="font-medium text-[#333333]">{app.name}</h3>
               <p className="text-sm text-gray-500">{app.type}</p>
             </div>
           </div>
