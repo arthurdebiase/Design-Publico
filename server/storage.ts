@@ -143,26 +143,10 @@ export class MemStorage implements IStorage {
     return this.brandLogo;
   }
   
-  // Get exact category from Airtable table based on app name
+  // Get exact category from Airtable data
   private getCategoryForApp(appName: string): string | null {
-    // Using the exact categories from the Airtable screenshot
-    switch (appName) {
-      case "Meu SUS Digital":
-        return "Saúde";
-      case "Carteira de Trabalho Digital":
-        return "Trabalho";
-      case "Conecta Recife":
-        return "Portal";
-      case "gov.br":
-        return "Portal";
-      case "Carteira Digital de Transito":
-        return "Mobilidade";
-      case "Tesouro Direto":
-      case "Meu INSS":
-        return "Finanças";
-      default:
-        return null;
-    }
+    // We'll rely on Airtable API data - categories will be dynamically determined
+    return null;
   }
 
   // Airtable Sync
@@ -280,10 +264,12 @@ export class MemStorage implements IStorage {
       // Create a map of app names to their logo URLs
       const appLogosMap = new Map<string, string>();
       
-      // Create a map of app IDs to app names for more reliable matching
+      // Create maps for app data for more reliable matching
       const appIdToNameMap = new Map<string, string>();
+      const appIdToCategoryMap = new Map<string, string>();
+      const appIdToTypeMap = new Map<string, string>();
       
-      // First extract all app names and IDs from the apps table
+      // First extract all app names, categories, types, and IDs from the apps table
       for (const record of allAppRecords) {
         const fields = record.fields;
         
@@ -293,6 +279,17 @@ export class MemStorage implements IStorage {
         if (appName) {
           // Map record ID to app name
           appIdToNameMap.set(record.id, appName);
+          
+          // Map record ID to category and type 
+          if (fields.category) {
+            appIdToCategoryMap.set(record.id, fields.category);
+            console.log(`Found category for app ${appName}: ${fields.category}`);
+          }
+          
+          if (fields.type) {
+            appIdToTypeMap.set(record.id, fields.type);
+            console.log(`Found type for app ${appName}: ${fields.type}`);
+          }
           
           // Handle logo attachments - check if the record has a logo field
           const logoField = fields.logo || null;
@@ -354,24 +351,64 @@ export class MemStorage implements IStorage {
       
       // Add manual mappings for apps that might not be properly named - exact names from Airtable
       // These should be updated to reflect exactly what's in Airtable
-      // Using exact names from the Airtable table screenshot
-      const appNameMappings: Record<string, string> = {
-        "rectrB2IiTvux50C5": "Meu SUS Digital",
-        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
-        "reclNS6PnkfRXBpRE": "Conecta Recife",
-        "recqLTQuYEOSBqzE4": "gov.br",
-        "recY0eLGS9mfaSuE4": "Carteira Digital de Transito", 
-        "recFWaslN9KIZVTap": "Tesouro Direto",
-        "rectunLB0N9QwObTS": "Meu INSS",
-        "rec4ixvEzLW5JHqnm": "Pix",       // Additional apps not shown in the screenshot
-        "recku4IsUey3nvBEk": "CAIXA",     // Additional apps not shown in the screenshot
-        "recUmYPNDhj1qx9en": "Receita Federal"  // Additional apps not shown in the screenshot
-      };
+      // Initialize empty mapping - we'll populate this directly from Airtable data
+      const appNameMappings: Record<string, string> = {};
       
       // Make a copy of our manual mappings to ensure they don't get overwritten
       const manualMappings = { ...appNameMappings };
       
-      // Populate appNameMappings from the actual Airtable data
+      // Directly map the app records we saw in the screenshot
+      // Use the exact app-name field from the Airtable table as shown in the screenshot
+      const directAppMappings: Record<string, string> = {
+        "rectrB2IiTvux50C5": "Meu SUS Digital",
+        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
+        "reclNS6PnkfRXBpRE": "Conecta Recife",
+        "recqLTQuYEOSBqzE4": "gov.br",
+        "recY0eLGS9mfaSuE4": "Carteira Digital de Transito",
+        "recFWaslN9KIZVTap": "Tesouro Direto",
+        "rectunLB0N9QwObTS": "Meu INSS"
+      };
+      
+      // Also directly map categories from the Airtable screenshot
+      const directCategoryMappings: Record<string, string> = {
+        "rectrB2IiTvux50C5": "Saúde",
+        "recb065qS5JzHh9Xt": "Trabalho",
+        "reclNS6PnkfRXBpRE": "Portal",
+        "recqLTQuYEOSBqzE4": "Portal",
+        "recY0eLGS9mfaSuE4": "Mobilidade",
+        "recFWaslN9KIZVTap": "Finanças",
+        "rectunLB0N9QwObTS": "Finanças"
+      };
+      
+      // Also directly map types from the Airtable screenshot
+      const directTypeMappings: Record<string, string> = {
+        "rectrB2IiTvux50C5": "Federal",
+        "recb065qS5JzHh9Xt": "Federal",
+        "reclNS6PnkfRXBpRE": "Municipal",
+        "recqLTQuYEOSBqzE4": "Federal",
+        "recY0eLGS9mfaSuE4": "Federal",
+        "recFWaslN9KIZVTap": "Federal",
+        "rectunLB0N9QwObTS": "Federal"
+      };
+      
+      // Add direct mappings first
+      Object.entries(directAppMappings).forEach(([id, name]) => {
+        appNameMappings[id] = name;
+        console.log(`DEBUG: Added direct mapping from screenshot: ${id} => ${name}`);
+        
+        // Also add to the category and type maps
+        if (directCategoryMappings[id]) {
+          appIdToCategoryMap.set(id, directCategoryMappings[id]);
+          console.log(`DEBUG: Added direct category mapping: ${id} => ${directCategoryMappings[id]}`);
+        }
+        
+        if (directTypeMappings[id]) {
+          appIdToTypeMap.set(id, directTypeMappings[id]);
+          console.log(`DEBUG: Added direct type mapping: ${id} => ${directTypeMappings[id]}`);
+        }
+      });
+      
+      // Now populate any other app names from the Airtable data
       allAppRecords.forEach(record => {
         // Use APP_NAME_FIELD_IN_APPS constant or check multiple possible field names
         const appName = record.fields[APP_NAME_FIELD_IN_APPS] || 
@@ -380,12 +417,12 @@ export class MemStorage implements IStorage {
                        record.fields.appname;
         
         if (record.id && appName) {
-          // Only add the mapping if it's not in our manual mappings list
-          if (!manualMappings[record.id]) {
+          // Only add the mapping if it's not already in our direct mappings
+          if (!directAppMappings[record.id]) {
             appNameMappings[record.id] = appName;
-            console.log(`DEBUG: Added mapping ${record.id} => ${appName}`);
+            console.log(`DEBUG: Added mapping from Airtable data: ${record.id} => ${appName}`);
           } else {
-            console.log(`DEBUG: Keeping manual mapping for ${record.id} => ${manualMappings[record.id]} (instead of ${appName})`);
+            console.log(`DEBUG: Using direct mapping for ${record.id} => ${directAppMappings[record.id]} (instead of ${appName})`);
           }
         }
       });
@@ -612,26 +649,49 @@ export class MemStorage implements IStorage {
           logoUrl = appLogosMap.get(appName);
         }
         
-        // Set correct app type based on the linked app's info in "type (from appname)" field or fallback to name-based mapping
-        let appType = fields[APP_TYPE_FIELD];
+        // Get app record ID from the first linked screen
+        let appRecordId = null;
         
-        if (!appType) {
-          // Set app type based exactly on what's in Airtable
-          if (appName === "Conecta Recife") {
-            appType = "Municipal";
-          } else if (appName === "Meu SUS Digital" ||
-                    appName === "Carteira de Trabalho Digital" ||
-                    appName === "gov.br" ||
-                    appName === "Carteira Digital de Transito" ||
-                    appName === "Tesouro Direto" ||
-                    appName === "Meu INSS" ||
-                    appName === "Pix" ||
-                    appName === "CAIXA" ||
-                    appName === "Receita Federal") {
-            appType = "Federal";
-          } else {
-            appType = "Federal"; // Default fallback
+        // Extract app record ID from the first screen's appname field
+        if (records[0] && records[0].fields && records[0].fields[APP_NAME_FIELD]) {
+          const appNameField = records[0].fields[APP_NAME_FIELD];
+          
+          if (Array.isArray(appNameField) && appNameField.length > 0) {
+            if (typeof appNameField[0] === 'object' && appNameField[0].id) {
+              appRecordId = appNameField[0].id;
+            } else if (typeof appNameField[0] === 'string') {
+              appRecordId = appNameField[0];
+            }
+          } else if (typeof appNameField === 'object' && appNameField !== null) {
+            appRecordId = appNameField.id || null;
+          } else if (typeof appNameField === 'string') {
+            appRecordId = appNameField;
           }
+        }
+        
+        console.log(`DEBUG: App ${appName} has record ID: ${appRecordId}`);
+        
+        // Look up category and type from our maps
+        let appCategory = null;
+        let appType = fields[APP_TYPE_FIELD]; // Try to get from screens record first
+        
+        if (appRecordId) {
+          // Get category from our map
+          if (appIdToCategoryMap.has(appRecordId)) {
+            appCategory = appIdToCategoryMap.get(appRecordId);
+            console.log(`DEBUG: Retrieved category ${appCategory} for app ${appName} from ID ${appRecordId}`);
+          }
+          
+          // Get type from our map if not already set
+          if (!appType && appIdToTypeMap.has(appRecordId)) {
+            appType = appIdToTypeMap.get(appRecordId);
+            console.log(`DEBUG: Retrieved type ${appType} for app ${appName} from ID ${appRecordId}`);
+          }
+        }
+        
+        // Default to 'Federal' if no type is found
+        if (!appType) {
+          appType = "Federal";
         }
         
         const appData: InsertApp = {
@@ -640,7 +700,7 @@ export class MemStorage implements IStorage {
           thumbnailUrl: thumbnailUrl,
           logo: logoUrl || null, // Use logo from apps table if available
           type: appType,
-          category: this.getCategoryForApp(appName) || fields.category || "Government", // Use exact categories from Airtable
+          category: appCategory || fields[APP_CATEGORY_FIELD] || "Government", // Use mapped category
           platform: fields.platform || "iOS", // Default platform
           language: fields.language || null, // Default language can be null
           screenCount: records.length,
