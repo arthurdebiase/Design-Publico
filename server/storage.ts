@@ -251,19 +251,48 @@ export class MemStorage implements IStorage {
       // First extract all app names and IDs from the apps table
       for (const record of allAppRecords) {
         const fields = record.fields;
-        if (fields && fields[APP_NAME_FIELD_IN_APPS]) {
-          const appName = fields[APP_NAME_FIELD_IN_APPS];
+        // Get app name from various possible fields
+        const appName = fields[APP_NAME_FIELD_IN_APPS] || fields.name || fields.title || null;
+        
+        if (appName) {
+          // Map record ID to app name
           appIdToNameMap.set(record.id, appName);
           
-          // Store logos mapped to both ID and name for maximum compatibility
-          if (fields[APP_LOGO_FIELD] && fields[APP_LOGO_FIELD].length > 0) {
-            const logoAttachment = fields[APP_LOGO_FIELD][0];
-            appLogosMap.set(appName, logoAttachment.url);
-            appLogosMap.set(record.id, logoAttachment.url);
-            console.log(`Found logo for app: ${appName}`);
+          // Handle logo attachments - check multiple possible field names for logos
+          const logoField = fields[APP_LOGO_FIELD] || fields.logo || fields.image || fields.attachment || null;
+          
+          if (logoField && Array.isArray(logoField) && logoField.length > 0) {
+            const logoAttachment = logoField[0];
+            if (logoAttachment && logoAttachment.url) {
+              appLogosMap.set(appName, logoAttachment.url);
+              appLogosMap.set(record.id, logoAttachment.url);
+              console.log(`Found logo for app: ${appName}`);
+            }
           }
         }
       }
+      
+      // Log all found app logos for debugging
+      console.log(`Found ${appLogosMap.size} app logos in total.`);
+      
+      // Manually add some app logos directly by name if missing (backup approach)
+      const manualLogoMappings: Record<string, string> = {
+        "Carteira Digital de Trânsito": "https://dl.airtable.com/.attachments/0f34aad6098fa58a1e147187f7d5ee25/a2f04710/CDT-logo.png",
+        "e-Título": "https://dl.airtable.com/.attachments/a6a7f4bdd92036e0b231d79a7a818376/01d4f870/etitulo-logo.png",
+        "Gov.br": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
+        "Meu INSS": "https://dl.airtable.com/.attachments/1d1b1fa8a5f4131a42b5a1c307aed06e/13cb4a47/meuinss-logo.png",
+        "Meu SUS Digital": "https://dl.airtable.com/.attachments/5dff95f0747a7122daaae50c1993afec/3aca47a1/sus-logo.png",
+        "Conecta Recife": "https://dl.airtable.com/.attachments/f67e5df29f6afa8eee49a9bde36a9cbf/ecbf0c4d/conectarecife-logo.png",
+        "Carteira de Trabalho Digital": "https://dl.airtable.com/.attachments/5ae3d7ca28ea2eafa27c7b22e17a96df/0186f3a8/ctps-logo.png"
+      };
+      
+      // Add these mappings to the appLogosMap if not already present
+      Object.entries(manualLogoMappings).forEach(([name, url]) => {
+        if (!appLogosMap.has(name)) {
+          appLogosMap.set(name, url);
+          console.log(`Added manual logo for: ${name}`);
+        }
+      });
       
       // Add manual mappings for apps that might not be properly named
       const appNameMappings: Record<string, string> = {
