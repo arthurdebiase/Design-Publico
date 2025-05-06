@@ -9,7 +9,7 @@ import axios from "axios";
 // Interface for storage operations
 export interface IStorage {
   // Apps
-  getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]>;
+  getApps(filters?: { type?: string; platform?: string; category?: string; name?: string; search?: string }): Promise<App[]>;
   getAppById(id: number): Promise<App | undefined>;
   createApp(app: InsertApp): Promise<App>;
   

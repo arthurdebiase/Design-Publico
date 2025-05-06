@@ -1,6 +1,7 @@
 // App types
 export type AppType = 'Federal' | 'Municipal' | 'State' | '';
 export type Platform = 'iOS' | 'Android' | 'Web' | 'Cross-platform' | '';
+export type AppCategory = 'Saúde' | 'Trabalho' | 'Portal' | 'Mobilidade' | 'Finanças' | '';
 
 export interface App {
   id: string;
