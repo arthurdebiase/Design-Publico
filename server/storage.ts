@@ -399,13 +399,31 @@ export class MemStorage implements IStorage {
                            fields['screen_name'] || 
                            `Screen ${i + 1}`;
           
+          // Determine screen type - set splash/login screens to lower order values
+          const lowerCaseName = screenName.toLowerCase();
+          const isIntroScreen = 
+            lowerCaseName.includes('splash') || 
+            lowerCaseName.includes('início') || 
+            lowerCaseName.includes('login') || 
+            lowerCaseName.includes('welcome') || 
+            lowerCaseName.includes('intro') ||
+            lowerCaseName.includes('start') ||
+            lowerCaseName.includes('abertura');
+          
+          // Make sure splash screens appear first in the order
+          let screenOrder = i;
+          if (i < 3 && isIntroScreen) {
+            // Force intro screens to the beginning by setting order to -1, 0, or very low numbers
+            screenOrder = -1000 + i;
+          }
+          
           const screenData: InsertScreen = {
             appId: app.id,
             name: screenName,
             description: fields.description || null,
             imageUrl: attachment.url,
             flow: fields.flow || null,
-            order: i,
+            order: screenOrder,
             airtableId: record.id,
           };
           

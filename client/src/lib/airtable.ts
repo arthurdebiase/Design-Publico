@@ -86,7 +86,11 @@ export async function fetchScreensByAppId(appId: string): Promise<Screen[]> {
     const screens = await response.json();
     
     // Sort screens by their order field to ensure consistent display
-    return screens.sort((a: Screen, b: Screen) => a.order - b.order);
+    // This ensures the splash screen (typically order=0 or order=1) appears first
+    return screens.sort((a: Screen, b: Screen) => {
+      // Primary sort by order
+      return a.order - b.order;
+    });
   } catch (error) {
     console.error(`Error fetching screens for app with ID ${appId}:`, error);
     throw error;
