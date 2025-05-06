@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "wouter";
-import { Badge } from "@/components/ui/badge";
+import { useLocation } from "wouter";
 import { App, Screen } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { fetchScreensByAppId } from "@/lib/airtable";
@@ -68,6 +67,7 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
   // Handle click on the carousel to navigate to app detail
   const handleCarouselClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     if (!touchMoved) {
       navigate(`/app/${appId}`);
     }
@@ -214,34 +214,48 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
 
 export default function AppCard({ app }: AppCardProps) {
   const isMobile = useIsMobile();
+  const [, navigate] = useLocation();
   
   // Responsive heights that maintain the proper aspect ratio (9:16)
   const cardHeight = isMobile ? "h-auto" : "h-auto";
-  const imageContainerHeight = isMobile ? "h-auto" : "h-auto";
   // Use aspect ratio to maintain proper proportions
   const imageContainerStyle = { aspectRatio: "9/18" };
   
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/app/${app.id}`);
+  };
+  
   return (
-    <Link 
-      href={`/app/${app.id}`}
-      className="focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-lg"
+    <div 
+      onClick={handleCardClick}
+      className="focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-lg cursor-pointer"
+      role="link"
+      tabIndex={0}
+      aria-label={`View details for ${app.name}`}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(`/app/${app.id}`);
+        }
+      }}
     >
       <div 
-        className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-6 flex flex-col ${cardHeight}`}
+        className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-4 flex flex-col ${cardHeight}`}
         role="article"
         aria-labelledby={`app-name-${app.id}`}
       >
         <div className="relative flex-grow overflow-hidden" style={imageContainerStyle}>
           <AppScreenCarousel appId={app.id.toString()} appName={app.name} />
         </div>
-        <div className={`${isMobile ? 'p-3' : 'p-4'} flex-shrink-0`}>
+        <div className={`${isMobile ? 'p-2' : 'p-3'} flex-shrink-0`}>
           <div className="flex items-center gap-3">
-            <div className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} flex-shrink-0 flex items-center justify-center`}>
+            <div className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} flex-shrink-0 flex items-center justify-center`}>
               {app.logo ? (
                 <img 
                   src={app.logo} 
                   alt={`${app.name} Logo`} 
-                  className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} object-contain`}
+                  className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} object-contain`}
                 />
               ) : (
                 <LogoPlaceholder app={app} />
@@ -255,7 +269,7 @@ export default function AppCard({ app }: AppCardProps) {
           </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
