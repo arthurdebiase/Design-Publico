@@ -148,13 +148,17 @@ export class MemStorage implements IStorage {
     try {
       console.log(`Syncing data from Airtable base ${baseId}...`);
       
-      // Define the Airtable field mappings
-      const AIRTABLE_TABLE_NAME = "screens";
-      const APPS_TABLE_NAME = "apps";
-      const BRAND_FILES_TABLE_NAME = "brand";
-      const APP_NAME_FIELD = "app-name";
-      const ATTACHMENT_FIELD = "images";
-      const SCREEN_NAME_FIELD = "title";
+      // Define the Airtable field mappings - these must match exactly with your Airtable column names
+      const AIRTABLE_TABLE_NAME = "screens"; // Table containing screen images and details
+      const APPS_TABLE_NAME = "apps";       // Table containing app metadata and logos
+      const BRAND_FILES_TABLE_NAME = "brand"; // Table containing global brand assets
+      
+      // Field name constants for more flexibility with Airtable structure
+      const APP_NAME_FIELD = "app";        // Field linking screens to apps or containing app name
+      const ATTACHMENT_FIELD = "images";   // Field containing screen images
+      const SCREEN_NAME_FIELD = "title";   // Field containing screen titles/names
+      const APP_LOGO_FIELD = "logo";       // Field containing app logos
+      const APP_NAME_FIELD_IN_APPS = "name"; // Field containing app names in the apps table
       
       // 1. Fetch all records from the Airtable screens table with pagination
       let allScreenRecords: any[] = [];
@@ -241,16 +245,51 @@ export class MemStorage implements IStorage {
       // Create a map of app names to their logo URLs
       const appLogosMap = new Map<string, string>();
       
-      // Process app records to extract logos
+      // Create a map of app IDs to app names for more reliable matching
+      const appIdToNameMap = new Map<string, string>();
+      
+      // First extract all app names and IDs from the apps table
       for (const record of allAppRecords) {
         const fields = record.fields;
-        if (fields && fields["app-name"] && fields.logo && fields.logo.length > 0) {
-          const appName = fields["app-name"];
-          const logoAttachment = fields.logo[0];
-          appLogosMap.set(appName, logoAttachment.url);
-          console.log(`Found logo for app: ${appName}`);
+        if (fields && fields[APP_NAME_FIELD_IN_APPS]) {
+          const appName = fields[APP_NAME_FIELD_IN_APPS];
+          appIdToNameMap.set(record.id, appName);
+          
+          // Store logos mapped to both ID and name for maximum compatibility
+          if (fields[APP_LOGO_FIELD] && fields[APP_LOGO_FIELD].length > 0) {
+            const logoAttachment = fields[APP_LOGO_FIELD][0];
+            appLogosMap.set(appName, logoAttachment.url);
+            appLogosMap.set(record.id, logoAttachment.url);
+            console.log(`Found logo for app: ${appName}`);
+          }
         }
       }
+      
+      // Add manual mappings for apps that might not be properly named
+      const appNameMappings: Record<string, string> = {
+        "recqLTQuYEOSBqzE4": "Gov.br",
+        "recUmYPNDhj1qx9en": "Conecta Recife",
+        "rectrB2IiTvux50C5": "Meu SUS Digital",
+        "rectunLB0N9QwObTS": "Pix",
+        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
+        "recFWaslN9KIZVTap": "Meu INSS",
+        "rec4ixvEzLW5JHqnm": "Carteira Digital de Trânsito",
+        "recO0Fz9BhXYpqTgJ": "e-Título",
+        "recGwK0XXHDMrfzL8": "Celular Seguro BR",
+        "recb4PdJEShoxI0x5": "Correios",
+        "recEL1ZOe6nGpEP73": "CAIXA Tem",
+        "recJBNHjc8G2QvEb4": "MEI",
+        "recMNEJDQCCupjYZJ": "Cadastro Único",
+        "recXnV9THYptJQ1UL": "Receita Federal",
+        "recqJwRQQxGxYLnp4": "CAIXA",
+        "recKe1q9hB1oEEfn5": "Resultados",
+        "reczpknduWvlL2cey": "Zona Azul Digital Recife"
+      };
+      
+      // Add these mappings to the appIdToNameMap
+      Object.entries(appNameMappings).forEach(([id, name]) => {
+        appIdToNameMap.set(id, name);
+      });
       
       // Group screen records by app name to create distinct apps
       const appGroups = new Map<string, any[]>();
@@ -274,16 +313,24 @@ export class MemStorage implements IStorage {
         let appNameField = fields[APP_NAME_FIELD] || fields['app-name'] || fields['appname'] || fields['app'];
         
         // If the app name field is an object or array with an ID, try to find its name
-        let appName;
+        let appRecordId: string | null = null;
+        let appName: string = "Unknown App";
+        
+        // Extract the app ID or name from the appNameField
         if (Array.isArray(appNameField)) {
           // For linked records that return arrays
-          if (typeof appNameField[0] === 'object' && appNameField[0].name) {
-            appName = appNameField[0].name;
+          if (typeof appNameField[0] === 'object' && appNameField[0].id) {
+            appRecordId = appNameField[0].id;
+            if (appNameField[0].name) {
+              appName = appNameField[0].name;
+            }
           } else {
-            appName = appNameField[0];
+            appRecordId = typeof appNameField[0] === 'string' ? appNameField[0] : null;
+            appName = appRecordId || "Unknown App";
           }
         } else if (typeof appNameField === 'object' && appNameField !== null) {
           // For linked records that return objects
+          appRecordId = appNameField.id || null;
           if (appNameField.name) {
             appName = appNameField.name;
           } else {
@@ -291,18 +338,38 @@ export class MemStorage implements IStorage {
             appName = appNameField.id || "Unknown App";
           }
         } else {
-          // Regular string field
+          // Regular string field (might be an ID or name)
+          appRecordId = appNameField;
           appName = appNameField;
         }
         
-        // Handle specific record IDs and map them to proper app names
-        if (appName === "recqLTQuYEOSBqzE4") appName = "Gov.br";
-        if (appName === "recUmYPNDhj1qx9en") appName = "Conecta Recife";
-        if (appName === "rectrB2IiTvux50C5") appName = "Meu SUS Digital";
-        if (appName === "rectunLB0N9QwObTS") appName = "Pix";
-        if (appName === "recb065qS5JzHh9Xt") appName = "Carteira de Trabalho Digital";
-        if (appName === "recFWaslN9KIZVTap") appName = "Meu INSS";
-        if (appName === "rec4ixvEzLW5JHqnm") appName = "Carteira Digital de Trânsito";
+        // First try to get a name from our ID-to-name mapping
+        if (appRecordId && appIdToNameMap.has(appRecordId)) {
+          appName = appIdToNameMap.get(appRecordId) || appName;
+        }
+        
+        // Check the current screen for app name clues in title or description
+        const screenTitle = fields[SCREEN_NAME_FIELD] || fields.name || fields.title || '';
+        const screenDescription = fields.description || '';
+        
+        // Use content to help determine the app identity more accurately
+        if (screenTitle || screenDescription) {
+          // Convert to lowercase for case-insensitive matching
+          const titleLower = screenTitle.toString().toLowerCase();
+          const descLower = screenDescription.toString().toLowerCase();
+          
+          // Special case patterns
+          if (titleLower.includes('e-título') || descLower.includes('e-título') || 
+              titleLower.includes('etitulo') || titleLower.includes('título eleitoral')) {
+            appName = "e-Título";
+          } else if (titleLower.includes('carteira digital de trânsito') || 
+                     titleLower.includes('cdt') || descLower.includes('cdt') || 
+                     (titleLower.includes('trânsito') && titleLower.includes('carteira'))) {
+            appName = "Carteira Digital de Trânsito";
+          } else if (appRecordId === "recqLTQuYEOSBqzE4" || titleLower.includes('gov.br')) {
+            appName = "Gov.br";
+          }
+        }
         
         // Get all screens that have already been processed with this app name
         const currentAppRecords = appGroups.get(appName) || [];
