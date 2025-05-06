@@ -441,18 +441,22 @@ export class MemStorage implements IStorage {
           const titleLower = screenTitle.toString().toLowerCase();
           const descLower = screenDescription.toString().toLowerCase();
           
-          // Special case patterns
+          // Special case patterns - Use exact names from Airtable
           if (titleLower.includes('e-título') || descLower.includes('e-título') || 
               titleLower.includes('etitulo') || titleLower.includes('título eleitoral')) {
-            appName = "e-Título";
+            // Use the exact name from Airtable ID mapping
+            appName = appNameMappings["recO0Fz9BhXYpqTgJ"] || "e-Título";
           } else if (titleLower.includes('carteira digital de trânsito') || 
                      titleLower.includes('cdt') || descLower.includes('cdt') || 
                      (titleLower.includes('trânsito') && titleLower.includes('carteira'))) {
-            appName = "Carteira Digital de Trânsito";
+            // Use the exact name from Airtable ID mapping
+            appName = appNameMappings["rec4ixvEzLW5JHqnm"] || "Carteira Digital de Trânsito";
           } else if (appRecordId === "recqLTQuYEOSBqzE4" || titleLower.includes('gov.br')) {
-            appName = "gov.br";
+            // Use the exact name from Airtable ID mapping
+            appName = appNameMappings["recqLTQuYEOSBqzE4"] || "gov.br";
           } else if (appRecordId === "rectunLB0N9QwObTS" || titleLower.includes('pix')) {
-            appName = "PIX";
+            // Use the exact name from Airtable ID mapping
+            appName = appNameMappings["rectunLB0N9QwObTS"] || "PIX";
           }
         }
         
@@ -477,9 +481,9 @@ export class MemStorage implements IStorage {
         
         // Update app name based on screen content - use the exact same names as in the Airtable
         if (hasEtituloScreens) {
-          appName = "e-Título";
+          appName = appNameMappings["recO0Fz9BhXYpqTgJ"] || "e-Título";
         } else if (hasCDTScreens) {
-          appName = "Carteira Digital de Trânsito";
+          appName = appNameMappings["rec4ixvEzLW5JHqnm"] || "Carteira Digital de Trânsito";
         }
         
         if (!appGroups.has(appName)) {
