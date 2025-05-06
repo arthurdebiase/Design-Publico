@@ -35,10 +35,10 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
   const firstScreen = screens[0];
 
   return (
-    <div className="w-full h-full flex items-center justify-center">
+    <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
       <div className="flex items-center justify-center h-full relative group/item" style={{ 
-        width: "100%",
-        height: "100%"
+        width: "calc(100% - 16px)",
+        height: "calc(100% - 16px)"
       }}>
         <div 
           className="h-full w-full flex items-center justify-center cursor-pointer"
