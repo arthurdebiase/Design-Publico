@@ -66,9 +66,9 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
 
   // Handle click on the carousel to navigate to app detail
   const handleCarouselClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+    // Allow the click to propagate to the parent card
     if (!touchMoved) {
+      // We no longer prevent default or stop propagation
       navigate(`/app/${appId}`);
     }
     // Reset the flag
@@ -107,8 +107,7 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
                 <div 
                   className="h-full w-full flex items-center justify-center cursor-pointer"
                   onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
+                    // Allow the click to propagate to the parent card
                     navigate(`/app/${appId}`);
                   }}
                   role="button"
@@ -116,8 +115,7 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
                   aria-label={`View ${appName || 'app'} details`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      e.stopPropagation();
+                      // Allow keyboard events to propagate
                       navigate(`/app/${appId}`);
                     }
                   }}
@@ -140,9 +138,8 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
                 {!isMobile && (
                   <div 
                     className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-all opacity-0 group-hover/item:opacity-100 flex items-center justify-center rounded-lg cursor-pointer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    onClick={() => {
+                      // Allow the event to propagate to the parent handlers
                       navigate(`/app/${appId}`);
                     }}
                     role="button"
