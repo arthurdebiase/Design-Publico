@@ -149,12 +149,12 @@ export class MemStorage implements IStorage {
       console.log(`Syncing data from Airtable base ${baseId}...`);
       
       // Define the Airtable field mappings
-      const AIRTABLE_TABLE_NAME = "all-screens";
-      const APPS_TABLE_NAME = "all-apps";
-      const BRAND_FILES_TABLE_NAME = "brand-files";
-      const APP_NAME_FIELD = "app-name (from appname)";
+      const AIRTABLE_TABLE_NAME = "screens";
+      const APPS_TABLE_NAME = "apps";
+      const BRAND_FILES_TABLE_NAME = "brand";
+      const APP_NAME_FIELD = "app-name";
       const ATTACHMENT_FIELD = "images";
-      const SCREEN_NAME_FIELD = "imagetitle";
+      const SCREEN_NAME_FIELD = "title";
       
       // 1. Fetch all records from the Airtable screens table with pagination
       let allScreenRecords: any[] = [];
@@ -260,12 +260,18 @@ export class MemStorage implements IStorage {
         const fields = record.fields;
         
         // Skip records without required fields
-        if (!fields[APP_NAME_FIELD] || !fields[ATTACHMENT_FIELD]) {
+        if (!fields[APP_NAME_FIELD] && !fields['app-name'] && !fields['appname']) {
+          console.log('Skipping record without app name:', record.id);
           continue;
         }
         
-        // Handle app name which may be an array in Airtable's response
-        const appNameField = fields[APP_NAME_FIELD];
+        if (!fields[ATTACHMENT_FIELD] && !fields['image'] && !fields['attachment']) {
+          console.log('Skipping record without image:', record.id);
+          continue;
+        }
+        
+        // Try different possible field names for app name
+        const appNameField = fields[APP_NAME_FIELD] || fields['app-name'] || fields['appname'];
         const appName = Array.isArray(appNameField) ? appNameField[0] : appNameField;
         
         if (!appGroups.has(appName)) {
@@ -291,8 +297,13 @@ export class MemStorage implements IStorage {
         const firstRecord = records[0];
         const fields = firstRecord.fields;
         
-        // Extract the first image to use as app thumbnail
-        const thumbnailAttachment = fields[ATTACHMENT_FIELD] && fields[ATTACHMENT_FIELD][0];
+        // Try different possible field names for images/attachments
+        const attachments = 
+          (fields[ATTACHMENT_FIELD] && fields[ATTACHMENT_FIELD].length > 0 ? fields[ATTACHMENT_FIELD] :
+          (fields['image'] && fields['image'].length > 0 ? fields['image'] :
+          (fields['attachment'] && fields['attachment'].length > 0 ? fields['attachment'] : null)));
+        
+        const thumbnailAttachment = attachments && attachments[0];
         const thumbnailUrl = thumbnailAttachment ? thumbnailAttachment.url : "https://via.placeholder.com/500x300";
         
         // Check if we have a logo for this app from the apps table
