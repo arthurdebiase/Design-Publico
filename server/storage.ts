@@ -260,19 +260,49 @@ export class MemStorage implements IStorage {
         const fields = record.fields;
         
         // Skip records without required fields
-        if (!fields[APP_NAME_FIELD] && !fields['app-name'] && !fields['appname']) {
+        if (!fields[APP_NAME_FIELD] && !fields['app-name'] && !fields['appname'] && !fields['app']) {
           console.log('Skipping record without app name:', record.id);
           continue;
         }
         
-        if (!fields[ATTACHMENT_FIELD] && !fields['image'] && !fields['attachment']) {
+        if (!fields[ATTACHMENT_FIELD] && !fields['image'] && !fields['attachment'] && !fields['images']) {
           console.log('Skipping record without image:', record.id);
           continue;
         }
         
         // Try different possible field names for app name
-        const appNameField = fields[APP_NAME_FIELD] || fields['app-name'] || fields['appname'];
-        const appName = Array.isArray(appNameField) ? appNameField[0] : appNameField;
+        let appNameField = fields[APP_NAME_FIELD] || fields['app-name'] || fields['appname'] || fields['app'];
+        
+        // If the app name field is an object or array with an ID, try to find its name
+        let appName;
+        if (Array.isArray(appNameField)) {
+          // For linked records that return arrays
+          if (typeof appNameField[0] === 'object' && appNameField[0].name) {
+            appName = appNameField[0].name;
+          } else {
+            appName = appNameField[0];
+          }
+        } else if (typeof appNameField === 'object' && appNameField !== null) {
+          // For linked records that return objects
+          if (appNameField.name) {
+            appName = appNameField.name;
+          } else {
+            // Default to the ID if no name is found
+            appName = appNameField.id || "Unknown App";
+          }
+        } else {
+          // Regular string field
+          appName = appNameField;
+        }
+        
+        // Handle specific record IDs and map them to proper app names
+        if (appName === "recqLTQuYEOSBqzE4") appName = "Gov.br";
+        if (appName === "recUmYPNDhj1qx9en") appName = "Conecta Recife";
+        if (appName === "rectrB2IiTvux50C5") appName = "Meu SUS Digital";
+        if (appName === "rectunLB0N9QwObTS") appName = "Pix";
+        if (appName === "recb065qS5JzHh9Xt") appName = "Carteira de Trabalho Digital";
+        if (appName === "recFWaslN9KIZVTap") appName = "Meu INSS";
+        if (appName === "rec4ixvEzLW5JHqnm") appName = "e-Título";
         
         if (!appGroups.has(appName)) {
           appGroups.set(appName, []);
@@ -346,13 +376,28 @@ export class MemStorage implements IStorage {
           const record = records[i];
           const fields = record.fields;
           
+          // Try different possible field names for attachments
+          const attachmentField = 
+            (fields[ATTACHMENT_FIELD] && fields[ATTACHMENT_FIELD].length > 0 ? fields[ATTACHMENT_FIELD] :
+            (fields['image'] && fields['image'].length > 0 ? fields['image'] :
+            (fields['attachment'] && fields['attachment'].length > 0 ? fields['attachment'] :
+            (fields['images'] && fields['images'].length > 0 ? fields['images'] : null))));
+          
           // Skip records without attachments
-          if (!fields[ATTACHMENT_FIELD] || !fields[ATTACHMENT_FIELD].length) {
+          if (!attachmentField || !attachmentField.length) {
+            console.log(`Skipping screen record for ${appName} without attachment: ${record.id}`);
             continue;
           }
           
-          const attachment = fields[ATTACHMENT_FIELD][0];
-          const screenName = fields[SCREEN_NAME_FIELD] || `Screen ${i + 1}`;
+          const attachment = attachmentField[0];
+          
+          // Try different possible field names for screen name
+          const screenName = fields[SCREEN_NAME_FIELD] || 
+                           fields['name'] || 
+                           fields['title'] || 
+                           fields['screen-name'] || 
+                           fields['screen_name'] || 
+                           `Screen ${i + 1}`;
           
           const screenData: InsertScreen = {
             appId: app.id,
