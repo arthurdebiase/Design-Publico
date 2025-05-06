@@ -234,28 +234,23 @@ export default function AppCard({ app }: AppCardProps) {
           <AppScreenCarousel appId={app.id.toString()} appName={app.name} />
         </div>
         <div className={`${isMobile ? 'p-3' : 'p-4'} flex-shrink-0`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} flex-shrink-0 flex items-center justify-center`}>
-                {app.logo ? (
-                  <img 
-                    src={app.logo} 
-                    alt={`${app.name} Logo`} 
-                    className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} object-contain`}
-                  />
-                ) : (
-                  <LogoPlaceholder app={app} />
-                )}
-              </div>
-              {/* Logo only, no app name displayed as per requirements */}
-              <div className="sr-only">
-                <h3 id={`app-name-${app.id}`}>{app.name}</h3>
-                <p>{app.type}</p>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} flex-shrink-0 flex items-center justify-center`}>
+              {app.logo ? (
+                <img 
+                  src={app.logo} 
+                  alt={`${app.name} Logo`} 
+                  className={`${isMobile ? 'w-9 h-9' : 'w-10 h-10'} object-contain`}
+                />
+              ) : (
+                <LogoPlaceholder app={app} />
+              )}
             </div>
-            <Badge variant="outline" className="text-xs font-semibold">
-              {app.screenCount} telas
-            </Badge>
+            {/* Logo only, no app name displayed as per requirements */}
+            <div className="sr-only">
+              <h3 id={`app-name-${app.id}`}>{app.name}</h3>
+              <p>{app.type}</p>
+            </div>
           </div>
         </div>
       </div>
