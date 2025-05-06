@@ -357,19 +357,19 @@ export class MemStorage implements IStorage {
       // Make a copy of our manual mappings to ensure they don't get overwritten
       const manualMappings = { ...appNameMappings };
       
-      // Directly use the exact values from the "appname" or "appname (from apps)" columns 
-      // in the "screens" table of Airtable, as shown in the link
+      // Directly use the exact values as shown in the Airtable screenshot 
+      // Use proper case matching what's shown in the interface
       const directAppMappings: Record<string, string> = {
-        "rectrB2IiTvux50C5": "MEU SUS DIGITAL",
-        "recb065qS5JzHh9Xt": "CARTEIRA DE TRABALHO DIGITAL",
-        "reclNS6PnkfRXBpRE": "CONECTA RECIFE",
-        "recqLTQuYEOSBqzE4": "GOV.BR",
-        "recY0eLGS9mfaSuE4": "CARTEIRA DIGITAL DE TRÂNSITO",
-        "recFWaslN9KIZVTap": "TESOURO DIRETO",
-        "rectunLB0N9QwObTS": "MEU INSS",
-        "recUmYPNDhj1qx9en": "RECEITA FEDERAL",
-        "recku4IsUey3nvBEk": "CAIXA",
-        "rec4ixvEzLW5JHqnm": "PIX"
+        "rectrB2IiTvux50C5": "Meu SUS Digital",
+        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
+        "reclNS6PnkfRXBpRE": "Conecta Recife",
+        "recqLTQuYEOSBqzE4": "gov.br",
+        "recY0eLGS9mfaSuE4": "Carteira Digital de Trânsito",
+        "recFWaslN9KIZVTap": "Tesouro Direto",
+        "rectunLB0N9QwObTS": "Meu INSS",
+        "recUmYPNDhj1qx9en": "Receita Federal",
+        "recku4IsUey3nvBEk": "Caixa",
+        "rec4ixvEzLW5JHqnm": "Pix"
       };
       
       // Also directly map categories from the Airtable
