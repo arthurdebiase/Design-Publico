@@ -310,29 +310,28 @@ export class MemStorage implements IStorage {
         }
       });
       
+      // First, log all Airtable app records to debug what names are actually in Airtable
+      console.log("DEBUG: All Airtable app records:");
+      allAppRecords.forEach(record => {
+        console.log(`  - ID: ${record.id}, Name: ${record.fields.name || 'null'}`);
+      });
+      
       // Add manual mappings for apps that might not be properly named - exact names from Airtable
-      const appNameMappings: Record<string, string> = {
-        "recqLTQuYEOSBqzE4": "GOV.BR", // Fixed capitalization to match Airtable
-        "recUmYPNDhj1qx9en": "Conecta Recife",
-        "rectrB2IiTvux50C5": "Meu SUS Digital",
-        "rectunLB0N9QwObTS": "Pix", // Fixed capitalization to match Airtable
-        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
-        "recFWaslN9KIZVTap": "MEU INSS", // Fixed capitalization to match Airtable
-        "rec4ixvEzLW5JHqnm": "Carteira Digital de Trânsito",
-        "recO0Fz9BhXYpqTgJ": "e-Título",
-        "recGwK0XXHDMrfzL8": "Celular Seguro BR",
-        "recb4PdJEShoxI0x5": "Correios",
-        "recEL1ZOe6nGpEP73": "CAIXA Tem",
-        "recJBNHjc8G2QvEb4": "MEI",
-        "recMNEJDQCCupjYZJ": "Cadastro Único",
-        "recXnV9THYptJQ1UL": "Receita Federal",
-        "recqJwRQQxGxYLnp4": "CAIXA",
-        "recKe1q9hB1oEEfn5": "Resultados",
-        "reczpknduWvlL2cey": "Zona Azul Digital Recife",
-        // Add any missing apps from the Unknown App debug output
-        "recFeNuRH3cMZiM2j": "e-Título",
-        "recku4IsUey3nvBEk": "CAIXA" // New mapping from debugging output
-      };
+      // These should be updated to reflect exactly what's in Airtable
+      const appNameMappings: Record<string, string> = {};
+      
+      // Populate appNameMappings from the actual Airtable data
+      allAppRecords.forEach(record => {
+        if (record.id && record.fields.name) {
+          appNameMappings[record.id] = record.fields.name;
+        }
+      });
+      
+      // Log all app ID to name mappings for verification
+      console.log("DEBUG: App ID to Name mappings:");
+      Object.entries(appNameMappings).forEach(([id, name]) => {
+        console.log(`  - ID: ${id}, Name: ${name}`);
+      });
       
       // Add these mappings to the appIdToNameMap
       Object.entries(appNameMappings).forEach(([id, name]) => {
@@ -390,6 +389,10 @@ export class MemStorage implements IStorage {
         let appRecordId: string | null = null;
         let appName: string = "Unknown App";
         
+        // Add more debug logging for app name field
+        console.log(`DEBUG: Screen '${fields[SCREEN_NAME_FIELD] || "Unknown"}' app name field:`, 
+          JSON.stringify(appNameField));
+        
         // Extract the app ID or name from the appNameField
         if (Array.isArray(appNameField)) {
           // For linked records that return arrays (most likely scenario with Airtable)
@@ -397,38 +400,50 @@ export class MemStorage implements IStorage {
             if (typeof appNameField[0] === 'object' && appNameField[0].id) {
               // This is an object with linked record data
               appRecordId = appNameField[0].id;
-              appName = appNameField[0].name || "Unknown App";
+              console.log(`DEBUG: Found linked app record ID: ${appRecordId}`);
+              
+              // Directly use the ID to look up the name from our mapping
+              if (appNameMappings[appRecordId]) {
+                appName = appNameMappings[appRecordId];
+                console.log(`DEBUG: Mapped app name from ID mapping: ${appName}`);
+              }
             } else {
               // This is just an array of IDs or strings
               appRecordId = typeof appNameField[0] === 'string' ? appNameField[0] : null;
-              appName = "Unknown App"; // We'll resolve this from the ID mapping later
+              console.log(`DEBUG: Found app ID as string in array: ${appRecordId}`);
+              
+              // Directly use the ID to look up the name from our mapping
+              if (appRecordId && appNameMappings[appRecordId]) {
+                appName = appNameMappings[appRecordId];
+                console.log(`DEBUG: Mapped app name from ID string in array: ${appName}`);
+              }
             }
           }
         } else if (typeof appNameField === 'object' && appNameField !== null) {
           // For linked records that return a single object
           appRecordId = appNameField.id || null;
-          appName = appNameField.name || "Unknown App";
+          console.log(`DEBUG: Found app object with ID: ${appRecordId}`);
+          
+          // Directly use the ID to look up the name from our mapping
+          if (appRecordId && appNameMappings[appRecordId]) {
+            appName = appNameMappings[appRecordId];
+            console.log(`DEBUG: Mapped app name from object ID: ${appName}`);
+          }
         } else if (typeof appNameField === 'string') {
           // Regular string field
           appRecordId = appNameField;
-          appName = "Unknown App"; // We'll resolve this from the ID mapping later
-        }
-        
-        // If we have the app record ID but not a good name, try to get it from our mappings
-        if (appRecordId) {
-          if (appName === "Unknown App" && appIdToNameMap.has(appRecordId)) {
-            appName = appIdToNameMap.get(appRecordId) || appName;
-          }
+          console.log(`DEBUG: Found app ID as string: ${appRecordId}`);
           
-          // Also set the app name if we have a direct mapping for this record ID
+          // Directly use the ID to look up the name from our mapping
           if (appNameMappings[appRecordId]) {
             appName = appNameMappings[appRecordId];
+            console.log(`DEBUG: Mapped app name from string ID: ${appName}`);
           }
         }
         
-        // First try to get a name from our ID-to-name mapping
-        if (appRecordId && appIdToNameMap.has(appRecordId)) {
-          appName = appIdToNameMap.get(appRecordId) || appName;
+        // Log the final app record ID and name after all mappings
+        if (appRecordId) {
+          console.log(`DEBUG: Final mapping - App Record ID: ${appRecordId}, App Name: ${appName}`);
         }
         
         // Check the current screen for app name clues in title or description
@@ -441,25 +456,15 @@ export class MemStorage implements IStorage {
           const titleLower = screenTitle.toString().toLowerCase();
           const descLower = screenDescription.toString().toLowerCase();
           
-          // Special case patterns - Use exact names from Airtable
-          if (titleLower.includes('e-título') || descLower.includes('e-título') || 
-              titleLower.includes('etitulo') || titleLower.includes('título eleitoral')) {
-            // Use the exact name from Airtable ID mapping
-            appName = appNameMappings["recO0Fz9BhXYpqTgJ"] || "e-Título";
-          } else if (titleLower.includes('carteira digital de trânsito') || 
-                     titleLower.includes('cdt') || descLower.includes('cdt') || 
-                     (titleLower.includes('trânsito') && titleLower.includes('carteira'))) {
-            // Use the exact name from Airtable ID mapping
-            appName = appNameMappings["rec4ixvEzLW5JHqnm"] || "Carteira Digital de Trânsito";
-          } else if (appRecordId === "recqLTQuYEOSBqzE4" || titleLower.includes('gov.br')) {
-            // Use the exact name from Airtable ID mapping
-            appName = appNameMappings["recqLTQuYEOSBqzE4"] || "GOV.BR";
-          } else if (appRecordId === "rectunLB0N9QwObTS" || titleLower.includes('pix')) {
-            // Use the exact name from Airtable ID mapping
-            appName = appNameMappings["rectunLB0N9QwObTS"] || "Pix";
-          } else if (appRecordId === "recFWaslN9KIZVTap" || titleLower.includes('inss')) {
-            // Use the exact name from Airtable ID mapping
-            appName = appNameMappings["recFWaslN9KIZVTap"] || "MEU INSS";
+          // Debug the appRecordId and related screen details
+          if (appRecordId) {
+            console.log(`DEBUG: Screen "${screenTitle}" has app record ID: ${appRecordId}`);
+          }
+          
+          // Use the appRecordId to look up the name directly from Airtable data
+          if (appRecordId && appNameMappings[appRecordId]) {
+            appName = appNameMappings[appRecordId];
+            console.log(`DEBUG: Assigned app name from record ID ${appRecordId}: ${appName}`);
           }
         }
         
@@ -482,12 +487,7 @@ export class MemStorage implements IStorage {
                  screenName.includes('trânsito');
         });
         
-        // Update app name based on screen content - use the exact same names as in the Airtable
-        if (hasEtituloScreens) {
-          appName = appNameMappings["recO0Fz9BhXYpqTgJ"] || "e-Título";
-        } else if (hasCDTScreens) {
-          appName = appNameMappings["rec4ixvEzLW5JHqnm"] || "Carteira Digital de Trânsito";
-        }
+        // We rely on Airtable data and record IDs for proper mapping now
         
         if (!appGroups.has(appName)) {
           appGroups.set(appName, []);
