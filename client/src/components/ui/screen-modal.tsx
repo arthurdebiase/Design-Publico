@@ -104,8 +104,7 @@ export function ScreenModal({
               )}
             </div>
             <div>
-              {/* Logo only, no app name displayed as per requirements */}
-              <DialogTitle className="sr-only">{app.name}</DialogTitle>
+              <DialogTitle className="font-medium text-base m-0 p-0">{app.name}</DialogTitle>
               <DialogDescription className="text-sm text-gray-500 m-0">{currentScreen.name}</DialogDescription>
             </div>
           </div>

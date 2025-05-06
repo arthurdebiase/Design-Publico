@@ -119,8 +119,7 @@ export default function AppDetail() {
                 </div>
                 <div className="flex-1">
                   <div className="flex flex-wrap items-center mb-2 gap-3">
-                    {/* Logo only, no app name displayed as per requirements */}
-                    <h1 className="sr-only">{app.name}</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">{app.name}</h1>
                     {app.platform && (
                       <Badge variant="secondary" className={`px-3 py-1.5 rounded ${getPlatformBadgeClass(app.platform)}`}>
                         {app.platform}
