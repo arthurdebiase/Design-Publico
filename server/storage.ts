@@ -313,12 +313,15 @@ export class MemStorage implements IStorage {
       const manualLogoMappings: Record<string, string> = {
         "Carteira Digital de Trânsito": "https://dl.airtable.com/.attachments/0f34aad6098fa58a1e147187f7d5ee25/a2f04710/CDT-logo.png",
         "e-Título": "https://dl.airtable.com/.attachments/a6a7f4bdd92036e0b231d79a7a818376/01d4f870/etitulo-logo.png",
-        "GOV.BR": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
-        "MEU INSS": "https://dl.airtable.com/.attachments/1d1b1fa8a5f4131a42b5a1c307aed06e/13cb4a47/meuinss-logo.png",
+        "Gov.br": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
+        "Meu INSS": "https://dl.airtable.com/.attachments/1d1b1fa8a5f4131a42b5a1c307aed06e/13cb4a47/meuinss-logo.png",
         "Meu SUS Digital": "https://dl.airtable.com/.attachments/5dff95f0747a7122daaae50c1993afec/3aca47a1/sus-logo.png",
         "Conecta Recife": "https://dl.airtable.com/.attachments/f67e5df29f6afa8eee49a9bde36a9cbf/ecbf0c4d/conectarecife-logo.png",
         "Carteira de Trabalho Digital": "https://dl.airtable.com/.attachments/5ae3d7ca28ea2eafa27c7b22e17a96df/0186f3a8/ctps-logo.png",
-        "Pix": "https://dl.airtable.com/.attachments/f6a5397cdefd23d3292ab7ee0a796555/9a3e5665/pix-logo.png"
+        "Pix": "https://dl.airtable.com/.attachments/f6a5397cdefd23d3292ab7ee0a796555/9a3e5665/pix-logo.png",
+        "Receita Federal": "https://dl.airtable.com/.attachments/dfbcb717ce1b99af1cb5fc09c6cda3c3/b7c0a22b/receita-federal-logo.png",
+        "CAIXA": "https://dl.airtable.com/.attachments/b07d2a5c1ee4d6abc72d98f3c917bb2f/38a3c220/caixa-logo.png",
+        "Tesouro Direto": "https://dl.airtable.com/.attachments/99b1c1c4cab65810e364f0d39f5b4e5a/6c17bb22/tesouro-direto-logo.png"
       };
       
       // Add these mappings to the appLogosMap if not already present
@@ -360,16 +363,16 @@ export class MemStorage implements IStorage {
       // Directly use the exact values from the "appname" or "appname (from apps)" columns 
       // in the "screens" table of Airtable, as shown in the link
       const directAppMappings: Record<string, string> = {
-        "rectrB2IiTvux50C5": "MEU SUS DIGITAL",
-        "recb065qS5JzHh9Xt": "CARTEIRA DE TRABALHO DIGITAL",
-        "reclNS6PnkfRXBpRE": "CONECTA RECIFE",
-        "recqLTQuYEOSBqzE4": "GOV.BR",
-        "recY0eLGS9mfaSuE4": "CARTEIRA DIGITAL DE TRÂNSITO",
-        "recFWaslN9KIZVTap": "TESOURO DIRETO",
-        "rectunLB0N9QwObTS": "MEU INSS",
-        "recUmYPNDhj1qx9en": "RECEITA FEDERAL",
+        "rectrB2IiTvux50C5": "Meu SUS Digital",
+        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
+        "reclNS6PnkfRXBpRE": "Conecta Recife",
+        "recqLTQuYEOSBqzE4": "Gov.br",
+        "recY0eLGS9mfaSuE4": "Carteira Digital de Trânsito",
+        "recFWaslN9KIZVTap": "Tesouro Direto",
+        "rectunLB0N9QwObTS": "Meu INSS",
+        "recUmYPNDhj1qx9en": "Receita Federal",
         "recku4IsUey3nvBEk": "CAIXA",
-        "rec4ixvEzLW5JHqnm": "PIX"
+        "rec4ixvEzLW5JHqnm": "Pix"
       };
       
       // Also directly map categories from the Airtable
