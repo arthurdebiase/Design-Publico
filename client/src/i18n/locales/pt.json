@@ -6,6 +6,11 @@
     "submitApp": "Enviar Aplicativo",
     "requestApp": "Solicitar Aplicativo"
   },
+  "auth": {
+    "login": "Entrar",
+    "logout": "Sair",
+    "profile": "Perfil"
+  },
   "footer": {
     "privacy": "Política de Privacidade",
     "terms": "Termos de Serviço",

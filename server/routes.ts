@@ -77,20 +77,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Sync data from Airtable
-  app.post("/api/sync", async (req, res) => {
-    try {
-      if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
-        return res.status(400).json({ message: "Airtable API key or base ID not configured" });
-      }
-      
-      await storage.syncFromAirtable(AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
-      res.json({ message: "Sync completed successfully" });
-    } catch (error) {
-      console.error("Error syncing from Airtable:", error);
-      res.status(500).json({ message: "Failed to sync from Airtable" });
-    }
-  });
+  // Public Sync endpoint (removed as it's duplicated below with the protected version)
 
   // Create a new app
   app.post("/api/apps", async (req, res) => {
