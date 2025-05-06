@@ -279,14 +279,16 @@ export class MemStorage implements IStorage {
       console.log(`Found ${appLogosMap.size} app logos in total.`);
       
       // Manually add some app logos directly by name if missing (backup approach)
+      // These exact names match what's in the Airtable
       const manualLogoMappings: Record<string, string> = {
         "Carteira Digital de Trânsito": "https://dl.airtable.com/.attachments/0f34aad6098fa58a1e147187f7d5ee25/a2f04710/CDT-logo.png",
         "e-Título": "https://dl.airtable.com/.attachments/a6a7f4bdd92036e0b231d79a7a818376/01d4f870/etitulo-logo.png",
-        "Gov.br": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
+        "gov.br": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
         "Meu INSS": "https://dl.airtable.com/.attachments/1d1b1fa8a5f4131a42b5a1c307aed06e/13cb4a47/meuinss-logo.png",
         "Meu SUS Digital": "https://dl.airtable.com/.attachments/5dff95f0747a7122daaae50c1993afec/3aca47a1/sus-logo.png",
         "Conecta Recife": "https://dl.airtable.com/.attachments/f67e5df29f6afa8eee49a9bde36a9cbf/ecbf0c4d/conectarecife-logo.png",
-        "Carteira de Trabalho Digital": "https://dl.airtable.com/.attachments/5ae3d7ca28ea2eafa27c7b22e17a96df/0186f3a8/ctps-logo.png"
+        "Carteira de Trabalho Digital": "https://dl.airtable.com/.attachments/5ae3d7ca28ea2eafa27c7b22e17a96df/0186f3a8/ctps-logo.png",
+        "PIX": "https://dl.airtable.com/.attachments/f6a5397cdefd23d3292ab7ee0a796555/9a3e5665/pix-logo.png"
       };
       
       // Add these mappings to the appLogosMap if not already present
@@ -297,12 +299,12 @@ export class MemStorage implements IStorage {
         }
       });
       
-      // Add manual mappings for apps that might not be properly named
+      // Add manual mappings for apps that might not be properly named - exact names from Airtable
       const appNameMappings: Record<string, string> = {
-        "recqLTQuYEOSBqzE4": "Gov.br",
+        "recqLTQuYEOSBqzE4": "gov.br",
         "recUmYPNDhj1qx9en": "Conecta Recife",
         "rectrB2IiTvux50C5": "Meu SUS Digital",
-        "rectunLB0N9QwObTS": "Pix",
+        "rectunLB0N9QwObTS": "PIX",
         "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
         "recFWaslN9KIZVTap": "Meu INSS",
         "rec4ixvEzLW5JHqnm": "Carteira Digital de Trânsito",
@@ -408,7 +410,9 @@ export class MemStorage implements IStorage {
                      (titleLower.includes('trânsito') && titleLower.includes('carteira'))) {
             appName = "Carteira Digital de Trânsito";
           } else if (appRecordId === "recqLTQuYEOSBqzE4" || titleLower.includes('gov.br')) {
-            appName = "Gov.br";
+            appName = "gov.br";
+          } else if (appRecordId === "rectunLB0N9QwObTS" || titleLower.includes('pix')) {
+            appName = "PIX";
           }
         }
         
@@ -431,7 +435,7 @@ export class MemStorage implements IStorage {
                  screenName.includes('trânsito');
         });
         
-        // Update app name based on screen content
+        // Update app name based on screen content - use the exact same names as in the Airtable
         if (hasEtituloScreens) {
           appName = "e-Título";
         } else if (hasCDTScreens) {
@@ -496,16 +500,16 @@ export class MemStorage implements IStorage {
         let appType = fields[APP_TYPE_FIELD];
         
         if (!appType) {
-          // Specific app-based overrides for missing type values
+          // Specific app-based overrides for missing type values - use exact names from Airtable
           if (appName === "Conecta Recife" || appName === "Zona Azul Digital Recife") {
             appType = "Municipal";
           } else if (appName === "Carteira de Trabalho Digital" || 
                     appName === "Meu SUS Digital" ||
-                    appName === "Gov.br" ||
+                    appName === "gov.br" ||
                     appName === "e-Título" ||
                     appName === "Carteira Digital de Trânsito" ||
                     appName === "Meu INSS" ||
-                    appName === "Pix" ||
+                    appName === "PIX" ||
                     appName === "CAIXA" ||
                     appName === "CAIXA Tem" ||
                     appName === "Receita Federal" ||
