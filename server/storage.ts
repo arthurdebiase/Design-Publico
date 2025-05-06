@@ -330,7 +330,8 @@ export class MemStorage implements IStorage {
         "recKe1q9hB1oEEfn5": "Resultados",
         "reczpknduWvlL2cey": "Zona Azul Digital Recife",
         // Add any missing apps from the Unknown App debug output
-        "recFeNuRH3cMZiM2j": "e-Título"
+        "recFeNuRH3cMZiM2j": "e-Título",
+        "recku4IsUey3nvBEk": "CAIXA" // New mapping from debugging output
       };
       
       // Add these mappings to the appIdToNameMap
