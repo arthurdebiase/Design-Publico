@@ -1,10 +1,11 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { Menu, LogIn, LogOut, User } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 // Import the symbol image
 import symbolLogo from "@/assets/designpublico-symbol.svg";
 
@@ -25,6 +26,7 @@ function useBrandLogo() {
 export default function Header() {
   const [location] = useLocation();
   const { t } = useTranslation();
+  const { user, isLoading, isAuthenticated } = useAuth();
   
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
@@ -59,6 +61,23 @@ export default function Header() {
           <Button className="bg-[#0066FF] hover:bg-blue-700 text-white">
             {t('header.requestApp')}
           </Button>
+          
+          {/* Auth buttons */}
+          {isAuthenticated ? (
+            <a href="/api/logout">
+              <Button variant="outline" className="flex items-center gap-2">
+                <LogOut className="h-4 w-4" />
+                {t('auth.logout')}
+              </Button>
+            </a>
+          ) : (
+            <a href="/api/login">
+              <Button variant="outline" className="flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                {t('auth.login')}
+              </Button>
+            </a>
+          )}
         </nav>
         
         {/* Mobile Menu */}
@@ -83,6 +102,23 @@ export default function Header() {
                 <Button className="bg-[#0066FF] hover:bg-blue-700 text-white mt-4">
                   {t('header.requestApp')}
                 </Button>
+                
+                {/* Auth buttons for mobile */}
+                {isAuthenticated ? (
+                  <a href="/api/logout" className="mt-2">
+                    <Button variant="outline" className="flex items-center gap-2 w-full">
+                      <LogOut className="h-4 w-4" />
+                      {t('auth.logout')}
+                    </Button>
+                  </a>
+                ) : (
+                  <a href="/api/login" className="mt-2">
+                    <Button variant="outline" className="flex items-center gap-2 w-full">
+                      <LogIn className="h-4 w-4" />
+                      {t('auth.login')}
+                    </Button>
+                  </a>
+                )}
               </div>
             </SheetContent>
           </Sheet>

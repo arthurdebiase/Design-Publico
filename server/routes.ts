@@ -4,8 +4,12 @@ import { storage } from "./storage";
 import { insertAppSchema, insertScreenSchema } from "@shared/schema";
 import { z } from "zod";
 import { subscribeToNewsletter, getNewsletterSubscribers } from "./newsletter";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Setup Replit Auth
+  await setupAuth(app);
+  
   // Setup Airtable API key
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY || "";
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || "";
@@ -135,6 +139,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Newsletter subscription endpoints
   app.post("/api/newsletter/subscribe", subscribeToNewsletter);
   app.get("/api/newsletter/subscribers", getNewsletterSubscribers);
+  
+  // Auth routes
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const user = await storage.getUser(userId);
+      res.json(user);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ message: "Failed to fetch user" });
+    }
+  });
+  
+  // Protected routes example
+  app.post('/api/sync', isAuthenticated, async (req, res) => {
+    try {
+      if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
+        return res.status(400).json({ message: "Airtable API key or base ID not configured" });
+      }
+      
+      await storage.syncFromAirtable(AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
+      res.json({ message: "Sync completed successfully" });
+    } catch (error) {
+      console.error("Error syncing from Airtable:", error);
+      res.status(500).json({ message: "Failed to sync from Airtable" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
