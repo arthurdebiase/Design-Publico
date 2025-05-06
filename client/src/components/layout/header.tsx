@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
 import { useQuery } from "@tanstack/react-query";
 // Import the symbol image
-import symbolLogo from "@/assets/symbol.png";
+import symbolLogo from "@/assets/designpublico-symbol.svg";
 
 interface LogoResponse {
   url: string;
