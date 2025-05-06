@@ -294,12 +294,12 @@ export class MemStorage implements IStorage {
       const manualLogoMappings: Record<string, string> = {
         "Carteira Digital de Trânsito": "https://dl.airtable.com/.attachments/0f34aad6098fa58a1e147187f7d5ee25/a2f04710/CDT-logo.png",
         "e-Título": "https://dl.airtable.com/.attachments/a6a7f4bdd92036e0b231d79a7a818376/01d4f870/etitulo-logo.png",
-        "gov.br": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
-        "Meu INSS": "https://dl.airtable.com/.attachments/1d1b1fa8a5f4131a42b5a1c307aed06e/13cb4a47/meuinss-logo.png",
+        "GOV.BR": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
+        "MEU INSS": "https://dl.airtable.com/.attachments/1d1b1fa8a5f4131a42b5a1c307aed06e/13cb4a47/meuinss-logo.png",
         "Meu SUS Digital": "https://dl.airtable.com/.attachments/5dff95f0747a7122daaae50c1993afec/3aca47a1/sus-logo.png",
         "Conecta Recife": "https://dl.airtable.com/.attachments/f67e5df29f6afa8eee49a9bde36a9cbf/ecbf0c4d/conectarecife-logo.png",
         "Carteira de Trabalho Digital": "https://dl.airtable.com/.attachments/5ae3d7ca28ea2eafa27c7b22e17a96df/0186f3a8/ctps-logo.png",
-        "PIX": "https://dl.airtable.com/.attachments/f6a5397cdefd23d3292ab7ee0a796555/9a3e5665/pix-logo.png"
+        "Pix": "https://dl.airtable.com/.attachments/f6a5397cdefd23d3292ab7ee0a796555/9a3e5665/pix-logo.png"
       };
       
       // Add these mappings to the appLogosMap if not already present
@@ -312,12 +312,12 @@ export class MemStorage implements IStorage {
       
       // Add manual mappings for apps that might not be properly named - exact names from Airtable
       const appNameMappings: Record<string, string> = {
-        "recqLTQuYEOSBqzE4": "gov.br",
+        "recqLTQuYEOSBqzE4": "GOV.BR", // Fixed capitalization to match Airtable
         "recUmYPNDhj1qx9en": "Conecta Recife",
         "rectrB2IiTvux50C5": "Meu SUS Digital",
-        "rectunLB0N9QwObTS": "PIX",
+        "rectunLB0N9QwObTS": "Pix", // Fixed capitalization to match Airtable
         "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
-        "recFWaslN9KIZVTap": "Meu INSS",
+        "recFWaslN9KIZVTap": "MEU INSS", // Fixed capitalization to match Airtable
         "rec4ixvEzLW5JHqnm": "Carteira Digital de Trânsito",
         "recO0Fz9BhXYpqTgJ": "e-Título",
         "recGwK0XXHDMrfzL8": "Celular Seguro BR",
@@ -453,10 +453,13 @@ export class MemStorage implements IStorage {
             appName = appNameMappings["rec4ixvEzLW5JHqnm"] || "Carteira Digital de Trânsito";
           } else if (appRecordId === "recqLTQuYEOSBqzE4" || titleLower.includes('gov.br')) {
             // Use the exact name from Airtable ID mapping
-            appName = appNameMappings["recqLTQuYEOSBqzE4"] || "gov.br";
+            appName = appNameMappings["recqLTQuYEOSBqzE4"] || "GOV.BR";
           } else if (appRecordId === "rectunLB0N9QwObTS" || titleLower.includes('pix')) {
             // Use the exact name from Airtable ID mapping
-            appName = appNameMappings["rectunLB0N9QwObTS"] || "PIX";
+            appName = appNameMappings["rectunLB0N9QwObTS"] || "Pix";
+          } else if (appRecordId === "recFWaslN9KIZVTap" || titleLower.includes('inss')) {
+            // Use the exact name from Airtable ID mapping
+            appName = appNameMappings["recFWaslN9KIZVTap"] || "MEU INSS";
           }
         }
         
@@ -549,11 +552,11 @@ export class MemStorage implements IStorage {
             appType = "Municipal";
           } else if (appName === "Carteira de Trabalho Digital" || 
                     appName === "Meu SUS Digital" ||
-                    appName === "gov.br" ||
+                    appName === "GOV.BR" ||
                     appName === "e-Título" ||
                     appName === "Carteira Digital de Trânsito" ||
-                    appName === "Meu INSS" ||
-                    appName === "PIX" ||
+                    appName === "MEU INSS" ||
+                    appName === "Pix" ||
                     appName === "CAIXA" ||
                     appName === "CAIXA Tem" ||
                     appName === "Receita Federal" ||
