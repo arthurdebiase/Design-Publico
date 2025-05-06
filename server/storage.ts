@@ -302,7 +302,33 @@ export class MemStorage implements IStorage {
         if (appName === "rectunLB0N9QwObTS") appName = "Pix";
         if (appName === "recb065qS5JzHh9Xt") appName = "Carteira de Trabalho Digital";
         if (appName === "recFWaslN9KIZVTap") appName = "Meu INSS";
-        if (appName === "rec4ixvEzLW5JHqnm") appName = "e-Título";
+        if (appName === "rec4ixvEzLW5JHqnm") appName = "Carteira Digital de Trânsito";
+        
+        // Get all screens that have already been processed with this app name
+        const currentAppRecords = appGroups.get(appName) || [];
+        
+        // Check if any screen has e-Título related text
+        const hasEtituloScreens = currentAppRecords.some((r: any) => {
+          const screenName = (r.fields?.name || r.fields?.title || '').toString().toLowerCase();
+          return screenName.includes('e-título') || 
+                 screenName.includes('etitulo') || 
+                 screenName.includes('título eleitoral');
+        });
+        
+        // Check if any screen has CDT related text
+        const hasCDTScreens = currentAppRecords.some((r: any) => {
+          const screenName = (r.fields?.name || r.fields?.title || '').toString().toLowerCase();
+          return screenName.includes('carteira digital de trânsito') || 
+                 screenName.includes('cdt') || 
+                 screenName.includes('trânsito');
+        });
+        
+        // Update app name based on screen content
+        if (hasEtituloScreens) {
+          appName = "e-Título";
+        } else if (hasCDTScreens) {
+          appName = "Carteira Digital de Trânsito";
+        }
         
         if (!appGroups.has(appName)) {
           appGroups.set(appName, []);
@@ -344,9 +370,22 @@ export class MemStorage implements IStorage {
         let appType = fields.type;
         if (!appType) {
           // Specific app-based overrides for missing type values
-          if (appName === "Conecta Recife") {
+          if (appName === "Conecta Recife" || appName === "Zona Azul Digital Recife") {
             appType = "Municipal";
-          } else if (appName === "Carteira de Trabalho Digital" || appName === "Meu SUS Digital") {
+          } else if (appName === "Carteira de Trabalho Digital" || 
+                    appName === "Meu SUS Digital" ||
+                    appName === "Gov.br" ||
+                    appName === "e-Título" ||
+                    appName === "Carteira Digital de Trânsito" ||
+                    appName === "Meu INSS" ||
+                    appName === "Pix" ||
+                    appName === "CAIXA" ||
+                    appName === "CAIXA Tem" ||
+                    appName === "Receita Federal" ||
+                    appName === "MEI" ||
+                    appName === "Cadastro Único" ||
+                    appName === "Correios" ||
+                    appName === "Celular Seguro BR") {
             appType = "Federal";
           } else {
             appType = "Federal"; // Default fallback
