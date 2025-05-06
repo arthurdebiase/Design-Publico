@@ -4,44 +4,20 @@ import { App, Screen } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { fetchScreensByAppId } from "@/lib/airtable";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { 
-  Carousel, 
-  CarouselContent, 
-  CarouselItem, 
-  CarouselNext, 
-  CarouselPrevious,
-  type CarouselApi
-} from "@/components/ui/carousel";
+// No longer need carousel components
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface AppCardProps {
   app: App;
 }
 
-function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string }) {
+function AppScreenImage({ appId, appName }: { appId: string, appName?: string }) {
   const { data: screens, isLoading, error } = useQuery({
     queryKey: [`/api/apps/${appId}/screens`],
     queryFn: () => fetchScreensByAppId(appId),
   });
-  const [api, setApi] = useState<CarouselApi | null>(null);
-  const [current, setCurrent] = useState(0);
   const [, navigate] = useLocation();
   const isMobile = useIsMobile();
-  const [touchMoved, setTouchMoved] = useState(false);
-
-  useEffect(() => {
-    if (!api) return;
-    
-    const onSelect = () => {
-      setCurrent(api.selectedScrollSnap());
-    };
-
-    api.on("select", onSelect);
-    
-    return () => {
-      api.off("select", onSelect);
-    };
-  }, [api]);
 
   if (isLoading) {
     return <Skeleton className="w-full h-full" />;
@@ -55,157 +31,72 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
     );
   }
 
-  // Get first 3 screens
-  const displayScreens = screens.slice(0, Math.min(3, screens.length));
-
-  // Prevent click events from bubbling up (for navigation buttons)
-  const handleControlClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
-  // Handle click on the carousel to navigate to app detail
-  const handleCarouselClick = (e: React.MouseEvent) => {
-    // Allow the click to propagate to the parent card
-    if (!touchMoved) {
-      // We no longer prevent default or stop propagation
-      navigate(`/app/${appId}`);
-    }
-    // Reset the flag
-    setTouchMoved(false);
-  };
-  
-  // Track touch movements to prevent navigating when user is swiping
-  const handleTouchStart = () => {
-    setTouchMoved(false);
-  };
-  
-  const handleTouchMove = () => {
-    setTouchMoved(true);
-  };
+  // Get first screen only
+  const firstScreen = screens[0];
 
   return (
-    <Carousel 
-      className="w-full h-full relative group cursor-pointer touch-pan-y" 
-      opts={{ 
-        loop: true,
-        align: "center"
-      }} 
-      setApi={setApi}
-      onClick={handleCarouselClick}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-    >
-      <CarouselContent className="-ml-1 h-full">
-        {displayScreens.map((screen) => (
-          <CarouselItem key={screen.id} className="pl-1 h-full">
-            <div className="w-full h-full flex items-center justify-center bg-gray-100 p-1 sm:p-2">
-              <div className="flex items-center justify-center h-full relative group/item" style={{ 
-                width: isMobile ? "98%" : "95%",
-                height: "100%"
-              }}>
-                <div 
-                  className="h-full w-full flex items-center justify-center cursor-pointer"
-                  onClick={(e) => {
-                    // Allow the click to propagate to the parent card
-                    navigate(`/app/${appId}`);
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`View ${appName || 'app'} details`}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      // Allow keyboard events to propagate
-                      navigate(`/app/${appId}`);
-                    }
-                  }}
-                >
-                  <img 
-                    src={screen.imageUrl} 
-                    alt={`${appName ? appName + ': ' : ''}${screen.name || 'Screen view'} - ${screen.description || 'User interface example'}`}
-                    className="w-auto h-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
-                    style={{ 
-                      maxWidth: "100%",
-                      maxHeight: "100%",
-                      objectFit: "contain",
-                      objectPosition: "center",
-                      aspectRatio: "9/16"
-                    }}
-                  />
-                </div>
-                
-                {/* Clickable overlay for desktop */}
-                {!isMobile && (
-                  <div 
-                    className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-all opacity-0 group-hover/item:opacity-100 flex items-center justify-center rounded-lg cursor-pointer"
-                    onClick={() => {
-                      // Allow the event to propagate to the parent handlers
-                      navigate(`/app/${appId}`);
-                    }}
-                    role="button"
-                    tabIndex={-1}
-                    aria-hidden="true"
-                  >
-                    <div className="bg-black/60 text-white rounded-full p-2 transform scale-90 hover:scale-100 transition-transform">
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        width="24" 
-                        height="24" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        strokeWidth="2" 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        className="w-5 h-5"
-                        aria-hidden="true"
-                      >
-                        <polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>
-                        <line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>
-                      </svg>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <div 
-        className={`absolute inset-0 ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}
-        onClick={handleControlClick}
-      >
-        <CarouselPrevious 
-          className={`absolute left-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'} bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm`}
-          variant="outline"
-          aria-label={`View previous screen for ${appName || 'app'}`}
-        />
-        <CarouselNext 
-          className={`absolute right-2 top-1/2 transform -translate-y-1/2 ${isMobile ? 'h-7 w-7' : 'h-8 w-8'} bg-black/40 hover:bg-black/60 border-none text-white z-10 shadow-sm`}
-          variant="outline"
-          aria-label={`View next screen for ${appName || 'app'}`}
-        />
-      </div>
-      
-      {/* Dots indicator */}
-      {displayScreens.length > 1 && (
+    <div className="w-full h-full flex items-center justify-center bg-gray-100 p-1 sm:p-2">
+      <div className="flex items-center justify-center h-full relative group/item" style={{ 
+        width: isMobile ? "98%" : "95%",
+        height: "100%"
+      }}>
         <div 
-          className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 z-10"
-          onClick={handleControlClick}
+          className="h-full w-full flex items-center justify-center cursor-pointer"
+          onClick={() => navigate(`/app/${appId}`)}
+          role="button"
+          tabIndex={0}
+          aria-label={`View ${appName || 'app'} details`}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              navigate(`/app/${appId}`);
+            }
+          }}
         >
-          {displayScreens.map((_, index) => (
-            <button
-              key={index}
-              className={`${isMobile ? 'w-1.5 h-1.5' : 'w-2 h-2'} rounded-full transition-colors ${
-                index === current ? "bg-black/70" : "bg-black/30"
-              }`}
-              onClick={() => api?.scrollTo(index)}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+          <img 
+            src={firstScreen.imageUrl} 
+            alt={`${appName ? appName + ': ' : ''}${firstScreen.name || 'Screen view'} - ${firstScreen.description || 'User interface example'}`}
+            className="w-auto h-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
+            style={{ 
+              maxWidth: "100%",
+              maxHeight: "100%",
+              objectFit: "contain",
+              objectPosition: "center",
+              aspectRatio: "9/16"
+            }}
+          />
         </div>
-      )}
-    </Carousel>
+        
+        {/* Clickable overlay for desktop */}
+        {!isMobile && (
+          <div 
+            className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-all opacity-0 group-hover/item:opacity-100 flex items-center justify-center rounded-lg cursor-pointer"
+            onClick={() => navigate(`/app/${appId}`)}
+            role="button"
+            tabIndex={-1}
+            aria-hidden="true"
+          >
+            <div className="bg-black/60 text-white rounded-full p-2 transform scale-90 hover:scale-100 transition-transform">
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className="w-5 h-5"
+                aria-hidden="true"
+              >
+                <polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>
+                <line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>
+              </svg>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -243,7 +134,7 @@ export default function AppCard({ app }: AppCardProps) {
         aria-labelledby={`app-name-${app.id}`}
       >
         <div className="relative flex-grow overflow-hidden" style={imageContainerStyle}>
-          <AppScreenCarousel appId={app.id.toString()} appName={app.name} />
+          <AppScreenImage appId={app.id.toString()} appName={app.name} />
         </div>
         <div className={`${isMobile ? 'p-2' : 'p-3'} flex-shrink-0`}>
           <div className="flex items-center gap-3">
