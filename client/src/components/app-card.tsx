@@ -125,14 +125,13 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
                   <img 
                     src={screen.imageUrl} 
                     alt={`${appName ? appName + ': ' : ''}${screen.name || 'Screen view'} - ${screen.description || 'User interface example'}`}
-                    className="max-h-full w-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
+                    className="w-auto h-auto object-contain rounded-lg shadow-sm transition-transform hover:scale-[1.01]"
                     style={{ 
                       maxWidth: "100%",
                       maxHeight: "100%",
-                      height: "auto",
-                      width: "auto",
                       objectFit: "contain",
-                      objectPosition: "center"
+                      objectPosition: "center",
+                      aspectRatio: "9/16"
                     }}
                   />
                 </div>
@@ -216,9 +215,11 @@ function AppScreenCarousel({ appId, appName }: { appId: string, appName?: string
 export default function AppCard({ app }: AppCardProps) {
   const isMobile = useIsMobile();
   
-  // Responsive heights for different screen sizes
-  const cardHeight = isMobile ? "h-[380px]" : "h-[600px]";
-  const imageContainerHeight = isMobile ? "h-[320px]" : "h-[540px]";
+  // Responsive heights that maintain the proper aspect ratio (9:16)
+  const cardHeight = isMobile ? "h-auto" : "h-auto";
+  const imageContainerHeight = isMobile ? "h-auto" : "h-auto";
+  // Use aspect ratio to maintain proper proportions
+  const imageContainerStyle = { aspectRatio: "9/18" };
   
   return (
     <Link 
@@ -230,7 +231,7 @@ export default function AppCard({ app }: AppCardProps) {
         role="article"
         aria-labelledby={`app-name-${app.id}`}
       >
-        <div className="relative flex-grow overflow-hidden" style={{ height: imageContainerHeight }}>
+        <div className="relative flex-grow overflow-hidden" style={imageContainerStyle}>
           <AppScreenCarousel appId={app.id.toString()} appName={app.name} />
         </div>
         <div className={`${isMobile ? 'p-3' : 'p-4'} flex-shrink-0`}>

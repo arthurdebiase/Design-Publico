@@ -275,7 +275,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         }
       }}
     >
-      <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm aspect-[9/16] relative group">
+      <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" style={{ aspectRatio: "9/16" }}>
         {!imageLoaded && !imageError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
             <span className="sr-only">Loading screen image for {screen.name}</span>
@@ -295,7 +295,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           <img 
             src={screen.imageUrl} 
             alt={`${screen.app?.name ? screen.app.name + ': ' : ''}${screen.name} - ${screen.description || 'Screen view'}`}
-            className={`w-full h-full object-cover ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`w-full h-full object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
           />
