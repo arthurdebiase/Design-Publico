@@ -158,9 +158,7 @@ export default function ScreensPage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
-                {selectedAppId 
-                  ? `App: ${apps.find((app: App) => app.id.toString() === selectedAppId)?.name || 'Unknown'}`
-                  : 'Filter by App'}
+                {'Filter by App'}
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
@@ -181,13 +179,12 @@ export default function ScreensPage() {
                 >
                   <div className="flex items-center gap-2">
                     {app.logo ? (
-                      <img src={app.logo} alt={`${app.name} logo`} className="w-5 h-5" />
+                      <img src={app.logo} alt="App logo" className="w-6 h-6" />
                     ) : (
-                      <div className="w-5 h-5 bg-gray-100 rounded flex items-center justify-center">
+                      <div className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
                         <span className="text-xs">{app.name.charAt(0)}</span>
                       </div>
                     )}
-                    <span>{app.name}</span>
                   </div>
                 </DropdownMenuItem>
               ))}
@@ -322,7 +319,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
             {screen.app.logo ? (
               <img 
                 src={screen.app.logo} 
-                alt={`${screen.app.name} Logo`} 
+                alt="App Logo" 
                 className="w-6 h-6"
               />
             ) : (
@@ -332,13 +329,6 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
             )}
           </div>
         )}
-        <div className="flex-1 min-w-0">
-          {screen.app && (
-            <p className="text-sm font-medium truncate">
-              {screen.app.name}
-            </p>
-          )}
-        </div>
       </div>
     </div>
   );

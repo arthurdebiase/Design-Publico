@@ -308,29 +308,7 @@ export class MemStorage implements IStorage {
       // Log all found app logos for debugging
       console.log(`Found ${appLogosMap.size} app logos in total.`);
       
-      // Manually add some app logos directly by name if missing (backup approach)
-      // These exact names match what's in the Airtable
-      const manualLogoMappings: Record<string, string> = {
-        "Carteira Digital de Trânsito": "https://dl.airtable.com/.attachments/0f34aad6098fa58a1e147187f7d5ee25/a2f04710/CDT-logo.png",
-        "e-Título": "https://dl.airtable.com/.attachments/a6a7f4bdd92036e0b231d79a7a818376/01d4f870/etitulo-logo.png",
-        "Gov.br": "https://dl.airtable.com/.attachments/0b021baed6e69dde1c7c79eeda37d5b3/24da4893/govbr-logo.png",
-        "Meu INSS": "https://dl.airtable.com/.attachments/1d1b1fa8a5f4131a42b5a1c307aed06e/13cb4a47/meuinss-logo.png",
-        "Meu SUS Digital": "https://dl.airtable.com/.attachments/5dff95f0747a7122daaae50c1993afec/3aca47a1/sus-logo.png",
-        "Conecta Recife": "https://dl.airtable.com/.attachments/f67e5df29f6afa8eee49a9bde36a9cbf/ecbf0c4d/conectarecife-logo.png",
-        "Carteira de Trabalho Digital": "https://dl.airtable.com/.attachments/5ae3d7ca28ea2eafa27c7b22e17a96df/0186f3a8/ctps-logo.png",
-        "Pix": "https://dl.airtable.com/.attachments/f6a5397cdefd23d3292ab7ee0a796555/9a3e5665/pix-logo.png",
-        "Receita Federal": "https://dl.airtable.com/.attachments/dfbcb717ce1b99af1cb5fc09c6cda3c3/b7c0a22b/receita-federal-logo.png",
-        "CAIXA": "https://dl.airtable.com/.attachments/b07d2a5c1ee4d6abc72d98f3c917bb2f/38a3c220/caixa-logo.png",
-        "Tesouro Direto": "https://dl.airtable.com/.attachments/99b1c1c4cab65810e364f0d39f5b4e5a/6c17bb22/tesouro-direto-logo.png"
-      };
-      
-      // Add these mappings to the appLogosMap if not already present
-      Object.entries(manualLogoMappings).forEach(([name, url]) => {
-        if (!appLogosMap.has(name)) {
-          appLogosMap.set(name, url);
-          console.log(`Added manual logo for: ${name}`);
-        }
-      });
+      // We'll skip manual logo mappings and rely only on Airtable data
       
       // First, log all Airtable app records to debug what names are actually in Airtable
       // Full app record debugging
@@ -357,68 +335,10 @@ export class MemStorage implements IStorage {
       // Initialize empty mapping - we'll populate this directly from Airtable data
       const appNameMappings: Record<string, string> = {};
       
-      // Make a copy of our manual mappings to ensure they don't get overwritten
-      const manualMappings = { ...appNameMappings };
+      // No manual mappings needed
       
-      // Directly use the exact values from the "appname" or "appname (from apps)" columns 
-      // in the "screens" table of Airtable, as shown in the link
-      const directAppMappings: Record<string, string> = {
-        "rectrB2IiTvux50C5": "Meu SUS Digital",
-        "recb065qS5JzHh9Xt": "Carteira de Trabalho Digital",
-        "reclNS6PnkfRXBpRE": "Conecta Recife",
-        "recqLTQuYEOSBqzE4": "Gov.br",
-        "recY0eLGS9mfaSuE4": "Carteira Digital de Trânsito",
-        "recFWaslN9KIZVTap": "Tesouro Direto",
-        "rectunLB0N9QwObTS": "Meu INSS",
-        "recUmYPNDhj1qx9en": "Receita Federal",
-        "recku4IsUey3nvBEk": "CAIXA",
-        "rec4ixvEzLW5JHqnm": "Pix"
-      };
-      
-      // Also directly map categories from the Airtable
-      const directCategoryMappings: Record<string, string> = {
-        "rectrB2IiTvux50C5": "Saúde",
-        "recb065qS5JzHh9Xt": "Trabalho",
-        "reclNS6PnkfRXBpRE": "Portal",
-        "recqLTQuYEOSBqzE4": "Portal",
-        "recY0eLGS9mfaSuE4": "Mobilidade",
-        "recFWaslN9KIZVTap": "Finanças",
-        "rectunLB0N9QwObTS": "Finanças",
-        "recUmYPNDhj1qx9en": "Finanças",
-        "recku4IsUey3nvBEk": "Finanças",
-        "rec4ixvEzLW5JHqnm": "Finanças"
-      };
-      
-      // Also directly map types from the Airtable
-      const directTypeMappings: Record<string, string> = {
-        "rectrB2IiTvux50C5": "Federal",
-        "recb065qS5JzHh9Xt": "Federal",
-        "reclNS6PnkfRXBpRE": "Municipal",
-        "recqLTQuYEOSBqzE4": "Federal",
-        "recY0eLGS9mfaSuE4": "Federal",
-        "recFWaslN9KIZVTap": "Federal",
-        "rectunLB0N9QwObTS": "Federal",
-        "recUmYPNDhj1qx9en": "Federal",
-        "recku4IsUey3nvBEk": "Federal",
-        "rec4ixvEzLW5JHqnm": "Federal"
-      };
-      
-      // Add direct mappings first
-      Object.entries(directAppMappings).forEach(([id, name]) => {
-        appNameMappings[id] = name;
-        console.log(`DEBUG: Added direct mapping from screenshot: ${id} => ${name}`);
-        
-        // Also add to the category and type maps
-        if (directCategoryMappings[id]) {
-          appIdToCategoryMap.set(id, directCategoryMappings[id]);
-          console.log(`DEBUG: Added direct category mapping: ${id} => ${directCategoryMappings[id]}`);
-        }
-        
-        if (directTypeMappings[id]) {
-          appIdToTypeMap.set(id, directTypeMappings[id]);
-          console.log(`DEBUG: Added direct type mapping: ${id} => ${directTypeMappings[id]}`);
-        }
-      });
+      // We'll skip direct mappings and let Airtable data determine app names and details
+      const directAppMappings: Record<string, string> = {};
       
       // Now populate any other app names from the Airtable data
       allAppRecords.forEach(record => {
@@ -429,20 +349,10 @@ export class MemStorage implements IStorage {
                        record.fields.appname;
         
         if (record.id && appName) {
-          // Only add the mapping if it's not already in our direct mappings
-          if (!directAppMappings[record.id]) {
-            appNameMappings[record.id] = appName;
-            console.log(`DEBUG: Added mapping from Airtable data: ${record.id} => ${appName}`);
-          } else {
-            console.log(`DEBUG: Using direct mapping for ${record.id} => ${directAppMappings[record.id]} (instead of ${appName})`);
-          }
+          // Add mapping from Airtable data
+          appNameMappings[record.id] = appName;
+          console.log(`DEBUG: Added mapping from Airtable data: ${record.id} => ${appName}`);
         }
-      });
-      
-      // Restore the manual mappings to ensure they're not overwritten
-      Object.entries(manualMappings).forEach(([id, name]) => {
-        appNameMappings[id] = name;
-        console.log(`DEBUG: Enforced manual mapping ${id} => ${name}`);
       });
       
       // Log all app ID to name mappings for verification
