@@ -140,7 +140,33 @@ export function ScreenModal({
           </div>
         </div>
         
-        <div className="flex-1 p-4 sm:p-6 flex items-center justify-center">
+        <div className="flex-1 p-4 sm:p-6 flex items-center justify-center relative">
+          {screens.length > 1 && (
+            <>
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
+                onClick={handlePrevious}
+                aria-label="View previous screen"
+                title={`View previous screen: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
+              >
+                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              </Button>
+              
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
+                onClick={handleNext}
+                aria-label="View next screen"
+                title={`View next screen: ${screens[(localIndex + 1) % screens.length].name}`}
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              </Button>
+            </>
+          )}
+          
           <div className="relative max-w-full">
             <img 
               src={currentScreen.imageUrl} 
@@ -148,32 +174,6 @@ export function ScreenModal({
               className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
               aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
             />
-            
-            {screens.length > 1 && (
-              <>
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
-                  onClick={handlePrevious}
-                  aria-label="View previous screen"
-                  title={`View previous screen: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
-                >
-                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                </Button>
-                
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white w-10 h-10 rounded-full shadow-md" 
-                  onClick={handleNext}
-                  aria-label="View next screen"
-                  title={`View next screen: ${screens[(localIndex + 1) % screens.length].name}`}
-                >
-                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                </Button>
-              </>
-            )}
           </div>
         </div>
       </DialogContent>
