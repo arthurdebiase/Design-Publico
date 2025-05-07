@@ -2,13 +2,15 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import dotenv from "dotenv";
-import { initMailerLite } from "./mailerlite";
+// Temporarily commented out due to API issues
+// import { initMailerLite } from "./mailerlite";
 
 // Load environment variables from .env file
 dotenv.config();
 
+// Temporarily disabled due to API issues
 // Initialize MailerLite if API key is available
-initMailerLite();
+// initMailerLite();
 
 const app = express();
 app.use(express.json());
