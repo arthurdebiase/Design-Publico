@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Screen, App } from "@/types";
-import { X, FileDown, Link2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { X, Link2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
@@ -71,42 +71,6 @@ export function ScreenModal({
       });
   };
   
-  const handleDownloadImage = () => {
-    try {
-      // Create a temporary anchor element
-      const link = document.createElement('a');
-      link.href = currentScreen.imageUrl;
-      
-      // Set the download attribute with the filename
-      const filename = currentScreen.name 
-        ? `${app.name}-${currentScreen.name}.jpg`.replace(/\s+/g, '-').toLowerCase()
-        : `screen-${currentScreen.id}.jpg`;
-      
-      link.setAttribute('download', filename);
-      link.setAttribute('target', '_blank');
-      
-      // Append to the body, click, and remove
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Show success toast
-      toast({
-        title: "Download started",
-        description: "The image is being downloaded to your device",
-        duration: 3000,
-      });
-    } catch (error) {
-      console.error("Failed to download image: ", error);
-      toast({
-        title: "Download failed",
-        description: "Could not download the image. Please try again later.",
-        variant: "destructive",
-        duration: 3000,
-      });
-    }
-  };
-  
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -146,16 +110,6 @@ export function ScreenModal({
             </div>
           </div>
           <div className="flex items-center gap-1">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-9 w-9" 
-              aria-label="Download screen image"
-              onClick={handleDownloadImage}
-              title="Download image to your device"
-            >
-              <FileDown className="h-4 w-4" aria-hidden="true" />
-            </Button>
             <Button 
               variant="ghost" 
               size="icon" 
