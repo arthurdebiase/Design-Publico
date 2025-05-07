@@ -1,5 +1,7 @@
+
 import { Request, Response } from "express";
 import { z } from "zod";
+import MailerLite from 'mailerlite';
 
 // Schema for validating newsletter subscription requests
 const subscribeSchema = z.object({
@@ -8,13 +10,21 @@ const subscribeSchema = z.object({
   name: z.string().optional(),
 });
 
-// A simple in-memory storage for demo purposes
-// In a real application, this would be stored in a database
-const subscribers = new Set<string>();
+let mailerLiteClient: any = null;
+let isMailerLiteDisabled = false;
+
+// Initialize MailerLite client
+const MAILERLITE_API_KEY = process.env.MAILERLITE_API_KEY;
+if (MAILERLITE_API_KEY) {
+  mailerLiteClient = new MailerLite(MAILERLITE_API_KEY);
+  console.log("MailerLite initialized successfully");
+} else {
+  console.warn("MAILERLITE_API_KEY not provided. Email functionality will be disabled.");
+  isMailerLiteDisabled = true;
+}
 
 /**
- * Subscribe to the newsletter
- * MailerLite integration is temporarily disabled, using in-memory storage only
+ * Subscribe to the newsletter using MailerLite
  */
 export async function subscribeToNewsletter(req: Request, res: Response) {
   try {
@@ -27,26 +37,38 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
       });
     }
 
-    // Default to Portuguese (pt) as our application primarily targets Brazilian users
-    const { email, language = "pt", name } = validation.data;
-    
-    // Check if the email is already subscribed in our local cache
-    if (subscribers.has(email)) {
-      return res.status(200).json({ 
-        message: "Already subscribed", 
-        alreadySubscribed: true 
+    if (!mailerLiteClient || isMailerLiteDisabled) {
+      return res.status(503).json({ 
+        message: "Newsletter service is currently unavailable" 
       });
     }
+
+    const { email, language = "pt", name } = validation.data;
     
-    // Add to our in-memory set
-    subscribers.add(email);
-    
-    // Log the subscription for development purposes
-    console.log(`New newsletter subscription: ${email} (language: ${language})`);
+    try {
+      // Check if subscriber already exists
+      const subscriber = await mailerLiteClient.Subscribers.getDetails(email);
+      if (subscriber) {
+        return res.status(200).json({ 
+          message: "Already subscribed", 
+          alreadySubscribed: true 
+        });
+      }
+    } catch (error) {
+      // Subscriber not found, continue with subscription
+    }
+
+    // Add subscriber to MailerLite
+    await mailerLiteClient.Subscribers.addSubscriber(
+      '1', // Default group ID
+      email,
+      name || email.split('@')[0],
+      { language },
+      true // Resubscribe if unsubscribed
+    );
     
     return res.status(201).json({ 
-      message: "Successfully subscribed to the newsletter",
-      subscriberCount: subscribers.size
+      message: "Successfully subscribed to the newsletter"
     });
   } catch (error) {
     console.error("Error subscribing to newsletter:", error);
@@ -55,15 +77,27 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
 }
 
 /**
- * Get all newsletter subscribers (for admin purposes)
- * This would typically be protected by authentication
+ * Get subscriber count from MailerLite
  */
 export async function getNewsletterSubscribers(_req: Request, res: Response) {
   try {
-    // Just return the count from the in-memory set
-    return res.status(200).json({ 
-      count: subscribers.size
-    });
+    if (!mailerLiteClient || isMailerLiteDisabled) {
+      return res.status(503).json({ 
+        message: "Newsletter service is currently unavailable",
+        count: 0
+      });
+    }
+
+    // Get first group details which includes subscriber count
+    const groups = await mailerLiteClient.Lists.getAll(1, 1);
+    if (Array.isArray(groups) && groups.length > 0) {
+      const groupDetails = await mailerLiteClient.Lists.getDetails(groups[0].id);
+      return res.status(200).json({ 
+        count: groupDetails.active || 0
+      });
+    }
+
+    return res.status(200).json({ count: 0 });
   } catch (error) {
     console.error("Error getting newsletter subscribers:", error);
     return res.status(500).json({ message: "Failed to get newsletter subscribers" });
