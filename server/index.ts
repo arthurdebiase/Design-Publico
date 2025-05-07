@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import dotenv from "dotenv";
 import { initMailerLite } from "./mailerlite";
+import path from "path";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -62,6 +63,7 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     serveStatic(app);
+    app.use(express.static(path.join(__dirname, '../client/dist')));
   }
 
   // ALWAYS serve the app on port 5000
