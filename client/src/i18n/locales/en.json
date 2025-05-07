@@ -6,11 +6,6 @@
     "submitApp": "Submit App",
     "requestApp": "Request App"
   },
-  "auth": {
-    "login": "Log In",
-    "logout": "Log Out",
-    "profile": "Profile"
-  },
   "footer": {
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",

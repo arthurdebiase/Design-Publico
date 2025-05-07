@@ -1,14 +1,10 @@
 import { 
   App, InsertApp, 
   Screen, InsertScreen,
-  User, UpsertUser,
   apps as appsTable,
-  screens as screensTable,
-  users as usersTable
+  screens as screensTable
 } from "@shared/schema";
 import axios from "axios";
-import { db } from "./db";
-import { eq } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -21,10 +17,6 @@ export interface IStorage {
   getScreensByAppId(appId: number): Promise<Screen[]>;
   createScreen(screen: InsertScreen): Promise<Screen>;
   
-  // Users (for Replit Auth)
-  getUser(id: string): Promise<User | undefined>;
-  upsertUser(user: UpsertUser): Promise<User>;
-  
   // Brand
   getBrandLogo(): Promise<string | null>;
   
@@ -36,79 +28,17 @@ export interface IStorage {
 export class MemStorage implements IStorage {
   private apps: Map<number, App>;
   private screens: Map<number, Screen>;
-  private users: Map<string, User>;
   private appIdCounter: number;
   private screenIdCounter: number;
 
   constructor() {
     this.apps = new Map();
     this.screens = new Map();
-    this.users = new Map();
     this.appIdCounter = 1;
     this.screenIdCounter = 1;
     
     // Initialize with sample data
     this.initializeSampleData();
-  }
-  
-  // User methods for Replit Auth
-  async getUser(id: string): Promise<User | undefined> {
-    // First try to get from memory
-    const memUser = this.users.get(id);
-    if (memUser) {
-      return memUser;
-    }
-    
-    // If not found in memory, try to get from database
-    try {
-      const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
-      return user;
-    } catch (error) {
-      console.error("Error fetching user from database:", error);
-      return undefined;
-    }
-  }
-  
-  async upsertUser(userData: UpsertUser): Promise<User> {
-    try {
-      // Try to upsert into database
-      const [user] = await db
-        .insert(usersTable)
-        .values(userData)
-        .onConflictDoUpdate({
-          target: usersTable.id,
-          set: {
-            ...userData,
-            updatedAt: new Date(),
-          },
-        })
-        .returning();
-        
-      // Also update in memory
-      this.users.set(user.id, user);
-      return user;
-    } catch (error) {
-      console.error("Error upserting user:", error);
-      
-      // Fallback to in-memory only
-      const now = new Date();
-      const existingUser = this.users.get(userData.id);
-      
-      const user: User = {
-        id: userData.id,
-        username: userData.username,
-        email: userData.email ?? null,
-        firstName: userData.firstName ?? null,
-        lastName: userData.lastName ?? null,
-        bio: userData.bio ?? null,
-        profileImageUrl: userData.profileImageUrl ?? null,
-        createdAt: existingUser?.createdAt ?? now,
-        updatedAt: now,
-      };
-      
-      this.users.set(userData.id, user);
-      return user;
-    }
   }
 
   // Apps
