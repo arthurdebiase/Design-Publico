@@ -120,7 +120,7 @@ export default function Footer() {
               
               <div className="flex items-center text-sm text-gray-500 space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-500" />
-                <span>{t('newsletter.privacy')}</span>
+                <span>We respect your privacy. Unsubscribe anytime.</span>
               </div>
             </form>
           </div>
