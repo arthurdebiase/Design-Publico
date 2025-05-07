@@ -73,8 +73,17 @@
     "subtitle": "Get the latest updates and design inspiration delivered to your inbox",
     "placeholder": "Enter your email",
     "button": "Subscribe",
+    "submitting": "Submitting...",
+    "subscribed": "Subscribed",
     "success": "Thank you for subscribing!",
-    "error": "An error occurred. Please try again."
+    "successDesc": "You'll receive our updates soon.",
+    "error": "An error occurred",
+    "errorDesc": "Please try again later.",
+    "alreadySubscribed": "Already subscribed",
+    "alreadySubscribedDesc": "This email is already subscribed to our newsletter.",
+    "thankyou": "Thank you for your subscription!",
+    "tryAgain": "Please try again later.",
+    "subscriberCount": "{{count}} people subscribed to our newsletter"
   },
   "types": {
     "Federal": "Federal",

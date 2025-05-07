@@ -73,8 +73,17 @@
     "subtitle": "Receba as últimas atualizações e inspirações de design em seu email",
     "placeholder": "Digite seu email",
     "button": "Assinar",
+    "submitting": "Enviando...",
+    "subscribed": "Inscrito",
     "success": "Obrigado por se inscrever!",
-    "error": "Ocorreu um erro. Por favor, tente novamente."
+    "successDesc": "Você receberá nossas atualizações em breve.",
+    "error": "Ocorreu um erro",
+    "errorDesc": "Por favor, tente novamente mais tarde.",
+    "alreadySubscribed": "Já inscrito",
+    "alreadySubscribedDesc": "Este email já está inscrito em nossa newsletter.",
+    "thankyou": "Obrigado pela sua inscrição!",
+    "tryAgain": "Por favor, tente novamente mais tarde.",
+    "subscriberCount": "{{count}} pessoas inscritas em nossa newsletter"
   },
   "types": {
     "Federal": "Federal",
