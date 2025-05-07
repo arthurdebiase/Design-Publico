@@ -8,17 +8,20 @@ import { subscribeToNewsletter, getNewsletterSubscribers } from "./newsletter";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup Airtable API key
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY || "";
-  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || "";
+  const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || "app5Z2hf5ARjgunjy"; // Default to known base ID if not provided
   
-  if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
-    console.warn("Airtable API key or base ID not provided. Using mock data.");
+  if (!AIRTABLE_API_KEY) {
+    console.warn("Airtable API key not provided. Using mock data.");
+  } else if (!AIRTABLE_BASE_ID) {
+    console.warn("Airtable base ID not provided. Using default base ID.");
   } else {
     console.log("Airtable credentials detected. Attempting to sync data...");
     try {
       await storage.syncFromAirtable(AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
       console.log("Initial Airtable sync completed successfully.");
     } catch (error) {
-      console.error("Failed to perform initial Airtable sync:", error);
+      console.error("Failed to perform initial Airtable sync. Error details:", error);
+      console.log("The application will continue with mock data. You can manually trigger a sync later.");
     }
   }
 
@@ -76,15 +79,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Sync data from Airtable
   app.post("/api/sync", async (req, res) => {
     try {
-      if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
-        return res.status(400).json({ message: "Airtable API key or base ID not configured" });
+      // Check for API key
+      if (!AIRTABLE_API_KEY) {
+        return res.status(400).json({ 
+          message: "Airtable API key not configured",
+          help: "Please set the AIRTABLE_API_KEY environment variable or secret"
+        });
       }
       
-      await storage.syncFromAirtable(AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
-      res.json({ message: "Sync completed successfully" });
-    } catch (error) {
+      // Use either provided base ID or default
+      const baseId = AIRTABLE_BASE_ID || req.body.baseId || "app5Z2hf5ARjgunjy";
+      console.log(`Starting Airtable sync with base ID: ${baseId}`);
+      
+      await storage.syncFromAirtable(AIRTABLE_API_KEY, baseId);
+      res.json({ 
+        message: "Sync completed successfully", 
+        baseId,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
       console.error("Error syncing from Airtable:", error);
-      res.status(500).json({ message: "Failed to sync from Airtable" });
+      
+      // Send more detailed error for debugging
+      res.status(500).json({ 
+        message: "Failed to sync from Airtable", 
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
     }
   });
 
