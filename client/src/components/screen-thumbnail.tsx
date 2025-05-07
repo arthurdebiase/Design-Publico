@@ -21,7 +21,7 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
   
   return (
     <div className="cursor-pointer hover:opacity-90 transition-all" onClick={() => onClick(screen)}>
-      <div className="bg-white rounded-lg overflow-hidden shadow-sm relative group" style={{ aspectRatio: "9/16" }}>
+      <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" style={{ aspectRatio: "9/16" }}>
         {!imageLoaded && !imageError && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse">
             <span className="sr-only">Loading...</span>
