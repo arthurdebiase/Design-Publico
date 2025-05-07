@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { z } from "zod";
-import { addSubscriber, checkSubscriber } from "./mailerlite";
+import { addSubscriber, checkSubscriber, getSubscriberCount } from "./mailerlite";
 
 // Schema for validating newsletter subscription requests
 const subscribeSchema = z.object({
@@ -57,21 +57,26 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
     console.log(`New newsletter subscription: ${email} (language: ${language})`);
     
     // Try to add the subscriber to MailerLite
-    addSubscriber(email, name, language)
-      .then(success => {
-        if (success) {
-          console.log(`Subscriber added to MailerLite: ${email}`);
-        } else {
-          console.log(`Failed to add subscriber to MailerLite: ${email} (MailerLite not configured or error occurred)`);
-        }
-      })
-      .catch(err => {
-        console.error(`Error adding subscriber to MailerLite: ${email}:`, err);
-      });
+    const addResult = await addSubscriber(email, name, language);
+    
+    if (addResult) {
+      console.log(`Subscriber added to MailerLite: ${email}`);
+    } else {
+      console.log(`Failed to add subscriber to MailerLite: ${email} (MailerLite not configured or error occurred)`);
+    }
+    
+    // Get the updated subscriber count
+    let count = subscribers.size;
+    const mailerLiteCount = await getSubscriberCount();
+    
+    // If we have a count from MailerLite, use that instead
+    if (mailerLiteCount !== null) {
+      count = mailerLiteCount;
+    }
     
     return res.status(201).json({ 
       message: "Successfully subscribed to the newsletter",
-      subscriberCount: subscribers.size
+      subscriberCount: count
     });
   } catch (error) {
     console.error("Error subscribing to newsletter:", error);
@@ -85,8 +90,18 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
  */
 export async function getNewsletterSubscribers(_req: Request, res: Response) {
   try {
+    // Try to get subscriber count from MailerLite first
+    const mailerLiteCount = await getSubscriberCount();
+    
+    if (mailerLiteCount !== null) {
+      // If we can get the count from MailerLite, use that
+      return res.status(200).json({
+        count: mailerLiteCount
+      });
+    }
+    
+    // Fallback to our in-memory set if MailerLite is not available
     return res.status(200).json({ 
-      subscribers: Array.from(subscribers),
       count: subscribers.size
     });
   } catch (error) {

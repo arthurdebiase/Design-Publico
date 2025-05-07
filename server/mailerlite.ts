@@ -25,7 +25,7 @@ export function initMailerLite() {
  * @param language Subscriber's preferred language (optional)
  * @returns True if subscription was successful, false otherwise
  */
-export async function addSubscriber(email: string, name?: string, language = 'en'): Promise<boolean> {
+export async function addSubscriber(email: string, name?: string, language = 'pt'): Promise<boolean> {
   if (!mailerLiteClient) {
     console.warn("MailerLite not initialized. Cannot add subscriber.");
     return false;
@@ -37,7 +37,9 @@ export async function addSubscriber(email: string, name?: string, language = 'en
       fields: {
         name: name || email.split('@')[0], // Default to the part before @ if no name is provided
         language: language
-      }
+      },
+      // Set status as active to automatically confirm the subscription
+      status: 'active'
     };
     
     // Add subscriber to default group
@@ -72,5 +74,36 @@ export async function checkSubscriber(email: string): Promise<boolean> {
     }
     console.error('MailerLite check subscriber error:', error);
     return false;
+  }
+}
+
+/**
+ * Get subscriber count from MailerLite
+ * @returns Number of subscribers or null if there's an error
+ */
+export async function getSubscriberCount(): Promise<number | null> {
+  if (!mailerLiteClient) {
+    console.warn("MailerLite not initialized. Cannot get subscriber count.");
+    return null;
+  }
+  
+  try {
+    const response = await mailerLiteClient.getSubscribers({ limit: 1 });
+    // The response might include metadata with total count
+    // This is implementation-specific, so we need to check the structure
+    if (response && typeof response === 'object' && 'meta' in response && response.meta && typeof response.meta === 'object' && 'total' in response.meta) {
+      return (response.meta as any).total || 0;
+    }
+    
+    // Fallback: If we can't get the count from metadata, return the length of the results array
+    if (Array.isArray(response)) {
+      // Not ideal for large subscriber counts, but works as a fallback
+      return response.length;
+    }
+    
+    return 0;
+  } catch (error) {
+    console.error('MailerLite get subscriber count error:', error);
+    return null;
   }
 }

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Globe } from "lucide-react";
+import { Globe, Mail, CheckCircle2, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
@@ -11,16 +11,36 @@ const symbolLogo = "/designpublico-symbol.png";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
-  const [language, setLanguage] = useState("pt"); // Default to Portuguese for newsletter
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subscriberCount, setSubscriberCount] = useState<number | null>(null);
+  const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { toast } = useToast();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language || "pt"; // Default to Portuguese
+  
+  // Fetch subscriber count when component mounts
+  useEffect(() => {
+    async function fetchSubscriberCount() {
+      try {
+        const response = await fetch('/api/newsletter/subscribers');
+        if (response.ok) {
+          const data = await response.json();
+          setSubscriberCount(data.count || 0);
+        }
+      } catch (error) {
+        console.error("Error fetching subscriber count:", error);
+      }
+    }
+    
+    fetchSubscriberCount();
+  }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
 
     setIsSubmitting(true);
+    setFormStatus("loading");
     
     try {
       // Call our API endpoint to subscribe to the newsletter
@@ -31,37 +51,56 @@ export default function Footer() {
         },
         body: JSON.stringify({
           email,
-          language
+          language: currentLanguage, // Use the current UI language
+          name: "" // We don't collect name in the form currently
         })
       });
       
       const data = await response.json();
       
       if (response.ok) {
+        setFormStatus("success");
+        
         if (data.alreadySubscribed) {
           toast({
-            title: t("newsletter.success"),
-            description: "This email is already subscribed to our newsletter.",
+            title: t("newsletter.alreadySubscribed"),
+            description: t("newsletter.alreadySubscribedDesc"),
             variant: "default",
           });
         } else {
+          // Update subscriber count
+          if (subscriberCount !== null) {
+            setSubscriberCount(subscriberCount + 1);
+          }
+          
           toast({
             title: t("newsletter.success"),
-            description: "You'll receive our newsletter updates soon.",
+            description: t("newsletter.successDesc"),
             variant: "default",
           });
         }
         setEmail("");
+        
+        // Reset form status after a delay
+        setTimeout(() => {
+          setFormStatus("idle");
+        }, 3000);
       } else {
         throw new Error(data.message || "Failed to subscribe");
       }
     } catch (error) {
+      setFormStatus("error");
       toast({
         title: t("newsletter.error"),
-        description: "Please try again later.",
+        description: t("newsletter.errorDesc"),
         variant: "destructive",
       });
       console.error("Newsletter subscription error:", error);
+      
+      // Reset form status after a delay
+      setTimeout(() => {
+        setFormStatus("idle");
+      }, 3000);
     } finally {
       setIsSubmitting(false);
     }
@@ -90,6 +129,15 @@ export default function Footer() {
             <p className="text-gray-600 max-w-md">
               {t('about.description')}
             </p>
+            
+            {subscriberCount !== null && (
+              <div className="flex items-center gap-2 text-sm text-gray-600 mt-4">
+                <Mail size={16} className="text-gray-400" />
+                <span>
+                  {t('newsletter.subscriberCount', { count: subscriberCount })}
+                </span>
+              </div>
+            )}
           </div>
           
           {/* Newsletter subscription */}
@@ -101,22 +149,46 @@ export default function Footer() {
             
             <form onSubmit={handleSubscribe} className="space-y-3">
               <div className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder={t('newsletter.placeholder')}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-grow"
-                  required
-                />
+                <div className="relative flex-grow">
+                  <Input
+                    type="email"
+                    placeholder={t('newsletter.placeholder')}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className={`w-full pr-9 ${
+                      formStatus === "success" ? "border-green-500 focus-visible:ring-green-500" : 
+                      formStatus === "error" ? "border-red-500 focus-visible:ring-red-500" : ""
+                    }`}
+                    required
+                    disabled={isSubmitting || formStatus === "success"}
+                  />
+                  {formStatus === "success" && (
+                    <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                  )}
+                  {formStatus === "error" && (
+                    <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500 h-4 w-4" />
+                  )}
+                </div>
                 <Button 
                   type="submit" 
                   className="bg-[#0066FF] hover:bg-blue-700"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || formStatus === "success"}
                 >
-                  {isSubmitting ? "..." : t('newsletter.button')}
+                  {isSubmitting ? t('newsletter.submitting') : 
+                   formStatus === "success" ? t('newsletter.subscribed') : 
+                   t('newsletter.button')}
                 </Button>
               </div>
+              {formStatus === "success" && (
+                <p className="text-sm text-green-600 mt-2">
+                  {t('newsletter.thankyou')}
+                </p>
+              )}
+              {formStatus === "error" && (
+                <p className="text-sm text-red-600 mt-2">
+                  {t('newsletter.tryAgain')}
+                </p>
+              )}
             </form>
           </div>
         </div>
