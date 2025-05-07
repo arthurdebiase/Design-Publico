@@ -117,7 +117,7 @@ export default function Footer() {
               </span>
             </Link>
             
-            <p className="text-gray-600 max-w-md">
+            <p className="text-gray-600 w-full">
               {t('about.description')}
             </p>
             
