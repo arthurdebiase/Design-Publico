@@ -96,11 +96,14 @@ app.use((req, res, next) => {
     // Add extra error logging for production troubleshooting
     app.use((req, res, next) => {
       const originalEnd = res.end;
-      res.end = function(chunk, encoding) {
+      
+      // @ts-ignore - We're overriding the function for logging purposes
+      res.end = function(...args: any[]) {
         if (res.statusCode >= 400) {
           console.error(`[ERROR] ${req.method} ${req.originalUrl} - Status ${res.statusCode}`);
         }
-        return originalEnd.call(this, chunk, encoding);
+        // @ts-ignore - Using apply to forward all arguments
+        return originalEnd.apply(this, args);
       };
       next();
     });
