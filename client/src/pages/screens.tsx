@@ -146,10 +146,7 @@ export default function ScreensPage() {
   return (
     <div className="container mx-auto px-4 md:px-6 pt-10 pb-0">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">{t('screens.allScreens')}</h1>
-        <p className="text-gray-600">
-          {t('screens.browseAll', { count: filteredScreens.length })}
-        </p>
+        <h1 className="text-3xl font-bold mb-2">Todas as telas</h1>
       </div>
       
       <div className="mb-6 flex justify-between items-center">
@@ -158,18 +155,18 @@ export default function ScreensPage() {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
-                {'Filter by App'}
+                {'Filtrar por aplicativo'}
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Filter by App</DropdownMenuLabel>
+              <DropdownMenuLabel>Filtrar por aplicativo</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 className={!selectedAppId ? "bg-accent/50" : ""}
                 onClick={() => handleAppFilterChange(null)}
               >
-                All Apps
+                Todos os aplicativos
               </DropdownMenuItem>
               {apps.map((app: App) => (
                 <DropdownMenuItem
@@ -185,6 +182,7 @@ export default function ScreensPage() {
                         <span className="text-xs">{app.name.charAt(0)}</span>
                       </div>
                     )}
+                    <span>{app.name}</span>
                   </div>
                 </DropdownMenuItem>
               ))}
@@ -198,7 +196,7 @@ export default function ScreensPage() {
               onClick={() => handleAppFilterChange(null)}
               className="text-sm"
             >
-              Clear filter
+              Limpar filtro
             </Button>
           )}
         </div>
@@ -208,7 +206,7 @@ export default function ScreensPage() {
         <div 
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4"
           role="grid"
-          aria-label={t('screens.allScreens')}
+          aria-label="Todas as telas"
         >
           {filteredScreens.map((screen: Screen & { app?: App }) => (
             <div key={screen.id} role="gridcell">
