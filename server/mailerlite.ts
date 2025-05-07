@@ -1,15 +1,14 @@
 import MailerLite from 'mailerlite';
 
-let mailerLiteClient: MailerLite | null = null;
+let mailerLiteClient: any = null;
+let defaultListId: string = '1'; // Default to first list, change this to your actual default list ID
 
 // Initialize MailerLite client if API key is available
 export function initMailerLite() {
   const MAILERLITE_API_KEY = process.env.MAILERLITE_API_KEY;
   
   if (MAILERLITE_API_KEY) {
-    mailerLiteClient = new MailerLite({
-      api_key: MAILERLITE_API_KEY
-    });
+    mailerLiteClient = new MailerLite(MAILERLITE_API_KEY);
     console.log("MailerLite initialized successfully");
     return true;
   } else {
