@@ -88,7 +88,6 @@ export default function Header() {
                 {/* Language selector for mobile */}
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <div className="flex items-center">
-                    <span className="text-sm text-gray-500 mr-2">{t('language.select')}:</span>
                     <LanguageSelector />
                   </div>
                 </div>
