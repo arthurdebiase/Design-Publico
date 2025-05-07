@@ -93,51 +93,130 @@ app.use((req, res, next) => {
       next();
     });
     
-    // Add cache control for static assets
+    // Add extra error logging for production troubleshooting
     app.use((req, res, next) => {
-      if (req.url.match(/\.(css|js|jpg|png|svg|ico|webp)$/)) {
-        res.setHeader('Cache-Control', 'public, max-age=86400'); // Cache for 1 day
+      const originalEnd = res.end;
+      res.end = function(chunk, encoding) {
+        if (res.statusCode >= 400) {
+          console.error(`[ERROR] ${req.method} ${req.originalUrl} - Status ${res.statusCode}`);
+        }
+        return originalEnd.call(this, chunk, encoding);
+      };
+      next();
+    });
+    
+    // Handle symbol.png specifically since it's showing 502 errors
+    app.get('/src/assets/symbol.png', (req, res) => {
+      // Provide a fallback path to the symbol from any available location
+      const symboPath = path.join(process.cwd(), 'designpublico-symbol.png');
+      if (fs.existsSync(symboPath)) {
+        return res.sendFile(symboPath);
+      }
+      // If not found, return a 404 instead of 502
+      res.status(404).send('Symbol image not found');
+    });
+    
+    // Add better cache control for static assets
+    app.use((req, res, next) => {
+      // Set appropriate cache headers based on file type
+      if (req.url.match(/\.(css|js)$/)) {
+        // Short cache for code files (1 hour) to ensure updates are reflected
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+      } else if (req.url.match(/\.(jpg|png|svg|ico|webp|gif|woff|woff2|ttf|eot)$/)) {
+        // Longer cache for static assets (1 week)
+        res.setHeader('Cache-Control', 'public, max-age=604800');
       }
       next();
     });
     
-    // Try different paths for static files to improve deployment compatibility
-    const possiblePaths = [
-      path.join(__dirname, '../dist/public'),
-      path.join(__dirname, 'public'),
-      path.join(__dirname, '../client/dist'),
-      path.join(process.cwd(), 'dist/public'),
-      path.join(process.cwd(), 'client/dist')
+    // Define static paths with clear priority
+    const staticPaths = [
+      // First priority - standard dist folder
+      { path: path.join(process.cwd(), 'dist/public'), maxAge: '1d' },
+      // Second priority - public folder
+      { path: path.join(process.cwd(), 'public'), maxAge: '1d' },
+      // Third priority - attached assets
+      { path: path.join(process.cwd(), 'attached_assets'), maxAge: '7d' },
+      // Fourth priority - client dist
+      { path: path.join(process.cwd(), 'client/dist'), maxAge: '1d' },
+      // Fifth priority - relative paths from current directory
+      { path: path.join(__dirname, '../dist/public'), maxAge: '1d' },
+      { path: path.join(__dirname, 'public'), maxAge: '1d' },
+      { path: path.join(__dirname, '../client/dist'), maxAge: '1d' }
     ];
     
-    // Try each path and use the first one that exists
-    for (const staticPath of possiblePaths) {
+    // Serve static files from all available paths
+    let staticPathsFound = 0;
+    for (const { path: staticPath, maxAge } of staticPaths) {
       if (fs.existsSync(staticPath)) {
         console.log(`Serving static files from: ${staticPath}`);
-        app.use(express.static(staticPath, { maxAge: '1d' }));
+        app.use(express.static(staticPath, { 
+          maxAge, 
+          etag: true,
+          lastModified: true,
+          setHeaders: (res, filePath) => {
+            if (filePath.endsWith('.html')) {
+              // Don't cache HTML
+              res.setHeader('Cache-Control', 'no-cache');
+            }
+          }
+        }));
+        staticPathsFound++;
       }
     }
     
+    console.log(`Found ${staticPathsFound} valid static file directories`);
+    
     // Also use the standard serveStatic function as a fallback
+    console.log("Using serveStatic as a fallback");
     serveStatic(app);
     
     // Add a catch-all route to serve index.html for client-side routing
     app.get('*', (req, res, next) => {
       // Skip API routes
       if (req.path.startsWith('/api/')) {
-        return next();
+        console.log(`API route not found: ${req.path}`);
+        return res.status(404).json({ message: "API endpoint not found" });
       }
       
+      console.log(`Trying to serve SPA route: ${req.path}`);
+      
       // Try to find the index.html in multiple possible locations
-      for (const staticPath of possiblePaths) {
+      let indexFound = false;
+      for (const { path: staticPath } of staticPaths) {
         const indexPath = path.join(staticPath, 'index.html');
         if (fs.existsSync(indexPath)) {
+          console.log(`Serving index.html from: ${indexPath}`);
+          indexFound = true;
           return res.sendFile(indexPath);
         }
       }
       
-      // If no index.html is found, continue to the next middleware
-      next();
+      if (!indexFound) {
+        console.log("No index.html found in any static path");
+        // If no index.html is found, serve a basic HTML
+        res.type('html').send(`
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>DESIGN PÚBLICO</title>
+            <style>
+              body { font-family: system-ui, sans-serif; display: flex; align-items: center; 
+                justify-content: center; height: 100vh; margin: 0; flex-direction: column; }
+              h1 { margin-bottom: 10px; }
+              p { margin-top: 0; color: #666; }
+            </style>
+          </head>
+          <body>
+            <h1>DESIGN PÚBLICO</h1>
+            <p>Loading application...</p>
+            <script>window.location.href = "/";</script>
+          </body>
+          </html>
+        `);
+      }
     });
   }
 
