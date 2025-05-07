@@ -5,8 +5,8 @@ import { Menu } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
 import { useQuery } from "@tanstack/react-query";
-// Import the symbol image
-import symbolLogo from "@/assets/designpublico-symbol.png";
+// Use the logo from the root directory
+const symbolLogo = "/designpublico-symbol.png";
 
 interface LogoResponse {
   url: string;
