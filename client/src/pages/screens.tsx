@@ -313,20 +313,27 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           </div>
         </div>
       </div>
-      <div className="mt-2 flex items-center gap-2">
+      <div className="mt-2">
+        {/* Screen name */}
+        <p className="font-medium text-sm truncate">{screen.name}</p>
+        
+        {/* App name and logo */}
         {screen.app && (
-          <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
-            {screen.app.logo ? (
-              <img 
-                src={screen.app.logo} 
-                alt="App Logo" 
-                className="w-6 h-6"
-              />
-            ) : (
-              <div className="w-6 h-6 rounded-sm bg-gray-100 flex items-center justify-center">
-                <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
-              </div>
-            )}
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+              {screen.app.logo ? (
+                <img 
+                  src={screen.app.logo} 
+                  alt="App Logo" 
+                  className="w-5 h-5"
+                />
+              ) : (
+                <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center">
+                  <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 truncate">{screen.app.name}</p>
           </div>
         )}
       </div>
