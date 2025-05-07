@@ -1,17 +1,20 @@
 import MailerLite from 'mailerlite';
 
-let mailerLiteClient: MailerLite | null = null;
+let mailerLiteClient: any = null;
 
 // Initialize MailerLite client if API key is available
 export function initMailerLite() {
   const MAILERLITE_API_KEY = process.env.MAILERLITE_API_KEY;
   
   if (MAILERLITE_API_KEY) {
-    mailerLiteClient = new MailerLite({
-      api_key: MAILERLITE_API_KEY
-    });
-    console.log("MailerLite initialized successfully");
-    return true;
+    try {
+      mailerLiteClient = new MailerLite(MAILERLITE_API_KEY);
+      console.log("MailerLite initialized successfully");
+      return true;
+    } catch (error) {
+      console.error("Failed to initialize MailerLite client:", error);
+      return false;
+    }
   } else {
     console.warn("MAILERLITE_API_KEY not provided. Email functionality will be disabled.");
     return false;
@@ -32,20 +35,24 @@ export async function addSubscriber(email: string, name?: string, language = 'pt
   }
   
   try {
-    const subscriber = {
+    const subscriberData = {
       email: email,
+      name: name || email.split('@')[0], // Default to the part before @ if no name is provided
       fields: {
-        name: name || email.split('@')[0], // Default to the part before @ if no name is provided
         language: language
       },
-      // Set status as active to automatically confirm the subscription
-      status: 'active'
+      status: 'active' // Set status as active to automatically confirm the subscription
     };
     
-    // Add subscriber to default group
-    await mailerLiteClient.addSubscriber(subscriber);
-    console.log(`Subscriber added to MailerLite: ${email}`);
-    return true;
+    // Add subscriber using the Subscribers namespace
+    if (mailerLiteClient.Subscribers && typeof mailerLiteClient.Subscribers.create === 'function') {
+      await mailerLiteClient.Subscribers.create(subscriberData);
+      console.log(`Subscriber added to MailerLite: ${email}`);
+      return true;
+    } else {
+      console.warn("MailerLite API does not have Subscribers.create method");
+      return false;
+    }
   } catch (error) {
     console.error('MailerLite subscription error:', error);
     return false;
@@ -64,8 +71,14 @@ export async function checkSubscriber(email: string): Promise<boolean> {
   }
   
   try {
-    const response = await mailerLiteClient.getSubscriber(email);
-    return !!response && !!response.id;
+    // Check subscriber using the Subscribers namespace
+    if (mailerLiteClient.Subscribers && typeof mailerLiteClient.Subscribers.find === 'function') {
+      const response = await mailerLiteClient.Subscribers.find(email);
+      return !!response && !!response.id;
+    } else {
+      console.warn("MailerLite API does not have Subscribers.find method");
+      return false;
+    }
   } catch (error) {
     // If the error is that the subscriber doesn't exist, return false
     // Otherwise, log the error but still return false
@@ -88,20 +101,23 @@ export async function getSubscriberCount(): Promise<number | null> {
   }
   
   try {
-    const response = await mailerLiteClient.getSubscribers({ limit: 1 });
-    // The response might include metadata with total count
-    // This is implementation-specific, so we need to check the structure
-    if (response && typeof response === 'object' && 'meta' in response && response.meta && typeof response.meta === 'object' && 'total' in response.meta) {
-      return (response.meta as any).total || 0;
+    // Get subscribers count using the Subscribers namespace
+    if (mailerLiteClient.Subscribers && typeof mailerLiteClient.Subscribers.count === 'function') {
+      const count = await mailerLiteClient.Subscribers.count();
+      return count || 0;
+    } else if (mailerLiteClient.Subscribers && typeof mailerLiteClient.Subscribers.getAll === 'function') {
+      // Fallback: try to get all subscribers with a limit and extract count
+      const response = await mailerLiteClient.Subscribers.getAll({ limit: 1 });
+      
+      if (response && typeof response === 'object' && response.meta && typeof response.meta === 'object' && 'total' in response.meta) {
+        return response.meta.total || 0;
+      }
+      
+      return 0;
+    } else {
+      console.warn("MailerLite API does not have required Subscribers methods");
+      return 0;
     }
-    
-    // Fallback: If we can't get the count from metadata, return the length of the results array
-    if (Array.isArray(response)) {
-      // Not ideal for large subscriber counts, but works as a fallback
-      return response.length;
-    }
-    
-    return 0;
   } catch (error) {
     console.error('MailerLite get subscriber count error:', error);
     return null;
