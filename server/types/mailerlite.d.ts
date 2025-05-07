@@ -1,4 +1,8 @@
 declare module 'mailerlite' {
+  interface MailerLiteOptions {
+    api_key: string;
+  }
+
   interface SubscriberFields {
     [key: string]: any;
   }
@@ -16,79 +20,31 @@ declare module 'mailerlite' {
     [key: string]: any;
   }
 
-  interface SubscribersAPI {
-    // Add a subscriber to a list
-    addSubscriber(list_id: string | number, email: string, name: string, fields?: any, resubscribe?: boolean): Promise<MailerLiteResponse>;
-    
-    // Add many subscribers to a list
-    addManySubscribers(list_id: string | number, subscribers: any[], resubscribe?: boolean): Promise<MailerLiteResponse>;
-    
-    // Get subscriber details
-    getDetails(email: string, history?: boolean): Promise<MailerLiteResponse>;
-    
-    // Remove subscriber from a list
-    deleteSubscriber(list_id: string | number, email: string): Promise<MailerLiteResponse>;
-    
-    // Unsubscribe a subscriber
-    unsubscribeSubscriber(email: string): Promise<MailerLiteResponse>;
-  }
-  
-  interface ListsAPI {
-    // Get all lists
-    getAll(limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get list details
-    getDetails(id: string | number): Promise<MailerLiteResponse>;
-    
-    // Create new list
-    addList(name: string): Promise<MailerLiteResponse>;
-    
-    // Update list
-    updateList(id: string | number, name: string): Promise<MailerLiteResponse>;
-    
-    // Remove list
-    removeList(id: string | number): Promise<MailerLiteResponse>;
-    
-    // Get active subscribers in a list
-    getActiveSubscribers(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get unsubscribed subscribers in a list
-    getUnsubscribedSubscribers(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get bounced subscribers in a list
-    getBouncedSubscribers(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-  }
-  
-  interface CampaignsAPI {
-    // Get all campaigns
-    getAll(limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get campaign details
-    getDetails(id: string | number): Promise<MailerLiteResponse>;
-    
-    // Get campaign recipients
-    getRecipients(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get campaign opens
-    getOpens(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get campaign clicks
-    getClicks(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get campaign unsubscribes
-    getUnsubscribes(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-    
-    // Get campaign spam complaints
-    getSpamComplaints(id: string | number, limit?: number, page?: number): Promise<MailerLiteResponse[]>;
-  }
-  
   class MailerLite {
-    constructor(apiKey: string);
+    constructor(options: MailerLiteOptions);
     
-    // API modules
-    Subscribers: SubscribersAPI;
-    Lists: ListsAPI;
-    Campaigns: CampaignsAPI;
+    // Subscribers
+    getSubscribers(params?: object): Promise<MailerLiteResponse[]>;
+    getSubscriber(email: string): Promise<MailerLiteResponse>;
+    addSubscriber(data: Subscriber): Promise<MailerLiteResponse>;
+    updateSubscriber(email: string, data: Partial<Subscriber>): Promise<MailerLiteResponse>;
+    removeSubscriber(email: string): Promise<boolean>;
+    
+    // Groups
+    getGroups(params?: object): Promise<MailerLiteResponse[]>;
+    getGroup(id: string | number): Promise<MailerLiteResponse>;
+    createGroup(name: string): Promise<MailerLiteResponse>;
+    updateGroup(id: string | number, name: string): Promise<MailerLiteResponse>;
+    deleteGroup(id: string | number): Promise<boolean>;
+    
+    // Group subscribers
+    getGroupSubscribers(groupId: string | number, params?: object): Promise<MailerLiteResponse[]>;
+    addSubscriberToGroup(groupId: string | number, data: Subscriber): Promise<MailerLiteResponse>;
+    removeSubscriberFromGroup(groupId: string | number, email: string): Promise<boolean>;
+    
+    // Campaigns
+    getCampaigns(params?: object): Promise<MailerLiteResponse[]>;
+    getCampaign(id: string | number): Promise<MailerLiteResponse>;
   }
 
   export = MailerLite;

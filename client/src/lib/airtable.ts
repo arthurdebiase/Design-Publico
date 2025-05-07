@@ -62,7 +62,7 @@ export async function fetchAppById(id: string): Promise<App> {
 
     return await response.json();
   } catch (error) {
-    console.error('Error fetching app:', { id, error: error.message });
+    console.error(`Error fetching app with ID ${id}:`, error);
     throw error;
   }
 }
