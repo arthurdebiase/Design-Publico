@@ -91,7 +91,7 @@ export default function AppDetail() {
         }
       }
     }
-  }, [screens]);
+  }, [screens, location]);
   
   if (!match) return null;
   

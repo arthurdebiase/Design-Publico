@@ -62,12 +62,30 @@ export function ScreenModal({
       })
       .catch((error) => {
         console.error("Failed to copy link: ", error);
-        toast({
-          title: "Copy failed",
-          description: "Could not copy link to clipboard",
-          variant: "destructive",
-          duration: 3000,
-        });
+        // Fallback for browsers where clipboard API fails
+        try {
+          // Create a temporary input element
+          const tempInput = document.createElement("input");
+          tempInput.value = shareableUrl;
+          document.body.appendChild(tempInput);
+          tempInput.select();
+          document.execCommand("copy");
+          document.body.removeChild(tempInput);
+          
+          toast({
+            title: "Link copied!",
+            description: "Screen link copied to clipboard",
+            duration: 3000,
+          });
+        } catch (fallbackError) {
+          console.error("Fallback copy method failed: ", fallbackError);
+          toast({
+            title: "Copy failed",
+            description: "Could not copy link to clipboard",
+            variant: "destructive",
+            duration: 3000,
+          });
+        }
       });
   };
   
