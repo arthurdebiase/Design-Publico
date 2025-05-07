@@ -46,17 +46,24 @@ export default function Header() {
         </div>
         
         {/* Navigation (Desktop) */}
-        <nav className="hidden md:flex items-center space-x-6">
-          <Link href="/" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/' ? 'text-[#0066FF]' : ''}`}>
-            {t('header.apps')}
-          </Link>
-          <Link href="/screens" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/screens' ? 'text-[#0066FF]' : ''}`}>
-            {t('header.screens')}
-          </Link>
-          <Link href="/about" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/about' ? 'text-[#0066FF]' : ''}`}>
-            {t('header.about')}
-          </Link>
-        </nav>
+        <div className="hidden md:flex items-center">
+          <nav className="flex items-center space-x-6 mr-6">
+            <Link href="/" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/' ? 'text-[#0066FF]' : ''}`}>
+              {t('header.apps')}
+            </Link>
+            <Link href="/screens" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/screens' ? 'text-[#0066FF]' : ''}`}>
+              {t('header.screens')}
+            </Link>
+            <Link href="/about" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/about' ? 'text-[#0066FF]' : ''}`}>
+              {t('header.about')}
+            </Link>
+          </nav>
+          
+          {/* Language selector */}
+          <div className="border-l border-gray-200 pl-4">
+            <LanguageSelector />
+          </div>
+        </div>
         
         {/* Mobile Menu */}
         <div className="md:hidden flex items-center space-x-2">
@@ -77,6 +84,14 @@ export default function Header() {
                 <Link href="/about" className="text-lg font-medium hover:text-[#0066FF]">
                   {t('header.about')}
                 </Link>
+                
+                {/* Language selector for mobile */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 mr-2">{t('language.select')}:</span>
+                    <LanguageSelector />
+                  </div>
+                </div>
               </div>
             </SheetContent>
           </Sheet>

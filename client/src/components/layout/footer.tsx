@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Globe, Mail, CheckCircle2, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
-import { LanguageSelector } from "@/components/language-selector";
 // Use the logo from the root directory
 const symbolLogo = "/designpublico-symbol.png";
 
@@ -178,14 +177,11 @@ export default function Footer() {
           </div>
         </div>
         
-        {/* Bottom section with copyright and language selector */}
-        <div className="border-t border-gray-200 mt-10 pt-10 pb-8 flex flex-col md:flex-row justify-center items-center">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <p className="text-gray-600 text-sm mb-2 md:mb-0">
-              {t('footer.copyright')}
-            </p>
-            <LanguageSelector />
-          </div>
+        {/* Bottom section with copyright */}
+        <div className="border-t border-gray-200 mt-10 pt-10 pb-8 flex justify-center items-center">
+          <p className="text-gray-600 text-sm text-center">
+            {t('footer.copyright')}
+          </p>
         </div>
       </div>
     </footer>
