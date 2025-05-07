@@ -56,9 +56,6 @@ export default function Header() {
           <Link href="/about" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/about' ? 'text-[#0066FF]' : ''}`}>
             {t('header.about')}
           </Link>
-          <Button className="bg-[#0066FF] hover:bg-blue-700 text-white">
-            {t('header.requestApp')}
-          </Button>
         </nav>
         
         {/* Mobile Menu */}
@@ -80,9 +77,6 @@ export default function Header() {
                 <Link href="/about" className="text-lg font-medium hover:text-[#0066FF]">
                   {t('header.about')}
                 </Link>
-                <Button className="bg-[#0066FF] hover:bg-blue-700 text-white mt-4">
-                  {t('header.requestApp')}
-                </Button>
               </div>
             </SheetContent>
           </Sheet>
