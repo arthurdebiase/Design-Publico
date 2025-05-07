@@ -50,7 +50,9 @@
     "copyFailedDesc": "Não foi possível copiar o link para a área de transferência",
     "closeModal": "Fechar",
     "previousScreen": "Tela anterior",
-    "nextScreen": "Próxima tela"
+    "nextScreen": "Próxima tela",
+    "viewScreenOf": "Visualizar tela de {{appName}}: {{screenName}}",
+    "screenView": "Visualização da tela"
   },
   "about": {
     "title": "Sobre o DESIGN PÚBLICO",

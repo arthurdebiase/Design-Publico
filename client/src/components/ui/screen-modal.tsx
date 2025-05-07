@@ -107,7 +107,7 @@ export function ScreenModal({
     
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, localIndex, screens.length]);
+  }, [isOpen, localIndex, screens.length, handlePrevious, handleNext, onClose]);
   
   if (!currentScreen) return null;
   
@@ -145,7 +145,8 @@ export function ScreenModal({
               size="icon" 
               onClick={onClose} 
               className="h-9 w-9" 
-              aria-label="Close modal"
+              aria-label={t("screens.closeModal")}
+              title={t("screens.closeModal")}
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </Button>
@@ -160,8 +161,8 @@ export function ScreenModal({
                 size="icon" 
                 className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
                 onClick={handlePrevious}
-                aria-label="View previous screen"
-                title={`View previous screen: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
+                aria-label={t("screens.previousScreen")}
+                title={`${t("screens.previousScreen")}: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
               >
                 <ChevronLeft className="h-5 w-5" aria-hidden="true" />
               </Button>
@@ -171,8 +172,8 @@ export function ScreenModal({
                 size="icon" 
                 className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
                 onClick={handleNext}
-                aria-label="View next screen"
-                title={`View next screen: ${screens[(localIndex + 1) % screens.length].name}`}
+                aria-label={t("screens.nextScreen")}
+                title={`${t("screens.nextScreen")}: ${screens[(localIndex + 1) % screens.length].name}`}
               >
                 <ChevronRight className="h-5 w-5" aria-hidden="true" />
               </Button>
@@ -182,9 +183,15 @@ export function ScreenModal({
           <div className="relative max-w-full">
             <img 
               src={currentScreen.imageUrl} 
-              alt={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
+              alt={t("screens.viewScreenOf", { 
+                appName: app.name, 
+                screenName: currentScreen.name 
+              })}
               className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
-              aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+              aria-label={t("screens.viewScreenOf", { 
+                appName: app.name, 
+                screenName: currentScreen.name 
+              })}
             />
           </div>
         </div>
