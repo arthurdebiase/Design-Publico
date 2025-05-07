@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Screen, App } from "@/types";
-import { X, Download, Share2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { X, Copy, Link2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
@@ -45,7 +45,7 @@ export function ScreenModal({
     onScreenChange(newIndex);
   };
   
-  const handleShare = () => {
+  const handleCopyLink = () => {
     // Create shareable URL with app ID and screen ID
     const baseUrl = window.location.origin;
     const shareableUrl = `${baseUrl}/app/${app.id}?screen=${currentScreen.id}`;
@@ -69,6 +69,44 @@ export function ScreenModal({
           duration: 3000,
         });
       });
+  };
+  
+  const handleCopyImage = async () => {
+    try {
+      // Fetch the image from the URL
+      const response = await fetch(currentScreen.imageUrl);
+      const blob = await response.blob();
+      
+      // For browsers that don't have the ClipboardItem interface defined in global scope
+      const ClipboardItemPolyfill = (window as any).ClipboardItem || 
+        // Simple polyfill if ClipboardItem is not available
+        class ClipboardItemPolyfill {
+          constructor(public data: Record<string, Blob>) {}
+        };
+      
+      // Create a clipboard item with the image blob
+      const item = new ClipboardItemPolyfill({
+        [blob.type]: blob
+      });
+      
+      // Copy to clipboard
+      await navigator.clipboard.write([item as any]);
+      
+      // Show success toast
+      toast({
+        title: "Image copied!",
+        description: "Screen image copied to clipboard",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("Failed to copy image: ", error);
+      toast({
+        title: "Copy failed",
+        description: "Could not copy image to clipboard. This feature may not be supported in your browser.",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
   };
   
   // Keyboard navigation
@@ -114,19 +152,21 @@ export function ScreenModal({
               variant="ghost" 
               size="icon" 
               className="h-9 w-9" 
-              aria-label="Download screen image"
+              aria-label="Copy screen image"
+              onClick={handleCopyImage}
+              title="Copy image to clipboard"
             >
-              <Download className="h-4 w-4" aria-hidden="true" />
+              <Copy className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button 
               variant="ghost" 
               size="icon" 
               className="h-9 w-9" 
-              aria-label="Share screen link"
-              onClick={handleShare}
-              title="Copy screen link to clipboard"
+              aria-label="Copy screen link"
+              onClick={handleCopyLink}
+              title="Copy link to clipboard"
             >
-              <Share2 className="h-4 w-4" aria-hidden="true" />
+              <Link2 className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button 
               variant="ghost" 
