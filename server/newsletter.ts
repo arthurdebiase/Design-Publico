@@ -119,11 +119,14 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
     // Default to Portuguese (pt) as our application primarily targets Brazilian users
     const { email, language = "pt", name } = validation.data;
     
-    // Check if the subscriber already exists
-    if (checkSubscriber(email)) {
-      return res.status(200).json({ 
-        message: "Already subscribed", 
-        alreadySubscribed: true 
+    // Check if the subscriber already exists, but don't tell the user for security reasons
+    // Just proceed and return a success message even if the email is already subscribed
+    const alreadySubscribed = checkSubscriber(email);
+    if (alreadySubscribed) {
+      // Silently return success without actually adding the email again
+      return res.status(201).json({ 
+        message: "Thank you for subscribing to our newsletter", 
+        subscriberCount: getSubscriberCount()
       });
     }
     
@@ -137,9 +140,11 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
       console.log(`Subscriber added: ${email}`);
     } else {
       console.log(`Failed to add subscriber: ${email} (may already exist)`);
-      return res.status(200).json({ 
-        message: "Already subscribed", 
-        alreadySubscribed: true 
+      // Don't reveal that the subscriber already exists for security reasons
+      // Just return a generic success message
+      return res.status(201).json({ 
+        message: "Thank you for subscribing to our newsletter", 
+        subscriberCount: getSubscriberCount()
       });
     }
     
@@ -147,7 +152,7 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
     const subscriberCount = getSubscriberCount();
     
     return res.status(201).json({ 
-      message: "Successfully subscribed to the newsletter",
+      message: "Thank you for subscribing to our newsletter",
       subscriberCount: subscriberCount
     });
   } catch (error) {

@@ -61,24 +61,16 @@ export default function Footer() {
       if (response.ok) {
         setFormStatus("success");
         
-        if (data.alreadySubscribed) {
-          toast({
-            title: t("newsletter.alreadySubscribed"),
-            description: t("newsletter.alreadySubscribedDesc"),
-            variant: "default",
-          });
-        } else {
-          // Update subscriber count
-          if (subscriberCount !== null) {
-            setSubscriberCount(subscriberCount + 1);
-          }
-          
-          toast({
-            title: t("newsletter.success"),
-            description: t("newsletter.successDesc"),
-            variant: "default",
-          });
+        // Update subscriber count if provided
+        if (data.subscriberCount !== undefined) {
+          setSubscriberCount(data.subscriberCount);
         }
+        
+        toast({
+          title: t("newsletter.success"),
+          description: t("newsletter.successDesc"),
+          variant: "default",
+        });
         setEmail("");
         
         // Reset form status after a delay
