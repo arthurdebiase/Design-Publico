@@ -42,7 +42,15 @@
   },
   "screens": {
     "title": "Screens",
-    "subtitle": "Browse design screens from various applications"
+    "subtitle": "Browse design screens from various applications",
+    "allScreens": "All screens",
+    "linkCopied": "Link copied!",
+    "linkCopiedDesc": "Screen link copied to clipboard",
+    "copyFailed": "Copy failed",
+    "copyFailedDesc": "Could not copy link to clipboard",
+    "closeModal": "Close",
+    "previousScreen": "Previous screen",
+    "nextScreen": "Next screen"
   },
   "about": {
     "title": "About DESIGN PÚBLICO",

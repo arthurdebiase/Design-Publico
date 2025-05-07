@@ -5,6 +5,7 @@ import { Screen, App } from "@/types";
 import { X, Link2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -26,6 +27,7 @@ export function ScreenModal({
   const [localIndex, setLocalIndex] = useState(currentScreenIndex);
   const [location] = useLocation();
   const { toast } = useToast();
+  const { t } = useTranslation();
   
   useEffect(() => {
     setLocalIndex(currentScreenIndex);
@@ -55,8 +57,8 @@ export function ScreenModal({
       .then(() => {
         // Show success toast
         toast({
-          title: "Link copied!",
-          description: "Screen link copied to clipboard",
+          title: t("screens.linkCopied"),
+          description: t("screens.linkCopiedDesc"),
           duration: 3000,
         });
       })
@@ -73,15 +75,15 @@ export function ScreenModal({
           document.body.removeChild(tempInput);
           
           toast({
-            title: "Link copied!",
-            description: "Screen link copied to clipboard",
+            title: t("screens.linkCopied"),
+            description: t("screens.linkCopiedDesc"),
             duration: 3000,
           });
         } catch (fallbackError) {
           console.error("Fallback copy method failed: ", fallbackError);
           toast({
-            title: "Copy failed",
-            description: "Could not copy link to clipboard",
+            title: t("screens.copyFailed"),
+            description: t("screens.copyFailedDesc"),
             variant: "destructive",
             duration: 3000,
           });
@@ -132,9 +134,9 @@ export function ScreenModal({
               variant="ghost" 
               size="icon" 
               className="h-9 w-9" 
-              aria-label="Copy screen link"
+              aria-label={t("screens.linkCopiedDesc")}
               onClick={handleCopyLink}
-              title="Copy link to clipboard"
+              title={t("screens.linkCopiedDesc")}
             >
               <Link2 className="h-4 w-4" aria-hidden="true" />
             </Button>
