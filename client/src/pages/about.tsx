@@ -42,7 +42,7 @@ export default function About() {
                   <Layers className="h-8 w-8 text-[#0066FF]" />
                 </div>
                 <span className="text-4xl font-bold mb-2">{totalScreens}</span>
-                <p className="text-gray-600">Interface Screens</p>
+                <p className="text-gray-600">{t('about.stats.screens')}</p>
               </div>
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function About() {
       <section className="bg-gray-50 py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold mb-6 text-center">About the Project</h2>
+            <h2 className="text-3xl font-bold mb-6 text-center">{t('about.projectTitle')}</h2>
             <div className="prose prose-lg mx-auto">
               <p>
                 DESIGN PÚBLICO is a comprehensive catalog of design examples from public applications across various platforms.
@@ -88,16 +88,16 @@ export default function About() {
       <section className="bg-white py-16">
         <div className="container mx-auto px-4 md:px-6">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-12">Supported Platforms</h2>
+            <h2 className="text-3xl font-bold mb-12">{t('about.platformsTitle')}</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="p-6">
                 <div className="mx-auto w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-4">
                   <Smartphone className="h-8 w-8 text-gray-700" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Mobile Apps</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('about.platforms.mobile.title')}</h3>
                 <p className="text-gray-600">
-                  iOS and Android applications designed for smartphones and tablets
+                  {t('about.platforms.mobile.description')}
                 </p>
               </div>
               
@@ -105,9 +105,9 @@ export default function About() {
                 <div className="mx-auto w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-4">
                   <Monitor className="h-8 w-8 text-gray-700" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Web Applications</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('about.platforms.web.title')}</h3>
                 <p className="text-gray-600">
-                  Responsive web applications optimized for desktop and mobile browsers
+                  {t('about.platforms.web.description')}
                 </p>
               </div>
               
@@ -115,9 +115,9 @@ export default function About() {
                 <div className="mx-auto w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-4">
                   <Layers className="h-8 w-8 text-gray-700" />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Cross-Platform</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('about.platforms.cross.title')}</h3>
                 <p className="text-gray-600">
-                  Applications that work across multiple platforms with consistent design
+                  {t('about.platforms.cross.description')}
                 </p>
               </div>
             </div>
