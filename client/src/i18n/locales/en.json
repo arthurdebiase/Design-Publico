@@ -50,9 +50,7 @@
     "copyFailedDesc": "Could not copy link to clipboard",
     "closeModal": "Close",
     "previousScreen": "Previous screen",
-    "nextScreen": "Next screen",
-    "viewScreenOf": "View screen of {{appName}}: {{screenName}}",
-    "screenView": "Screen view"
+    "nextScreen": "Next screen"
   },
   "about": {
     "title": "About DESIGN PÚBLICO",
