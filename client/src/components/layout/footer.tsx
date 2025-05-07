@@ -6,7 +6,7 @@ import { Globe, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
-import symbolLogo from "@/assets/designpublico-symbol.svg";
+import symbolLogo from "@assets/symbol.png";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
