@@ -4,6 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import dotenv from "dotenv";
 import { initMailerLite } from "./mailerlite";
 import path from "path";
+import fs from "fs";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -62,8 +63,19 @@ app.use((req, res, next) => {
   if (app.get("env") === "development") {
     await setupVite(app, server);
   } else {
+    // Add proper CORS headers for production
+    app.use((req, res, next) => {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+      res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+      if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+      }
+      next();
+    });
+    
+    // Serve static files using the built-in serveStatic function
     serveStatic(app);
-    app.use(express.static(path.join(__dirname, '../client/dist')));
   }
 
   // ALWAYS serve the app on port 5000
