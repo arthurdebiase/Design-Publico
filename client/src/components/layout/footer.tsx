@@ -130,14 +130,7 @@ export default function Footer() {
               {t('about.description')}
             </p>
             
-            {subscriberCount !== null && (
-              <div className="flex items-center gap-2 text-sm text-gray-600 mt-4">
-                <Mail size={16} className="text-gray-400" />
-                <span>
-                  {t('newsletter.subscriberCount', { count: subscriberCount })}
-                </span>
-              </div>
-            )}
+            {/* Subscriber count removed as requested */}
           </div>
           
           {/* Newsletter subscription */}
