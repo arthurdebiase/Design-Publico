@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Globe, CheckCircle } from "lucide-react";
+import { Globe } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
@@ -116,11 +116,6 @@ export default function Footer() {
                 >
                   {isSubmitting ? "..." : t('newsletter.button')}
                 </Button>
-              </div>
-              
-              <div className="flex items-center text-sm text-gray-500 space-x-2">
-                <CheckCircle className="h-4 w-4 text-green-500" />
-                <span>We respect your privacy. Unsubscribe anytime.</span>
               </div>
             </form>
           </div>
