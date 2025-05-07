@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Screen, App } from "@/types";
-import { X, Copy, Link2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { X, FileDown, Link2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 
@@ -71,38 +71,36 @@ export function ScreenModal({
       });
   };
   
-  const handleCopyImage = async () => {
+  const handleDownloadImage = () => {
     try {
-      // Fetch the image from the URL
-      const response = await fetch(currentScreen.imageUrl);
-      const blob = await response.blob();
+      // Create a temporary anchor element
+      const link = document.createElement('a');
+      link.href = currentScreen.imageUrl;
       
-      // For browsers that don't have the ClipboardItem interface defined in global scope
-      const ClipboardItemPolyfill = (window as any).ClipboardItem || 
-        // Simple polyfill if ClipboardItem is not available
-        class ClipboardItemPolyfill {
-          constructor(public data: Record<string, Blob>) {}
-        };
+      // Set the download attribute with the filename
+      const filename = currentScreen.name 
+        ? `${app.name}-${currentScreen.name}.jpg`.replace(/\s+/g, '-').toLowerCase()
+        : `screen-${currentScreen.id}.jpg`;
       
-      // Create a clipboard item with the image blob
-      const item = new ClipboardItemPolyfill({
-        [blob.type]: blob
-      });
+      link.setAttribute('download', filename);
+      link.setAttribute('target', '_blank');
       
-      // Copy to clipboard
-      await navigator.clipboard.write([item as any]);
+      // Append to the body, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
       // Show success toast
       toast({
-        title: "Image copied!",
-        description: "Screen image copied to clipboard",
+        title: "Download started",
+        description: "The image is being downloaded to your device",
         duration: 3000,
       });
     } catch (error) {
-      console.error("Failed to copy image: ", error);
+      console.error("Failed to download image: ", error);
       toast({
-        title: "Copy failed",
-        description: "Could not copy image to clipboard. This feature may not be supported in your browser.",
+        title: "Download failed",
+        description: "Could not download the image. Please try again later.",
         variant: "destructive",
         duration: 3000,
       });
@@ -152,11 +150,11 @@ export function ScreenModal({
               variant="ghost" 
               size="icon" 
               className="h-9 w-9" 
-              aria-label="Copy screen image"
-              onClick={handleCopyImage}
-              title="Copy image to clipboard"
+              aria-label="Download screen image"
+              onClick={handleDownloadImage}
+              title="Download image to your device"
             >
-              <Copy className="h-4 w-4" aria-hidden="true" />
+              <FileDown className="h-4 w-4" aria-hidden="true" />
             </Button>
             <Button 
               variant="ghost" 
