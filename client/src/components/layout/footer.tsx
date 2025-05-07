@@ -6,7 +6,7 @@ import { Globe, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
 import { LanguageSelector } from "@/components/language-selector";
-import symbolLogo from "@assets/symbol.png";
+import symbolLogo from "@/assets/designpublico-symbol.svg";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -73,11 +73,11 @@ export default function Footer() {
           {/* Logo and description column */}
           <div className="md:col-span-6 space-y-4">
             <Link href="/" className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 rounded-md flex items-center justify-center">
+              <div className="w-8 h-8 flex items-center justify-center">
                 <img 
                   src={symbolLogo} 
                   alt="Design Público Logo" 
-                  className="h-full w-auto rounded-md"
+                  className="h-full w-auto"
                 />
               </div>
               <span className="flex items-center">
