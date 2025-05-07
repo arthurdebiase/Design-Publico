@@ -3,6 +3,7 @@ import { z } from "zod";
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { addSubscriber as addMailerLiteSubscriber, checkSubscriber as checkMailerLiteSubscriber, getSubscriberCount as getMailerLiteSubscriberCount } from "./mailerlite";
 
 // Get current file and directory path in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -16,7 +17,7 @@ const subscribeSchema = z.object({
 });
 
 // Simple JSON file to store subscribers when MailerLite API is not available
-// This is a temporary solution until the MailerLite API is properly integrated
+// This is a fallback solution if the MailerLite API fails
 const SUBSCRIBERS_FILE = path.join(__dirname, '../subscribers.json');
 
 interface Subscriber {
@@ -26,7 +27,7 @@ interface Subscriber {
   subscriptionDate: string;
 }
 
-// Function to read subscribers from file
+// Function to read subscribers from file (used as fallback)
 function readSubscribers(): Subscriber[] {
   try {
     if (!fs.existsSync(SUBSCRIBERS_FILE)) {
@@ -42,7 +43,7 @@ function readSubscribers(): Subscriber[] {
   }
 }
 
-// Function to write subscribers to file
+// Function to write subscribers to file (used as fallback)
 function writeSubscribers(subscribers: Subscriber[]): boolean {
   try {
     fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(subscribers, null, 2));
@@ -53,8 +54,8 @@ function writeSubscribers(subscribers: Subscriber[]): boolean {
   }
 }
 
-// Function to add a subscriber
-function addSubscriber(email: string, name?: string, language?: string): boolean {
+// Function to add a subscriber to the local file (used as fallback)
+function addFileSubscriber(email: string, name?: string, language?: string): boolean {
   try {
     const subscribers = readSubscribers();
     
@@ -74,36 +75,36 @@ function addSubscriber(email: string, name?: string, language?: string): boolean
     
     return writeSubscribers(subscribers);
   } catch (error) {
-    console.error('Error adding subscriber:', error);
+    console.error('Error adding subscriber to file:', error);
     return false;
   }
 }
 
-// Function to check if subscriber exists
-function checkSubscriber(email: string): boolean {
+// Function to check if subscriber exists in local file (used as fallback)
+function checkFileSubscriber(email: string): boolean {
   try {
     const subscribers = readSubscribers();
     return subscribers.some(s => s.email.toLowerCase() === email.toLowerCase());
   } catch (error) {
-    console.error('Error checking subscriber:', error);
+    console.error('Error checking subscriber in file:', error);
     return false;
   }
 }
 
-// Function to get subscriber count
-function getSubscriberCount(): number {
+// Function to get subscriber count from local file (used as fallback)
+function getFileSubscriberCount(): number {
   try {
     const subscribers = readSubscribers();
     return subscribers.length;
   } catch (error) {
-    console.error('Error getting subscriber count:', error);
+    console.error('Error getting subscriber count from file:', error);
     return 0;
   }
 }
 
 /**
  * Subscribe to the newsletter
- * This function uses a file-based storage as a fallback until MailerLite API is working
+ * This function first tries to use MailerLite API, with file storage as fallback
  */
 export async function subscribeToNewsletter(req: Request, res: Response) {
   try {
@@ -119,38 +120,55 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
     // Default to Portuguese (pt) as our application primarily targets Brazilian users
     const { email, language = "pt", name } = validation.data;
     
-    // Check if the subscriber already exists, but don't tell the user for security reasons
-    // Just proceed and return a success message even if the email is already subscribed
-    const alreadySubscribed = checkSubscriber(email);
-    if (alreadySubscribed) {
-      // Silently return success without actually adding the email again
-      return res.status(201).json({ 
-        message: "Thank you for subscribing to our newsletter", 
-        subscriberCount: getSubscriberCount()
-      });
-    }
-    
-    // Log the subscription for development purposes
+    // Log the subscription attempt for development purposes
     console.log(`New newsletter subscription: ${email} (language: ${language})`);
     
-    // Add the subscriber
-    const addResult = addSubscriber(email, name, language);
+    // Try to use MailerLite API first
+    let subscriptionSuccess = false;
+    let subscriberCount = 0;
     
-    if (addResult) {
-      console.log(`Subscriber added: ${email}`);
-    } else {
-      console.log(`Failed to add subscriber: ${email} (may already exist)`);
-      // Don't reveal that the subscriber already exists for security reasons
-      // Just return a generic success message
-      return res.status(201).json({ 
-        message: "Thank you for subscribing to our newsletter", 
-        subscriberCount: getSubscriberCount()
-      });
+    try {
+      // Add subscriber to MailerLite
+      subscriptionSuccess = await addMailerLiteSubscriber(email, name, language);
+      
+      if (subscriptionSuccess) {
+        // Try to get subscriber count from MailerLite
+        const count = await getMailerLiteSubscriberCount();
+        if (count !== null) {
+          subscriberCount = count;
+        }
+      }
+    } catch (error) {
+      console.error('Error using MailerLite API, falling back to file storage:', error);
+      // If MailerLite fails, fall back to file storage
+      subscriptionSuccess = false;
     }
     
-    // Get the updated subscriber count
-    const subscriberCount = getSubscriberCount();
+    // If MailerLite subscription failed, use file storage as fallback
+    if (!subscriptionSuccess) {
+      console.log(`MailerLite subscription failed, using file storage fallback for: ${email}`);
+      
+      // Check if already subscribed in file (but don't tell the user for security reasons)
+      const alreadySubscribed = checkFileSubscriber(email);
+      
+      if (!alreadySubscribed) {
+        // Add to file storage
+        const addResult = addFileSubscriber(email, name, language);
+        if (addResult) {
+          console.log(`Subscriber added to file storage: ${email}`);
+          subscriptionSuccess = true;
+        }
+      } else {
+        // Treat as success even if already subscribed (for privacy)
+        subscriptionSuccess = true;
+      }
+      
+      // Get count from file storage
+      subscriberCount = getFileSubscriberCount();
+    }
     
+    // Always return a success message, even if there was an issue
+    // This prevents email enumeration for privacy/security reasons
     return res.status(201).json({ 
       message: "Thank you for subscribing to our newsletter",
       subscriberCount: subscriberCount
@@ -162,18 +180,32 @@ export async function subscribeToNewsletter(req: Request, res: Response) {
 }
 
 /**
- * Get all newsletter subscribers (for admin purposes)
+ * Get all newsletter subscribers count (for admin purposes)
  * This would typically be protected by authentication
  */
 export async function getNewsletterSubscribers(_req: Request, res: Response) {
   try {
-    // Get subscriber count
-    const count = getSubscriberCount();
+    // Try to get count from MailerLite first
+    let count = 0;
+    
+    try {
+      const mailerLiteCount = await getMailerLiteSubscriberCount();
+      if (mailerLiteCount !== null) {
+        count = mailerLiteCount;
+      }
+    } catch (error) {
+      console.error('Error getting count from MailerLite, falling back to file storage:', error);
+    }
+    
+    // If MailerLite count is zero or failed, try file storage
+    if (count === 0) {
+      count = getFileSubscriberCount();
+    }
     
     // Return the count
     return res.status(200).json({ count });
   } catch (error) {
-    console.error("Error getting newsletter subscribers:", error);
-    return res.status(500).json({ message: "Failed to get newsletter subscribers" });
+    console.error("Error getting newsletter subscribers count:", error);
+    return res.status(500).json({ message: "Failed to get newsletter subscribers count" });
   }
 }
