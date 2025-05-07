@@ -105,7 +105,7 @@ export default function AppDetail() {
         </div>
       ) : app ? (
         <>
-          <div className="bg-white rounded-lg overflow-hidden shadow-md mb-8">
+          <div className="bg-white rounded-lg overflow-hidden mb-8">
             <div className="bg-white p-6 relative">
               <div className="flex flex-row items-center">
                 <div className="flex-shrink-0 mr-6">
@@ -234,7 +234,7 @@ export default function AppDetail() {
 
 function AppDetailSkeleton() {
   return (
-    <div className="bg-white rounded-lg overflow-hidden shadow-md mb-8">
+    <div className="bg-white rounded-lg overflow-hidden mb-8">
       <div className="bg-white p-6 relative">
         <div className="flex items-start">
           <Skeleton className="w-16 h-16 rounded-2xl mr-6" />
