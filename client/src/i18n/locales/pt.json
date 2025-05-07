@@ -46,7 +46,27 @@
   },
   "about": {
     "title": "Sobre o DESIGN PÚBLICO",
-    "description": "O DESIGN PÚBLICO é uma coleção curada de exemplos de design de aplicativos públicos. Nosso objetivo é fornecer inspiração e referências para designers e desenvolvedores criarem interfaces de usuário bonitas."
+    "description": "O DESIGN PÚBLICO é uma coleção curada de exemplos de design de aplicativos públicos. Nosso objetivo é fornecer inspiração e referências para designers e desenvolvedores criarem interfaces de usuário bonitas.",
+    "stats": {
+      "apps": "Aplicativos Públicos",
+      "screens": "Telas de Interface"
+    },
+    "projectTitle": "Sobre o Projeto",
+    "platformsTitle": "Plataformas Suportadas",
+    "platforms": {
+      "mobile": {
+        "title": "Aplicativos Móveis",
+        "description": "Aplicativos iOS e Android projetados para smartphones e tablets"
+      },
+      "web": {
+        "title": "Aplicativos Web",
+        "description": "Aplicativos web responsivos otimizados para navegadores desktop e móveis"
+      },
+      "cross": {
+        "title": "Multiplataforma",
+        "description": "Aplicativos que funcionam em múltiplas plataformas com design consistente"
+      }
+    }
   },
   "newsletter": {
     "title": "Assine nossa newsletter",

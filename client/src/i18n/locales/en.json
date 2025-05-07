@@ -46,7 +46,27 @@
   },
   "about": {
     "title": "About DESIGN PÚBLICO",
-    "description": "DESIGN PÚBLICO is a curated collection of design examples from public applications. Our goal is to provide designers and developers with inspiration and references for creating beautiful user interfaces."
+    "description": "DESIGN PÚBLICO is a curated collection of design examples from public applications. Our goal is to provide designers and developers with inspiration and references for creating beautiful user interfaces.",
+    "stats": {
+      "apps": "Public Applications",
+      "screens": "Interface Screens"
+    },
+    "projectTitle": "About the Project",
+    "platformsTitle": "Supported Platforms",
+    "platforms": {
+      "mobile": {
+        "title": "Mobile Apps",
+        "description": "iOS and Android applications designed for smartphones and tablets"
+      },
+      "web": {
+        "title": "Web Applications",
+        "description": "Responsive web applications optimized for desktop and mobile browsers"
+      },
+      "cross": {
+        "title": "Cross-Platform",
+        "description": "Applications that work across multiple platforms with consistent design"
+      }
+    }
   },
   "newsletter": {
     "title": "Subscribe to our newsletter",
