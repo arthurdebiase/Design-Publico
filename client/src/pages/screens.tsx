@@ -222,7 +222,8 @@ export default function ScreensPage() {
         <h1 className="text-3xl font-bold mb-2">Todas as telas</h1>
       </div>
       
-      <div className="mb-6 flex flex-wrap gap-4">
+      <div className="mb-6 flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex flex-wrap gap-4">
         {/* Tag filter dropdown */}
         <div className="flex items-center">
           <DropdownMenu>
@@ -320,6 +321,12 @@ export default function ScreensPage() {
             Limpar todos os filtros
           </Button>
         )}
+        </div>
+        
+        {/* Screen counter */}
+        <div className="text-gray-600 font-medium">
+          {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
+        </div>
       </div>
       
       {filteredScreens.length > 0 ? (
