@@ -167,14 +167,15 @@ export function ScreenModal({
             </div>
           </div>
           <div className="flex items-center gap-1">
-            {currentScreen.tags && currentScreen.tags.length > 0 && (
+            {/* Show info button if there are tags or categories to display */}
+            {((currentScreen.tags && currentScreen.tags.length > 0) || currentScreen.category) && (
               <Button 
                 variant="ghost" 
                 size="icon" 
                 className={`h-9 w-9 ${showTags ? 'bg-gray-100' : ''}`} 
-                aria-label={showTags ? "Hide tags" : "Show tags"}
+                aria-label={showTags ? "Hide metadata" : "Show metadata"}
                 onClick={() => setShowTags(!showTags)}
-                title={showTags ? "Hide tags" : "Show tags"}
+                title={showTags ? "Hide tags and categories" : "Show tags and categories"}
               >
                 <Info className="h-4 w-4" aria-hidden="true" />
               </Button>
@@ -238,40 +239,42 @@ export function ScreenModal({
           </div>
           
           {/* Tags and categories displayed here */}
-          <div className="flex flex-wrap gap-2 mt-4 justify-center">
-            {/* Categories - Always visible */}
-            {currentScreen.category && (
-              <>
-                {typeof currentScreen.category === 'string' ? (
-                  <span className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium">
-                    {currentScreen.category}
-                  </span>
-                ) : (
-                  Array.isArray(currentScreen.category) && 
-                  currentScreen.category.map((cat, idx) => (
-                    <span 
-                      key={`modal-category-${idx}`} 
-                      className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium"
-                    >
-                      {cat}
+          {showTags && (
+            <div className="flex flex-wrap gap-2 mt-4 justify-center">
+              {/* Categories - Only visible when showTags is true */}
+              {currentScreen.category && (
+                <>
+                  {typeof currentScreen.category === 'string' ? (
+                    <span className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium">
+                      {currentScreen.category}
                     </span>
-                  ))
-                )}
-              </>
-            )}
-            
-            {/* Tags - Only visible when showTags is true */}
-            {showTags && currentScreen.tags && currentScreen.tags.length > 0 && (
-              currentScreen.tags.map((tag, index) => (
-                <span 
-                  key={`modal-tag-${index}`} 
-                  className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800`}
-                >
-                  {tag}
-                </span>
-              ))
-            )}
-          </div>
+                  ) : (
+                    Array.isArray(currentScreen.category) && 
+                    currentScreen.category.map((cat, idx) => (
+                      <span 
+                        key={`modal-category-${idx}`} 
+                        className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium"
+                      >
+                        {cat}
+                      </span>
+                    ))
+                  )}
+                </>
+              )}
+              
+              {/* Tags - Only visible when showTags is true */}
+              {currentScreen.tags && currentScreen.tags.length > 0 && (
+                currentScreen.tags.map((tag, index) => (
+                  <span 
+                    key={`modal-tag-${index}`} 
+                    className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800`}
+                  >
+                    {tag}
+                  </span>
+                ))
+              )}
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
