@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, FileText, Maximize2, ChevronDown, Filter } from 'lucide-react';
+import { Loader2, FileText, Maximize2, ChevronDown, Filter, X } from 'lucide-react';
 import { Screen, App } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -222,105 +222,110 @@ export default function ScreensPage() {
         <h1 className="text-3xl font-bold mb-2">Todas as telas</h1>
       </div>
       
-      <div className="mb-6 flex flex-wrap gap-4 items-center justify-between">
-        <div className="flex flex-wrap gap-4">
-        {/* Tag filter dropdown */}
-        <div className="flex items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                {'Tag'}
-                <ChevronDown className="h-4 w-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Tag</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className={!selectedTag ? "bg-accent/50" : ""}
-                onClick={() => handleTagFilterChange(null)}
-              >
-                Todas as Tags
-              </DropdownMenuItem>
-              {availableTags.map((tag: string, index: number) => (
-                <DropdownMenuItem
-                  key={`tag-${index}-${tag}`}
-                  className={selectedTag === tag ? "bg-accent/50" : ""}
-                  onClick={() => handleTagFilterChange(tag)}
+      <div className="mb-6 flex flex-wrap items-center justify-between">
+        <div className="flex flex-wrap gap-4 items-center">
+          {/* Tag filter dropdown */}
+          <div className="flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  {'Tag'}
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>Tag</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  className={!selectedTag ? "bg-accent/50" : ""}
+                  onClick={() => handleTagFilterChange(null)}
                 >
-                  <span>{tag}</span>
+                  Todas as Tags
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          
-          {selectedTag && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => handleTagFilterChange(null)}
-              className="text-sm"
-            >
-              Limpar filtro de tag
-            </Button>
-          )}
-        </div>
+                {availableTags.map((tag: string, index: number) => (
+                  <DropdownMenuItem
+                    key={`tag-${index}-${tag}`}
+                    className={selectedTag === tag ? "bg-accent/50" : ""}
+                    onClick={() => handleTagFilterChange(tag)}
+                  >
+                    <span>{tag}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
-        {/* Category filter dropdown */}
-        <div className="flex items-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                {'Categoria'}
-                <ChevronDown className="h-4 w-4 ml-2" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Categoria</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className={!selectedCategory ? "bg-accent/50" : ""}
-                onClick={() => handleCategoryFilterChange(null)}
-              >
-                Todas as Categorias
-              </DropdownMenuItem>
-              {availableCategories.map((category: string, index: number) => (
-                <DropdownMenuItem
-                  key={`category-${index}-${category}`}
-                  className={selectedCategory === category ? "bg-accent/50" : ""}
-                  onClick={() => handleCategoryFilterChange(category)}
+          {/* Category filter dropdown */}
+          <div className="flex items-center">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="flex items-center gap-2">
+                  {'Categoria'}
+                  <ChevronDown className="h-4 w-4 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-56">
+                <DropdownMenuLabel>Categoria</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  className={!selectedCategory ? "bg-accent/50" : ""}
+                  onClick={() => handleCategoryFilterChange(null)}
                 >
-                  <span>{category}</span>
+                  Todas as Categorias
                 </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                {availableCategories.map((category: string, index: number) => (
+                  <DropdownMenuItem
+                    key={`category-${index}-${category}`}
+                    className={selectedCategory === category ? "bg-accent/50" : ""}
+                    onClick={() => handleCategoryFilterChange(category)}
+                  >
+                    <span>{category}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Active filter chips */}
+          {selectedTag && (
+            <div className="bg-accent/20 text-accent-foreground px-3 py-1 rounded-full text-sm flex items-center gap-1">
+              <span>Tag: {selectedTag}</span>
+              <button 
+                onClick={() => handleTagFilterChange(null)}
+                className="rounded-full hover:bg-accent/30 p-1 transition-colors"
+                aria-label="Remover filtro de tag"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
           
           {selectedCategory && (
+            <div className="bg-accent/20 text-accent-foreground px-3 py-1 rounded-full text-sm flex items-center gap-1">
+              <span>Categoria: {selectedCategory}</span>
+              <button 
+                onClick={() => handleCategoryFilterChange(null)}
+                className="rounded-full hover:bg-accent/30 p-1 transition-colors"
+                aria-label="Remover filtro de categoria"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+
+          {/* Clear all filters button */}
+          {(selectedTag || selectedCategory) && (
             <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={() => handleCategoryFilterChange(null)}
-              className="text-sm"
+              variant="secondary" 
+              size="sm"
+              onClick={() => {
+                setSelectedTag(null);
+                setSelectedCategory(null);
+              }}
             >
-              Limpar filtro de categoria
+              Limpar todos os filtros
             </Button>
           )}
-        </div>
-
-        {/* Clear all filters button */}
-        {(selectedTag || selectedCategory) && (
-          <Button 
-            variant="secondary" 
-            size="sm"
-            onClick={() => {
-              setSelectedTag(null);
-              setSelectedCategory(null);
-            }}
-          >
-            Limpar todos os filtros
-          </Button>
-        )}
         </div>
         
         {/* Screen counter */}
