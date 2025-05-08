@@ -57,7 +57,9 @@
     "description": "DESIGN PÚBLICO is a visual reference database of digital public interfaces. We gather good design examples to inspire those who create digital services for the population.",
     "stats": {
       "apps": "Public Applications",
-      "screens": "Interface Screens"
+      "screens": "Interface Screens",
+      "tags": "Tags",
+      "categories": "Categories"
     },
     "projectTitle": "About the Project",
     "platformsTitle": "Supported Platforms",
