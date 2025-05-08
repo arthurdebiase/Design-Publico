@@ -47,35 +47,9 @@ export default function ScreensPage() {
     }
     
     if (selectedCategory) {
-      filtered = filtered.filter(screen => {
-        // Check if the screen's category matches
-        if (screen.category === selectedCategory) return true;
-        
-        // Check if the app's category matches
-        if (screen.app?.category === selectedCategory) return true;
-        
-        // Check app type-based categories
-        if (selectedCategory === 'Federal' && screen.app?.type === 'Federal') return true;
-        if (selectedCategory === 'Municipal' && screen.app?.type === 'Municipal') return true;
-        if (selectedCategory === 'Estadual' && screen.app?.type === 'State') return true;
-        
-        // Check name-based categories
-        if (selectedCategory === 'Saúde' && 
-            (screen.app?.name.includes('SUS') || screen.app?.category === 'Saúde')) return true;
-        
-        if (selectedCategory === 'Trabalho' && 
-            (screen.app?.name.includes('Trabalho') || screen.app?.category === 'Trabalho')) return true;
-        
-        if (selectedCategory === 'Mobilidade' && 
-            (screen.app?.name.includes('Trânsito') || screen.app?.category === 'Mobilidade')) return true;
-        
-        if (selectedCategory === 'Finanças' && 
-            (screen.app?.name.includes('CAIXA') || screen.app?.name.includes('Tesouro'))) return true;
-        
-        if (selectedCategory === 'Portal' && screen.app?.name.includes('gov.br')) return true;
-        
-        return false;
-      });
+      filtered = filtered.filter(screen => 
+        screen.category === selectedCategory || screen.app?.category === selectedCategory
+      );
     }
     
     setFilteredScreens(filtered);
@@ -131,41 +105,12 @@ export default function ScreensPage() {
             screen.tags.forEach(tag => tags.add(tag));
           }
           
-          // Extract categories from the screens
+          // Extract categories
           if (screen.category) {
             categories.add(screen.category);
           }
-          
-          // Add standard categories based on app type
-          if (screen.app) {
-            switch(screen.app.type) {
-              case 'Federal':
-                categories.add('Federal');
-                break;
-              case 'Municipal':
-                categories.add('Municipal');
-                break;
-              case 'State':
-                categories.add('Estadual');
-                break;
-            }
-            
-            // Add common category groups
-            if (screen.app.name.includes('SUS') || screen.app.category === 'Saúde') {
-              categories.add('Saúde');
-            }
-            if (screen.app.name.includes('Trabalho') || screen.app.category === 'Trabalho') {
-              categories.add('Trabalho');
-            }
-            if (screen.app.name.includes('Trânsito') || screen.app.category === 'Mobilidade') {
-              categories.add('Mobilidade');
-            }
-            if (screen.app.name.includes('CAIXA') || screen.app.name.includes('Tesouro')) {
-              categories.add('Finanças');
-            }
-            if (screen.app.name.includes('gov.br')) {
-              categories.add('Portal');
-            }
+          if (screen.app?.category) {
+            categories.add(screen.app.category);
           }
         });
         
@@ -400,11 +345,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
 
   // Function to get tag background color
   const getTagColor = (tag: string) => {
-    interface ColorMap {
-      [key: string]: string;
-    }
-    
-    const colors: ColorMap = {
+    const colors = {
       'navigation': 'bg-blue-100',
       'form': 'bg-green-100',
       'chart': 'bg-purple-100',
