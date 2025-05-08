@@ -595,11 +595,29 @@ export class MemStorage implements IStorage {
         
         console.log(`DEBUG: App ${appName} has record ID: ${appRecordId}`);
         
+        // Predefined categories to ensure we have them
+        const predefinedCategories = {
+          'Meu INSS': 'Previdência',
+          'Conecta Recife': 'Serviços Municipais',
+          'Meu SUS Digital': 'Saúde',
+          'gov.br': 'Serviços Federais',
+          'Carteira de Trabalho Digital': 'Trabalho',
+          'Tesouro Direto': 'Finanças',
+          'CAIXA': 'Banco',
+          'Carteira Digital de Transito': 'Mobilidade'
+        };
+        
         // Look up category and type from our maps
         let appCategory = null;
         let appType = fields[APP_TYPE_FIELD]; // Try to get from screens record first
         
-        if (appRecordId) {
+        // First check in predefined categories
+        if (appName && predefinedCategories[appName]) {
+          appCategory = predefinedCategories[appName];
+          console.log(`DEBUG: Using predefined category ${appCategory} for app ${appName}`);
+        }
+        // Then fall back to Airtable data
+        else if (appRecordId) {
           // Get category from our map
           if (appIdToCategoryMap.has(appRecordId)) {
             appCategory = appIdToCategoryMap.get(appRecordId);
@@ -845,16 +863,16 @@ export class MemStorage implements IStorage {
     
     // Create sample screens for the first app (Meu SUS Digital)
     const screenTypes = [
-      { name: "Login", description: "Initial app login screen" },
-      { name: "Home", description: "Main dashboard" },
-      { name: "Profile", description: "User profile view" },
-      { name: "Notifications", description: "Notification center" },
-      { name: "Vaccination", description: "Vaccination records" },
-      { name: "Health Card", description: "Digital health card" },
-      { name: "Appointments", description: "Schedule medical appointments" },
-      { name: "Medications", description: "Prescribed medications" },
-      { name: "Hospitals", description: "Nearby hospitals and clinics" },
-      { name: "Lab Results", description: "Laboratory test results" },
+      { name: "Login", description: "Initial app login screen", category: "Autenticação" },
+      { name: "Home", description: "Main dashboard", category: "Home" },
+      { name: "Profile", description: "User profile view", category: "Perfil" },
+      { name: "Notifications", description: "Notification center", category: "Notificações" },
+      { name: "Vaccination", description: "Vaccination records", category: "Saúde" },
+      { name: "Health Card", description: "Digital health card", category: "Documentos" },
+      { name: "Appointments", description: "Schedule medical appointments", category: "Agendamento" },
+      { name: "Medications", description: "Prescribed medications", category: "Saúde" },
+      { name: "Hospitals", description: "Nearby hospitals and clinics", category: "Localização" },
+      { name: "Lab Results", description: "Laboratory test results", category: "Resultados" },
     ];
     
     screenTypes.forEach((screenType, index) => {

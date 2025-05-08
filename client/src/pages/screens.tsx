@@ -102,17 +102,25 @@ export default function ScreensPage() {
         sortedScreens.forEach(screen => {
           // Extract tags
           if (screen.tags && Array.isArray(screen.tags)) {
-            screen.tags.forEach(tag => tags.add(tag));
+            screen.tags.forEach(tag => {
+              if (tag && typeof tag === 'string' && tag.trim()) {
+                tags.add(tag.trim());
+              }
+            });
           }
           
           // Extract categories
-          if (screen.category) {
-            categories.add(screen.category);
+          if (screen.category && typeof screen.category === 'string' && screen.category.trim()) {
+            categories.add(screen.category.trim());
           }
-          if (screen.app?.category) {
-            categories.add(screen.app.category);
+          
+          // Also add categories from the app
+          if (screen.app?.category && typeof screen.app.category === 'string' && screen.app.category.trim()) {
+            categories.add(screen.app.category.trim());
           }
         });
+        
+        console.log('Available categories:', Array.from(categories));
         
         setAvailableTags(Array.from(tags).sort());
         setAvailableCategories(Array.from(categories).sort());
