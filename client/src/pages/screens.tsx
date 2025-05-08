@@ -48,12 +48,21 @@ export default function ScreensPage() {
     
     if (selectedCategory) {
       filtered = filtered.filter(screen => {
-        const screenCategory = screen.category;
-        const appCategory = screen.app?.category;
+        // Handle screen.category which could be string or array
+        if (typeof screen.category === 'string') {
+          if (screen.category === selectedCategory) return true;
+        } else if (Array.isArray(screen.category)) {
+          if (screen.category.includes(selectedCategory)) return true;
+        }
         
-        // Make sure to handle null/undefined values properly
-        return (screenCategory && screenCategory === selectedCategory) || 
-               (appCategory && appCategory === selectedCategory);
+        // Handle app category which could be string or array
+        if (typeof screen.app?.category === 'string') {
+          if (screen.app.category === selectedCategory) return true;
+        } else if (Array.isArray(screen.app?.category)) {
+          if (screen.app.category.includes(selectedCategory)) return true;
+        }
+        
+        return false;
       });
     }
     
@@ -114,14 +123,30 @@ export default function ScreensPage() {
             });
           }
           
-          // Extract categories
-          if (screen.category && typeof screen.category === 'string' && screen.category.trim()) {
-            categories.add(screen.category.trim());
+          // Extract categories - handle both string and array of strings
+          if (screen.category) {
+            if (typeof screen.category === 'string' && screen.category.trim()) {
+              categories.add(screen.category.trim());
+            } else if (Array.isArray(screen.category)) {
+              screen.category.forEach(cat => {
+                if (cat && typeof cat === 'string' && cat.trim()) {
+                  categories.add(cat.trim());
+                }
+              });
+            }
           }
           
           // Also add categories from the app
-          if (screen.app?.category && typeof screen.app.category === 'string' && screen.app.category.trim()) {
-            categories.add(screen.app.category.trim());
+          if (screen.app?.category) {
+            if (typeof screen.app.category === 'string' && screen.app.category.trim()) {
+              categories.add(screen.app.category.trim());
+            } else if (Array.isArray(screen.app.category)) {
+              screen.app.category.forEach(cat => {
+                if (cat && typeof cat === 'string' && cat.trim()) {
+                  categories.add(cat.trim());
+                }
+              });
+            }
           }
         });
         
