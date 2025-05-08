@@ -21,7 +21,10 @@ export default function ScreensPage() {
   const [allScreens, setAllScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [filteredScreens, setFilteredScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [apps, setApps] = useState<App[]>([]);
-  const [selectedAppId, setSelectedAppId] = useState<string | null>(null);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,19 +34,26 @@ export default function ScreensPage() {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   
-  // Filter screens when selectedAppId changes
+  // Filter screens when selectedTag or selectedCategory changes
   useEffect(() => {
     if (allScreens.length === 0) return;
     
-    if (selectedAppId) {
-      const filtered = allScreens.filter(screen => 
-        screen.app?.id.toString() === selectedAppId
+    let filtered = [...allScreens];
+    
+    if (selectedTag) {
+      filtered = filtered.filter(screen => 
+        screen.tags?.includes(selectedTag)
       );
-      setFilteredScreens(filtered);
-    } else {
-      setFilteredScreens(allScreens);
     }
-  }, [selectedAppId, allScreens]);
+    
+    if (selectedCategory) {
+      filtered = filtered.filter(screen => 
+        screen.category === selectedCategory || screen.app?.category === selectedCategory
+      );
+    }
+    
+    setFilteredScreens(filtered);
+  }, [selectedTag, selectedCategory, allScreens]);
 
   useEffect(() => {
     const fetchAllScreens = async () => {
@@ -85,6 +95,27 @@ export default function ScreensPage() {
           return nameA.localeCompare(nameB);
         });
         
+        // Extract unique tags and categories
+        const tags = new Set<string>();
+        const categories = new Set<string>();
+        
+        sortedScreens.forEach(screen => {
+          // Extract tags
+          if (screen.tags && Array.isArray(screen.tags)) {
+            screen.tags.forEach(tag => tags.add(tag));
+          }
+          
+          // Extract categories
+          if (screen.category) {
+            categories.add(screen.category);
+          }
+          if (screen.app?.category) {
+            categories.add(screen.app.category);
+          }
+        });
+        
+        setAvailableTags(Array.from(tags).sort());
+        setAvailableCategories(Array.from(categories).sort());
         setAllScreens(sortedScreens);
         setFilteredScreens(sortedScreens);
       } catch (err) {
@@ -113,8 +144,12 @@ export default function ScreensPage() {
     setIsModalOpen(true);
   };
   
-  const handleAppFilterChange = (appId: string | null) => {
-    setSelectedAppId(appId);
+  const handleTagFilterChange = (tag: string | null) => {
+    setSelectedTag(tag);
+  };
+  
+  const handleCategoryFilterChange = (category: string | null) => {
+    setSelectedCategory(category);
   };
 
   if (loading) {
@@ -149,57 +184,106 @@ export default function ScreensPage() {
         <h1 className="text-3xl font-bold mb-2">Todas as telas</h1>
       </div>
       
-      <div className="mb-6 flex justify-between items-center">
-        <div className="flex items-center space-x-4">
+      <div className="mb-6 flex flex-wrap gap-4">
+        {/* Tag filter dropdown */}
+        <div className="flex items-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
-                {'Filtrar por aplicativo'}
+                {'Filtrar por Tag'}
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Filtrar por aplicativo</DropdownMenuLabel>
+              <DropdownMenuLabel>Filtrar por Tag</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
-                className={!selectedAppId ? "bg-accent/50" : ""}
-                onClick={() => handleAppFilterChange(null)}
+                className={!selectedTag ? "bg-accent/50" : ""}
+                onClick={() => handleTagFilterChange(null)}
               >
-                Todos os aplicativos
+                Todas as Tags
               </DropdownMenuItem>
-              {apps.map((app: App) => (
+              {availableTags.map((tag: string) => (
                 <DropdownMenuItem
-                  key={app.id}
-                  className={selectedAppId === app.id.toString() ? "bg-accent/50" : ""}
-                  onClick={() => handleAppFilterChange(app.id.toString())}
+                  key={tag}
+                  className={selectedTag === tag ? "bg-accent/50" : ""}
+                  onClick={() => handleTagFilterChange(tag)}
                 >
-                  <div className="flex items-center gap-2">
-                    {app.logo ? (
-                      <img src={app.logo} alt="App logo" className="w-6 h-6" />
-                    ) : (
-                      <div className="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
-                        <span className="text-xs">{app.name.charAt(0)}</span>
-                      </div>
-                    )}
-                    <span>{app.name}</span>
-                  </div>
+                  <span>{tag}</span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
           
-          {selectedAppId && (
+          {selectedTag && (
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => handleAppFilterChange(null)}
+              onClick={() => handleTagFilterChange(null)}
               className="text-sm"
             >
-              Limpar filtro
+              Limpar filtro de tag
             </Button>
           )}
         </div>
+
+        {/* Category filter dropdown */}
+        <div className="flex items-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                {'Filtrar por Categoria'}
+                <ChevronDown className="h-4 w-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel>Filtrar por Categoria</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={!selectedCategory ? "bg-accent/50" : ""}
+                onClick={() => handleCategoryFilterChange(null)}
+              >
+                Todas as Categorias
+              </DropdownMenuItem>
+              {availableCategories.map((category: string) => (
+                <DropdownMenuItem
+                  key={category}
+                  className={selectedCategory === category ? "bg-accent/50" : ""}
+                  onClick={() => handleCategoryFilterChange(category)}
+                >
+                  <span>{category}</span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          {selectedCategory && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => handleCategoryFilterChange(null)}
+              className="text-sm"
+            >
+              Limpar filtro de categoria
+            </Button>
+          )}
+        </div>
+
+        {/* Clear all filters button */}
+        {(selectedTag || selectedCategory) && (
+          <Button 
+            variant="secondary" 
+            size="sm"
+            onClick={() => {
+              setSelectedTag(null);
+              setSelectedCategory(null);
+            }}
+          >
+            Limpar todos os filtros
+          </Button>
+        )}
       </div>
       
       {filteredScreens.length > 0 ? (
@@ -257,6 +341,31 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   
   const handleImageError = () => {
     setImageError(true);
+  };
+
+  // Function to get tag background color
+  const getTagColor = (tag: string) => {
+    const colors = {
+      'navigation': 'bg-blue-100',
+      'form': 'bg-green-100',
+      'chart': 'bg-purple-100',
+      'modal': 'bg-yellow-100',
+      'card': 'bg-pink-100', 
+      'loading': 'bg-orange-100',
+      'splash-screen': 'bg-teal-100',
+      'avatar': 'bg-indigo-100',
+      'button': 'bg-red-100',
+      'filter': 'bg-cyan-100',
+      'icon': 'bg-lime-100',
+      'dropdown': 'bg-amber-100',
+      'list': 'bg-violet-100',
+      'input': 'bg-emerald-100',
+      'onboarding': 'bg-sky-100',
+      'callout': 'bg-rose-100'
+    };
+    
+    // Default color for unknown tags
+    return colors[tag.toLowerCase()] || 'bg-gray-100';
   };
   
   return (
@@ -332,6 +441,34 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
               )}
             </div>
             <p className="text-xs text-gray-500 truncate">{screen.app.name}</p>
+          </div>
+        )}
+        
+        {/* Tags */}
+        {screen.tags && screen.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {screen.tags.slice(0, 2).map((tag, index) => (
+              <span 
+                key={index} 
+                className={`text-xs px-2 py-1 rounded-full ${getTagColor(tag)} text-gray-800`}
+              >
+                {tag}
+              </span>
+            ))}
+            {screen.tags.length > 2 && (
+              <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-800">
+                +{screen.tags.length - 2}
+              </span>
+            )}
+          </div>
+        )}
+        
+        {/* Category badge */}
+        {screen.category && (
+          <div className="mt-1">
+            <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">
+              {screen.category}
+            </span>
           </div>
         )}
       </div>

@@ -900,6 +900,8 @@ export class MemStorage implements IStorage {
         imageUrl: `https://random.imagecdn.app/400/800?image=${30 + index}`,
         flow: "Main",
         order: index,
+        tags: ["employment", "documents"],
+        category: "Employment",
         airtableId: `ctps${index + 1}`,
         createdAt: now,
         updatedAt: now,
