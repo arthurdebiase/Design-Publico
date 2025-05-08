@@ -245,18 +245,26 @@ export function ScreenModal({
               {currentScreen.category && (
                 <>
                   {typeof currentScreen.category === 'string' ? (
-                    <span className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium">
+                    <Link 
+                      href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
+                      onClick={onClose}
+                      className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer"
+                      title={`View all screens in ${currentScreen.category} category`}
+                    >
                       {currentScreen.category}
-                    </span>
+                    </Link>
                   ) : (
                     Array.isArray(currentScreen.category) && 
                     currentScreen.category.map((cat, idx) => (
-                      <span 
-                        key={`modal-category-${idx}`} 
-                        className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium"
+                      <Link 
+                        key={`modal-category-${idx}`}
+                        href={`/screens?category=${encodeURIComponent(cat)}`}
+                        onClick={onClose}
+                        className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer"
+                        title={`View all screens in ${cat} category`}
                       >
                         {cat}
-                      </span>
+                      </Link>
                     ))
                   )}
                 </>
@@ -265,12 +273,15 @@ export function ScreenModal({
               {/* Tags - Only visible when showTags is true */}
               {currentScreen.tags && currentScreen.tags.length > 0 && (
                 currentScreen.tags.map((tag, index) => (
-                  <span 
-                    key={`modal-tag-${index}`} 
-                    className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800`}
+                  <Link 
+                    key={`modal-tag-${index}`}
+                    href={`/screens?tag=${encodeURIComponent(tag)}`}
+                    onClick={onClose}
+                    className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer`}
+                    title={`View all screens with ${tag} tag`}
                   >
                     {tag}
-                  </span>
+                  </Link>
                 ))
               )}
             </div>
