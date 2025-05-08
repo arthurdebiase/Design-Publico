@@ -595,29 +595,12 @@ export class MemStorage implements IStorage {
         
         console.log(`DEBUG: App ${appName} has record ID: ${appRecordId}`);
         
-        // Predefined categories to ensure we have them
-        const predefinedCategories = {
-          'Meu INSS': 'Previdência',
-          'Conecta Recife': 'Serviços Municipais',
-          'Meu SUS Digital': 'Saúde',
-          'gov.br': 'Serviços Federais',
-          'Carteira de Trabalho Digital': 'Trabalho',
-          'Tesouro Direto': 'Finanças',
-          'CAIXA': 'Banco',
-          'Carteira Digital de Transito': 'Mobilidade'
-        };
-        
         // Look up category and type from our maps
         let appCategory = null;
         let appType = fields[APP_TYPE_FIELD]; // Try to get from screens record first
         
-        // First check in predefined categories
-        if (appName && predefinedCategories.hasOwnProperty(appName)) {
-          appCategory = predefinedCategories[appName as keyof typeof predefinedCategories];
-          console.log(`DEBUG: Using predefined category ${appCategory} for app ${appName}`);
-        }
-        // Then fall back to Airtable data
-        else if (appRecordId) {
+        // Use Airtable data for categories
+        if (appRecordId) {
           // Get category from our map
           if (appIdToCategoryMap.has(appRecordId)) {
             appCategory = appIdToCategoryMap.get(appRecordId);
