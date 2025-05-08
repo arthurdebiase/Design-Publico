@@ -96,7 +96,7 @@ export default function AppDetail() {
   if (!match) return null;
   
   return (
-    <div className="container mx-auto px-4 md:px-6 pt-6 pb-0">
+    <div className="container mx-auto px-4 md:px-6 py-10">
       {isLoading ? (
         <AppDetailSkeleton />
       ) : error ? (
@@ -163,7 +163,7 @@ export default function AppDetail() {
               )}
               
               {isScreensLoading ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
                   {[...Array(10)].map((_, i) => (
                     <div key={i}>
                       <Skeleton className="w-full aspect-[9/16] rounded-lg" />
@@ -175,7 +175,7 @@ export default function AppDetail() {
                   ))}
                 </div>
               ) : screens && screens.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
                   {screens.map((screen) => (
                     <ScreenThumbnail 
                       key={screen.id} 
@@ -185,7 +185,7 @@ export default function AppDetail() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8 bg-gray-50 rounded-lg">
+                <div className="text-center py-8 bg-gray-50 rounded-lg mb-10">
                   <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-medium text-gray-900">No screens available</h3>
                   <p className="text-gray-500 mt-2">
@@ -255,7 +255,7 @@ function AppDetailSkeleton() {
       
       <div className="p-6">
         <Skeleton className="h-6 w-24 mb-4 rounded-md" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
           {[...Array(10)].map((_, i) => (
             <div key={i}>
               <Skeleton className="w-full aspect-[9/16] rounded-lg" />
