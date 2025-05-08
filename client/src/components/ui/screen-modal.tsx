@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Screen, App } from "@/types";
-import { X, Link2, ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { X, Link2, ChevronLeft, ChevronRight, ExternalLink, Info } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
@@ -55,6 +55,7 @@ export function ScreenModal({
   app,
 }: ScreenModalProps) {
   const [localIndex, setLocalIndex] = useState(currentScreenIndex);
+  const [showTags, setShowTags] = useState(false);
   const [location] = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -166,6 +167,18 @@ export function ScreenModal({
             </div>
           </div>
           <div className="flex items-center gap-1">
+            {currentScreen.tags && currentScreen.tags.length > 0 && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className={`h-9 w-9 ${showTags ? 'bg-gray-100' : ''}`} 
+                aria-label={showTags ? "Hide tags" : "Show tags"}
+                onClick={() => setShowTags(!showTags)}
+                title={showTags ? "Hide tags" : "Show tags"}
+              >
+                <Info className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            )}
             <Button 
               variant="ghost" 
               size="icon" 
@@ -226,7 +239,7 @@ export function ScreenModal({
           
           {/* Tags and categories displayed here */}
           <div className="flex flex-wrap gap-2 mt-4 justify-center">
-            {/* Categories */}
+            {/* Categories - Always visible */}
             {currentScreen.category && (
               <>
                 {typeof currentScreen.category === 'string' ? (
@@ -247,8 +260,8 @@ export function ScreenModal({
               </>
             )}
             
-            {/* Tags */}
-            {currentScreen.tags && currentScreen.tags.length > 0 && (
+            {/* Tags - Only visible when showTags is true */}
+            {showTags && currentScreen.tags && currentScreen.tags.length > 0 && (
               currentScreen.tags.map((tag, index) => (
                 <span 
                   key={`modal-tag-${index}`} 
