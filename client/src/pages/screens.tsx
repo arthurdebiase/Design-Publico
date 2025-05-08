@@ -312,20 +312,6 @@ export default function ScreensPage() {
               </button>
             </div>
           )}
-
-          {/* Clear all filters button */}
-          {(selectedTag || selectedCategory) && (
-            <Button 
-              variant="secondary" 
-              size="sm"
-              onClick={() => {
-                setSelectedTag(null);
-                setSelectedCategory(null);
-              }}
-            >
-              Limpar todos os filtros
-            </Button>
-          )}
         </div>
         
         {/* Screen counter */}
