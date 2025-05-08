@@ -6,7 +6,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { ScreenModal } from '@/components/ui/screen-modal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'wouter';
+import { Link, useLocation, useSearch } from 'wouter';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,8 +31,37 @@ export default function ScreensPage() {
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   const [currentAppScreens, setCurrentAppScreens] = useState<Screen[]>([]);
   const [currentApp, setCurrentApp] = useState<App | null>(null);
+  const [location] = useLocation();
+  const search = useSearch();
   const { t } = useTranslation();
   const isMobile = useIsMobile();
+  
+  // Parse query parameters from URL
+  const parseQueryParams = () => {
+    if (!search) return;
+    
+    // Create a URLSearchParams object to easily access the parameters
+    const params = new URLSearchParams(search);
+    
+    // Get tag from query params
+    const tagParam = params.get('tag');
+    if (tagParam && availableTags.includes(tagParam)) {
+      setSelectedTags([tagParam]);
+    }
+    
+    // Get category from query params
+    const categoryParam = params.get('category');
+    if (categoryParam && availableCategories.includes(categoryParam)) {
+      setSelectedCategories([categoryParam]);
+    }
+  };
+  
+  // Apply URL query parameters when the page loads and data is available
+  useEffect(() => {
+    if (availableTags.length > 0 && availableCategories.length > 0 && search) {
+      parseQueryParams();
+    }
+  }, [search, availableTags, availableCategories]);
   
   // Filter screens when selectedTags or selectedCategories change
   useEffect(() => {
