@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, FileText, Maximize2, ChevronDown, Filter, X } from 'lucide-react';
+import { Loader2, FileText, Maximize2, ChevronDown, Filter, X, Check } from 'lucide-react';
 import { Screen, App } from '@/types';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -21,8 +21,8 @@ export default function ScreensPage() {
   const [allScreens, setAllScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [filteredScreens, setFilteredScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [apps, setApps] = useState<App[]>([]);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,32 +34,36 @@ export default function ScreensPage() {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   
-  // Filter screens when selectedTag or selectedCategory changes
+  // Filter screens when selectedTags or selectedCategories change
   useEffect(() => {
     if (allScreens.length === 0) return;
     
     let filtered = [...allScreens];
     
-    if (selectedTag) {
-      filtered = filtered.filter(screen => 
-        screen.tags?.includes(selectedTag)
-      );
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(screen => {
+        if (!screen.tags || !Array.isArray(screen.tags)) return false;
+        
+        // At least one of the selected tags must be present in the screen's tags
+        return selectedTags.some(tag => screen.tags.includes(tag));
+      });
     }
     
-    if (selectedCategory) {
+    if (selectedCategories.length > 0) {
       filtered = filtered.filter(screen => {
-        // Handle screen.category which could be string or array
+        // Check for category match in screen category
         if (typeof screen.category === 'string') {
-          if (screen.category === selectedCategory) return true;
+          if (selectedCategories.includes(screen.category)) return true;
         } else if (screen.category && Array.isArray(screen.category)) {
-          if (screen.category.includes(selectedCategory)) return true;
+          // Check if any selected category exists in the screen's categories
+          if (selectedCategories.some(cat => screen.category.includes(cat))) return true;
         }
         
-        // Handle app category which could be string or array
+        // Check for category match in app category
         if (typeof screen.app?.category === 'string') {
-          if (screen.app.category === selectedCategory) return true;
+          if (selectedCategories.includes(screen.app.category)) return true;
         } else if (screen.app?.category && Array.isArray(screen.app.category)) {
-          if (screen.app.category.includes(selectedCategory)) return true;
+          if (selectedCategories.some(cat => screen.app.category.includes(cat))) return true;
         }
         
         return false;
@@ -67,7 +71,7 @@ export default function ScreensPage() {
     }
     
     setFilteredScreens(filtered);
-  }, [selectedTag, selectedCategory, allScreens]);
+  }, [selectedTags, selectedCategories, allScreens]);
 
   useEffect(() => {
     const fetchAllScreens = async () => {
@@ -183,11 +187,43 @@ export default function ScreensPage() {
   };
   
   const handleTagFilterChange = (tag: string | null) => {
-    setSelectedTag(tag);
+    if (tag === null) {
+      // Clear all tags
+      setSelectedTags([]);
+    } else {
+      // Toggle tag - add if not present, remove if already present
+      setSelectedTags(prev => {
+        if (prev.includes(tag)) {
+          return prev.filter(t => t !== tag);
+        } else {
+          return [...prev, tag];
+        }
+      });
+    }
   };
   
   const handleCategoryFilterChange = (category: string | null) => {
-    setSelectedCategory(category);
+    if (category === null) {
+      // Clear all categories
+      setSelectedCategories([]);
+    } else {
+      // Toggle category - add if not present, remove if already present
+      setSelectedCategories(prev => {
+        if (prev.includes(category)) {
+          return prev.filter(c => c !== category);
+        } else {
+          return [...prev, category];
+        }
+      });
+    }
+  };
+  
+  const handleRemoveTag = (tag: string) => {
+    setSelectedTags(prev => prev.filter(t => t !== tag));
+  };
+  
+  const handleRemoveCategory = (category: string) => {
+    setSelectedCategories(prev => prev.filter(c => c !== category));
   };
 
   if (loading) {
@@ -237,7 +273,7 @@ export default function ScreensPage() {
                 <DropdownMenuLabel>Tag</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  className={!selectedTag ? "bg-accent/50" : ""}
+                  className={selectedTags.length === 0 ? "bg-accent/50" : ""}
                   onClick={() => handleTagFilterChange(null)}
                 >
                   Todas as Tags
@@ -245,10 +281,11 @@ export default function ScreensPage() {
                 {availableTags.map((tag: string, index: number) => (
                   <DropdownMenuItem
                     key={`tag-${index}-${tag}`}
-                    className={selectedTag === tag ? "bg-accent/50" : ""}
+                    className={selectedTags.includes(tag) ? "bg-accent/50" : ""}
                     onClick={() => handleTagFilterChange(tag)}
                   >
                     <span>{tag}</span>
+                    {selectedTags.includes(tag) && <Check className="ml-auto h-4 w-4" />}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -268,7 +305,7 @@ export default function ScreensPage() {
                 <DropdownMenuLabel>Categoria</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  className={!selectedCategory ? "bg-accent/50" : ""}
+                  className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
                   onClick={() => handleCategoryFilterChange(null)}
                 >
                   Todas as Categorias
@@ -276,10 +313,11 @@ export default function ScreensPage() {
                 {availableCategories.map((category: string, index: number) => (
                   <DropdownMenuItem
                     key={`category-${index}-${category}`}
-                    className={selectedCategory === category ? "bg-accent/50" : ""}
+                    className={selectedCategories.includes(category) ? "bg-accent/50" : ""}
                     onClick={() => handleCategoryFilterChange(category)}
                   >
                     <span>{category}</span>
+                    {selectedCategories.includes(category) && <Check className="ml-auto h-4 w-4" />}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -294,32 +332,56 @@ export default function ScreensPage() {
       </div>
       
       {/* Active filter chips below filters */}
-      {(selectedTag || selectedCategory) && (
+      {(selectedTags.length > 0 || selectedCategories.length > 0) && (
         <div className="flex flex-wrap gap-2 mb-6">
-          {selectedTag && (
-            <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
-              <span>{selectedTag}</span>
+          {/* Tag filter chips */}
+          {selectedTags.map(tag => (
+            <div 
+              key={`chip-tag-${tag}`}
+              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm"
+            >
+              <span>{tag}</span>
               <button 
-                onClick={() => handleTagFilterChange(null)}
+                onClick={() => handleRemoveTag(tag)}
                 className="rounded-full hover:bg-blue-200 p-1 transition-colors"
-                aria-label="Remover filtro de tag"
+                aria-label={`Remover filtro de tag ${tag}`}
               >
                 <X className="h-3 w-3" />
               </button>
             </div>
-          )}
+          ))}
           
-          {selectedCategory && (
-            <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
-              <span>{selectedCategory}</span>
+          {/* Category filter chips */}
+          {selectedCategories.map(category => (
+            <div 
+              key={`chip-category-${category}`}
+              className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm"
+            >
+              <span>{category}</span>
               <button 
-                onClick={() => handleCategoryFilterChange(null)}
+                onClick={() => handleRemoveCategory(category)}
                 className="rounded-full hover:bg-purple-200 p-1 transition-colors"
-                aria-label="Remover filtro de categoria"
+                aria-label={`Remover filtro de categoria ${category}`}
               >
                 <X className="h-3 w-3" />
               </button>
             </div>
+          ))}
+          
+          {/* Clear all filters button (shown only when multiple filters are active) */}
+          {(selectedTags.length > 1 || selectedCategories.length > 1 || 
+            (selectedTags.length > 0 && selectedCategories.length > 0)) && (
+            <button
+              onClick={() => {
+                setSelectedTags([]);
+                setSelectedCategories([]);
+              }}
+              className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
+              aria-label="Limpar todos os filtros"
+            >
+              <span>Limpar filtros</span>
+              <X className="h-3 w-3 ml-1" />
+            </button>
           )}
         </div>
       )}
