@@ -152,7 +152,7 @@ export default function AppDetail() {
               </div>
             </div>
             
-            <div className="p-6 pt-0">
+            <div className="py-6 pt-0 px-0">
               {screens && (
                 <div className="flex items-center mb-4">
                   <Badge variant="outline" className="px-2 py-1 flex items-center">
@@ -253,7 +253,7 @@ function AppDetailSkeleton() {
         </div>
       </div>
       
-      <div className="p-6">
+      <div className="py-6 px-0">
         <Skeleton className="h-6 w-24 mb-4 rounded-md" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
           {[...Array(10)].map((_, i) => (
