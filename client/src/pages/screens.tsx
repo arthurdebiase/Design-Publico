@@ -285,35 +285,38 @@ export default function ScreensPage() {
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-
-          {/* Active filter chips */}
-          {selectedTag && (
-            <div className="bg-accent/20 text-accent-foreground px-3 py-1 rounded-full text-sm flex items-center gap-1">
-              <span>Tag: {selectedTag}</span>
-              <button 
-                onClick={() => handleTagFilterChange(null)}
-                className="rounded-full hover:bg-accent/30 p-1 transition-colors"
-                aria-label="Remover filtro de tag"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          )}
-          
-          {selectedCategory && (
-            <div className="bg-accent/20 text-accent-foreground px-3 py-1 rounded-full text-sm flex items-center gap-1">
-              <span>Categoria: {selectedCategory}</span>
-              <button 
-                onClick={() => handleCategoryFilterChange(null)}
-                className="rounded-full hover:bg-accent/30 p-1 transition-colors"
-                aria-label="Remover filtro de categoria"
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          )}
         </div>
         
+        {/* Active filter chips in separate div */}
+        {(selectedTag || selectedCategory) && (
+          <div className="flex flex-wrap gap-2 mt-3 mb-6">
+            {selectedTag && (
+              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
+                <span>{selectedTag}</span>
+                <button 
+                  onClick={() => handleTagFilterChange(null)}
+                  className="rounded-full hover:bg-blue-200 p-1 transition-colors"
+                  aria-label="Remover filtro de tag"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+            
+            {selectedCategory && (
+              <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
+                <span>{selectedCategory}</span>
+                <button 
+                  onClick={() => handleCategoryFilterChange(null)}
+                  className="rounded-full hover:bg-purple-200 p-1 transition-colors"
+                  aria-label="Remover filtro de categoria"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            )}
+          </div>
+        )}
         {/* Screen counter */}
         <div className="text-gray-600 font-medium">
           {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
