@@ -549,20 +549,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           </div>
         )}
         
-        {/* Tags removed from here and moved to modal */}
-        
-        {/* Category badge */}
-        {screen.category && (
-          <div className="mt-1">
-            <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">
-              {typeof screen.category === 'string' 
-                ? screen.category 
-                : Array.isArray(screen.category) && screen.category.length > 0 
-                  ? screen.category[0] 
-                  : ''}
-            </span>
-          </div>
-        )}
+        {/* Tags and Categories removed from thumbnails and moved to modal */}
       </div>
     </div>
   );
