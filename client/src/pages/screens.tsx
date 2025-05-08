@@ -549,24 +549,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           </div>
         )}
         
-        {/* Tags */}
-        {screen.tags && screen.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-2">
-            {screen.tags.slice(0, 2).map((tag, index) => (
-              <span 
-                key={index} 
-                className={`text-xs px-2 py-1 rounded-full ${getTagColor(tag)} text-gray-800`}
-              >
-                {tag}
-              </span>
-            ))}
-            {screen.tags.length > 2 && (
-              <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-800">
-                +{screen.tags.length - 2}
-              </span>
-            )}
-          </div>
-        )}
+        {/* Tags removed from here and moved to modal */}
         
         {/* Category badge */}
         {screen.category && (

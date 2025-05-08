@@ -16,6 +16,36 @@ interface ScreenModalProps {
   app: App;
 }
 
+// Function to get tag background color
+const getTagColor = (tag: string): string => {
+  type ColorMap = {
+    [key: string]: string;
+  };
+  
+  const colors: ColorMap = {
+    'navigation': 'bg-blue-100',
+    'form': 'bg-green-100',
+    'chart': 'bg-purple-100',
+    'modal': 'bg-yellow-100',
+    'card': 'bg-pink-100', 
+    'loading': 'bg-orange-100',
+    'splash-screen': 'bg-teal-100',
+    'avatar': 'bg-indigo-100',
+    'button': 'bg-red-100',
+    'filter': 'bg-cyan-100',
+    'icon': 'bg-lime-100',
+    'dropdown': 'bg-amber-100',
+    'list': 'bg-violet-100',
+    'input': 'bg-emerald-100',
+    'onboarding': 'bg-sky-100',
+    'callout': 'bg-rose-100'
+  };
+  
+  const tagLower = tag.toLowerCase();
+  // Default color for unknown tags
+  return colors[tagLower] || 'bg-gray-100';
+};
+
 export function ScreenModal({
   isOpen,
   onClose,
@@ -152,7 +182,7 @@ export function ScreenModal({
           </div>
         </div>
         
-        <div className="flex-1 p-4 sm:p-6 flex items-center justify-center relative">
+        <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center relative">
           {screens.length > 1 && (
             <>
               <Button 
@@ -186,6 +216,42 @@ export function ScreenModal({
               className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
               aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
             />
+          </div>
+          
+          {/* Tags and categories displayed here */}
+          <div className="flex flex-wrap gap-2 mt-4 justify-center">
+            {/* Categories */}
+            {currentScreen.category && (
+              <>
+                {typeof currentScreen.category === 'string' ? (
+                  <span className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium">
+                    {currentScreen.category}
+                  </span>
+                ) : (
+                  Array.isArray(currentScreen.category) && 
+                  currentScreen.category.map((cat, idx) => (
+                    <span 
+                      key={`modal-category-${idx}`} 
+                      className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium"
+                    >
+                      {cat}
+                    </span>
+                  ))
+                )}
+              </>
+            )}
+            
+            {/* Tags */}
+            {currentScreen.tags && currentScreen.tags.length > 0 && (
+              currentScreen.tags.map((tag, index) => (
+                <span 
+                  key={`modal-tag-${index}`} 
+                  className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800`}
+                >
+                  {tag}
+                </span>
+              ))
+            )}
           </div>
         </div>
       </DialogContent>
