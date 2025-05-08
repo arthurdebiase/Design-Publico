@@ -146,13 +146,19 @@ export function ScreenModal({
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
-            <div className="w-10 h-10 flex items-center justify-center mr-3">
-              {app.logo ? (
-                <img src={app.logo} alt={`${app.name} logo`} className="w-8 h-8" />
-              ) : (
-                <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">{app.name.charAt(0)}</div>
-              )}
-            </div>
+            <Link href={`/app/${app.id}`} onClick={onClose}>
+              <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity" 
+                title={`View ${app.name} details`}
+                role="button"
+                tabIndex={0}
+              >
+                {app.logo ? (
+                  <img src={app.logo} alt={`${app.name} logo`} className="w-8 h-8" />
+                ) : (
+                  <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">{app.name.charAt(0)}</div>
+                )}
+              </div>
+            </Link>
             <div>
               {/* Logo only, no app name displayed as per requirements */}
               <DialogTitle className="sr-only">{app.name}</DialogTitle>
