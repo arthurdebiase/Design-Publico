@@ -8,6 +8,7 @@ export default function About() {
   const { t } = useTranslation();
   const [totalTags, setTotalTags] = useState<number>(0);
   const [totalCategories, setTotalCategories] = useState<number>(0);
+  const [totalScreens, setTotalScreens] = useState<number>(0);
 
   // Fetch all apps to count them and their screens
   const { data: apps = [] } = useQuery<App[]>({
@@ -15,17 +16,16 @@ export default function About() {
     // The QueryClient default settings will handle the request
   });
 
-  // Fixed totalScreens value from Airtable logs
-  const totalScreens = 326; // 42 + 47 + 46 + 25 + 44 + 48 + 48 + 26 = 326 (verified from Airtable sync logs)
   const totalApps = apps.length;
   
-  // Calculate unique tags and categories
+  // Calculate total screens, unique tags and categories
   useEffect(() => {
     const fetchData = async () => {
       if (!apps.length) return;
       
       const tags = new Set<string>();
       const categories = new Set<string>();
+      let screenCount = 0;
       
       // For each app, fetch its screens
       for (const app of apps) {
@@ -34,7 +34,10 @@ export default function About() {
           const appScreens = await screensResponse.json() as Screen[];
           
           if (Array.isArray(appScreens)) {
-            // Extract tags
+            // Count screens
+            screenCount += appScreens.length;
+            
+            // Extract tags & categories
             appScreens.forEach(screen => {
               // Extract tags
               if (screen.tags && Array.isArray(screen.tags)) {
@@ -79,6 +82,7 @@ export default function About() {
         }
       });
       
+      setTotalScreens(screenCount);
       setTotalTags(tags.size);
       setTotalCategories(categories.size);
     };
