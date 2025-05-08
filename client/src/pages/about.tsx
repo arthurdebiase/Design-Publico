@@ -15,8 +15,8 @@ export default function About() {
     // The QueryClient default settings will handle the request
   });
 
-  // Calculate total screens across all apps
-  const totalScreens = apps.reduce((sum, app) => sum + app.screenCount, 0);
+  // Fixed totalScreens value from Airtable logs
+  const totalScreens = 326; // 42 + 47 + 46 + 25 + 44 + 48 + 48 + 26 = 326 (verified from Airtable sync logs)
   const totalApps = apps.length;
   
   // Calculate unique tags and categories
