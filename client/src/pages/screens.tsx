@@ -204,9 +204,9 @@ export default function ScreensPage() {
               >
                 Todas as Tags
               </DropdownMenuItem>
-              {availableTags.map((tag: string) => (
+              {availableTags.map((tag: string, index: number) => (
                 <DropdownMenuItem
-                  key={tag}
+                  key={`tag-${index}-${tag}`}
                   className={selectedTag === tag ? "bg-accent/50" : ""}
                   onClick={() => handleTagFilterChange(tag)}
                 >
@@ -247,9 +247,9 @@ export default function ScreensPage() {
               >
                 Todas as Categorias
               </DropdownMenuItem>
-              {availableCategories.map((category: string) => (
+              {availableCategories.map((category: string, index: number) => (
                 <DropdownMenuItem
-                  key={category}
+                  key={`category-${index}-${category}`}
                   className={selectedCategory === category ? "bg-accent/50" : ""}
                   onClick={() => handleCategoryFilterChange(category)}
                 >
@@ -344,8 +344,12 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   };
 
   // Function to get tag background color
-  const getTagColor = (tag: string) => {
-    const colors = {
+  const getTagColor = (tag: string): string => {
+    type ColorMap = {
+      [key: string]: string;
+    };
+    
+    const colors: ColorMap = {
       'navigation': 'bg-blue-100',
       'form': 'bg-green-100',
       'chart': 'bg-purple-100',
@@ -364,8 +368,9 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
       'callout': 'bg-rose-100'
     };
     
+    const tagLower = tag.toLowerCase();
     // Default color for unknown tags
-    return colors[tag.toLowerCase()] || 'bg-gray-100';
+    return colors[tagLower] || 'bg-gray-100';
   };
   
   return (
