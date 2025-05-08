@@ -555,12 +555,11 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         </div>
       </div>
       <div className="mt-2">
-        {/* Screen name */}
-        <p className="font-medium text-sm truncate">{screen.name}</p>
+        {/* Screen name hidden as requested */}
         
         {/* App name and logo */}
         {screen.app && (
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-2 mt-0">
             <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
               {screen.app.logo ? (
                 <img 
