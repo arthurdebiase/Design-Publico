@@ -233,7 +233,7 @@ export default function ScreensPage() {
                   <ChevronDown className="h-4 w-4 ml-2" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
                 <DropdownMenuLabel>Tag</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
@@ -264,7 +264,7 @@ export default function ScreensPage() {
                   <ChevronDown className="h-4 w-4 ml-2" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
                 <DropdownMenuLabel>Categoria</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
