@@ -47,9 +47,14 @@ export default function ScreensPage() {
     }
     
     if (selectedCategory) {
-      filtered = filtered.filter(screen => 
-        screen.category === selectedCategory || screen.app?.category === selectedCategory
-      );
+      filtered = filtered.filter(screen => {
+        const screenCategory = screen.category;
+        const appCategory = screen.app?.category;
+        
+        // Make sure to handle null/undefined values properly
+        return (screenCategory && screenCategory === selectedCategory) || 
+               (appCategory && appCategory === selectedCategory);
+      });
     }
     
     setFilteredScreens(filtered);

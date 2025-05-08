@@ -612,8 +612,8 @@ export class MemStorage implements IStorage {
         let appType = fields[APP_TYPE_FIELD]; // Try to get from screens record first
         
         // First check in predefined categories
-        if (appName && predefinedCategories[appName]) {
-          appCategory = predefinedCategories[appName];
+        if (appName && predefinedCategories.hasOwnProperty(appName)) {
+          appCategory = predefinedCategories[appName as keyof typeof predefinedCategories];
           console.log(`DEBUG: Using predefined category ${appCategory} for app ${appName}`);
         }
         // Then fall back to Airtable data
@@ -888,7 +888,7 @@ export class MemStorage implements IStorage {
         flow: "Main",
         order: index,
         tags: ["healthcare", "digital"],
-        category: "Healthcare",
+        category: screenType.category || "Saúde",
         airtableId: `screen${index + 1}`,
         createdAt: now,
         updatedAt: now,
@@ -897,13 +897,13 @@ export class MemStorage implements IStorage {
     
     // Create sample screens for the second app (Carteira de Trabalho Digital)
     const ctpsScreenTypes = [
-      { name: "Welcome", description: "App introduction screen" },
-      { name: "Registration", description: "User registration" },
-      { name: "Work History", description: "Employment history view" },
-      { name: "Current Job", description: "Current employment details" },
-      { name: "Benefits", description: "Employment benefits" },
-      { name: "Documents", description: "Digital work documents" },
-      { name: "Notifications", description: "System notifications" },
+      { name: "Welcome", description: "App introduction screen", category: "Onboarding" },
+      { name: "Registration", description: "User registration", category: "Cadastro" },
+      { name: "Work History", description: "Employment history view", category: "Histórico" },
+      { name: "Current Job", description: "Current employment details", category: "Trabalho" },
+      { name: "Benefits", description: "Employment benefits", category: "Benefícios" },
+      { name: "Documents", description: "Digital work documents", category: "Documentos" },
+      { name: "Notifications", description: "System notifications", category: "Notificações" },
     ];
     
     ctpsScreenTypes.forEach((screenType, index) => {
@@ -919,7 +919,7 @@ export class MemStorage implements IStorage {
         flow: "Main",
         order: index,
         tags: ["employment", "documents"],
-        category: "Employment",
+        category: screenType.category || "Trabalho",
         airtableId: `ctps${index + 1}`,
         createdAt: now,
         updatedAt: now,
