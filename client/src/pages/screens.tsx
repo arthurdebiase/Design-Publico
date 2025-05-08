@@ -51,14 +51,14 @@ export default function ScreensPage() {
         // Handle screen.category which could be string or array
         if (typeof screen.category === 'string') {
           if (screen.category === selectedCategory) return true;
-        } else if (Array.isArray(screen.category)) {
+        } else if (screen.category && Array.isArray(screen.category)) {
           if (screen.category.includes(selectedCategory)) return true;
         }
         
         // Handle app category which could be string or array
         if (typeof screen.app?.category === 'string') {
           if (screen.app.category === selectedCategory) return true;
-        } else if (Array.isArray(screen.app?.category)) {
+        } else if (screen.app?.category && Array.isArray(screen.app.category)) {
           if (screen.app.category.includes(selectedCategory)) return true;
         }
         
@@ -510,7 +510,11 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         {screen.category && (
           <div className="mt-1">
             <span className="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-800">
-              {screen.category}
+              {typeof screen.category === 'string' 
+                ? screen.category 
+                : Array.isArray(screen.category) && screen.category.length > 0 
+                  ? screen.category[0] 
+                  : ''}
             </span>
           </div>
         )}

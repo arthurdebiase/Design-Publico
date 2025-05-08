@@ -9,7 +9,7 @@ export interface App {
   thumbnailUrl: string;
   logo?: string;
   type: AppType;
-  category: string;
+  category: string | string[];
   platform: Platform;
   language?: string;
   screenCount: number;
@@ -28,7 +28,7 @@ export interface Screen {
   flow?: string;
   order: number;
   tags?: string[];
-  category?: string;
+  category?: string | string[];
   createdAt: string;
   updatedAt: string;
 }
