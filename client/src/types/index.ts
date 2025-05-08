@@ -27,6 +27,8 @@ export interface Screen {
   imageUrl: string;
   flow?: string;
   order: number;
+  tags?: string[];
+  category?: string;
   createdAt: string;
   updatedAt: string;
 }

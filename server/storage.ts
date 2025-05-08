@@ -119,6 +119,8 @@ export class MemStorage implements IStorage {
       imageUrl: insertScreen.imageUrl,
       flow: insertScreen.flow ?? null,
       order: insertScreen.order ?? 0,
+      tags: insertScreen.tags ?? null,
+      category: insertScreen.category ?? null,
       airtableId: insertScreen.airtableId,
       createdAt: now,
       updatedAt: now,
@@ -695,6 +697,20 @@ export class MemStorage implements IStorage {
             screenOrder = -1000 + i;
           }
           
+          // Extract tags from Airtable fields
+          let tags: string[] | null = null;
+          if (fields.tags && Array.isArray(fields.tags)) {
+            tags = fields.tags;
+          }
+          
+          // Extract category from Airtable fields or from the parent app
+          let category: string | null = null;
+          if (fields.category) {
+            category = fields.category;
+          } else if (app.category) {
+            category = app.category;
+          }
+          
           const screenData: InsertScreen = {
             appId: app.id,
             name: screenName,
@@ -702,6 +718,8 @@ export class MemStorage implements IStorage {
             imageUrl: attachment.url,
             flow: fields.flow || null,
             order: screenOrder,
+            tags: tags,
+            category: category,
             airtableId: record.id,
           };
           
@@ -851,6 +869,8 @@ export class MemStorage implements IStorage {
         imageUrl: `https://random.imagecdn.app/400/800?image=${20 + index}`,
         flow: "Main",
         order: index,
+        tags: ["healthcare", "digital"],
+        category: "Healthcare",
         airtableId: `screen${index + 1}`,
         createdAt: now,
         updatedAt: now,

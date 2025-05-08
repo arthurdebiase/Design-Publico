@@ -29,6 +29,8 @@ export const screens = pgTable("screens", {
   imageUrl: text("image_url").notNull(),
   flow: text("flow"),
   order: integer("order").notNull().default(0),
+  tags: text("tags").array(),
+  category: text("category"),
   airtableId: text("airtable_id").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
