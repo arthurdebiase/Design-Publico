@@ -222,7 +222,7 @@ export default function ScreensPage() {
         <h1 className="text-3xl font-bold mb-2">Todas as telas</h1>
       </div>
       
-      <div className="mb-6 flex flex-wrap items-center justify-between">
+      <div className="mb-4 flex flex-wrap items-center justify-between">
         <div className="flex flex-wrap gap-4 items-center">
           {/* Tag filter dropdown */}
           <div className="flex items-center">
@@ -287,41 +287,42 @@ export default function ScreensPage() {
           </div>
         </div>
         
-        {/* Active filter chips in separate div */}
-        {(selectedTag || selectedCategory) && (
-          <div className="flex flex-wrap gap-2 mt-3 mb-6">
-            {selectedTag && (
-              <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
-                <span>{selectedTag}</span>
-                <button 
-                  onClick={() => handleTagFilterChange(null)}
-                  className="rounded-full hover:bg-blue-200 p-1 transition-colors"
-                  aria-label="Remover filtro de tag"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-            
-            {selectedCategory && (
-              <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
-                <span>{selectedCategory}</span>
-                <button 
-                  onClick={() => handleCategoryFilterChange(null)}
-                  className="rounded-full hover:bg-purple-200 p-1 transition-colors"
-                  aria-label="Remover filtro de categoria"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-          </div>
-        )}
         {/* Screen counter */}
         <div className="text-gray-600 font-medium">
           {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
         </div>
       </div>
+      
+      {/* Active filter chips below filters */}
+      {(selectedTag || selectedCategory) && (
+        <div className="flex flex-wrap gap-2 mb-6">
+          {selectedTag && (
+            <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
+              <span>{selectedTag}</span>
+              <button 
+                onClick={() => handleTagFilterChange(null)}
+                className="rounded-full hover:bg-blue-200 p-1 transition-colors"
+                aria-label="Remover filtro de tag"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+          
+          {selectedCategory && (
+            <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm">
+              <span>{selectedCategory}</span>
+              <button 
+                onClick={() => handleCategoryFilterChange(null)}
+                className="rounded-full hover:bg-purple-200 p-1 transition-colors"
+                aria-label="Remover filtro de categoria"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </div>
+          )}
+        </div>
+      )}
       
       {filteredScreens.length > 0 ? (
         <div 
