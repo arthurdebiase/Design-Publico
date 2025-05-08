@@ -228,13 +228,12 @@ export default function ScreensPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                {'Filtrar por Tag'}
+                {'Tag'}
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Filtrar por Tag</DropdownMenuLabel>
+              <DropdownMenuLabel>Tag</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 className={!selectedTag ? "bg-accent/50" : ""}
@@ -271,13 +270,12 @@ export default function ScreensPage() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                {'Filtrar por Categoria'}
+                {'Categoria'}
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
-              <DropdownMenuLabel>Filtrar por Categoria</DropdownMenuLabel>
+              <DropdownMenuLabel>Categoria</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem 
                 className={!selectedCategory ? "bg-accent/50" : ""}
