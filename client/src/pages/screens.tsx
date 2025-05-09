@@ -257,9 +257,35 @@ export default function ScreensPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center p-4 py-20">
-        <Loader2 className="h-12 w-12 text-[#0066FF] animate-spin mb-4" />
-        <p className="text-lg text-gray-600">{t('common.loading')}</p>
+      <div className="container mx-auto px-4 md:px-6 py-10">
+        <div className="mb-6">
+          <Skeleton className="h-10 w-64 mb-2" />
+        </div>
+        
+        <div className="mb-4 flex flex-wrap items-center justify-between">
+          <div className="flex flex-wrap gap-4 items-center">
+            <Skeleton className="h-10 w-28" />
+            <Skeleton className="h-10 w-28" />
+          </div>
+          <Skeleton className="h-6 w-20" />
+        </div>
+        
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
+          {Array(15).fill(0).map((_, index) => (
+            <div key={`skeleton-${index}`} className="rounded-lg overflow-hidden">
+              <Skeleton className="h-64 w-full" />
+              <div className="p-3">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-8 w-8 rounded-full" />
+                  <div>
+                    <Skeleton className="h-4 w-20 mb-2" />
+                    <Skeleton className="h-3 w-16" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
