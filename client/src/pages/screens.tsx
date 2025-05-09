@@ -7,6 +7,7 @@ import { ScreenModal } from '@/components/ui/screen-modal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useSearch } from 'wouter';
+import { getProcessedImageUrl } from '@/lib/imageUtils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -488,6 +489,7 @@ interface ScreenThumbnailProps {
 function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [imageSrc, setImageSrc] = useState(getProcessedImageUrl(screen.imageUrl));
   const isMobile = useIsMobile();
   
   const handleImageLoad = () => {
@@ -495,7 +497,23 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   };
   
   const handleImageError = () => {
-    setImageError(true);
+    // If we already tried a proxy, don't retry again
+    if (imageSrc.startsWith('/v5.airtableusercontent.com')) {
+      setImageError(true);
+      console.error(`Failed to load image even with proxy: ${imageSrc}`);
+      return;
+    }
+    
+    console.error(`Failed to load image: ${imageSrc}`);
+    
+    // Attempt to retry with proxy if direct URL fails
+    if (imageSrc.startsWith('https://v5.airtableusercontent.com')) {
+      const proxyUrl = imageSrc.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
+      console.log('Trying with proxy URL:', proxyUrl);
+      setImageSrc(proxyUrl);
+    } else {
+      setImageError(true);
+    }
   };
 
   // Function to get tag background color
@@ -560,11 +578,12 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           </div>
         ) : (
           <img 
-            src={screen.imageUrl} 
+            src={imageSrc} 
             alt={`${screen.app?.name ? screen.app.name + ': ' : ''}${screen.name} - ${screen.description || 'Screen view'}`}
             className={`w-full h-full object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
+            loading="lazy"
           />
         )}
         
@@ -589,9 +608,14 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
             <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
               {screen.app.logo ? (
                 <img 
-                  src={screen.app.logo} 
+                  src={getProcessedImageUrl(screen.app.logo)}
                   alt="App Logo" 
                   className="w-5 h-5"
+                  onError={(e) => {
+                    console.error(`Failed to load app logo: ${screen.app.logo}`);
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentNode.innerHTML = `<div class="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center"><span class="text-xs font-bold text-gray-600">${screen.app.name.charAt(0)}</span></div>`;
+                  }}
                 />
               ) : (
                 <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center">
