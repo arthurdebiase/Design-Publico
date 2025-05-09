@@ -17,6 +17,12 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
   
   const handleImageError = () => {
     setImageError(true);
+    console.error(`Failed to load image: ${screen.imageUrl}`);
+    // Attempt to retry with proxy if direct URL fails
+    if (screen.imageUrl?.startsWith('https://v5.airtableusercontent.com')) {
+      const proxyUrl = screen.imageUrl.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
+      setImageUrl(proxyUrl);
+    }
   };
   
   return (

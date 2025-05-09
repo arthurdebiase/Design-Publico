@@ -22,7 +22,27 @@ export function log(message: string, source = "express") {
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server },
+    hmr: {
+      server,
+      host: '0.0.0.0',
+      port: 5000,
+      protocol: 'ws',
+    },
+    server: {
+      proxy: {
+        '/v5.airtableusercontent.com': {
+          target: 'https://v5.airtableusercontent.com',
+          changeOrigin: true,
+          secure: true,
+          rewrite: (path: string) => path.replace(/^\/v5.airtableusercontent.com/, '')
+        }
+      },
+      cors: {
+        origin: true,
+        methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+        credentials: true
+      }
+    },
     allowedHosts: true,
   };
 
