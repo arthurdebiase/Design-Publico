@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Screen } from "@/types";
 import { Maximize2 } from "lucide-react";
+import { getProcessedImageUrl } from "@/lib/imageUtils";
 
 interface ScreenThumbnailProps {
   screen: Screen;
@@ -10,7 +11,14 @@ interface ScreenThumbnailProps {
 export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [imageSrc, setImageSrc] = useState(screen.imageUrl || '');
+  const [imageSrc, setImageSrc] = useState(getProcessedImageUrl(screen.imageUrl));
+  
+  useEffect(() => {
+    // Update image source if screen changes
+    setImageSrc(getProcessedImageUrl(screen.imageUrl));
+    setImageLoaded(false);
+    setImageError(false);
+  }, [screen.imageUrl]);
   
   const handleImageLoad = () => {
     setImageLoaded(true);

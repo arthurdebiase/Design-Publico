@@ -6,6 +6,7 @@ import { X, Link2, ChevronLeft, ChevronRight, ExternalLink, Info } from "lucide-
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { getProcessedImageUrl } from "@/lib/imageUtils";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -73,7 +74,7 @@ export function ScreenModal({
     if (currentScreen && currentScreen.imageUrl) {
       setImageLoaded(false);
       setImageError(false);
-      setImageSrc(currentScreen.imageUrl);
+      setImageSrc(getProcessedImageUrl(currentScreen.imageUrl));
     }
   }, [currentScreen]);
   
