@@ -69,6 +69,38 @@ export function ScreenModal({
   
   const currentScreen = screens[localIndex];
   
+  useEffect(() => {
+    if (currentScreen && currentScreen.imageUrl) {
+      setImageLoaded(false);
+      setImageError(false);
+      setImageSrc(currentScreen.imageUrl);
+    }
+  }, [currentScreen]);
+  
+  const handleImageLoad = () => {
+    setImageLoaded(true);
+  };
+  
+  const handleImageError = () => {
+    // If we already tried a proxy, don't retry again
+    if (imageSrc.startsWith('/v5.airtableusercontent.com')) {
+      setImageError(true);
+      console.error(`Failed to load image even with proxy: ${imageSrc}`);
+      return;
+    }
+    
+    console.error(`Failed to load image: ${imageSrc}`);
+    
+    // Attempt to retry with proxy if direct URL fails
+    if (imageSrc.startsWith('https://v5.airtableusercontent.com')) {
+      const proxyUrl = imageSrc.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
+      console.log('Trying with proxy URL:', proxyUrl);
+      setImageSrc(proxyUrl);
+    } else {
+      setImageError(true);
+    }
+  };
+  
   const handlePrevious = () => {
     const newIndex = (localIndex - 1 + screens.length) % screens.length;
     setLocalIndex(newIndex);
@@ -233,12 +265,34 @@ export function ScreenModal({
           )}
           
           <div className="relative max-w-full">
-            <img 
-              src={currentScreen.imageUrl} 
-              alt={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
-              className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
-              aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-            />
+            {!imageLoaded && !imageError && (
+              <div className="w-full h-[70vh] flex items-center justify-center bg-gray-200 animate-pulse rounded-lg">
+                <span className="text-gray-500">Loading...</span>
+              </div>
+            )}
+            
+            {imageError ? (
+              <div className="w-full h-[70vh] flex items-center justify-center bg-gray-200 rounded-lg">
+                <div className="text-center">
+                  <div className="text-gray-500 font-medium mb-2">
+                    {currentScreen.name ? `${currentScreen.name} image not available` : 'Image not available'}
+                  </div>
+                  <p className="text-gray-400 text-sm max-w-md px-4">
+                    The image could not be loaded. This may be due to Airtable connection issues.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <img 
+                src={imageSrc} 
+                alt={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
+                className={`max-h-[70vh] max-w-full rounded-lg shadow-md object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                loading="lazy"
+              />
+            )}
           </div>
           
           {/* Tags and categories displayed here */}
