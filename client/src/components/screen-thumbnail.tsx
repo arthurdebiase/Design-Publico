@@ -10,18 +10,29 @@ interface ScreenThumbnailProps {
 export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [imageSrc, setImageSrc] = useState(screen.imageUrl || '');
   
   const handleImageLoad = () => {
     setImageLoaded(true);
   };
   
   const handleImageError = () => {
-    setImageError(true);
-    console.error(`Failed to load image: ${screen.imageUrl}`);
+    // If we already tried a proxy, don't retry again
+    if (imageSrc.startsWith('/v5.airtableusercontent.com')) {
+      setImageError(true);
+      console.error(`Failed to load image even with proxy: ${imageSrc}`);
+      return;
+    }
+    
+    console.error(`Failed to load image: ${imageSrc}`);
+    
     // Attempt to retry with proxy if direct URL fails
-    if (screen.imageUrl?.startsWith('https://v5.airtableusercontent.com')) {
-      const proxyUrl = screen.imageUrl.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
-      setImageUrl(proxyUrl);
+    if (imageSrc.startsWith('https://v5.airtableusercontent.com')) {
+      const proxyUrl = imageSrc.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
+      console.log('Trying with proxy URL:', proxyUrl);
+      setImageSrc(proxyUrl);
+    } else {
+      setImageError(true);
     }
   };
   
@@ -42,12 +53,13 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
           </div>
         ) : (
           <img 
-            src={screen.imageUrl} 
+            src={imageSrc} 
             alt={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
             className={`w-full h-full object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
             aria-label={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
+            loading="lazy"
           />
         )}
         

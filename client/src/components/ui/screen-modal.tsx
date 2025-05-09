@@ -56,6 +56,9 @@ export function ScreenModal({
 }: ScreenModalProps) {
   const [localIndex, setLocalIndex] = useState(currentScreenIndex);
   const [showTags, setShowTags] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [imageSrc, setImageSrc] = useState('');
   const [location] = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
