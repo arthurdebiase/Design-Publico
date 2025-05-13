@@ -189,8 +189,8 @@ export class MemStorage implements IStorage {
         const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
         const params: any = { 
           pageSize: 100,
-          // Sort by image title (screen name) to maintain consistent ordering
-          sort: [{ field: "imagetitle", direction: "asc" }]
+          // Use the specific view to maintain the exact order as seen in Airtable UI
+          view: "viwyDosqJV0fgIUf2" // This is the view ID you shared
         };
         if (offset) {
           params.offset = offset;
@@ -720,18 +720,21 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
 
-          // Determine order using position in app-specific screens
-          let screenOrder = i;
+          // Use the record's index directly from the Airtable response 
+          // Since we're using a specific view, this will preserve the exact order seen in Airtable
+          let screenOrder = records.findIndex(r => r.id === record.id);
           
-          // Store original record position in allScreenRecords to maintain Airtable ordering
-          const originalPosition = allScreenRecords.findIndex(r => r.id === record.id);
-          if (originalPosition !== -1) {
-            screenOrder = originalPosition;
+          // If for some reason the record isn't found in the array (should never happen), use a fallback
+          if (screenOrder === -1) {
+            screenOrder = 1000 + i; // Fallback to pushing it to the end
+            console.log(`WARNING: Screen ${screenName} record not found in records array, using fallback order ${screenOrder}`);
+          } else {
+            console.log(`Assigned order ${screenOrder} to screen ${screenName} based on Airtable view order`);
           }
           
-          // Apply special ordering for intro/welcome screens
+          // Special case: prioritize intro screens
           if (isIntroScreen) {
-            screenOrder = -1; // Put intro screens first
+            screenOrder = -1; // Always put intro screens first
           }
 
           // Extract tags from Airtable fields
