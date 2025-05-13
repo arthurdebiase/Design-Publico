@@ -183,7 +183,11 @@ export function ScreenModal({
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
-            <Link href={`/app/${app.id}`} onClick={onClose}>
+            <Link href={`/app/${app.id}`} onClick={() => {
+              onClose();
+              // Ensure we scroll to top when navigating to app details
+              window.scrollTo(0, 0);
+            }}>
               <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity" 
                 title={`View ${app.name} details`}
                 role="button"
@@ -320,7 +324,11 @@ export function ScreenModal({
                   {typeof currentScreen.category === 'string' ? (
                     <Link 
                       href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
-                      onClick={onClose}
+                      onClick={() => {
+                        onClose();
+                        // Ensure we scroll to top when navigating to filtered screens
+                        window.scrollTo(0, 0);
+                      }}
                       className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer"
                       title={`View all screens in ${currentScreen.category} category`}
                     >
@@ -332,7 +340,11 @@ export function ScreenModal({
                       <Link 
                         key={`modal-category-${idx}`}
                         href={`/screens?category=${encodeURIComponent(cat)}`}
-                        onClick={onClose}
+                        onClick={() => {
+                          onClose();
+                          // Ensure we scroll to top when navigating to filtered screens
+                          window.scrollTo(0, 0);
+                        }}
                         className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer"
                         title={`View all screens in ${cat} category`}
                       >
@@ -349,7 +361,11 @@ export function ScreenModal({
                   <Link 
                     key={`modal-tag-${index}`}
                     href={`/screens?tag=${encodeURIComponent(tag)}`}
-                    onClick={onClose}
+                    onClick={() => {
+                      onClose();
+                      // Ensure we scroll to top when navigating to filtered screens
+                      window.scrollTo(0, 0);
+                    }}
                     className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer`}
                     title={`View all screens with ${tag} componente`}
                   >

@@ -9,6 +9,7 @@ import ScreensPage from "@/pages/screens";
 import About from "@/pages/about";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
+import ScrollToTop from "@/components/scroll-to-top";
 
 function Router() {
   return (
@@ -25,14 +26,16 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-col">
-        <Header />
-        <main className="flex-grow">
-          <Router />
-        </main>
-        <Footer />
-      </div>
-      <Toaster />
+      <ScrollToTop>
+        <div className="flex flex-col">
+          <Header />
+          <main className="flex-grow">
+            <Router />
+          </main>
+          <Footer />
+        </div>
+        <Toaster />
+      </ScrollToTop>
     </QueryClientProvider>
   );
 }
