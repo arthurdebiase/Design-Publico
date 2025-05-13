@@ -135,12 +135,10 @@ export default function ScreensPage() {
           }
         }
         
-        // Sort all screens alphabetically by screen name
+        // Sort screens by their order field from Airtable to maintain original sequence
         const sortedScreens = fetchedScreens.sort((a, b) => {
-          // Ensure there's a name value to sort by
-          const nameA = a.name?.toLowerCase() || '';
-          const nameB = b.name?.toLowerCase() || '';
-          return nameA.localeCompare(nameB);
+          // Primary sort by order (same as in fetchScreensByAppId)
+          return a.order - b.order;
         });
         
         // Extract unique tags and categories

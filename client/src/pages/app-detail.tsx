@@ -96,16 +96,18 @@ export default function AppDetail() {
     return Array.from(tagSet).sort();
   }, [screens]);
 
-  // Filter screens based on selected tags
+  // Filter screens based on selected tags while preserving original order
   const filteredScreens = useMemo(() => {
     if (!screens) return [];
     if (selectedTags.length === 0) return screens;
     
+    // Filter screens but preserve their original order
     return screens.filter(screen => {
       if (!screen.tags) return false;
       // Check if screen has any of the selected tags
       return selectedTags.some(tag => screen.tags?.includes(tag));
     });
+    // No additional sorting is needed as the original order from Airtable is preserved
   }, [screens, selectedTags]);
   
   // Function to handle adding/removing tag filters
@@ -127,11 +129,11 @@ export default function AppDetail() {
     setSelectedTags(prev => prev.filter(t => t !== tag));
   };
   
-  // Function to group screens by their flow field
+  // Function to group screens by their flow field while preserving order
   const getScreensBySection = () => {
     if (!filteredScreens) return {};
     
-    return filteredScreens.reduce((groups: Record<string, Screen[]>, screen) => {
+    const groups = filteredScreens.reduce((groups: Record<string, Screen[]>, screen) => {
       // Get the flow or set to "Other" if not available
       const flow = screen.flow || "Other";
       
@@ -144,9 +146,16 @@ export default function AppDetail() {
       groups[flow].push(screen);
       return groups;
     }, {});
+    
+    // Screens within each section are already in the original order from Airtable
+    // because we preserved the order in filteredScreens
+    return groups;
   };
   
   const handleOpenModal = (screen: Screen) => {
+    // Find the index in the original ordered screens array (maintaining Airtable order)
+    // Since screens are already sorted by their order field from Airtable,
+    // this will preserve the correct viewing sequence
     const index = screens?.findIndex(s => s.id === screen.id) || 0;
     setCurrentScreenIndex(index);
     setIsModalOpen(true);
