@@ -720,16 +720,17 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
 
-          // Use the record's index directly from the Airtable response 
-          // Since we're using a specific view, this will preserve the exact order seen in Airtable
-          let screenOrder = records.findIndex(r => r.id === record.id);
+          // Find this record's position in the original allScreenRecords array
+          // This will preserve the exact order as shown in the Airtable view
+          let screenOrder = allScreenRecords.findIndex(r => r.id === record.id);
           
-          // If for some reason the record isn't found in the array (should never happen), use a fallback
+          // If the record isn't found in allScreenRecords, use the app-specific order as fallback
           if (screenOrder === -1) {
-            screenOrder = 1000 + i; // Fallback to pushing it to the end
-            console.log(`WARNING: Screen ${screenName} record not found in records array, using fallback order ${screenOrder}`);
+            // Use position in the app's records array as fallback
+            screenOrder = i;
+            console.log(`WARNING: Screen "${screenName}" for app "${appName}" not found in allScreenRecords, using fallback order ${screenOrder}`);
           } else {
-            console.log(`Assigned order ${screenOrder} to screen ${screenName} based on Airtable view order`);
+            console.log(`Assigned order ${screenOrder} to screen "${screenName}" for app "${appName}" based on Airtable view order`);
           }
           
           // Special case: prioritize intro screens
