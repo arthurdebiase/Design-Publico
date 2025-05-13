@@ -99,9 +99,16 @@ export class MemStorage implements IStorage {
 
   // Screens
   async getScreensByAppId(appId: number): Promise<Screen[]> {
-    const result = Array.from(this.screens.values())
-      .filter(screen => screen.appId === appId)
-      .sort((a, b) => a.order - b.order);
+    // Get all screens for the app
+    const appScreens = Array.from(this.screens.values())
+      .filter(screen => screen.appId === appId);
+      
+    // Sort screens by their order field to match Airtable's screens-list
+    // Lower order values come first in the list
+    const result = appScreens.sort((a, b) => {
+      // Primary sort by order
+      return a.order - b.order;
+    });
     
     return result;
   }
@@ -680,7 +687,28 @@ export class MemStorage implements IStorage {
                            fields['screen_name'] || 
                            `Screen ${i + 1}`;
           
-          // Determine screen type - set splash/login screens to lower order values
+          // Use the record index from Airtable as the order to match the "screens-list" table
+          // Based on the image shared, "Login no Meu SUS Digital" is record #1, "Início com login" is record #2, etc.
+          // This approach will ensure the order exactly matches the Airtable's order
+          
+          // Get screen order from either:
+          // 1. The explicit "order" field if present in Airtable
+          // 2. Or the "imagetitle" column (record) number if available (from the screenshot)
+          // 3. Or fall back to using the index in the records array
+          let screenOrder = i;
+          
+          // Check for explicit order field in Airtable
+          if (fields.order !== undefined && fields.order !== null) {
+            // Use the explicit order from Airtable
+            screenOrder = typeof fields.order === 'number' ? fields.order : parseInt(fields.order, 10);
+          } 
+          
+          // If there's a field showing the row/record number, use that (matches the image)
+          if (fields.row !== undefined && fields.row !== null) {
+            screenOrder = typeof fields.row === 'number' ? fields.row : parseInt(fields.row, 10);
+          }
+          
+          // For Login/Splash screens, ensure they come first
           const lowerCaseName = screenName.toLowerCase();
           const isIntroScreen = 
             lowerCaseName.includes('splash') || 
@@ -690,11 +718,9 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('intro') ||
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
-          
-          // Make sure splash screens appear first in the order
-          let screenOrder = i;
-          if (i < 3 && isIntroScreen) {
-            // Force intro screens to the beginning by setting order to -1, 0, or very low numbers
+            
+          // Make authentication screens appear first if no explicit order is set
+          if (isIntroScreen && fields.order === undefined && fields.row === undefined) {
             screenOrder = -1000 + i;
           }
           
