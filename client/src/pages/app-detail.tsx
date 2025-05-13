@@ -69,6 +69,27 @@ export default function AppDetail() {
   const isLoading = isAppLoading || isScreensLoading;
   const error = appError || screensError;
   
+  // Function to group screens by their category/section
+  const getScreensBySection = () => {
+    if (!screens) return {};
+    
+    return screens.reduce((groups: Record<string, Screen[]>, screen) => {
+      // Get the category or set to "Other" if not available
+      const category = screen.category ? 
+        (typeof screen.category === 'string' ? screen.category : screen.category[0]) : 
+        "Other";
+      
+      // Initialize the group if it doesn't exist
+      if (!groups[category]) {
+        groups[category] = [];
+      }
+      
+      // Add the screen to its category group
+      groups[category].push(screen);
+      return groups;
+    }, {});
+  };
+  
   const handleOpenModal = (screen: Screen) => {
     const index = screens?.findIndex(s => s.id === screen.id) || 0;
     setCurrentScreenIndex(index);
@@ -186,15 +207,40 @@ export default function AppDetail() {
                   ))}
                 </div>
               ) : screens && screens.length > 0 ? (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
-                  {screens.map((screen) => (
-                    <ScreenThumbnail 
-                      key={screen.id} 
-                      screen={screen} 
-                      onClick={handleOpenModal} 
-                    />
-                  ))}
-                </div>
+                showSections ? (
+                  // Display screens grouped by sections
+                  <div className="space-y-8 pb-10">
+                    {Object.entries(getScreensBySection()).map(([category, categoryScreens]) => (
+                      <div key={category}>
+                        <h3 className="text-lg font-medium mb-3 text-gray-900 flex items-center">
+                          <Tag className="h-4 w-4 mr-2 text-green-600" />
+                          {category}
+                          <span className="ml-2 text-sm text-gray-500">({categoryScreens.length})</span>
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                          {categoryScreens.map((screen) => (
+                            <ScreenThumbnail 
+                              key={screen.id} 
+                              screen={screen} 
+                              onClick={handleOpenModal} 
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  // Display all screens in a grid
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
+                    {screens.map((screen) => (
+                      <ScreenThumbnail 
+                        key={screen.id} 
+                        screen={screen} 
+                        onClick={handleOpenModal} 
+                      />
+                    ))}
+                  </div>
+                )
               ) : (
                 <div className="text-center py-8 bg-gray-50 rounded-lg mb-10">
                   <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
