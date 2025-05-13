@@ -278,10 +278,9 @@ export default function AppDetail() {
                     </div>
                     
                     {/* Screen counter */}
-                    <Badge variant="outline" className="px-2 py-1 flex items-center ml-auto">
-                      <Smartphone className="h-4 w-4 mr-1" />
-                      <span>{filteredScreens.length} {t('screens.title')}</span>
-                    </Badge>
+                    <div className="text-gray-600 font-medium ml-auto">
+                      {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
+                    </div>
                   </div>
                   
                   {/* Active filter chips below filters */}
