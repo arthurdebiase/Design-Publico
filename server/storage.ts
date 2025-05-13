@@ -101,7 +101,14 @@ export class MemStorage implements IStorage {
   async getScreensByAppId(appId: number): Promise<Screen[]> {
     const result = Array.from(this.screens.values())
       .filter(screen => screen.appId === appId)
-      .sort((a, b) => a.order - b.order);
+      .sort((a, b) => {
+        // Special case: always put intro screens first
+        if (a.order === -1 && b.order !== -1) return -1;
+        if (a.order !== -1 && b.order === -1) return 1;
+        
+        // Otherwise, use the numeric order
+        return a.order - b.order;
+      });
 
     return result;
   }
@@ -206,15 +213,18 @@ export class MemStorage implements IStorage {
           params
         });
 
-        // Add the airtable order index to each record
-        const recordsWithOrder = screensResponse.data.records.map((record: any) => {
-          return {
+        // Use a simpler approach - add each record with its exact index from Airtable's record list
+        for (let i = 0; i < screensResponse.data.records.length; i++) {
+          const record = screensResponse.data.records[i];
+          // Add the absolute position (recordCounter + i) as the order
+          allScreenRecords.push({
             ...record,
-            airtableOrder: recordCounter++  // Add order based on position in API response
-          };
-        });
-
-        allScreenRecords = [...allScreenRecords, ...recordsWithOrder];
+            airtableOrder: recordCounter + i
+          });
+        }
+        
+        // Move the counter forward by the number of records processed
+        recordCounter += screensResponse.data.records.length;
         offset = screensResponse.data.offset;
 
         console.log(`Fetched batch of ${screensResponse.data.records.length} screen records from Airtable`);
