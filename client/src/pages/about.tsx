@@ -104,32 +104,32 @@ export default function About() {
             {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
               <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-blue-100 p-4 rounded-full mb-4">
-                  <Monitor className="h-8 w-8 text-[#0066FF]" />
+                <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                  <Monitor className="h-8 w-8 text-[#009440]" />
                 </div>
                 <span className="text-4xl font-bold mb-2">{totalApps}</span>
                 <p className="text-gray-600">{t('about.stats.apps')}</p>
               </div>
               
               <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-blue-100 p-4 rounded-full mb-4">
-                  <Layers className="h-8 w-8 text-[#0066FF]" />
+                <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                  <Layers className="h-8 w-8 text-[#009440]" />
                 </div>
                 <span className="text-4xl font-bold mb-2">{totalScreens}</span>
                 <p className="text-gray-600">{t('about.stats.screens')}</p>
               </div>
 
               <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-green-100 p-4 rounded-full mb-4">
-                  <Tag className="h-8 w-8 text-[#0066FF]" />
+                <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                  <Tag className="h-8 w-8 text-[#009440]" />
                 </div>
                 <span className="text-4xl font-bold mb-2">{totalTags}</span>
                 <p className="text-gray-600">{t('about.stats.tags')}</p>
               </div>
               
               <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-purple-100 p-4 rounded-full mb-4">
-                  <FolderTree className="h-8 w-8 text-[#0066FF]" />
+                <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                  <FolderTree className="h-8 w-8 text-[#009440]" />
                 </div>
                 <span className="text-4xl font-bold mb-2">{totalCategories}</span>
                 <p className="text-gray-600">{t('about.stats.categories')}</p>
