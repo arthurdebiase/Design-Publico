@@ -321,18 +321,18 @@ export default function ScreensPage() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2">
-                  {'Tag'}
+                  {'Componentes'}
                   <ChevronDown className="h-4 w-4 ml-2" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                <DropdownMenuLabel>Tag</DropdownMenuLabel>
+                <DropdownMenuLabel>Componentes</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   className={selectedTags.length === 0 ? "bg-accent/50" : ""}
                   onClick={() => handleTagFilterChange(null)}
                 >
-                  Todas as Tags
+                  Todos os Componentes
                 </DropdownMenuItem>
                 {availableTags.map((tag: string, index: number) => (
                   <DropdownMenuItem

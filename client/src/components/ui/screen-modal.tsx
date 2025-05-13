@@ -17,7 +17,7 @@ interface ScreenModalProps {
   app: App;
 }
 
-// Function to get tag background color
+// Function to get component background color
 const getTagColor = (tag: string): string => {
   type ColorMap = {
     [key: string]: string;
