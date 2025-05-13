@@ -234,46 +234,40 @@ export default function AppDetail() {
             <div className="py-6 pt-0 px-0">
               {screens && (
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex flex-wrap gap-4 items-center">
-                      {/* Component/Tag filter dropdown */}
-                      <div className="flex items-center">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="flex items-center gap-2">
-                              {'Componentes'}
-                              <ChevronDown className="h-4 w-4 ml-2" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                            <DropdownMenuLabel>Componentes</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem 
-                              className={selectedTags.length === 0 ? "bg-accent/50" : ""}
-                              onClick={() => handleTagFilterChange(null)}
+                  <div className="flex flex-wrap items-center gap-4 mb-4">
+                    {/* Component/Tag filter dropdown */}
+                    <div className="flex items-center">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" className="flex items-center gap-2">
+                            {'Componentes'}
+                            <ChevronDown className="h-4 w-4 ml-2" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
+                          <DropdownMenuLabel>Componentes</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem 
+                            className={selectedTags.length === 0 ? "bg-accent/50" : ""}
+                            onClick={() => handleTagFilterChange(null)}
+                          >
+                            Todos os Componentes
+                          </DropdownMenuItem>
+                          {availableTags.map((tag: string, index: number) => (
+                            <DropdownMenuItem
+                              key={`tag-${index}-${tag}`}
+                              className={selectedTags.includes(tag) ? "bg-accent/50" : ""}
+                              onClick={() => handleTagFilterChange(tag)}
                             >
-                              Todos os Componentes
+                              <span>{tag}</span>
+                              {selectedTags.includes(tag) && <Check className="ml-auto h-4 w-4" />}
                             </DropdownMenuItem>
-                            {availableTags.map((tag: string, index: number) => (
-                              <DropdownMenuItem
-                                key={`tag-${index}-${tag}`}
-                                className={selectedTags.includes(tag) ? "bg-accent/50" : ""}
-                                onClick={() => handleTagFilterChange(tag)}
-                              >
-                                <span>{tag}</span>
-                                {selectedTags.includes(tag) && <Check className="ml-auto h-4 w-4" />}
-                              </DropdownMenuItem>
-                            ))}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                      
-                      <Badge variant="outline" className="px-2 py-1 flex items-center">
-                        <Smartphone className="h-4 w-4 mr-1" />
-                        <span>{filteredScreens.length} {t('screens.title')}</span>
-                      </Badge>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                     
+                    {/* Seções toggle */}
                     <div className="flex items-center">
                       <span className="text-sm mr-2 text-gray-600">Seções</span>
                       <Switch
@@ -282,6 +276,12 @@ export default function AppDetail() {
                         className={showSections ? "bg-[#009440]" : ""}
                       />
                     </div>
+                    
+                    {/* Screen counter */}
+                    <Badge variant="outline" className="px-2 py-1 flex items-center ml-auto">
+                      <Smartphone className="h-4 w-4 mr-1" />
+                      <span>{filteredScreens.length} {t('screens.title')}</span>
+                    </Badge>
                   </div>
                   
                   {/* Active filter chips below filters */}
