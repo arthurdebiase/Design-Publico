@@ -188,8 +188,9 @@ export class MemStorage implements IStorage {
       do {
         const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
         const params: any = { 
-          pageSize: 100
-          // Don't specify a view - we'll handle sorting with our own logic
+          pageSize: 100,
+          // Use the specific view to maintain the exact order as seen in Airtable UI
+          view: "viwyDosqJV0fgIUf2" // This is the view ID you shared
         };
         if (offset) {
           params.offset = offset;
@@ -719,47 +720,21 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
 
-          // Improved order extraction algorithm
-          let screenOrder = 1000; // Default high value
+          // Use the record's index directly from the Airtable response 
+          // Since we're using a specific view, this will preserve the exact order seen in Airtable
+          let screenOrder = records.findIndex(r => r.id === record.id);
           
-          // Handle special case for intro/welcome screens first
+          // If for some reason the record isn't found in the array (should never happen), use a fallback
+          if (screenOrder === -1) {
+            screenOrder = 1000 + i; // Fallback to pushing it to the end
+            console.log(`WARNING: Screen ${screenName} record not found in records array, using fallback order ${screenOrder}`);
+          } else {
+            console.log(`Assigned order ${screenOrder} to screen ${screenName} based on Airtable view order`);
+          }
+          
+          // Special case: prioritize intro screens
           if (isIntroScreen) {
             screenOrder = -1; // Always put intro screens first
-          } else {
-            // Try multiple approaches for extracting order
-            
-            // First try: Extract numeric value from filename
-            const numericMatch = screenName.match(/(\d+)/);
-            if (numericMatch && numericMatch[1]) {
-              // Convert extracted number to integer for sorting
-              screenOrder = parseInt(numericMatch[1], 10);
-              console.log(`Extracted numeric order ${screenOrder} from screen name "${screenName}"`);
-            } 
-            // Second try: If no number in name and it's an image with a name like "image.jpg", 
-            // try to use the record index for this app
-            else if (screenName.toLowerCase().endsWith('.jpg') || 
-                    screenName.toLowerCase().endsWith('.png') || 
-                    screenName.toLowerCase().endsWith('.jpeg')) {
-              
-              // Get all other screens in the same app to find relative position
-              const appScreens = allScreenRecords.filter(r => {
-                const appNameField = r.fields[APP_NAME_FIELD]; 
-                if (!Array.isArray(appNameField)) return false;
-                
-                // Match by app ID
-                return appNameField.some(id => appIdToNameMap.has(id) && 
-                  appIdToNameMap.get(id) === appName);
-              });
-              
-              // Find position of this record in app-specific records
-              const relativeIndex = appScreens.findIndex(r => r.id === record.id);
-              if (relativeIndex !== -1) {
-                screenOrder = relativeIndex;
-                console.log(`Using app-relative position ${screenOrder} for screen "${screenName}" in app "${appName}"`);
-              } else {
-                console.log(`No numeric part or position found for screen "${screenName}", using default order ${screenOrder}`);
-              }
-            }
           }
 
           // Extract tags from Airtable fields
