@@ -187,7 +187,15 @@ export class MemStorage implements IStorage {
 
       do {
         const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
-        const params: any = { pageSize: 100 };
+        const params: any = { 
+          pageSize: 100,
+          sort: [
+            // Try to sort by order field if it exists
+            { field: "screens-list.order", direction: "asc" },
+            // Fallback sort by name
+            { field: "imagetitle", direction: "asc" }
+          ]
+        };
         if (offset) {
           params.offset = offset;
         }
@@ -207,6 +215,31 @@ export class MemStorage implements IStorage {
       } while (offset);
 
       console.log(`Fetched a total of ${allScreenRecords.length} screen records from Airtable`);
+      
+      // Check if we have any records
+      if (allScreenRecords.length > 0) {
+        // DEBUG: Print first record fields
+        console.log("DEBUG: First record fields:", 
+          Object.keys(allScreenRecords[0].fields).join(", "));
+          
+        // Get field that contains position info - debug by printing it for all Meu SUS Digital records
+        const meuSusRecords = allScreenRecords.filter(record => {
+          const appField = record.fields[APP_NAME_FIELD];
+          if (Array.isArray(appField)) {
+            return appField.some(id => id.includes('trB2IiTvux50C5')); // Known Meu SUS Digital ID
+          }
+          return false;
+        });
+        
+        console.log(`DEBUG: Found ${meuSusRecords.length} Meu SUS Digital screen records`);
+        
+        // For each Meu SUS Digital record, log the name and position field
+        meuSusRecords.forEach(record => {
+          const name = record.fields[SCREEN_NAME_FIELD] || "Unknown";
+          const order = record.fields["airtable_order"] || record.fields["screens-list.order"] || "No order field";
+          console.log(`DEBUG: Screen "${name}" position: ${order}`);
+        });
+      }
 
       // 2. Fetch all records from the Airtable apps table with pagination
       let allAppRecords: any[] = [];
@@ -691,9 +724,27 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
 
-          // Use the record's index in Airtable records array as the order
-          let screenOrder = records.findIndex(r => r.id === record.id);
-          if (screenOrder === -1) screenOrder = i; // Fallback to original logic if not found
+          // Use numeric order from Airtable screens-list.order field, then fallback to record index
+          let screenOrder = 1000; // Default high value if no order field exists
+          
+          // Try to get order field from Airtable
+          if (fields.order !== undefined && !isNaN(Number(fields.order))) {
+            screenOrder = Number(fields.order);
+            console.log(`Found order field for screen ${screenName}: ${screenOrder}`);
+          } else if (fields["screens-list.order"] !== undefined && !isNaN(Number(fields["screens-list.order"]))) {
+            screenOrder = Number(fields["screens-list.order"]);
+            console.log(`Found screens-list.order field for screen ${screenName}: ${screenOrder}`);
+          } else {
+            // Use the record's position in the array from Airtable's API response
+            const indexInRecords = records.findIndex(r => r.id === record.id);
+            if (indexInRecords !== -1) {
+              screenOrder = indexInRecords;
+              console.log(`Using record index for screen ${screenName}: ${screenOrder}`);
+            } else {
+              screenOrder = i; // Last resort fallback
+              console.log(`Using loop index for screen ${screenName}: ${screenOrder}`);
+            }
+          }
 
           // Extract tags from Airtable fields
           let tags: string[] | null = null;

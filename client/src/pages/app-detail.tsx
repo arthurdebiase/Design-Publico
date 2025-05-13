@@ -96,47 +96,17 @@ export default function AppDetail() {
     return Array.from(tagSet).sort();
   }, [screens]);
 
-  // Manually assign order to specific Meu SUS Digital screens
-  const orderPriority = useMemo(() => {
-    if (!app || app.name !== "Meu SUS Digital") return {};
-    
-    return {
-      "Login no Meu SUS Digital": 1,
-      "Início com login": 2,
-      "Mini apps e conteúdo de saúde": 3,
-      "Aplicativos de saúde": 4,
-      "Notificações recentes": 5,
-      "\tNotificações recentes": 5, // Handle possible whitespace in name
-      "Notificações abertas": 6
-    };
-  }, [app]);
-  
-  // Sort screens using manually assigned order for Meu SUS Digital
-  const sortedScreens = useMemo(() => {
-    if (!screens) return [];
-    
-    if (app?.name === "Meu SUS Digital") {
-      return [...screens].sort((a, b) => {
-        const orderA = orderPriority[a.name] || 1000 + a.order;
-        const orderB = orderPriority[b.name] || 1000 + b.order;
-        return orderA - orderB;
-      });
-    }
-    
-    return screens;
-  }, [screens, app, orderPriority]);
-  
   // Filter screens based on selected tags
   const filteredScreens = useMemo(() => {
-    if (!sortedScreens) return [];
-    if (selectedTags.length === 0) return sortedScreens;
+    if (!screens) return [];
+    if (selectedTags.length === 0) return screens;
     
-    return sortedScreens.filter(screen => {
+    return screens.filter(screen => {
       if (!screen.tags) return false;
       // Check if screen has any of the selected tags
       return selectedTags.some(tag => screen.tags?.includes(tag));
     });
-  }, [sortedScreens, selectedTags]);
+  }, [screens, selectedTags]);
   
   // Function to handle adding/removing tag filters
   const handleTagFilterChange = (tag: string | null) => {
