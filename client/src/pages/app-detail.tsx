@@ -69,23 +69,21 @@ export default function AppDetail() {
   const isLoading = isAppLoading || isScreensLoading;
   const error = appError || screensError;
   
-  // Function to group screens by their category/section
+  // Function to group screens by their flow field
   const getScreensBySection = () => {
     if (!screens) return {};
     
     return screens.reduce((groups: Record<string, Screen[]>, screen) => {
-      // Get the category or set to "Other" if not available
-      const category = screen.category ? 
-        (typeof screen.category === 'string' ? screen.category : screen.category[0]) : 
-        "Other";
+      // Get the flow or set to "Other" if not available
+      const flow = screen.flow || "Other";
       
       // Initialize the group if it doesn't exist
-      if (!groups[category]) {
-        groups[category] = [];
+      if (!groups[flow]) {
+        groups[flow] = [];
       }
       
-      // Add the screen to its category group
-      groups[category].push(screen);
+      // Add the screen to its flow group
+      groups[flow].push(screen);
       return groups;
     }, {});
   };
@@ -185,7 +183,7 @@ export default function AppDetail() {
                   
                   <Badge 
                     variant={showSections ? "default" : "outline"} 
-                    className={`px-2 py-1 flex items-center cursor-pointer hover:opacity-90 transition-opacity ${showSections ? 'bg-green-600' : ''}`}
+                    className={`px-2 py-1 flex items-center cursor-pointer hover:opacity-90 transition-opacity ${showSections ? 'bg-[#009440]' : ''}`}
                     onClick={() => setShowSections(!showSections)}
                   >
                     <Tag className="h-4 w-4 mr-1" />
@@ -208,17 +206,30 @@ export default function AppDetail() {
                 </div>
               ) : screens && screens.length > 0 ? (
                 showSections ? (
-                  // Display screens grouped by sections
-                  <div className="space-y-8 pb-10">
-                    {Object.entries(getScreensBySection()).map(([category, categoryScreens]) => (
-                      <div key={category}>
-                        <h3 className="text-lg font-medium mb-3 text-gray-900 flex items-center">
-                          <Tag className="h-4 w-4 mr-2 text-green-600" />
-                          {category}
-                          <span className="ml-2 text-sm text-gray-500">({categoryScreens.length})</span>
-                        </h3>
+                  // Display screens grouped by flow sections
+                  <div className="space-y-10 pb-10">
+                    {Object.entries(getScreensBySection())
+                      .sort(([flowA], [flowB]) => {
+                        // Put "Other" at the end
+                        if (flowA === "Other") return 1;
+                        if (flowB === "Other") return -1;
+                        // Otherwise sort alphabetically
+                        return flowA.localeCompare(flowB);
+                      })
+                      .map(([flow, flowScreens]) => (
+                      <div key={flow} className="bg-gray-50 p-6 rounded-lg">
+                        <div className="border-l-4 border-[#009440] pl-3 mb-4">
+                          <h3 className="text-lg font-medium mb-1 text-gray-900 flex items-center">
+                            <Tag className="h-4 w-4 mr-2 text-[#009440]" />
+                            {flow}
+                            <span className="ml-2 text-sm text-gray-500">({flowScreens.length})</span>
+                          </h3>
+                          <p className="text-sm text-gray-500">
+                            Telas relacionadas ao fluxo {flow.toLowerCase() === 'other' ? 'principal' : flow.toLowerCase()} do aplicativo
+                          </p>
+                        </div>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                          {categoryScreens.map((screen) => (
+                          {flowScreens.map((screen) => (
                             <ScreenThumbnail 
                               key={screen.id} 
                               screen={screen} 
