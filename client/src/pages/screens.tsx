@@ -316,7 +316,7 @@ export default function ScreensPage() {
       
       <div className="mb-4 flex flex-wrap items-center justify-between">
         <div className="flex flex-wrap gap-4 items-center">
-          {/* Tag filter dropdown */}
+          {/* Componentes filter dropdown */}
           <div className="flex items-center">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -390,7 +390,7 @@ export default function ScreensPage() {
       {/* Active filter chips below filters */}
       {(selectedTags.length > 0 || selectedCategories.length > 0) && (
         <div className="flex flex-wrap gap-2 mb-6">
-          {/* Tag filter chips */}
+          {/* Componente filter chips */}
           {selectedTags.map(tag => (
             <div 
               key={`chip-tag-${tag}`}
@@ -400,7 +400,7 @@ export default function ScreensPage() {
               <button 
                 onClick={() => handleRemoveTag(tag)}
                 className="rounded-full hover:bg-blue-200 p-1 transition-colors"
-                aria-label={`Remover filtro de tag ${tag}`}
+                aria-label={`Remover filtro de componente ${tag}`}
               >
                 <X className="h-3 w-3" />
               </button>
@@ -516,7 +516,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
     }
   };
 
-  // Function to get tag background color
+  // Function to get component background color
   const getTagColor = (tag: string): string => {
     type ColorMap = {
       [key: string]: string;
@@ -542,7 +542,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
     };
     
     const tagLower = tag.toLowerCase();
-    // Default color for unknown tags
+    // Default color for unknown components
     return colors[tagLower] || 'bg-gray-100';
   };
   

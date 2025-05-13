@@ -226,7 +226,7 @@ export function ScreenModal({
                 className={`h-9 w-9 ${showTags ? 'bg-gray-100' : ''}`} 
                 aria-label={showTags ? "Hide metadata" : "Show metadata"}
                 onClick={() => setShowTags(!showTags)}
-                title={showTags ? "Hide tags and categories" : "Show tags and categories"}
+                title={showTags ? "Hide componentes and categories" : "Show componentes and categories"}
               >
                 <Info className="h-4 w-4" aria-hidden="true" />
               </Button>
@@ -351,7 +351,7 @@ export function ScreenModal({
                     href={`/screens?tag=${encodeURIComponent(tag)}`}
                     onClick={onClose}
                     className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer`}
-                    title={`View all screens with ${tag} tag`}
+                    title={`View all screens with ${tag} componente`}
                   >
                     {tag}
                   </Link>
