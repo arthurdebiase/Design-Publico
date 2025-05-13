@@ -720,17 +720,24 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
 
-          // Find this record's position in the original allScreenRecords array
-          // This will preserve the exact order as shown in the Airtable view
-          let screenOrder = allScreenRecords.findIndex(r => r.id === record.id);
+          // Extract numeric order from filename if it follows pattern like "001.jpg", "002.jpg", etc.
+          let screenOrder = 1000 + i; // Default high value
           
-          // If the record isn't found in allScreenRecords, use the app-specific order as fallback
-          if (screenOrder === -1) {
-            // Use position in the app's records array as fallback
-            screenOrder = i;
-            console.log(`WARNING: Screen "${screenName}" for app "${appName}" not found in allScreenRecords, using fallback order ${screenOrder}`);
+          // Try to get numeric order from filename
+          const filenameMatch = screenName.match(/^(\d+)\.jpg$/i);
+          if (filenameMatch && filenameMatch[1]) {
+            // If the filename starts with a number like "001.jpg", use that number as order
+            screenOrder = parseInt(filenameMatch[1], 10);
+            console.log(`Using numeric order ${screenOrder} from filename for screen "${screenName}" in app "${appName}"`);
           } else {
-            console.log(`Assigned order ${screenOrder} to screen "${screenName}" for app "${appName}" based on Airtable view order`);
+            // If no numeric pattern found, try to use the record's position in Airtable
+            const airtableIndex = allScreenRecords.findIndex(r => r.id === record.id);
+            if (airtableIndex !== -1) {
+              screenOrder = airtableIndex;
+              console.log(`Using Airtable index ${screenOrder} for screen "${screenName}" in app "${appName}"`);
+            } else {
+              console.log(`No numeric pattern in filename or Airtable index found for "${screenName}" in app "${appName}", using default order ${screenOrder}`);
+            }
           }
           
           // Special case: prioritize intro screens
