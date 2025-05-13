@@ -32,8 +32,9 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
     );
   }
 
-  // Get first screen only
-  const firstScreen = screens[0];
+  // Get the first screen by order (lowest order value) to match Airtable order
+  // Screens are already sorted by order in fetchScreensByAppId, but ensuring here as well
+  const firstScreen = screens.sort((a, b) => a.order - b.order)[0];
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
