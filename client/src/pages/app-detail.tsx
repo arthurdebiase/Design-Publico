@@ -207,7 +207,7 @@ export default function AppDetail() {
               ) : screens && screens.length > 0 ? (
                 showSections ? (
                   // Display screens grouped by flow sections
-                  <div className="space-y-10 pb-10">
+                  <div className="pb-10">
                     {Object.entries(getScreensBySection())
                       .sort(([flowA], [flowB]) => {
                         // Put "Other" at the end
@@ -217,17 +217,11 @@ export default function AppDetail() {
                         return flowA.localeCompare(flowB);
                       })
                       .map(([flow, flowScreens]) => (
-                      <div key={flow} className="bg-gray-50 p-6 rounded-lg">
-                        <div className="border-l-4 border-[#009440] pl-3 mb-4">
-                          <h3 className="text-lg font-medium mb-1 text-gray-900 flex items-center">
-                            <Tag className="h-4 w-4 mr-2 text-[#009440]" />
-                            {flow}
-                            <span className="ml-2 text-sm text-gray-500">({flowScreens.length})</span>
-                          </h3>
-                          <p className="text-sm text-gray-500">
-                            Telas relacionadas ao fluxo {flow.toLowerCase() === 'other' ? 'principal' : flow.toLowerCase()} do aplicativo
-                          </p>
-                        </div>
+                      <div key={flow} className="mb-8">
+                        <h3 className="text-lg font-medium mb-4 text-gray-900 flex items-center">
+                          {flow}
+                          <span className="ml-2 text-sm text-gray-500">({flowScreens.length})</span>
+                        </h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                           {flowScreens.map((screen) => (
                             <ScreenThumbnail 
