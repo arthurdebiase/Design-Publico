@@ -37,6 +37,8 @@ export default function AppDetail() {
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
+  // State for sections toggle
+  const [showSections, setShowSections] = useState(false);
   
   // Extract screenId from URL query parameters
   const getScreenIdFromUrl = (): string | null => {
@@ -154,10 +156,19 @@ export default function AppDetail() {
             
             <div className="py-6 pt-0 px-0">
               {screens && (
-                <div className="flex items-center mb-4">
+                <div className="flex items-center gap-2 mb-4">
                   <Badge variant="outline" className="px-2 py-1 flex items-center">
                     <Smartphone className="h-4 w-4 mr-1" />
                     <span>{screens.length} {t('screens.title')}</span>
+                  </Badge>
+                  
+                  <Badge 
+                    variant={showSections ? "default" : "outline"} 
+                    className={`px-2 py-1 flex items-center cursor-pointer hover:opacity-90 transition-opacity ${showSections ? 'bg-green-600' : ''}`}
+                    onClick={() => setShowSections(!showSections)}
+                  >
+                    <Tag className="h-4 w-4 mr-1" />
+                    <span>Seções</span>
                   </Badge>
                 </div>
               )}
