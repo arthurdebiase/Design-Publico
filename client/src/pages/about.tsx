@@ -2,7 +2,64 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Layers, Monitor, Tag, Smartphone, FolderTree } from "lucide-react";
 import { App, Screen } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+
+interface CounterAnimationProps {
+  end: number;
+  duration?: number;
+  className?: string;
+}
+
+function CounterAnimation({ end, duration = 2000, className = "" }: CounterAnimationProps) {
+  const [count, setCount] = useState(0);
+  const countRef = useRef<HTMLSpanElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    // Create intersection observer to start animation when element is in viewport
+    observerRef.current = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      setIsVisible(entry.isIntersecting);
+    }, { threshold: 0.1 });
+
+    // Observe the counter element
+    if (countRef.current) {
+      observerRef.current.observe(countRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    // Start animation when element becomes visible
+    if (!isVisible) return;
+    
+    let startTimestamp: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      
+      // Use easeOutQuad for a nice deceleration effect
+      const easeOutQuad = (t: number) => t * (2 - t);
+      const easedProgress = easeOutQuad(progress);
+      
+      setCount(Math.floor(easedProgress * end));
+      
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    
+    window.requestAnimationFrame(step);
+  }, [end, duration, isVisible]);
+  
+  return <span ref={countRef} className={className}>{count}</span>;
+}
 
 export default function About() {
   const { t } = useTranslation();
@@ -107,7 +164,7 @@ export default function About() {
                 <div className="bg-[#00944026] p-4 rounded-full mb-4">
                   <Monitor className="h-8 w-8 text-[#009440]" />
                 </div>
-                <span className="text-4xl font-bold mb-2">{totalApps}</span>
+                <CounterAnimation end={totalApps} className="text-4xl font-bold mb-2" />
                 <p className="text-gray-600">{t('about.stats.apps')}</p>
               </div>
               
@@ -115,7 +172,7 @@ export default function About() {
                 <div className="bg-[#00944026] p-4 rounded-full mb-4">
                   <Layers className="h-8 w-8 text-[#009440]" />
                 </div>
-                <span className="text-4xl font-bold mb-2">{totalScreens}</span>
+                <CounterAnimation end={totalScreens} className="text-4xl font-bold mb-2" />
                 <p className="text-gray-600">{t('about.stats.screens')}</p>
               </div>
 
@@ -123,7 +180,7 @@ export default function About() {
                 <div className="bg-[#00944026] p-4 rounded-full mb-4">
                   <Tag className="h-8 w-8 text-[#009440]" />
                 </div>
-                <span className="text-4xl font-bold mb-2">{totalTags}</span>
+                <CounterAnimation end={totalTags} className="text-4xl font-bold mb-2" />
                 <p className="text-gray-600">{t('about.stats.tags')}</p>
               </div>
               
@@ -131,7 +188,7 @@ export default function About() {
                 <div className="bg-[#00944026] p-4 rounded-full mb-4">
                   <FolderTree className="h-8 w-8 text-[#009440]" />
                 </div>
-                <span className="text-4xl font-bold mb-2">{totalCategories}</span>
+                <CounterAnimation end={totalCategories} className="text-4xl font-bold mb-2" />
                 <p className="text-gray-600">{t('about.stats.categories')}</p>
               </div>
             </div>
