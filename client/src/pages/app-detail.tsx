@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRoute, Link, useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAppById, fetchScreensByAppId } from "@/lib/airtable";
@@ -9,9 +9,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Bookmark, 
          Apple, TabletSmartphone, Globe, Tag, 
-         FileText, Smartphone } from "lucide-react";
+         FileText, Smartphone, ChevronDown, Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useTranslation } from 'react-i18next';
 
 // Platform badge styling function
@@ -40,6 +48,8 @@ export default function AppDetail() {
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   // State for sections toggle
   const [showSections, setShowSections] = useState(false);
+  // State for tag filtering
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   
   // Extract screenId from URL query parameters
   const getScreenIdFromUrl = (): string | null => {
@@ -70,11 +80,58 @@ export default function AppDetail() {
   const isLoading = isAppLoading || isScreensLoading;
   const error = appError || screensError;
   
+  // Extract all unique tags from screens
+  const availableTags = useMemo(() => {
+    if (!screens) return [];
+    
+    // Create a set of all unique tags
+    const tagSet = new Set<string>();
+    screens.forEach(screen => {
+      if (screen.tags && Array.isArray(screen.tags)) {
+        screen.tags.forEach(tag => tagSet.add(tag));
+      }
+    });
+    
+    // Convert the set to an array and sort alphabetically
+    return Array.from(tagSet).sort();
+  }, [screens]);
+
+  // Filter screens based on selected tags
+  const filteredScreens = useMemo(() => {
+    if (!screens) return [];
+    if (selectedTags.length === 0) return screens;
+    
+    return screens.filter(screen => {
+      if (!screen.tags) return false;
+      // Check if screen has any of the selected tags
+      return selectedTags.some(tag => screen.tags?.includes(tag));
+    });
+  }, [screens, selectedTags]);
+  
+  // Function to handle adding/removing tag filters
+  const handleTagFilterChange = (tag: string | null) => {
+    if (tag === null) {
+      // If null is passed, clear all filters
+      setSelectedTags([]);
+    } else if (selectedTags.includes(tag)) {
+      // If tag is already selected, remove it
+      setSelectedTags(prev => prev.filter(t => t !== tag));
+    } else {
+      // Otherwise add the tag
+      setSelectedTags(prev => [...prev, tag]);
+    }
+  };
+  
+  // Function to remove a specific tag from filters
+  const handleRemoveTag = (tag: string) => {
+    setSelectedTags(prev => prev.filter(t => t !== tag));
+  };
+  
   // Function to group screens by their flow field
   const getScreensBySection = () => {
-    if (!screens) return {};
+    if (!filteredScreens) return {};
     
-    return screens.reduce((groups: Record<string, Screen[]>, screen) => {
+    return filteredScreens.reduce((groups: Record<string, Screen[]>, screen) => {
       // Get the flow or set to "Other" if not available
       const flow = screen.flow || "Other";
       
@@ -176,20 +233,90 @@ export default function AppDetail() {
             
             <div className="py-6 pt-0 px-0">
               {screens && (
-                <div className="flex items-center justify-between mb-4">
-                  <Badge variant="outline" className="px-2 py-1 flex items-center">
-                    <Smartphone className="h-4 w-4 mr-1" />
-                    <span>{screens.length} {t('screens.title')}</span>
-                  </Badge>
-                  
-                  <div className="flex items-center">
-                    <span className="text-sm mr-2 text-gray-600">Seções</span>
-                    <Switch
-                      checked={showSections}
-                      onCheckedChange={setShowSections}
-                      className={showSections ? "bg-[#009440]" : ""}
-                    />
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-wrap gap-4 items-center">
+                      {/* Component/Tag filter dropdown */}
+                      <div className="flex items-center">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="flex items-center gap-2">
+                              {'Componentes'}
+                              <ChevronDown className="h-4 w-4 ml-2" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
+                            <DropdownMenuLabel>Componentes</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem 
+                              className={selectedTags.length === 0 ? "bg-accent/50" : ""}
+                              onClick={() => handleTagFilterChange(null)}
+                            >
+                              Todos os Componentes
+                            </DropdownMenuItem>
+                            {availableTags.map((tag: string, index: number) => (
+                              <DropdownMenuItem
+                                key={`tag-${index}-${tag}`}
+                                className={selectedTags.includes(tag) ? "bg-accent/50" : ""}
+                                onClick={() => handleTagFilterChange(tag)}
+                              >
+                                <span>{tag}</span>
+                                {selectedTags.includes(tag) && <Check className="ml-auto h-4 w-4" />}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                      
+                      <Badge variant="outline" className="px-2 py-1 flex items-center">
+                        <Smartphone className="h-4 w-4 mr-1" />
+                        <span>{filteredScreens.length} {t('screens.title')}</span>
+                      </Badge>
+                    </div>
+                    
+                    <div className="flex items-center">
+                      <span className="text-sm mr-2 text-gray-600">Seções</span>
+                      <Switch
+                        checked={showSections}
+                        onCheckedChange={setShowSections}
+                        className={showSections ? "bg-[#009440]" : ""}
+                      />
+                    </div>
                   </div>
+                  
+                  {/* Active filter chips below filters */}
+                  {selectedTags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {/* Component filter chips */}
+                      {selectedTags.map(tag => (
+                        <div 
+                          key={`chip-tag-${tag}`}
+                          className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm"
+                        >
+                          <span>{tag}</span>
+                          <button 
+                            onClick={() => handleRemoveTag(tag)}
+                            className="rounded-full hover:bg-blue-200 p-1 transition-colors"
+                            aria-label={`Remover filtro de componente ${tag}`}
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ))}
+                      
+                      {/* Clear all filters button (shown only when multiple filters are active) */}
+                      {selectedTags.length > 1 && (
+                        <button
+                          onClick={() => setSelectedTags([])}
+                          className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
+                          aria-label="Limpar todos os filtros"
+                        >
+                          <span>Limpar filtros</span>
+                          <X className="h-3 w-3 ml-1" />
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
               
@@ -238,7 +365,7 @@ export default function AppDetail() {
                 ) : (
                   // Display all screens in a grid
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
-                    {screens.map((screen) => (
+                    {filteredScreens.map((screen) => (
                       <ScreenThumbnail 
                         key={screen.id} 
                         screen={screen} 
