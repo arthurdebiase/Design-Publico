@@ -12,14 +12,14 @@ export interface IStorage {
   getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]>;
   getAppById(id: number): Promise<App | undefined>;
   createApp(app: InsertApp): Promise<App>;
-  
+
   // Screens
   getScreensByAppId(appId: number): Promise<Screen[]>;
   createScreen(screen: InsertScreen): Promise<Screen>;
-  
+
   // Brand
   getBrandLogo(): Promise<string | null>;
-  
+
   // Airtable Sync
   syncFromAirtable(apiKey: string, baseId: string): Promise<void>;
 }
@@ -36,7 +36,7 @@ export class MemStorage implements IStorage {
     this.screens = new Map();
     this.appIdCounter = 1;
     this.screenIdCounter = 1;
-    
+
     // Initialize with sample data
     this.initializeSampleData();
   }
@@ -44,16 +44,16 @@ export class MemStorage implements IStorage {
   // Apps
   async getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]> {
     let result = Array.from(this.apps.values());
-    
+
     if (filters) {
       if (filters.type) {
         result = result.filter(app => app.type === filters.type);
       }
-      
+
       if (filters.platform) {
         result = result.filter(app => app.platform === filters.platform);
       }
-      
+
       if (filters.search) {
         const searchLower = filters.search.toLowerCase();
         result = result.filter(app => 
@@ -63,7 +63,7 @@ export class MemStorage implements IStorage {
         );
       }
     }
-    
+
     return result;
   }
 
@@ -74,7 +74,7 @@ export class MemStorage implements IStorage {
   async createApp(insertApp: InsertApp): Promise<App> {
     const id = this.appIdCounter++;
     const now = new Date();
-    
+
     // Ensure all required fields have appropriate values
     const app: App = {
       id,
@@ -92,7 +92,7 @@ export class MemStorage implements IStorage {
       createdAt: now,
       updatedAt: now,
     };
-    
+
     this.apps.set(id, app);
     return app;
   }
@@ -102,14 +102,14 @@ export class MemStorage implements IStorage {
     const result = Array.from(this.screens.values())
       .filter(screen => screen.appId === appId)
       .sort((a, b) => a.order - b.order);
-    
+
     return result;
   }
 
   async createScreen(insertScreen: InsertScreen): Promise<Screen> {
     const id = this.screenIdCounter++;
     const now = new Date();
-    
+
     // Ensure all required fields have appropriate values
     const screen: Screen = {
       id,
@@ -125,16 +125,16 @@ export class MemStorage implements IStorage {
       createdAt: now,
       updatedAt: now,
     };
-    
+
     this.screens.set(id, screen);
-    
+
     // Update screen count for the app
     const app = this.apps.get(screen.appId);
     if (app) {
       app.screenCount = (app.screenCount || 0) + 1;
       this.apps.set(app.id, app);
     }
-    
+
     return screen;
   }
 
@@ -144,7 +144,7 @@ export class MemStorage implements IStorage {
   async getBrandLogo(): Promise<string | null> {
     return this.brandLogo;
   }
-  
+
   // Get exact category from Airtable data
   private getCategoryForApp(appName: string): string | null {
     // We'll rely on Airtable API data - categories will be dynamically determined
@@ -155,12 +155,12 @@ export class MemStorage implements IStorage {
   async syncFromAirtable(apiKey: string, baseId: string): Promise<void> {
     try {
       console.log(`Syncing data from Airtable base ${baseId}...`);
-      
+
       // Define the Airtable field mappings - these must match exactly with your Airtable column names
       const AIRTABLE_TABLE_NAME = "screens"; // Table containing screen images and details
       const APPS_TABLE_NAME = "apps";       // Table containing app metadata and logos
       const BRAND_FILES_TABLE_NAME = "brand"; // Table containing global brand assets
-      
+
       // Field name constants for more flexibility with Airtable structure - EXACT matches for Airtable columns
       const APP_NAME_FIELD = "appname";    // Field linking screens to apps or containing app name
       const ATTACHMENT_FIELD = "image";    // Field containing screen images - matching column name in screenshots
@@ -169,7 +169,7 @@ export class MemStorage implements IStorage {
       const APP_TYPE_FIELD = "type (from appname)"; // Field containing app type in the screens table
       const APP_CATEGORY_FIELD = "category (from appname)"; // Field containing app category
       const APP_NAME_FIELD_IN_APPS = "name"; // Field containing app names in the apps table
-      
+
       // Print all field mappings for debugging
       console.log("Airtable Field Mappings:");
       console.log(`APP_NAME_FIELD: "${APP_NAME_FIELD}"`);
@@ -179,19 +179,19 @@ export class MemStorage implements IStorage {
       console.log(`APP_TYPE_FIELD: "${APP_TYPE_FIELD}"`);
       console.log(`APP_CATEGORY_FIELD: "${APP_CATEGORY_FIELD}"`);
       console.log(`APP_NAME_FIELD_IN_APPS: "${APP_NAME_FIELD_IN_APPS}"`);
-      
-      
+
+
       // 1. Fetch all records from the Airtable screens table with pagination
       let allScreenRecords: any[] = [];
       let offset: string | undefined = undefined;
-      
+
       do {
         const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
         const params: any = { pageSize: 100 };
         if (offset) {
           params.offset = offset;
         }
-        
+
         const screensResponse = await axios.get(url, { 
           headers: { 
             Authorization: `Bearer ${apiKey}`,
@@ -199,26 +199,26 @@ export class MemStorage implements IStorage {
           },
           params
         });
-        
+
         allScreenRecords = [...allScreenRecords, ...screensResponse.data.records];
         offset = screensResponse.data.offset;
-        
+
         console.log(`Fetched batch of ${screensResponse.data.records.length} screen records from Airtable`);
       } while (offset);
-      
+
       console.log(`Fetched a total of ${allScreenRecords.length} screen records from Airtable`);
-      
+
       // 2. Fetch all records from the Airtable apps table with pagination
       let allAppRecords: any[] = [];
       let appOffset: string | undefined = undefined;
-      
+
       do {
         const url = `https://api.airtable.com/v0/${baseId}/${APPS_TABLE_NAME}`;
         const params: any = { pageSize: 100 };
         if (appOffset) {
           params.offset = appOffset;
         }
-        
+
         const appsResponse = await axios.get(url, { 
           headers: { 
             Authorization: `Bearer ${apiKey}`,
@@ -226,15 +226,15 @@ export class MemStorage implements IStorage {
           },
           params
         });
-        
+
         allAppRecords = [...allAppRecords, ...appsResponse.data.records];
         appOffset = appsResponse.data.offset;
-        
+
         console.log(`Fetched batch of ${appsResponse.data.records.length} app records from Airtable`);
       } while (appOffset);
-      
+
       console.log(`Fetched a total of ${allAppRecords.length} app records from Airtable`);
-      
+
       // 3. Fetch brand files data
       try {
         const brandFilesUrl = `https://api.airtable.com/v0/${baseId}/${BRAND_FILES_TABLE_NAME}`;
@@ -244,10 +244,10 @@ export class MemStorage implements IStorage {
             "Content-Type": "application/json"
           }
         });
-        
+
         const brandRecords = brandFilesResponse.data.records || [];
         console.log(`Fetched ${brandRecords.length} brand files records from Airtable`);
-        
+
         // Find the logo-svg file in the brand records
         for (const record of brandRecords) {
           const fields = record.fields;
@@ -262,40 +262,40 @@ export class MemStorage implements IStorage {
         console.error("Error fetching brand files:", error);
         // Continue with the sync process even if we couldn't fetch the brand logo
       }
-      
+
       // Create a map of app names to their logo URLs
       const appLogosMap = new Map<string, string>();
-      
+
       // Create maps for app data for more reliable matching
       const appIdToNameMap = new Map<string, string>();
       const appIdToCategoryMap = new Map<string, string>();
       const appIdToTypeMap = new Map<string, string>();
-      
+
       // First extract all app names, categories, types, and IDs from the apps table
       for (const record of allAppRecords) {
         const fields = record.fields;
-        
+
         // Get app name
         const appName = fields.name || null;
-        
+
         if (appName) {
           // Map record ID to app name
           appIdToNameMap.set(record.id, appName);
-          
+
           // Map record ID to category and type 
           if (fields.category) {
             appIdToCategoryMap.set(record.id, fields.category);
             console.log(`Found category for app ${appName}: ${fields.category}`);
           }
-          
+
           if (fields.type) {
             appIdToTypeMap.set(record.id, fields.type);
             console.log(`Found type for app ${appName}: ${fields.type}`);
           }
-          
+
           // Handle logo attachments - check if the record has a logo field
           const logoField = fields.logo || null;
-          
+
           if (logoField && Array.isArray(logoField) && logoField.length > 0) {
             const logoAttachment = logoField[0];
             if (logoAttachment && logoAttachment.url) {
@@ -306,12 +306,12 @@ export class MemStorage implements IStorage {
           }
         }
       }
-      
+
       // Log all found app logos for debugging
       console.log(`Found ${appLogosMap.size} app logos in total.`);
-      
+
       // We'll skip manual logo mappings and rely only on Airtable data
-      
+
       // First, log all Airtable app records to debug what names are actually in Airtable
       // Full app record debugging
       console.log("DEBUG: First app record structure:");
@@ -320,7 +320,7 @@ export class MemStorage implements IStorage {
         console.log("DEBUG: Available fields in first app record:", 
           Object.keys(allAppRecords[0].fields).join(", "));
       }
-      
+
       console.log("DEBUG: All Airtable app records:");
       allAppRecords.forEach(record => {
         // Use APP_NAME_FIELD_IN_APPS constant or check multiple possible field names
@@ -331,17 +331,17 @@ export class MemStorage implements IStorage {
                         'null';
         console.log(`  - ID: ${record.id}, Name: ${appName}`);
       });
-      
+
       // Add manual mappings for apps that might not be properly named - exact names from Airtable
       // These should be updated to reflect exactly what's in Airtable
       // Initialize empty mapping - we'll populate this directly from Airtable data
       const appNameMappings: Record<string, string> = {};
-      
+
       // No manual mappings needed
-      
+
       // We'll skip direct mappings and let Airtable data determine app names and details
       const directAppMappings: Record<string, string> = {};
-      
+
       // Now populate any other app names from the Airtable data
       allAppRecords.forEach(record => {
         // Use APP_NAME_FIELD_IN_APPS constant or check multiple possible field names
@@ -349,28 +349,28 @@ export class MemStorage implements IStorage {
                        record.fields.name || 
                        record.fields.title || 
                        record.fields.appname;
-        
+
         if (record.id && appName) {
           // Add mapping from Airtable data
           appNameMappings[record.id] = appName;
           console.log(`DEBUG: Added mapping from Airtable data: ${record.id} => ${appName}`);
         }
       });
-      
+
       // Log all app ID to name mappings for verification
       console.log("DEBUG: App ID to Name mappings:");
       Object.entries(appNameMappings).forEach(([id, name]) => {
         console.log(`  - ID: ${id}, Name: ${name}`);
       });
-      
+
       // Add these mappings to the appIdToNameMap
       Object.entries(appNameMappings).forEach(([id, name]) => {
         appIdToNameMap.set(id, name);
       });
-      
+
       // Group screen records by app name to create distinct apps
       const appGroups = new Map<string, any[]>();
-      
+
       // Process and group screen records
       // Log a sample record to debug field names
       if (allScreenRecords.length > 0) {
@@ -390,39 +390,39 @@ export class MemStorage implements IStorage {
             pixRecords[0].fields.appname[0].id : 'Not found');
         }
       }
-      
+
       for (const record of allScreenRecords) {
         const fields = record.fields;
-        
+
         // Skip records without required fields
         if (!fields[APP_NAME_FIELD] && !fields['app-name'] && !fields['appname'] && !fields['app']) {
           console.log('Skipping record without app name:', record.id);
           continue;
         }
-        
+
         if (!fields[ATTACHMENT_FIELD] && !fields['image'] && !fields['attachment'] && !fields['images']) {
           console.log('Skipping record without image:', record.id);
           continue;
         }
-        
+
         // Debug for the specific field we need
         if (record.id === 'recFeNuRH3cMZiM2j') {
           console.log('DEBUG record fields:', Object.keys(fields));
           console.log('DEBUG appname field:', JSON.stringify(fields[APP_NAME_FIELD]));
           console.log('DEBUG image field:', fields[ATTACHMENT_FIELD] ? 'exists' : 'missing');
         }
-        
+
         // Based on the Airtable screenshot, we should be looking for the "appname" field which links to the apps table
         let appNameField = fields[APP_NAME_FIELD]; // This should be "appname" from our constants
-        
+
         // If the app name field is an object or array with an ID, try to find its name
         let appRecordId: string | null = null;
         let appName: string = "Unknown App";
-        
+
         // Add more debug logging for app name field
         console.log(`DEBUG: Screen '${fields[SCREEN_NAME_FIELD] || "Unknown"}' app name field:`, 
           JSON.stringify(appNameField));
-        
+
         // Extract the app ID or name from the appNameField
         if (Array.isArray(appNameField)) {
           // For linked records that return arrays (most likely scenario with Airtable)
@@ -431,7 +431,7 @@ export class MemStorage implements IStorage {
               // This is an object with linked record data
               appRecordId = appNameField[0].id;
               console.log(`DEBUG: Found linked app record ID: ${appRecordId}`);
-              
+
               // Directly use the ID to look up the name from our mapping
               if (appRecordId && appNameMappings[appRecordId]) {
                 appName = appNameMappings[appRecordId];
@@ -441,7 +441,7 @@ export class MemStorage implements IStorage {
               // This is just an array of IDs or strings
               appRecordId = typeof appNameField[0] === 'string' ? appNameField[0] : null;
               console.log(`DEBUG: Found app ID as string in array: ${appRecordId}`);
-              
+
               // Directly use the ID to look up the name from our mapping
               if (appRecordId && appNameMappings[appRecordId]) {
                 appName = appNameMappings[appRecordId];
@@ -453,7 +453,7 @@ export class MemStorage implements IStorage {
           // For linked records that return a single object
           appRecordId = appNameField.id || null;
           console.log(`DEBUG: Found app object with ID: ${appRecordId}`);
-          
+
           // Directly use the ID to look up the name from our mapping
           if (appRecordId && appNameMappings[appRecordId]) {
             appName = appNameMappings[appRecordId];
@@ -463,44 +463,44 @@ export class MemStorage implements IStorage {
           // Regular string field
           appRecordId = appNameField;
           console.log(`DEBUG: Found app ID as string: ${appRecordId}`);
-          
+
           // Directly use the ID to look up the name from our mapping
           if (appNameMappings[appRecordId]) {
             appName = appNameMappings[appRecordId];
             console.log(`DEBUG: Mapped app name from string ID: ${appName}`);
           }
         }
-        
+
         // Log the final app record ID and name after all mappings
         if (appRecordId) {
           console.log(`DEBUG: Final mapping - App Record ID: ${appRecordId}, App Name: ${appName}`);
         }
-        
+
         // Check the current screen for app name clues in title or description
         const screenTitle = fields[SCREEN_NAME_FIELD] || fields.name || fields.title || '';
         const screenDescription = fields.description || '';
-        
+
         // Use content to help determine the app identity more accurately
         if (screenTitle || screenDescription) {
           // Convert to lowercase for case-insensitive matching
           const titleLower = screenTitle.toString().toLowerCase();
           const descLower = screenDescription.toString().toLowerCase();
-          
+
           // Debug the appRecordId and related screen details
           if (appRecordId) {
             console.log(`DEBUG: Screen "${screenTitle}" has app record ID: ${appRecordId}`);
           }
-          
+
           // Use the appRecordId to look up the name directly from Airtable data
           if (appRecordId && appNameMappings[appRecordId]) {
             appName = appNameMappings[appRecordId];
             console.log(`DEBUG: Assigned app name from record ID ${appRecordId}: ${appName}`);
           }
         }
-        
+
         // Get all screens that have already been processed with this app name
         const currentAppRecords = appGroups.get(appName) || [];
-        
+
         // Check if any screen has e-Título related text
         const hasEtituloScreens = currentAppRecords.some((r: any) => {
           const screenName = (r.fields?.name || r.fields?.title || '').toString().toLowerCase();
@@ -508,7 +508,7 @@ export class MemStorage implements IStorage {
                  screenName.includes('etitulo') || 
                  screenName.includes('título eleitoral');
         });
-        
+
         // Check if any screen has CDT related text
         const hasCDTScreens = currentAppRecords.some((r: any) => {
           const screenName = (r.fields?.name || r.fields?.title || '').toString().toLowerCase();
@@ -516,24 +516,24 @@ export class MemStorage implements IStorage {
                  screenName.includes('cdt') || 
                  screenName.includes('trânsito');
         });
-        
+
         // We rely on Airtable data and record IDs for proper mapping now
-        
+
         if (!appGroups.has(appName)) {
           appGroups.set(appName, []);
         }
-        
+
         appGroups.get(appName)?.push(record);
       }
-      
+
       console.log(`Identified ${appGroups.size} unique apps`);
-      
+
       // Clear existing data before importing new data
       this.apps.clear();
       this.screens.clear();
       this.appIdCounter = 1;
       this.screenIdCounter = 1;
-      
+
       // 3. Process each app group
       // Convert Map entries to Array to fix TypeScript error
       const appGroupsArray = Array.from(appGroups).map(([appName, records]) => ({ appName, records }));
@@ -541,24 +541,24 @@ export class MemStorage implements IStorage {
         // Use first record to get app metadata
         const firstRecord = records[0];
         const fields = firstRecord.fields;
-        
+
         // Try different possible field names for images/attachments
         const attachments = 
           (fields[ATTACHMENT_FIELD] && fields[ATTACHMENT_FIELD].length > 0 ? fields[ATTACHMENT_FIELD] :
           (fields['image'] && fields['image'].length > 0 ? fields['image'] :
           (fields['attachment'] && fields['attachment'].length > 0 ? fields['attachment'] : null)));
-        
+
         const thumbnailAttachment = attachments && attachments[0];
         const thumbnailUrl = thumbnailAttachment ? thumbnailAttachment.url : "https://via.placeholder.com/500x300";
-        
+
         // Get logo from the linked app's info in the "logo (from appname)" field
         let logoUrl = null;
-        
+
         // First check if the record has the "logo (from appname)" field which comes from linked field
         if (fields[APP_LOGO_FIELD]) {
           // This field might contain the logo URL directly
           const logoField = fields[APP_LOGO_FIELD];
-          
+
           if (Array.isArray(logoField) && logoField.length > 0 && logoField[0].url) {
             // This is an array of attachments
             logoUrl = logoField[0].url;
@@ -567,19 +567,19 @@ export class MemStorage implements IStorage {
             logoUrl = logoField;
           }
         }
-        
+
         // Fallback to our app logos map if the logo wasn't found in the record
         if (!logoUrl) {
           logoUrl = appLogosMap.get(appName);
         }
-        
+
         // Get app record ID from the first linked screen
         let appRecordId = null;
-        
+
         // Extract app record ID from the first screen's appname field
         if (records[0] && records[0].fields && records[0].fields[APP_NAME_FIELD]) {
           const appNameField = records[0].fields[APP_NAME_FIELD];
-          
+
           if (Array.isArray(appNameField) && appNameField.length > 0) {
             if (typeof appNameField[0] === 'object' && appNameField[0].id) {
               appRecordId = appNameField[0].id;
@@ -592,13 +592,13 @@ export class MemStorage implements IStorage {
             appRecordId = appNameField;
           }
         }
-        
+
         console.log(`DEBUG: App ${appName} has record ID: ${appRecordId}`);
-        
+
         // Look up category and type from our maps
         let appCategory = null;
         let appType = fields[APP_TYPE_FIELD]; // Try to get from screens record first
-        
+
         // Use Airtable data for categories
         if (appRecordId) {
           // Get category from our map
@@ -606,19 +606,19 @@ export class MemStorage implements IStorage {
             appCategory = appIdToCategoryMap.get(appRecordId);
             console.log(`DEBUG: Retrieved category ${appCategory} for app ${appName} from ID ${appRecordId}`);
           }
-          
+
           // Get type from our map if not already set
           if (!appType && appIdToTypeMap.has(appRecordId)) {
             appType = appIdToTypeMap.get(appRecordId);
             console.log(`DEBUG: Retrieved type ${appType} for app ${appName} from ID ${appRecordId}`);
           }
         }
-        
+
         // Default to 'Federal' if no type is found
         if (!appType) {
           appType = "Federal";
         }
-        
+
         const appData: InsertApp = {
           name: appName,
           description: fields.description || `Collection of design screens from ${appName}`,
@@ -632,7 +632,7 @@ export class MemStorage implements IStorage {
           url: fields.url || null, // No external URL by default
           airtableId: firstRecord.id,
         };
-        
+
         // Debug Unknown App
         if (appName === "Unknown App") {
           console.log("DEBUG: Unknown App details:");
@@ -642,36 +642,36 @@ export class MemStorage implements IStorage {
           if (fields[APP_NAME_FIELD] && Array.isArray(fields[APP_NAME_FIELD]) && fields[APP_NAME_FIELD].length > 0) {
             console.log("  - App ID:", fields[APP_NAME_FIELD][0].id);
           }
-          
+
           // Try to find sample screen title to help identify the app
           const sampleTitle = fields[SCREEN_NAME_FIELD] || "";
           console.log("  - Sample screen title:", sampleTitle);
         }
-        
+
         // Create the app
         const app = await this.createApp(appData);
         console.log(`Created app: ${app.name} with ${records.length} screens${logoUrl ? ' and logo' : ''}`);
-        
+
         // 4. Process screens for this app
         for (let i = 0; i < records.length; i++) {
           const record = records[i];
           const fields = record.fields;
-          
+
           // Try different possible field names for attachments
           const attachmentField = 
             (fields[ATTACHMENT_FIELD] && fields[ATTACHMENT_FIELD].length > 0 ? fields[ATTACHMENT_FIELD] :
             (fields['image'] && fields['image'].length > 0 ? fields['image'] :
             (fields['attachment'] && fields['attachment'].length > 0 ? fields['attachment'] :
             (fields['images'] && fields['images'].length > 0 ? fields['images'] : null))));
-          
+
           // Skip records without attachments
           if (!attachmentField || !attachmentField.length) {
             console.log(`Skipping screen record for ${appName} without attachment: ${record.id}`);
             continue;
           }
-          
+
           const attachment = attachmentField[0];
-          
+
           // Try different possible field names for screen name
           const screenName = fields[SCREEN_NAME_FIELD] || 
                            fields['name'] || 
@@ -679,7 +679,7 @@ export class MemStorage implements IStorage {
                            fields['screen-name'] || 
                            fields['screen_name'] || 
                            `Screen ${i + 1}`;
-          
+
           // Determine screen type - set splash/login screens to lower order values
           const lowerCaseName = screenName.toLowerCase();
           const isIntroScreen = 
@@ -690,20 +690,17 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('intro') ||
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
-          
-          // Make sure splash screens appear first in the order
-          let screenOrder = i;
-          if (i < 3 && isIntroScreen) {
-            // Force intro screens to the beginning by setting order to -1, 0, or very low numbers
-            screenOrder = -1000 + i;
-          }
-          
+
+          // Use the record's index in Airtable records array as the order
+          let screenOrder = records.findIndex(r => r.id === record.id);
+          if (screenOrder === -1) screenOrder = i; // Fallback to original logic if not found
+
           // Extract tags from Airtable fields
           let tags: string[] | null = null;
           if (fields.tags && Array.isArray(fields.tags)) {
             tags = fields.tags;
           }
-          
+
           // Extract category from Airtable fields or from the parent app
           let category: string | null = null;
           if (fields.category) {
@@ -711,7 +708,7 @@ export class MemStorage implements IStorage {
           } else if (app.category) {
             category = app.category;
           }
-          
+
           const screenData: InsertScreen = {
             appId: app.id,
             name: screenName,
@@ -723,20 +720,20 @@ export class MemStorage implements IStorage {
             category: category,
             airtableId: record.id,
           };
-          
+
           // Create the screen
           await this.createScreen(screenData);
         }
       }
-      
+
       console.log("Airtable sync completed successfully");
-      
+
     } catch (error) {
       console.error("Error syncing from Airtable:", error);
       throw new Error("Failed to sync from Airtable");
     }
   }
-  
+
   // Initialize with sample data for development
   private initializeSampleData() {
     // Sample apps
@@ -820,12 +817,12 @@ export class MemStorage implements IStorage {
         airtableId: "rec6",
       }
     ];
-    
+
     // Create sample apps
     sampleApps.forEach(app => {
       const id = this.appIdCounter++;
       const now = new Date();
-      
+
       this.apps.set(id, {
         id,
         name: app.name,
@@ -843,7 +840,7 @@ export class MemStorage implements IStorage {
         updatedAt: now,
       });
     });
-    
+
     // Create sample screens for the first app (Meu SUS Digital)
     const screenTypes = [
       { name: "Login", description: "Initial app login screen", category: "Autenticação" },
@@ -857,11 +854,11 @@ export class MemStorage implements IStorage {
       { name: "Hospitals", description: "Nearby hospitals and clinics", category: "Localização" },
       { name: "Lab Results", description: "Laboratory test results", category: "Resultados" },
     ];
-    
+
     screenTypes.forEach((screenType, index) => {
       const id = this.screenIdCounter++;
       const now = new Date();
-      
+
       this.screens.set(id, {
         id,
         appId: 1, // First app (Meu SUS Digital)
@@ -877,7 +874,7 @@ export class MemStorage implements IStorage {
         updatedAt: now,
       });
     });
-    
+
     // Create sample screens for the second app (Carteira de Trabalho Digital)
     const ctpsScreenTypes = [
       { name: "Welcome", description: "App introduction screen", category: "Onboarding" },
@@ -888,11 +885,11 @@ export class MemStorage implements IStorage {
       { name: "Documents", description: "Digital work documents", category: "Documentos" },
       { name: "Notifications", description: "System notifications", category: "Notificações" },
     ];
-    
+
     ctpsScreenTypes.forEach((screenType, index) => {
       const id = this.screenIdCounter++;
       const now = new Date();
-      
+
       this.screens.set(id, {
         id,
         appId: 2, // Second app (Carteira de Trabalho Digital)
