@@ -2,7 +2,10 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Layers, Monitor, Tag, Smartphone, FolderTree } from "lucide-react";
 import { App, Screen } from "@/types";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, createContext, useContext } from "react";
+
+// Create a context to share the animation state
+const AnimationContext = createContext<boolean>(false);
 
 interface CounterAnimationProps {
   end: number;
@@ -12,32 +15,11 @@ interface CounterAnimationProps {
 
 function CounterAnimation({ end, duration = 2000, className = "" }: CounterAnimationProps) {
   const [count, setCount] = useState(0);
-  const countRef = useRef<HTMLSpanElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-
+  const shouldAnimate = useContext(AnimationContext);
+  
   useEffect(() => {
-    // Create intersection observer to start animation when element is in viewport
-    observerRef.current = new IntersectionObserver((entries) => {
-      const [entry] = entries;
-      setIsVisible(entry.isIntersecting);
-    }, { threshold: 0.1 });
-
-    // Observe the counter element
-    if (countRef.current) {
-      observerRef.current.observe(countRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    // Start animation when element becomes visible
-    if (!isVisible) return;
+    // Start animation when the shared animation state is true
+    if (!shouldAnimate) return;
     
     let startTimestamp: number | null = null;
     const step = (timestamp: number) => {
@@ -56,9 +38,9 @@ function CounterAnimation({ end, duration = 2000, className = "" }: CounterAnima
     };
     
     window.requestAnimationFrame(step);
-  }, [end, duration, isVisible]);
+  }, [end, duration, shouldAnimate]);
   
-  return <span ref={countRef} className={className}>{count}</span>;
+  return <span className={className}>{count}</span>;
 }
 
 export default function About() {
@@ -66,6 +48,9 @@ export default function About() {
   const [totalTags, setTotalTags] = useState<number>(0);
   const [totalCategories, setTotalCategories] = useState<number>(0);
   const [totalScreens, setTotalScreens] = useState<number>(0);
+  const [shouldAnimate, setShouldAnimate] = useState<boolean>(false);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Fetch all apps to count them and their screens
   const { data: apps = [] } = useQuery<App[]>({
@@ -74,6 +59,28 @@ export default function About() {
   });
 
   const totalApps = apps.length;
+  
+  // Set up intersection observer for the stats section
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting) {
+        setShouldAnimate(true);
+        // Once animation is triggered, we can disconnect the observer
+        observerRef.current?.disconnect();
+      }
+    }, { threshold: 0.1 });
+
+    if (statsRef.current) {
+      observerRef.current.observe(statsRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
   
   // Calculate total screens, unique tags and categories
   useEffect(() => {
@@ -159,39 +166,41 @@ export default function About() {
             </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-              <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-[#00944026] p-4 rounded-full mb-4">
-                  <Monitor className="h-8 w-8 text-[#009440]" />
+            <AnimationContext.Provider value={shouldAnimate}>
+              <div ref={statsRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+                <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
+                  <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                    <Monitor className="h-8 w-8 text-[#009440]" />
+                  </div>
+                  <CounterAnimation end={totalApps} className="text-4xl font-bold mb-2" />
+                  <p className="text-gray-600">{t('about.stats.apps')}</p>
                 </div>
-                <CounterAnimation end={totalApps} className="text-4xl font-bold mb-2" />
-                <p className="text-gray-600">{t('about.stats.apps')}</p>
-              </div>
-              
-              <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-[#00944026] p-4 rounded-full mb-4">
-                  <Layers className="h-8 w-8 text-[#009440]" />
+                
+                <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
+                  <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                    <Layers className="h-8 w-8 text-[#009440]" />
+                  </div>
+                  <CounterAnimation end={totalScreens} className="text-4xl font-bold mb-2" />
+                  <p className="text-gray-600">{t('about.stats.screens')}</p>
                 </div>
-                <CounterAnimation end={totalScreens} className="text-4xl font-bold mb-2" />
-                <p className="text-gray-600">{t('about.stats.screens')}</p>
-              </div>
 
-              <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-[#00944026] p-4 rounded-full mb-4">
-                  <Tag className="h-8 w-8 text-[#009440]" />
+                <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
+                  <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                    <Tag className="h-8 w-8 text-[#009440]" />
+                  </div>
+                  <CounterAnimation end={totalTags} className="text-4xl font-bold mb-2" />
+                  <p className="text-gray-600">{t('about.stats.tags')}</p>
                 </div>
-                <CounterAnimation end={totalTags} className="text-4xl font-bold mb-2" />
-                <p className="text-gray-600">{t('about.stats.tags')}</p>
-              </div>
-              
-              <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                <div className="bg-[#00944026] p-4 rounded-full mb-4">
-                  <FolderTree className="h-8 w-8 text-[#009440]" />
+                
+                <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
+                  <div className="bg-[#00944026] p-4 rounded-full mb-4">
+                    <FolderTree className="h-8 w-8 text-[#009440]" />
+                  </div>
+                  <CounterAnimation end={totalCategories} className="text-4xl font-bold mb-2" />
+                  <p className="text-gray-600">{t('about.stats.categories')}</p>
                 </div>
-                <CounterAnimation end={totalCategories} className="text-4xl font-bold mb-2" />
-                <p className="text-gray-600">{t('about.stats.categories')}</p>
               </div>
-            </div>
+            </AnimationContext.Provider>
           </div>
         </div>
       </section>
