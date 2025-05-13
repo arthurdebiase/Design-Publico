@@ -99,33 +99,9 @@ export class MemStorage implements IStorage {
 
   // Screens
   async getScreensByAppId(appId: number): Promise<Screen[]> {
-    // Get all screens for the app
-    const appScreens = Array.from(this.screens.values())
-      .filter(screen => screen.appId === appId);
-      
-    // Hardcoded mapping of screen names to order for Meu SUS Digital
-    // Based on the Airtable screenshot shared by the user
-    const meususDigitalOrder: Record<string, number> = {
-      "Login no Meu SUS Digital": 1,
-      "Início com login": 2,
-      "Mini apps e conteúdo de saúde": 3,
-      "Aplicativos de saúde": 4,
-      "Notificações recentes": 5,
-      "Notificações abertas": 6
-    };
-    
-    // Sort screens by their order field to match Airtable's screens-list
-    const result = appScreens.sort((a, b) => {
-      // Special case for Meu SUS Digital app (appId 4 from our database)
-      if (appId === 4) {
-        const aOrder = a.name && meususDigitalOrder[a.name] ? meususDigitalOrder[a.name] : 1000 + a.order;
-        const bOrder = b.name && meususDigitalOrder[b.name] ? meususDigitalOrder[b.name] : 1000 + b.order;
-        return aOrder - bOrder;
-      }
-      
-      // Default sort by order field for other apps
-      return a.order - b.order;
-    });
+    const result = Array.from(this.screens.values())
+      .filter(screen => screen.appId === appId)
+      .sort((a, b) => a.order - b.order);
     
     return result;
   }
@@ -704,28 +680,7 @@ export class MemStorage implements IStorage {
                            fields['screen_name'] || 
                            `Screen ${i + 1}`;
           
-          // Use the record index from Airtable as the order to match the "screens-list" table
-          // Based on the image shared, "Login no Meu SUS Digital" is record #1, "Início com login" is record #2, etc.
-          // This approach will ensure the order exactly matches the Airtable's order
-          
-          // Get screen order from either:
-          // 1. The explicit "order" field if present in Airtable
-          // 2. Or the "imagetitle" column (record) number if available (from the screenshot)
-          // 3. Or fall back to using the index in the records array
-          let screenOrder = i;
-          
-          // Check for explicit order field in Airtable
-          if (fields.order !== undefined && fields.order !== null) {
-            // Use the explicit order from Airtable
-            screenOrder = typeof fields.order === 'number' ? fields.order : parseInt(fields.order, 10);
-          } 
-          
-          // If there's a field showing the row/record number, use that (matches the image)
-          if (fields.row !== undefined && fields.row !== null) {
-            screenOrder = typeof fields.row === 'number' ? fields.row : parseInt(fields.row, 10);
-          }
-          
-          // For Login/Splash screens, ensure they come first
+          // Determine screen type - set splash/login screens to lower order values
           const lowerCaseName = screenName.toLowerCase();
           const isIntroScreen = 
             lowerCaseName.includes('splash') || 
@@ -735,9 +690,11 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('intro') ||
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
-            
-          // Make authentication screens appear first if no explicit order is set
-          if (isIntroScreen && fields.order === undefined && fields.row === undefined) {
+          
+          // Make sure splash screens appear first in the order
+          let screenOrder = i;
+          if (i < 3 && isIntroScreen) {
+            // Force intro screens to the beginning by setting order to -1, 0, or very low numbers
             screenOrder = -1000 + i;
           }
           

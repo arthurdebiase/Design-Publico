@@ -32,16 +32,7 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
     );
   }
 
-  // The server now returns screens sorted by the proper order from the Airtable screens-list
-  // For Meu SUS Digital app (appId 4), we've explicitly set the order to match the row numbers from Airtable screenshot
-  
-  // Debug to see what screens we got and in what order
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`App ${appId} first few screens:`, 
-      screens.slice(0, 3).map(s => `${s.name} (order: ${s.order})`));
-  }
-  
-  // Take the first screen, which should be the one with the lowest order value
+  // Get first screen only
   const firstScreen = screens[0];
 
   return (

@@ -1,16 +1,6 @@
 import { apiRequest } from "./queryClient";
 import { App, Screen, AppType, Platform } from "@/types";
 
-// Interface for the screen-list to get the correct order from Airtable
-export interface ScreenListItem {
-  id: string;
-  appId: number;
-  imageUrl: string;
-  name: string;
-  description?: string;
-  order: number;
-}
-
 /**
  * Fetch a list of all apps, optionally filtered
  * 
