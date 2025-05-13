@@ -189,12 +189,8 @@ export class MemStorage implements IStorage {
         const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
         const params: any = { 
           pageSize: 100,
-          sort: [
-            // Try to sort by order field if it exists
-            { field: "screens-list.order", direction: "asc" },
-            // Fallback sort by name
-            { field: "imagetitle", direction: "asc" }
-          ]
+          // Sort by image title (screen name) to maintain consistent ordering
+          sort: [{ field: "imagetitle", direction: "asc" }]
         };
         if (offset) {
           params.offset = offset;
@@ -724,26 +720,18 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
 
-          // Use numeric order from Airtable screens-list.order field, then fallback to record index
-          let screenOrder = 1000; // Default high value if no order field exists
+          // Determine order using position in app-specific screens
+          let screenOrder = i;
           
-          // Try to get order field from Airtable
-          if (fields.order !== undefined && !isNaN(Number(fields.order))) {
-            screenOrder = Number(fields.order);
-            console.log(`Found order field for screen ${screenName}: ${screenOrder}`);
-          } else if (fields["screens-list.order"] !== undefined && !isNaN(Number(fields["screens-list.order"]))) {
-            screenOrder = Number(fields["screens-list.order"]);
-            console.log(`Found screens-list.order field for screen ${screenName}: ${screenOrder}`);
-          } else {
-            // Use the record's position in the array from Airtable's API response
-            const indexInRecords = records.findIndex(r => r.id === record.id);
-            if (indexInRecords !== -1) {
-              screenOrder = indexInRecords;
-              console.log(`Using record index for screen ${screenName}: ${screenOrder}`);
-            } else {
-              screenOrder = i; // Last resort fallback
-              console.log(`Using loop index for screen ${screenName}: ${screenOrder}`);
-            }
+          // Store original record position in allScreenRecords to maintain Airtable ordering
+          const originalPosition = allScreenRecords.findIndex(r => r.id === record.id);
+          if (originalPosition !== -1) {
+            screenOrder = originalPosition;
+          }
+          
+          // Apply special ordering for intro/welcome screens
+          if (isIntroScreen) {
+            screenOrder = -1; // Put intro screens first
           }
 
           // Extract tags from Airtable fields
