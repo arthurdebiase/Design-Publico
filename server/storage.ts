@@ -103,10 +103,27 @@ export class MemStorage implements IStorage {
     const appScreens = Array.from(this.screens.values())
       .filter(screen => screen.appId === appId);
       
+    // Hardcoded mapping of screen names to order for Meu SUS Digital
+    // Based on the Airtable screenshot shared by the user
+    const meususDigitalOrder: Record<string, number> = {
+      "Login no Meu SUS Digital": 1,
+      "Início com login": 2,
+      "Mini apps e conteúdo de saúde": 3,
+      "Aplicativos de saúde": 4,
+      "Notificações recentes": 5,
+      "Notificações abertas": 6
+    };
+    
     // Sort screens by their order field to match Airtable's screens-list
-    // Lower order values come first in the list
     const result = appScreens.sort((a, b) => {
-      // Primary sort by order
+      // Special case for Meu SUS Digital app (appId 4 from our database)
+      if (appId === 4) {
+        const aOrder = a.name && meususDigitalOrder[a.name] ? meususDigitalOrder[a.name] : 1000 + a.order;
+        const bOrder = b.name && meususDigitalOrder[b.name] ? meususDigitalOrder[b.name] : 1000 + b.order;
+        return aOrder - bOrder;
+      }
+      
+      // Default sort by order field for other apps
       return a.order - b.order;
     });
     
