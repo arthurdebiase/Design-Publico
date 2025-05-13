@@ -11,6 +11,7 @@ import { ExternalLink, Bookmark,
          Apple, TabletSmartphone, Globe, Tag, 
          FileText, Smartphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { useTranslation } from 'react-i18next';
 
 // Platform badge styling function
@@ -175,20 +176,20 @@ export default function AppDetail() {
             
             <div className="py-6 pt-0 px-0">
               {screens && (
-                <div className="flex items-center gap-2 mb-4">
+                <div className="flex items-center justify-between mb-4">
                   <Badge variant="outline" className="px-2 py-1 flex items-center">
                     <Smartphone className="h-4 w-4 mr-1" />
                     <span>{screens.length} {t('screens.title')}</span>
                   </Badge>
                   
-                  <Badge 
-                    variant={showSections ? "default" : "outline"} 
-                    className={`px-2 py-1 flex items-center cursor-pointer hover:opacity-90 transition-opacity ${showSections ? 'bg-[#009440]' : ''}`}
-                    onClick={() => setShowSections(!showSections)}
-                  >
-                    <Tag className="h-4 w-4 mr-1" />
-                    <span>Seções</span>
-                  </Badge>
+                  <div className="flex items-center">
+                    <span className="text-sm mr-2 text-gray-600">Seções</span>
+                    <Switch
+                      checked={showSections}
+                      onCheckedChange={setShowSections}
+                      className={showSections ? "bg-[#009440]" : ""}
+                    />
+                  </div>
                 </div>
               )}
               
