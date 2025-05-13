@@ -182,8 +182,10 @@ export class MemStorage implements IStorage {
 
 
       // 1. Fetch all records from the Airtable screens table with pagination
+      // We'll maintain the order from the Airtable screens-list table
       let allScreenRecords: any[] = [];
       let offset: string | undefined = undefined;
+      let recordCounter = 0; // Use this to track the original position in the Airtable list
 
       do {
         const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
@@ -204,7 +206,15 @@ export class MemStorage implements IStorage {
           params
         });
 
-        allScreenRecords = [...allScreenRecords, ...screensResponse.data.records];
+        // Add the airtable order index to each record
+        const recordsWithOrder = screensResponse.data.records.map((record: any) => {
+          return {
+            ...record,
+            airtableOrder: recordCounter++  // Add order based on position in API response
+          };
+        });
+
+        allScreenRecords = [...allScreenRecords, ...recordsWithOrder];
         offset = screensResponse.data.offset;
 
         console.log(`Fetched batch of ${screensResponse.data.records.length} screen records from Airtable`);
@@ -720,24 +730,18 @@ export class MemStorage implements IStorage {
             lowerCaseName.includes('start') ||
             lowerCaseName.includes('abertura');
 
-          // Extract numeric order from filename if it follows pattern like "001.jpg", "002.jpg", etc.
-          let screenOrder = 1000 + i; // Default high value
+          // Use the Airtable order we stored in each record
+          // This ensures screens appear in the same order as they do in the Airtable screens-list table
+          let screenOrder;
           
-          // Try to get numeric order from filename
-          const filenameMatch = screenName.match(/^(\d+)\.jpg$/i);
-          if (filenameMatch && filenameMatch[1]) {
-            // If the filename starts with a number like "001.jpg", use that number as order
-            screenOrder = parseInt(filenameMatch[1], 10);
-            console.log(`Using numeric order ${screenOrder} from filename for screen "${screenName}" in app "${appName}"`);
+          // Access the airtableOrder property we added earlier
+          if (record.airtableOrder !== undefined) {
+            screenOrder = record.airtableOrder;
+            console.log(`Using Airtable table order ${screenOrder} for screen "${screenName}" in app "${appName}"`);
           } else {
-            // If no numeric pattern found, try to use the record's position in Airtable
-            const airtableIndex = allScreenRecords.findIndex(r => r.id === record.id);
-            if (airtableIndex !== -1) {
-              screenOrder = airtableIndex;
-              console.log(`Using Airtable index ${screenOrder} for screen "${screenName}" in app "${appName}"`);
-            } else {
-              console.log(`No numeric pattern in filename or Airtable index found for "${screenName}" in app "${appName}", using default order ${screenOrder}`);
-            }
+            // Fallback if for some reason the record doesn't have an airtableOrder
+            screenOrder = 1000 + i;
+            console.log(`No Airtable order found for "${screenName}" in app "${appName}", using default order ${screenOrder}`);
           }
           
           // Special case: prioritize intro screens
