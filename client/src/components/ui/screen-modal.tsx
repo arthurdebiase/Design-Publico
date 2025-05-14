@@ -7,6 +7,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { getProcessedImageUrl } from "@/lib/imageUtils";
+import LazyImage from "@/lib/LazyImage";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -57,9 +58,6 @@ export function ScreenModal({
 }: ScreenModalProps) {
   const [localIndex, setLocalIndex] = useState(currentScreenIndex);
   const [showTags, setShowTags] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  const [imageSrc, setImageSrc] = useState('');
   const [location] = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -69,38 +67,6 @@ export function ScreenModal({
   }, [currentScreenIndex]);
   
   const currentScreen = screens[localIndex];
-  
-  useEffect(() => {
-    if (currentScreen && currentScreen.imageUrl) {
-      setImageLoaded(false);
-      setImageError(false);
-      setImageSrc(getProcessedImageUrl(currentScreen.imageUrl));
-    }
-  }, [currentScreen]);
-  
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
-  
-  const handleImageError = () => {
-    // If we already tried a proxy, don't retry again
-    if (imageSrc.startsWith('/v5.airtableusercontent.com')) {
-      setImageError(true);
-      console.error(`Failed to load image even with proxy: ${imageSrc}`);
-      return;
-    }
-    
-    console.error(`Failed to load image: ${imageSrc}`);
-    
-    // Attempt to retry with proxy if direct URL fails
-    if (imageSrc.startsWith('https://v5.airtableusercontent.com')) {
-      const proxyUrl = imageSrc.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
-      console.log('Trying with proxy URL:', proxyUrl);
-      setImageSrc(proxyUrl);
-    } else {
-      setImageError(true);
-    }
-  };
   
   const handlePrevious = () => {
     const newIndex = (localIndex - 1 + screens.length) % screens.length;
@@ -194,21 +160,18 @@ export function ScreenModal({
                 tabIndex={0}
               >
                 {app.logo ? (
-                  <img 
-                    src={getProcessedImageUrl(app.logo)} 
+                  <LazyImage 
+                    src={app.logo}
                     alt={`${app.name} logo`} 
                     className="w-8 h-8"
-                    onError={(e) => {
-                      console.error(`Failed to load logo: ${app.logo}`);
-                      e.currentTarget.onerror = null; // Prevent infinite error loops
-                      // Use fallback placeholder
-                      e.currentTarget.style.display = 'none';
-                      // Show placeholder instead
-                      const placeholder = document.createElement('div');
-                      placeholder.className = 'w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700';
-                      placeholder.textContent = app.name.charAt(0);
-                      e.currentTarget.parentNode?.appendChild(placeholder);
-                    }}
+                    width={32}
+                    height={32}
+                    quality={90}
+                    errorPlaceholder={
+                      <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">
+                        {app.name.charAt(0)}
+                      </div>
+                    }
                   />
                 ) : (
                   <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">{app.name.charAt(0)}</div>
@@ -285,14 +248,18 @@ export function ScreenModal({
           )}
           
           <div className="relative max-w-full">
-            {!imageLoaded && !imageError && (
-              <div className="w-full h-[70vh] flex items-center justify-center bg-gray-200 animate-pulse rounded-lg">
-                <span className="text-gray-500">Loading...</span>
-              </div>
-            )}
-            
-            {imageError ? (
-              <div className="w-full h-[70vh] flex items-center justify-center bg-gray-200 rounded-lg">
+            <LazyImage 
+              src={currentScreen.imageUrl}
+              alt={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+              className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
+              height={550} // Appropriate height for modal view
+              quality={95} // Higher quality for detailed view
+              placeholder={
+                <div className="flex items-center justify-center">
+                  <span className="text-gray-500">Loading...</span>
+                </div>
+              }
+              errorPlaceholder={
                 <div className="text-center">
                   <div className="text-gray-500 font-medium mb-2">
                     {currentScreen.name ? `${currentScreen.name} image not available` : 'Image not available'}
@@ -301,18 +268,9 @@ export function ScreenModal({
                     The image could not be loaded. This may be due to Airtable connection issues.
                   </p>
                 </div>
-              </div>
-            ) : (
-              <img 
-                src={imageSrc} 
-                alt={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
-                className={`max-h-[70vh] max-w-full rounded-lg shadow-md object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                onLoad={handleImageLoad}
-                onError={handleImageError}
-                aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                loading="lazy"
-              />
-            )}
+              }
+              aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+            />
           </div>
           
           {/* Tags and categories displayed here */}
