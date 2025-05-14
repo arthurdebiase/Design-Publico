@@ -14,32 +14,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
-
+  
   // Proxy for Airtable images
-  app.get("/proxy-image/*", async (req, res) => {
+  app.get('/v5.airtableusercontent.com/*', async (req, res) => {
     try {
-      const path = req.path.replace("/proxy-image", "");
-      const response = await axios.get(`https://v5.airtableusercontent.com${path}`, {
+      const path = req.path.replace('/v5.airtableusercontent.com/', '');
+      const url = `https://v5.airtableusercontent.com/${path}`;
+      
+      console.log(`Proxying Airtable image: ${url}`);
+      
+      const response = await axios.get(url, {
         responseType: 'arraybuffer',
         headers: {
-          'Accept': 'image/*',
-          'Cache-Control': 'no-cache'
+          'Referer': 'https://airtable.com/',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
         }
       });
-
-      // Set caching headers
-      res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
-      res.set('Content-Type', response.headers['content-type']);
+      
+      // Set content type and other headers
+      const contentType = response.headers['content-type'];
+      if (contentType) {
+        res.set('Content-Type', contentType);
+      }
+      
+      // Add CORS headers
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.set('Access-Control-Allow-Headers', 'Content-Type');
+      
+      // Send the image data
       res.send(response.data);
     } catch (error) {
-      console.error("Error proxying Airtable image:", error);
-      res.status(500).send("Failed to load image");
+      console.error('Error proxying Airtable image:', error);
+      res.status(500).send('Failed to load image');
     }
   });
   // Setup Airtable API key
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY || "";
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || "";
-
+  
   if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
     console.warn("Airtable API key or base ID not provided. Using mock data.");
   } else {
@@ -58,7 +71,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const type = req.query.type as string | undefined;
       const platform = req.query.platform as string | undefined;
       const search = req.query.search as string | undefined;
-
+      
       const apps = await storage.getApps({ type, platform, search });
       res.json(apps);
     } catch (error) {
@@ -74,12 +87,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (isNaN(id)) {
         return res.status(400).json({ message: "Invalid app ID" });
       }
-
+      
       const app = await storage.getAppById(id);
       if (!app) {
         return res.status(404).json({ message: "App not found" });
       }
-
+      
       res.json(app);
     } catch (error) {
       console.error("Error fetching app:", error);
@@ -94,7 +107,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (isNaN(appId)) {
         return res.status(400).json({ message: "Invalid app ID" });
       }
-
+      
       const screens = await storage.getScreensByAppId(appId);
       res.json(screens);
     } catch (error) {
@@ -109,7 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID) {
         return res.status(400).json({ message: "Airtable API key or base ID not configured" });
       }
-
+      
       await storage.syncFromAirtable(AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
       res.json({ message: "Sync completed successfully" });
     } catch (error) {

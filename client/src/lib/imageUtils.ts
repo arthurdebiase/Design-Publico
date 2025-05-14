@@ -13,12 +13,8 @@ export function getProcessedImageUrl(url: string | null | undefined): string {
   if (!url) return '';
   
   // For Airtable CDN URLs, use our proxy route
-  if (url.includes('airtableusercontent.com')) {
-    // Extract the path after the domain
-    const urlObj = new URL(url);
-    const path = urlObj.pathname;
-    // Return proxied path
-    return `/proxy-image${path}`;
+  if (url.startsWith('https://v5.airtableusercontent.com')) {
+    return url.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
   }
   
   return url;
