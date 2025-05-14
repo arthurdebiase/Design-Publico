@@ -6,8 +6,6 @@ import { z } from "zod";
 import { subscribeToNewsletter, getNewsletterSubscribers } from "./newsletter";
 import axios from "axios";
 import cors from "cors";
-import { optimizeAndServeImage } from "./imageOptimizer";
-import { imageRateLimit } from "./rateLimit";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enable CORS for all routes
@@ -17,11 +15,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
   
-  // Apply rate limiting to Airtable image requests to prevent overwhelming the server
-  app.use(imageRateLimit);
-  
-  // Proxy for Airtable images with optimization
-  app.get('/v5.airtableusercontent.com/*', optimizeAndServeImage);
+  // Proxy for Airtable images
+  app.get('/v5.airtableusercontent.com/*', async (req, res) => {
+    try {
+      const path = req.path.replace('/v5.airtableusercontent.com/', '');
+      const url = `https://v5.airtableusercontent.com/${path}`;
+      
+      console.log(`Proxying Airtable image: ${url}`);
+      
+      const response = await axios.get(url, {
+        responseType: 'arraybuffer',
+        headers: {
+          'Referer': 'https://airtable.com/',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+      });
+      
+      // Set content type and other headers
+      const contentType = response.headers['content-type'];
+      if (contentType) {
+        res.set('Content-Type', contentType);
+      }
+      
+      // Add CORS headers
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.set('Access-Control-Allow-Headers', 'Content-Type');
+      
+      // Send the image data
+      res.send(response.data);
+    } catch (error) {
+      console.error('Error proxying Airtable image:', error);
+      res.status(500).send('Failed to load image');
+    }
+  });
   // Setup Airtable API key
   const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY || "";
   const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID || "";
