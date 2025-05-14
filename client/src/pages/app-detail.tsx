@@ -127,11 +127,12 @@ export default function AppDetail() {
     setSelectedTags(prev => prev.filter(t => t !== tag));
   };
   
-  // Function to group screens by their flow field
+  // Function to group screens by their flow field while preserving Airtable order
   const getScreensBySection = () => {
     if (!filteredScreens) return {};
     
-    return filteredScreens.reduce((groups: Record<string, Screen[]>, screen) => {
+    // First, group screens by their flow
+    const groupedScreens = filteredScreens.reduce((groups: Record<string, Screen[]>, screen) => {
       // Get the flow or set to "Other" if not available
       const flow = screen.flow || "Other";
       
@@ -144,6 +145,13 @@ export default function AppDetail() {
       groups[flow].push(screen);
       return groups;
     }, {});
+    
+    // Then, sort each group by screen order (which comes from Airtable)
+    Object.keys(groupedScreens).forEach(flow => {
+      groupedScreens[flow].sort((a, b) => a.order - b.order);
+    });
+    
+    return groupedScreens;
   };
   
   const handleOpenModal = (screen: Screen) => {
