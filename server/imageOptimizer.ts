@@ -118,9 +118,14 @@ export async function optimizeAndServeImage(req: Request, res: Response) {
       outputOptions = { quality };
       imageProcessor = imageProcessor.jpeg(outputOptions);
     } else if (format === 'png') {
-      // For PNG, use a different compression approach
-      outputOptions = { quality };
-      imageProcessor = imageProcessor.png({ quality: quality / 100 });
+      // For PNG, quality is 0-100 integer in Sharp
+      const pngQuality = Math.min(Math.max(Math.round(quality), 1), 100);
+      outputOptions = { quality: pngQuality };
+      imageProcessor = imageProcessor.png({ 
+        quality: pngQuality,
+        compressionLevel: 9, // Maximum compression (0-9) 
+        adaptiveFiltering: true // Better compression
+      });
     } else if (format === 'webp') {
       outputOptions = { quality };
       imageProcessor = imageProcessor.webp(outputOptions);

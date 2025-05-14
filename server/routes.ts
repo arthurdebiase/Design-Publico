@@ -7,6 +7,7 @@ import { subscribeToNewsletter, getNewsletterSubscribers } from "./newsletter";
 import axios from "axios";
 import cors from "cors";
 import { optimizeAndServeImage } from "./imageOptimizer";
+import { imageRateLimit } from "./rateLimit";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enable CORS for all routes
@@ -15,6 +16,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
+  
+  // Apply rate limiting to Airtable image requests to prevent overwhelming the server
+  app.use(imageRateLimit);
   
   // Proxy for Airtable images with optimization
   app.get('/v5.airtableusercontent.com/*', optimizeAndServeImage);
