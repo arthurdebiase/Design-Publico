@@ -89,20 +89,19 @@ export function OptimizedImageLoader() {
         // Implementa uma estratégia de pré-carregamento que não afeta o desempenho
         const idleCallback = () => {
           // Encontra imagens acima da dobra que ainda não foram carregadas
-          const visibleImages = Array.from(document.querySelectorAll('img[loading="lazy"]'))
-            .filter((img) => {
-              const rect = img.getBoundingClientRect();
-              return (
-                rect.top >= 0 &&
-                rect.left >= 0 &&
-                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-              );
-            });
-          
-          // Pré-carrega estas imagens
-          visibleImages.forEach((img: HTMLImageElement) => {
-            if (img.dataset.src) {
+          document.querySelectorAll('img[loading="lazy"]').forEach((element) => {
+            const img = element as HTMLImageElement;
+            
+            // Verifica se a imagem está visível na viewport
+            const rect = img.getBoundingClientRect();
+            const isVisible = 
+              rect.top >= 0 &&
+              rect.left >= 0 &&
+              rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+              rect.right <= (window.innerWidth || document.documentElement.clientWidth);
+              
+            if (isVisible && img.dataset.src) {
+              // Pré-carrega a imagem
               const preloadLink = document.createElement('link');
               preloadLink.rel = 'preload';
               preloadLink.as = 'image';

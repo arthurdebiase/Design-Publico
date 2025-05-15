@@ -1,144 +1,141 @@
-import React, { useEffect } from 'react';
-import { RESPONSIVE_IMAGE_SIZES, getProcessedImageUrl } from '@/lib/imageUtils';
+import { useEffect } from 'react';
 
 /**
- * ResourcePreloader - Pré-carrega recursos críticos para melhorar performance LCP
+ * ResourcePreloader Component
  * 
- * Este componente identifica e pré-carrega recursos críticos como imagens e fontes
- * para melhorar as métricas de performance
+ * Este componente implementa estratégias de pré-carregamento para melhorar performance:
+ * - Pré-carrega imagens críticas para LCP (Largest Contentful Paint)
+ * - Implementa DNS prefetch para domínios externos
+ * - Implementa preconnect para conexões que serão necessárias logo
+ * - Detecta e prioriza automaticamente elementos importantes
  */
-export function ResourcePreloader({ preloadImages = [] }: { preloadImages?: string[] }) {
+export function ResourcePreloader() {
   useEffect(() => {
-    // Pré-carregar imagens críticas que foram explicitamente informadas
-    const preloadSpecifiedImages = () => {
-      preloadImages.forEach(imageUrl => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = imageUrl;
-        link.type = 'image/webp'; // Formato padrão, o servidor decidirá o melhor formato
-        link.setAttribute('fetchpriority', 'high');
-        document.head.appendChild(link);
+    // Detectar imagens críticas para Largest Contentful Paint (LCP)
+    const detectLcpCandidates = (): HTMLImageElement[] => {
+      // Estratégias para encontrar elementos LCP potenciais
+      const candidates: HTMLImageElement[] = [];
+      
+      // 1. Imagens grandes acima da dobra são frequentemente LCP
+      document.querySelectorAll('img').forEach((img) => {
+        const rect = img.getBoundingClientRect();
+        
+        // Imagem visível e razoavelmente grande (provavelmente LCP)
+        if (
+          rect.top < window.innerHeight &&
+          rect.width > 100 &&
+          rect.height > 100
+        ) {
+          candidates.push(img);
+        }
+      });
+      
+      // 2. Imagem com classes que sugerem destaque (hero, banner, etc)
+      document.querySelectorAll('img.hero, img.banner, img.featured').forEach((img) => {
+        if (!candidates.includes(img as HTMLImageElement)) {
+          candidates.push(img as HTMLImageElement);
+        }
+      });
+      
+      // 3. Ordena por área visível (maior primeiro = mais provável LCP)
+      return candidates.sort((a, b) => {
+        const areaA = a.width * a.height;
+        const areaB = b.width * b.height;
+        return areaB - areaA;
       });
     };
 
-    // Detectar e pré-carregar automaticamente imagens críticas para LCP (Largest Contentful Paint)
-    const detectAndPreloadCriticalImages = () => {
-      if (document.readyState !== 'complete') {
-        // Se o documento não estiver carregado, agendar para executar depois
-        window.addEventListener('load', detectAndPreloadCriticalImages);
-        return;
+    // Preload de recursos críticos
+    const preloadCriticalResources = () => {
+      // Obter candidatos LCP
+      const lcpCandidates = detectLcpCandidates();
+      
+      // Preload das principais imagens (Top 3)
+      lcpCandidates.slice(0, 3).forEach((img) => {
+        // Só pré-carrega se tiver src e não estiver com loading=eager
+        if (img.src && img.loading !== 'eager' && !img.hasAttribute('fetchpriority')) {
+          // Marca como alta prioridade
+          img.setAttribute('fetchpriority', 'high');
+          img.loading = 'eager';
+          
+          // Também pré-carrega usando link preload
+          if (!document.querySelector(`link[rel="preload"][href="${img.src}"]`)) {
+            const preloadLink = document.createElement('link');
+            preloadLink.rel = 'preload';
+            preloadLink.as = 'image';
+            preloadLink.href = img.src;
+            preloadLink.crossOrigin = 'anonymous';
+            document.head.appendChild(preloadLink);
+          }
+        }
+      });
+      
+      // Preconnect para domínios de imagens
+      const airtableDomain = 'v5.airtableusercontent.com';
+      if (!document.querySelector(`link[rel="preconnect"][href="https://${airtableDomain}"]`)) {
+        const preconnect = document.createElement('link');
+        preconnect.rel = 'preconnect';
+        preconnect.href = `https://${airtableDomain}`;
+        preconnect.crossOrigin = 'anonymous';
+        document.head.appendChild(preconnect);
       }
+    };
 
-      // 1. Encontrar potenciais candidatos a LCP
-      // Geralmente são imagens grandes acima da dobra, no hero, etc.
-      const eagerImages = Array.from(document.querySelectorAll('img[loading="eager"], img[data-priority="true"], .high-priority-image img'));
-      const potentialHeroImages = Array.from(document.querySelectorAll('picture > img, section > img, .hero-image img, header img, [class*="hero"] img'));
-      const potentialLCPCandidates = [...eagerImages, ...potentialHeroImages];
-
-      // 2. Encontrar e otimizar imagens no viewport inicial
-      const findImagesInViewport = () => {
-        // Para cada imagem acima da dobra, aplicar otimizações
-        const viewportHeight = window.innerHeight;
-        document.querySelectorAll('img').forEach(img => {
-          const rect = img.getBoundingClientRect();
-          // Se estiver visível e acima da dobra (ou logo abaixo)
-          if (rect.top < viewportHeight * 1.2) {
-            // Marcar explicitamente como eager e alta prioridade
-            img.setAttribute('loading', 'eager');
-            img.setAttribute('fetchpriority', 'high');
-            img.setAttribute('decoding', 'sync');
+    // Preload de recursos relacionados ao LCP (usando PerformanceObserver)
+    if ('PerformanceObserver' in window) {
+      try {
+        const lcpObserver = new PerformanceObserver((entryList) => {
+          const entries = entryList.getEntries();
+          const lastEntry = entries[entries.length - 1];
+          
+          if (lastEntry && 'element' in lastEntry) {
+            const element = (lastEntry as any).element;
             
-            // Adicionar dimensões específicas se não tiver
-            if (!img.width || !img.height) {
-              if (rect.width && rect.height) {
-                img.width = Math.round(rect.width);
-                img.height = Math.round(rect.height);
-              }
+            // Se o LCP for uma imagem, marcar para otimização futura
+            if (element && element.tagName === 'IMG') {
+              // Verifica se há imagens semelhantes para pré-carregar
+              const src = element.src;
+              const pathname = new URL(src).pathname;
+              const pathParts = pathname.split('/');
+              const filename = pathParts[pathParts.length - 1];
+              
+              // Detecta arquivos similares (mesmo padrão de nome)
+              const similarPattern = filename.replace(/\d+/g, '\\d+');
+              const regex = new RegExp(similarPattern);
+              
+              // Encontra e preload de imagens semelhantes
+              document.querySelectorAll('img').forEach((img) => {
+                if (img !== element && img.src && regex.test(img.src)) {
+                  const preloadLink = document.createElement('link');
+                  preloadLink.rel = 'preload';
+                  preloadLink.as = 'image';
+                  preloadLink.href = img.src;
+                  document.head.appendChild(preloadLink);
+                }
+              });
             }
           }
-        });
-      };
-      
-      // Executar otimização para imagens no viewport inicial
-      findImagesInViewport();
-    };
-
-    // Pré-carregar fontes críticas
-    const preloadCriticalFonts = () => {
-      const criticalFonts = [
-        '/fonts/Inter-Regular.woff2',
-        '/fonts/Inter-Medium.woff2'
-      ];
-      
-      criticalFonts.forEach(fontUrl => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'font';
-        link.href = fontUrl;
-        link.type = 'font/woff2';
-        link.setAttribute('crossorigin', 'anonymous');
-        document.head.appendChild(link);
-      });
-    };
-
-    // Função para detecção de recursos CSS não utilizados
-    const detectUnusedCSS = () => {
-      // Essa função seria utilizada apenas em desenvolvimento
-      if (import.meta.env.MODE !== 'development') return;
-      
-      // Esperar DOM carregar completamente
-      setTimeout(() => {
-        const allStyleSheets = Array.from(document.styleSheets);
-        const usedSelectors: Set<string> = new Set();
-        const unusedSelectors: string[] = [];
-        
-        // Para cada stylesheet no documento
-        allStyleSheets.forEach(sheet => {
-          try {
-            // Tentar acessar as regras CSS (pode falhar devido a CORS)
-            const rules = Array.from(sheet.cssRules || []);
-            
-            rules.forEach(rule => {
-              // Verificar apenas regras de estilo
-              if (rule instanceof CSSStyleRule) {
-                const selector = rule.selectorText;
-                
-                try {
-                  // Tentar encontrar elementos que correspondam ao seletor
-                  const elements = document.querySelectorAll(selector);
-                  if (elements.length > 0) {
-                    usedSelectors.add(selector);
-                  } else {
-                    unusedSelectors.push(selector);
-                  }
-                } catch (e) {
-                  // Ignorar erros de seletores inválidos
-                }
-              }
-            });
-          } catch (e) {
-            // Ignorar erros de CORS em stylesheets externos
-          }
+          
+          lcpObserver.disconnect();
         });
         
-        // Registrar seletores não utilizados para otimização
-        if (unusedSelectors.length > 0) {
-          console.log('Seletores CSS potencialmente não utilizados:', unusedSelectors.length);
-        }
-      }, 3000);
-    };
-
-    // Executar todas as otimizações
-    preloadSpecifiedImages();
-    detectAndPreloadCriticalImages();
-    preloadCriticalFonts();
-    
-    // Apenas em desenvolvimento
-    if (import.meta.env.MODE === 'development') {
-      detectUnusedCSS();
+        // Registra o observer para o tipo LCP
+        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+      } catch (e) {
+        console.warn('PerformanceObserver for LCP not supported', e);
+      }
     }
-  }, [preloadImages]);
+    
+    // Executa o preload inicial
+    preloadCriticalResources();
+    
+    // Re-executar quando necessário (após lazy load ou atualização dinâmica)
+    window.addEventListener('lazyloaded', preloadCriticalResources);
+    
+    return () => {
+      window.removeEventListener('lazyloaded', preloadCriticalResources);
+    };
+  }, []);
 
   return null;
 }

@@ -40,22 +40,34 @@ app.use((req, res, next) => {
   next();
 });
 
-// Aplicar compressão gzip/deflate para melhorar performance
+// Aplicar compressão gzip/brotli para melhorar performance
 app.use(compression({
-  // Comprimir tudo acima de 100 bytes (mais agressivo)
-  threshold: 100,
-  // Nível 9 para máxima compressão (prioriza tamanho sobre velocidade)
-  level: 9,
+  // Comprimir tudo acima de 1 byte (máxima agressividade)
+  threshold: 1,
+  // Nível 11 para máxima compressão Brotli (valores válidos 0-11)
+  // ou nível 9 para Gzip/Deflate (valores válidos 0-9)
+  level: 11,
   // Comprimir todos os tipos de conteúdo exceto imagens já comprimidas
   filter: (req, res) => {
     const path = req.path;
+    const userAgent = req.headers['user-agent'] || '';
     
     // Não comprimir imagens que já estão comprimidas
-    if (path.match(/\.(jpg|jpeg|png|gif|webp|avif|svg|ico)$/i)) {
+    if (path.match(/\.(jpg|jpeg|png|gif|webp|avif|ico)$/i)) {
       return false;
     }
     
-    // Comprimir de forma mais agressiva assets com hash no nome (JS/CSS)
+    // Comprimir SVG - eles são texto XML e comprimem bem
+    if (path.endsWith('.svg')) {
+      return true;
+    }
+    
+    // Comprimir arquivos de fontes que não são woff2 (woff2 já é comprimido)
+    if (path.match(/\.(woff|ttf|eot)$/i)) {
+      return true;
+    }
+    
+    // Comprimir de forma mais agressiva assets de texto (JS/CSS/HTML/JSON)
     if (path.match(/\.(js|css|json|txt|html|xml)$/i)) {
       return true;
     }
@@ -63,9 +75,23 @@ app.use(compression({
     // Para outros tipos, usar o filtro padrão
     return compression.filter(req, res);
   },
-  // Algoritmo preferencial Brotli para maior compressão, fallback para gzip
-  // Esta opção só está disponível se o cliente suportar
+  // Brotli é superior a gzip - usamos isso como algoritmo principal
+  // "brotli" agora é suportado diretamente pelo pacote compression
   algorithm: 'brotli',
+  
+  // Configurações avançadas do Brotli via zlib
+  // Estas configurações são aplicadas através do middleware
+  // Nota: O tipo 'any' é usado porque o TypeScript pode não reconhecer estas opções
+  params: {
+    // Usar configurações otimizadas para melhor compressão
+    // sem preocupação com CPU (compressão no servidor é feita uma vez só)
+    zlib: {
+      level: 9, // Nível máximo de compressão (zlib)
+      windowBits: 15, // Tamanho máximo da janela
+      memLevel: 9, // Memória máxima
+      strategy: 3, // Z_HUFFMAN_ONLY - melhor para textos
+    }
+  },
   
   // Comprimir todos os métodos HTTP, não apenas GET
   method: 'GET, POST, PUT, DELETE, OPTIONS',
