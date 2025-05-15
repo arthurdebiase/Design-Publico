@@ -13,9 +13,29 @@ export function MasonryGrid({
 }: MasonryGridProps) {
   const childrenArray = React.Children.toArray(children);
   
-  // Aplicar grid em vez de sistema de colunas manual
+  // Aplicar grid baseado no número de colunas
+  const getGridColsClass = () => {
+    switch(columns) {
+      case 1: return "grid-cols-1";
+      case 2: return "grid-cols-2";
+      case 3: return "grid-cols-3";
+      case 4: return "grid-cols-4";
+      default: return "grid-cols-3";
+    }
+  };
+  
+  // Aplicar gap baseado no valor
+  const getGapClass = () => {
+    switch(gap) {
+      case 4: return "gap-4";
+      case 6: return "gap-6";
+      case 8: return "gap-8";
+      default: return "gap-6";
+    }
+  };
+  
   return (
-    <div className={`grid grid-cols-${columns} gap-${gap}`}>
+    <div className={`grid ${getGridColsClass()} ${getGapClass()}`}>
       {childrenArray.map((child, i) => (
         <div key={i}>{child}</div>
       ))}
