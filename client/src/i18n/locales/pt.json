@@ -93,7 +93,10 @@
     "alreadySubscribedDesc": "Este email já está inscrito em nossa newsletter.",
     "thankyou": "Obrigado pela sua inscrição!",
     "tryAgain": "Por favor, tente novamente mais tarde.",
-    "subscriberCount": "{{count}} pessoas inscritas em nossa newsletter"
+    "subscriberCount": "{{count}} pessoas inscritas em nossa newsletter",
+    "emailRequired": "O endereço de email é obrigatório",
+    "invalidEmail": "Por favor, insira um endereço de email válido",
+    "emailTooLong": "O endereço de email é muito longo (máximo 100 caracteres)"
   },
   "types": {
     "Federal": "Federal",

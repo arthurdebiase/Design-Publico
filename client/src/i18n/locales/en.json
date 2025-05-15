@@ -93,7 +93,10 @@
     "alreadySubscribedDesc": "This email is already subscribed to our newsletter.",
     "thankyou": "Thank you for your subscription!",
     "tryAgain": "Please try again later.",
-    "subscriberCount": "{{count}} people subscribed to our newsletter"
+    "subscriberCount": "{{count}} people subscribed to our newsletter",
+    "emailRequired": "Email address is required",
+    "invalidEmail": "Please enter a valid email address",
+    "emailTooLong": "Email address is too long (max 100 characters)"
   },
   "types": {
     "Federal": "Federal",
