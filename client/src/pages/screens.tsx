@@ -568,15 +568,17 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           <div className="flex items-center gap-2 mt-0">
             <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
               {screen.app.logo ? (
-                <img 
-                  src={getProcessedImageUrl(screen.app.logo)}
-                  alt="App Logo" 
+                <ResponsiveImage 
+                  src={screen.app.logo}
+                  alt={`${screen.app.name} Logo`}
                   className="w-5 h-5"
-                  onError={(e) => {
-                    console.error(`Failed to load app logo: ${screen.app.logo}`);
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.parentNode.innerHTML = `<div class="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center"><span class="text-xs font-bold text-gray-600">${screen.app.name.charAt(0)}</span></div>`;
-                  }}
+                  widths={[20, 40, 60]}
+                  quality={90}
+                  placeholder={
+                    <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center">
+                      <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+                    </div>
+                  }
                 />
               ) : (
                 <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center">
