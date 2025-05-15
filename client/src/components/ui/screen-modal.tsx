@@ -7,6 +7,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
+import { createSlug } from "@/lib/slugUtils";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -80,9 +81,10 @@ export function ScreenModal({
   };
   
   const handleCopyLink = () => {
-    // Create shareable URL with app ID and Airtable screen ID for better link sharing
+    // Create shareable URL with app slug and Airtable screen ID for better link sharing
     const baseUrl = window.location.origin;
-    const shareableUrl = `${baseUrl}/app/${app.id}?screen=${currentScreen.airtableId}`;
+    const appSlug = createSlug(app.name);
+    const shareableUrl = `${baseUrl}/app/${appSlug}?screen=${currentScreen.airtableId}`;
     
     // Copy to clipboard
     navigator.clipboard.writeText(shareableUrl)
@@ -148,7 +150,7 @@ export function ScreenModal({
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
-            <Link href={`/app/${app.id}`} onClick={() => {
+            <Link href={`/app/${createSlug(app.name)}`} onClick={() => {
               onClose();
               // Ensure we scroll to top when navigating to app details
               window.scrollTo(0, 0);
