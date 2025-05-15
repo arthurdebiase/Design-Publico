@@ -13,6 +13,7 @@ import ScrollToTop from "@/components/scroll-to-top";
 import MetaTags from "@/components/seo/meta-tags";
 import { CriticalCSS } from "@/components/ui/critical-css";
 import { ResourcePreloader } from "@/components/ui/resource-preloader";
+import { ScriptOptimizer } from "@/components/ui/script-optimizer";
 
 function Router() {
   return (
@@ -36,6 +37,8 @@ function App() {
         <CriticalCSS />
         {/* Pré-carregamento de recursos críticos */}
         <ResourcePreloader />
+        {/* Otimização de carregamento de scripts */}
+        <ScriptOptimizer />
         <div className="flex flex-col">
           <Header />
           <main className="flex-grow">

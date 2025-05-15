@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { getProcessedImageUrl } from '@/lib/imageUtils';
+import React from 'react';
+import { getProcessedImageUrl, RESPONSIVE_IMAGE_SIZES } from '@/lib/imageUtils';
 
 /**
  * Componente para otimizar o carregamento e dimensionamento de imagens
@@ -7,136 +7,102 @@ import { getProcessedImageUrl } from '@/lib/imageUtils';
  */
 export function OptimizedImage({ 
   src, 
-  alt,
+  alt, 
   width, 
-  height,
-  className = '',
+  height, 
+  className, 
   priority = false,
-  quality = 85
+  containerClassName,
+  sizes = '100vw',
+  objectFit = 'cover'
 }: {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   className?: string;
   priority?: boolean;
-  quality?: number;
+  containerClassName?: string;
+  sizes?: string;
+  objectFit?: 'cover' | 'contain' | 'fill' | 'none';
 }) {
-  const [loaded, setLoaded] = useState(false);
-  const [isIntersecting, setIsIntersecting] = useState(priority);
-  const [imgSrc, setImgSrc] = useState<string | null>(null);
-
-  // Calcular a melhor largura para a tela
-  useEffect(() => {
-    // Definir tamanhos de imagem comuns para diferentes dispositivos
-    const breakpoints = [320, 640, 768, 1024, 1280, 1536];
+  // Gerar URLs otimizadas para diferentes tamanhos de tela
+  const generateSrcSet = () => {
+    const allSizes = [...RESPONSIVE_IMAGE_SIZES.small, ...RESPONSIVE_IMAGE_SIZES.medium, ...RESPONSIVE_IMAGE_SIZES.large];
     
-    // Encontrar a melhor largura para o dispositivo atual
-    const findOptimalWidth = () => {
-      const screenWidth = window.innerWidth;
-      // Encontrar o próximo breakpoint maior que a largura da tela atual
-      const optimalWidth = breakpoints.find(bp => bp >= screenWidth) || breakpoints[breakpoints.length - 1];
-      return Math.min(optimalWidth, width * 2); // 2x para telas de alta densidade
-    };
-
-    const optimalWidth = findOptimalWidth();
-    
-    // Gerar URL otimizada com dimensões apropriadas
-    const optimizedUrl = getProcessedImageUrl(src, {
-      width: optimalWidth,
-      format: 'webp',
-      quality: quality
-    });
-    
-    setImgSrc(optimizedUrl);
-    
-    // Atualizar se a janela for redimensionada
-    const handleResize = () => {
-      const newOptimalWidth = findOptimalWidth();
-      const newUrl = getProcessedImageUrl(src, {
-        width: newOptimalWidth,
-        format: 'webp',
-        quality: quality
-      });
-      setImgSrc(newUrl);
-    };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [src, width, quality]);
-
-  // Usar Intersection Observer para carregamento lazy quando não for prioritário
-  useEffect(() => {
-    if (priority) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsIntersecting(true);
-          observer.disconnect();
-        }
-      },
-      { 
-        rootMargin: '200px' // Pré-carregar imagens quando estiverem a 200px de distância da viewport
-      }
-    );
-
-    const element = document.getElementById(`img-${src.replace(/[^\w]/g, '-')}`);
-    if (element) {
-      observer.observe(element);
-    }
-
-    return () => observer.disconnect();
-  }, [src, priority]);
-
-  // Placeholder enquanto a imagem estiver carregando
-  const placeholderStyle = {
-    backgroundColor: '#f3f4f6',
-    width: '100%',
-    height: '100%',
-    aspectRatio: `${width} / ${height}`,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'opacity 0.3s ease',
-    opacity: loaded ? 0 : 1,
-    position: 'absolute' as const,
-    top: 0,
-    left: 0,
+    return allSizes
+      .filter((size, index, self) => self.indexOf(size) === index) // Remover duplicatas
+      .sort((a, b) => a - b) // Ordenar do menor para o maior
+      .map(size => {
+        const url = getProcessedImageUrl(src, {
+          width: size,
+          format: 'auto', // Deixar o servidor decidir o melhor formato
+          quality: size < 640 ? 80 : 85, // Qualidade ligeiramente maior para imagens maiores
+          priority
+        });
+        return `${url} ${size}w`;
+      })
+      .join(', ');
   };
+
+  // Processar URL base com tamanho padrão
+  const optimizedSrc = getProcessedImageUrl(src, {
+    width: width || 800, // Tamanho padrão razoável
+    format: 'auto',
+    quality: 85,
+    priority
+  });
+
+  // URL de baixa qualidade para carregamento imediato
+  const placeholderSrc = getProcessedImageUrl(src, {
+    width: 40, // Muito pequena
+    quality: 20, // Baixa qualidade
+    format: 'webp'
+  });
 
   return (
     <div 
-      className={`relative ${className}`}
-      style={{ aspectRatio: `${width} / ${height}` }}
-      id={`img-${src.replace(/[^\w]/g, '-')}`}
+      className={`${containerClassName || ''} ${priority ? 'high-priority-image' : ''}`}
+      style={{ position: 'relative', overflow: 'hidden' }}
     >
-      {/* Placeholder */}
-      <div style={placeholderStyle}>
-        <span className="text-gray-400 text-sm">Carregando...</span>
-      </div>
+      {/* Imagem de placeholder de baixa qualidade */}
+      <img 
+        src={placeholderSrc}
+        alt=""
+        aria-hidden="true"
+        className={`${className || ''} blur-sm absolute inset-0 w-full h-full transition-opacity duration-300`}
+        style={{ 
+          objectFit,
+          filter: 'blur(20px)',
+          transform: 'scale(1.1)', // Ligeiramente maior para cobrir bordas durante o blur
+          opacity: 0.7
+        }}
+      />
       
-      {/* Imagem real */}
-      {(priority || isIntersecting) && imgSrc && (
-        <img
-          src={imgSrc}
-          alt={alt}
-          width={width}
-          height={height}
-          loading={priority ? 'eager' : 'lazy'}
-          fetchPriority={priority ? 'high' : 'auto'}
-          onLoad={() => setLoaded(true)}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain',
-            transition: 'opacity 0.3s ease',
-            opacity: loaded ? 1 : 0,
-          }}
-        />
-      )}
+      {/* Imagem principal otimizada */}
+      <img 
+        src={optimizedSrc}
+        srcSet={generateSrcSet()}
+        sizes={sizes}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding={priority ? 'sync' : 'async'}
+        className={`${className || ''} transition-opacity duration-500 relative z-10`}
+        style={{ objectFit }}
+        onLoad={(e) => {
+          // Remover blur quando a imagem principal carrega
+          const target = e.target as HTMLImageElement;
+          const parent = target.parentElement;
+          if (parent) {
+            const placeholder = parent.querySelector('img[aria-hidden="true"]');
+            if (placeholder) {
+              placeholder.classList.add('opacity-0');
+            }
+          }
+        }}
+      />
     </div>
   );
 }

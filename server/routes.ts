@@ -19,7 +19,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create routes for SEO files
   app.get('/robots.txt', (req, res) => {
     res.type('text/plain');
-    res.send('User-agent: *\nAllow: /\n\nSitemap: https://designpublico.com.br/sitemap.xml');
+    res.send(`User-agent: *
+Allow: /
+Disallow: /proxy-image/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://designpublico.com.br/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 2`);
   });
   
   app.get('/sitemap.xml', (req, res) => {
@@ -37,13 +46,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const height = parseInt(req.query.height as string) || null;
       const format = (req.query.format as string) || null;
       const quality = parseInt(req.query.quality as string) || 80;
+      const isPriority = req.query.priority === 'true';
       
       // Check if browser supports WebP
       const acceptHeader = req.headers.accept || '';
       const supportsWebP = acceptHeader.includes('image/webp');
+      const supportsAvif = acceptHeader.includes('image/avif');
       
-      // Default format is WebP for browsers that support it
-      const outputFormat = format || (supportsWebP ? 'webp' : 'jpeg');
+      // Use the most efficient format supported by the browser
+      // AVIF > WebP > JPEG in terms of compression efficiency
+      let outputFormat = format;
+      if (!outputFormat || outputFormat === 'auto') {
+        if (supportsAvif) {
+          outputFormat = 'avif';
+        } else if (supportsWebP) {
+          outputFormat = 'webp';
+        } else {
+          outputFormat = 'jpeg';
+        }
+      }
+      
+      // Generate cache key for this resource
+      const cacheKey = `${path}-${width || 'orig'}-${height || 'orig'}-${outputFormat}-${quality}`;
+      const etag = `"${Buffer.from(cacheKey).toString('base64')}"`;
+      
+      // Check if the browser already has this version cached
+      if (req.headers['if-none-match'] === etag) {
+        res.status(304).end();
+        return;
+      }
       
       // Fetch the image from Airtable
       const response = await axios.get(`https://v5.airtableusercontent.com${path}`, {
@@ -54,59 +85,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       });
       
+      // Set default content type
+      const originalContentType = response.headers['content-type'] as string;
+      res.set('Content-Type', originalContentType);
+      
+      // If this is a priority image, set higher priority headers
+      if (isPriority) {
+        res.set('Priority', 'high');
+        res.set('Importance', 'high');
+      }
+      
       // If resizing or format conversion is requested, use Sharp
       if ((width || height) || outputFormat !== 'original') {
         let imageProcessor = sharp(response.data);
         
-        // Resize if dimensions are provided
-        if (width || height) {
-          imageProcessor = imageProcessor.resize({
-            width: width || undefined,
-            height: height || undefined,
-            fit: 'inside',
-            withoutEnlargement: true
-          });
+        // Get image metadata to make intelligent resizing decisions
+        const metadata = await imageProcessor.metadata();
+        const origWidth = metadata.width || 0;
+        const origHeight = metadata.height || 0;
+        
+        // Calculate dimensions to maintain aspect ratio
+        let resizeOptions: sharp.ResizeOptions = {
+          fit: 'inside',
+          withoutEnlargement: true
+        };
+        
+        if (width && height) {
+          // Both dimensions specified
+          resizeOptions.width = width;
+          resizeOptions.height = height;
+        } else if (width) {
+          // Only width specified, calculate height to maintain aspect ratio
+          resizeOptions.width = width;
+          if (origWidth > 0 && origHeight > 0) {
+            resizeOptions.height = Math.round((width * origHeight) / origWidth);
+          }
+        } else if (height) {
+          // Only height specified, calculate width to maintain aspect ratio
+          resizeOptions.height = height;
+          if (origWidth > 0 && origHeight > 0) {
+            resizeOptions.width = Math.round((height * origWidth) / origHeight);
+          }
         }
         
-        // Convert to the requested format
+        // Apply resize operation
+        imageProcessor = imageProcessor.resize(resizeOptions);
+        
+        // Convert to the requested format with appropriate options
         switch(outputFormat) {
           case 'webp':
-            imageProcessor = imageProcessor.webp({ quality });
+            imageProcessor = imageProcessor.webp({ 
+              quality, 
+              effort: 6,  // Higher compression effort
+              smartSubsample: true  // Improve visual quality
+            });
             res.set('Content-Type', 'image/webp');
             break;
           case 'avif':
-            imageProcessor = imageProcessor.avif({ quality });
+            imageProcessor = imageProcessor.avif({ 
+              quality, 
+              effort: 7,  // Balanced between speed and compression
+              chromaSubsampling: '4:2:0'  // Better compression
+            });
             res.set('Content-Type', 'image/avif');
             break;
           case 'jpeg':
           case 'jpg':
-            imageProcessor = imageProcessor.jpeg({ quality });
+            imageProcessor = imageProcessor.jpeg({ 
+              quality,
+              progressive: true,  // Progressive rendering
+              optimizeScans: true,  // Optimization for smaller file size
+              mozjpeg: true  // Use mozjpeg optimization
+            });
             res.set('Content-Type', 'image/jpeg');
             break;
           case 'png':
-            imageProcessor = imageProcessor.png({ quality });
+            imageProcessor = imageProcessor.png({ 
+              quality,
+              compressionLevel: 9,  // Maximum compression
+              palette: true  // Use palette to reduce colors when appropriate
+            });
             res.set('Content-Type', 'image/png');
             break;
           default:
             // Keep original format
-            res.set('Content-Type', response.headers['content-type']);
+            res.set('Content-Type', originalContentType);
         }
         
         // Process and send the optimized image
         const optimizedImageBuffer = await imageProcessor.toBuffer();
         
-        // Set caching headers
-        res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+        // Set comprehensive caching headers
+        res.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache for 1 year
+        res.set('ETag', etag);
+        res.set('Vary', 'Accept'); // Vary response based on Accept header
+        
         res.send(optimizedImageBuffer);
       } else {
         // No optimization requested, just pass through the original image
-        res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
-        res.set('Content-Type', response.headers['content-type']);
+        res.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache for 1 year
+        res.set('ETag', etag);
+        res.set('Vary', 'Accept');
         res.send(response.data);
       }
     } catch (error) {
       console.error("Error proxying Airtable image:", error);
-      res.status(500).send("Failed to load image");
+      
+      // Send a 1x1 pixel transparent fallback image instead of text
+      const fallbackImage = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+      res.set('Content-Type', 'image/gif');
+      res.set('Cache-Control', 'no-store');
+      res.status(500).send(fallbackImage);
     }
   });
   // Setup Airtable API key
