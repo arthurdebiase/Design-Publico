@@ -254,9 +254,14 @@ export default function AppDetail() {
                     <div className="flex items-center">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="outline" className="flex items-center gap-2">
+                          <Button 
+                            variant="outline" 
+                            className="flex items-center gap-2"
+                            aria-label="Filtrar por componentes"
+                            aria-haspopup="true"
+                          >
                             {'Componentes'}
-                            <ChevronDown className="h-4 w-4 ml-2" />
+                            <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
