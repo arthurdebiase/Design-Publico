@@ -6,6 +6,7 @@ import { z } from "zod";
 import { subscribeToNewsletter, getNewsletterSubscribers } from "./newsletter";
 import axios from "axios";
 import cors from "cors";
+import sharp from "sharp";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enable CORS for all routes
@@ -44,7 +45,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // If resizing or format conversion is requested, use Sharp
       if ((width || height) || outputFormat !== 'original') {
-        const sharp = require('sharp');
         let imageProcessor = sharp(response.data);
         
         // Resize if dimensions are provided

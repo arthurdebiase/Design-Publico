@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
 import { Screen } from "@/types";
 import { Maximize2 } from "lucide-react";
-import { getProcessedImageUrl } from "@/lib/imageUtils";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 
 interface ScreenThumbnailProps {
@@ -10,40 +8,6 @@ interface ScreenThumbnailProps {
 }
 
 export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  const [imageSrc, setImageSrc] = useState(getProcessedImageUrl(screen.imageUrl));
-  
-  useEffect(() => {
-    // Update image source if screen changes
-    setImageSrc(getProcessedImageUrl(screen.imageUrl));
-    setImageLoaded(false);
-    setImageError(false);
-  }, [screen.imageUrl]);
-  
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
-  
-  const handleImageError = () => {
-    // If we already tried a proxy, don't retry again
-    if (imageSrc.startsWith('/v5.airtableusercontent.com')) {
-      setImageError(true);
-      console.error(`Failed to load image even with proxy: ${imageSrc}`);
-      return;
-    }
-    
-    console.error(`Failed to load image: ${imageSrc}`);
-    
-    // Attempt to retry with proxy if direct URL fails
-    if (imageSrc.startsWith('https://v5.airtableusercontent.com')) {
-      const proxyUrl = imageSrc.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
-      console.log('Trying with proxy URL:', proxyUrl);
-      setImageSrc(proxyUrl);
-    } else {
-      setImageError(true);
-    }
-  };
   
   return (
     <div className="cursor-pointer hover:opacity-90 transition-all" onClick={() => onClick(screen)}>

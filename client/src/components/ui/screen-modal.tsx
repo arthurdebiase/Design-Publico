@@ -6,7 +6,6 @@ import { X, Link2, ChevronLeft, ChevronRight, ExternalLink, Info } from "lucide-
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
-import { getProcessedImageUrl } from "@/lib/imageUtils";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 
 interface ScreenModalProps {
@@ -58,9 +57,6 @@ export function ScreenModal({
 }: ScreenModalProps) {
   const [localIndex, setLocalIndex] = useState(currentScreenIndex);
   const [showTags, setShowTags] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  const [imageSrc, setImageSrc] = useState('');
   const [location] = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
@@ -70,38 +66,6 @@ export function ScreenModal({
   }, [currentScreenIndex]);
   
   const currentScreen = screens[localIndex];
-  
-  useEffect(() => {
-    if (currentScreen && currentScreen.imageUrl) {
-      setImageLoaded(false);
-      setImageError(false);
-      setImageSrc(getProcessedImageUrl(currentScreen.imageUrl));
-    }
-  }, [currentScreen]);
-  
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
-  
-  const handleImageError = () => {
-    // If we already tried a proxy, don't retry again
-    if (imageSrc.startsWith('/v5.airtableusercontent.com')) {
-      setImageError(true);
-      console.error(`Failed to load image even with proxy: ${imageSrc}`);
-      return;
-    }
-    
-    console.error(`Failed to load image: ${imageSrc}`);
-    
-    // Attempt to retry with proxy if direct URL fails
-    if (imageSrc.startsWith('https://v5.airtableusercontent.com')) {
-      const proxyUrl = imageSrc.replace('https://v5.airtableusercontent.com', '/v5.airtableusercontent.com');
-      console.log('Trying with proxy URL:', proxyUrl);
-      setImageSrc(proxyUrl);
-    } else {
-      setImageError(true);
-    }
-  };
   
   const handlePrevious = () => {
     const newIndex = (localIndex - 1 + screens.length) % screens.length;
