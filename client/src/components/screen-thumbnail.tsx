@@ -62,11 +62,11 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
         ) : (
           <img 
             src={imageSrc} 
-            alt={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
+            alt={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
             className={`w-full h-full object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
             onLoad={handleImageLoad}
             onError={handleImageError}
-            aria-label={`${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
+            aria-label={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
             loading="lazy"
           />
         )}

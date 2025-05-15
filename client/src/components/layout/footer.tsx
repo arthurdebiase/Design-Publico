@@ -10,12 +10,16 @@ const symbolLogo = "/designpublico-symbol.png";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [subscriberCount, setSubscriberCount] = useState<number | null>(null);
   const [formStatus, setFormStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const { toast } = useToast();
   const { t, i18n } = useTranslation();
   const currentLanguage = i18n.language || "pt"; // Default to Portuguese
+  
+  // Max character limit for email (prevent abuse)
+  const EMAIL_MAX_LENGTH = 100;
   
   // Fetch subscriber count when component mounts
   useEffect(() => {
@@ -34,10 +38,48 @@ export default function Footer() {
     fetchSubscriberCount();
   }, []);
 
+  // Email validation function
+  const validateEmail = (email: string): boolean => {
+    // Regular expression for email validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  };
+  
+  // Handle email input change
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    
+    // Enforce maximum length
+    if (value.length > EMAIL_MAX_LENGTH) {
+      setEmailError(t('newsletter.emailTooLong'));
+      setEmail(value.slice(0, EMAIL_MAX_LENGTH));
+      return;
+    }
+    
+    setEmail(value);
+    
+    // Clear error when field is empty or when typing after an error
+    if (!value || emailError) {
+      setEmailError(null);
+    }
+  };
+  
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
-
+    
+    // Email validation
+    if (!email) {
+      setEmailError(t('newsletter.emailRequired'));
+      return;
+    }
+    
+    if (!validateEmail(email)) {
+      setEmailError(t('newsletter.invalidEmail'));
+      return;
+    }
+    
+    // Clear any previous errors
+    setEmailError(null);
     setIsSubmitting(true);
     setFormStatus("loading");
     
@@ -138,12 +180,15 @@ export default function Footer() {
                     type="email"
                     placeholder={t('newsletter.placeholder')}
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
+                    maxLength={EMAIL_MAX_LENGTH}
                     className={`w-full pr-9 ${
                       formStatus === "success" ? "border-green-500 focus-visible:ring-green-500" : 
-                      formStatus === "error" ? "border-red-500 focus-visible:ring-red-500" : ""
+                      formStatus === "error" || emailError ? "border-red-500 focus-visible:ring-red-500" : ""
                     }`}
                     required
+                    aria-invalid={!!emailError}
+                    aria-describedby={emailError ? "email-error" : undefined}
                     disabled={isSubmitting || formStatus === "success"}
                   />
                   {formStatus === "success" && (
@@ -163,12 +208,22 @@ export default function Footer() {
                    t('newsletter.button')}
                 </Button>
               </div>
+              {/* Email validation error message */}
+              {emailError && (
+                <p id="email-error" className="text-sm text-red-600 mt-2">
+                  {emailError}
+                </p>
+              )}
+              
+              {/* Success message */}
               {formStatus === "success" && (
                 <p className="text-sm text-green-600 mt-2">
                   {t('newsletter.thankyou')}
                 </p>
               )}
-              {formStatus === "error" && (
+              
+              {/* Server error message */}
+              {formStatus === "error" && !emailError && (
                 <p className="text-sm text-red-600 mt-2">
                   {t('newsletter.tryAgain')}
                 </p>

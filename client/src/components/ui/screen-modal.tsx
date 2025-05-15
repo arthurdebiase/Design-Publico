@@ -305,11 +305,11 @@ export function ScreenModal({
             ) : (
               <img 
                 src={imageSrc} 
-                alt={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
+                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
                 className={`max-h-[70vh] max-w-full rounded-lg shadow-md object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
                 onLoad={handleImageLoad}
                 onError={handleImageError}
-                aria-label={`${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                aria-label={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
                 loading="lazy"
               />
             )}
