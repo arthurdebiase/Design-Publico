@@ -427,7 +427,7 @@ export default function ScreensPage() {
         
         {/* Screen counter */}
         <div className="text-gray-600 font-medium">
-          {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
+          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
         </div>
       </div>
       
