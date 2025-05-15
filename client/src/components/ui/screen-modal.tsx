@@ -295,7 +295,7 @@ export function ScreenModal({
                         // Ensure we scroll to top when navigating to filtered screens
                         window.scrollTo(0, 0);
                       }}
-                      className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer"
+                      className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
                       title={`View all screens in ${currentScreen.category} category`}
                     >
                       {currentScreen.category}
@@ -311,7 +311,7 @@ export function ScreenModal({
                           // Ensure we scroll to top when navigating to filtered screens
                           window.scrollTo(0, 0);
                         }}
-                        className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer"
+                        className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
                         title={`View all screens in ${cat} category`}
                       >
                         {cat}
@@ -332,7 +332,7 @@ export function ScreenModal({
                       // Ensure we scroll to top when navigating to filtered screens
                       window.scrollTo(0, 0);
                     }}
-                    className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer`}
+                    className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer no-underline`}
                     title={`View all screens with ${tag} componente`}
                   >
                     {tag}
