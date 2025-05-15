@@ -541,7 +541,7 @@ export default function ScreensPage() {
               {screen.app && (
                 <Link 
                   href={`/app/${createSlug(screen.app.name)}`}
-                  className="flex items-center gap-2 mt-2 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors"
+                  className="flex items-center gap-2 mt-2 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors no-underline group"
                   onClick={(e) => {
                     e.stopPropagation(); // Evita que a tela seja aberta ao clicar no app
                     // Garantir scroll para o topo ao navegar
@@ -562,7 +562,7 @@ export default function ScreensPage() {
                       <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
                     )}
                   </div>
-                  <span className="text-sm text-gray-600 truncate">{screen.app.name}</span>
+                  <span className="text-sm text-black truncate group-hover:underline">{screen.app.name}</span>
                 </Link>
               )}
             </div>
@@ -695,7 +695,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         {screen.app && (
           <Link 
             href={`/app/${createSlug(screen.app.name)}`} 
-            className="flex items-center gap-2 mt-0 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors"
+            className="flex items-center gap-2 mt-0 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors no-underline group"
             onClick={(e) => {
               e.stopPropagation(); // Evita que a tela seja aberta ao clicar no app
               // Garantir scroll para o topo ao navegar
@@ -718,7 +718,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
                 </div>
               )}
             </div>
-            <p className="text-xs text-gray-500 truncate">{screen.app.name}</p>
+            <p className="text-xs text-black truncate group-hover:underline">{screen.app.name}</p>
           </Link>
         )}
         
