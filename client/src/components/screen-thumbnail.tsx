@@ -5,9 +5,11 @@ import { ResponsiveImage } from "@/components/ui/responsive-image";
 interface ScreenThumbnailProps {
   screen: Screen;
   onClick: (screen: Screen) => void;
+  isPriority?: boolean; // Adicionado para priorizar carregamento de imagens LCP
+  index?: number; // Para rastrear posição do item na grade
 }
 
-export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
+export default function ScreenThumbnail({ screen, onClick, isPriority = false, index = -1 }: ScreenThumbnailProps) {
   const handleClick = () => onClick(screen);
   
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -16,6 +18,15 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
       handleClick();
     }
   };
+
+  // Dimensões fixas para evitar layout shift (CLS)
+  // Imagens de aplicativo normalmente têm proporção 9:16
+  const imageWidth = 300; 
+  const imageHeight = 534; // Mantendo a proporção 9:16
+  
+  // Verifica se essa imagem é visível inicialmente (primeiras 10 imagens)
+  // Isso otimiza o LCP (Largest Contentful Paint)
+  const isAboveFold = isPriority || index < 10;
   
   return (
     <div 
@@ -28,7 +39,7 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
     >
       <div 
         className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" 
-        style={{ aspectRatio: "9/16" }}
+        style={{ aspectRatio: "9/16", width: '100%', height: 'auto' }}
       >
         <ResponsiveImage 
           src={screen.imageUrl}
@@ -37,10 +48,13 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
           className="w-full h-full object-contain"
           placeholderClassName="absolute inset-0 flex items-center justify-center"
           sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw"
-          widths={[300, 600, 900]}
+          widths={[240, 320, 480]} // Reduzido o tamanho das imagens carregadas
           format="webp"
-          quality={80}
-          style={{ aspectRatio: "9/16" }}
+          quality={75} // Redução na qualidade para economizar bytes
+          width={imageWidth}
+          height={imageHeight}
+          priority={isAboveFold} // Carrega imediatamente as imagens acima da dobra
+          loading={isAboveFold ? "eager" : "lazy"}
         />
         
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">

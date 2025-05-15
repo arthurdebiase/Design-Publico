@@ -1,0 +1,251 @@
+Desempenho
+Os valores são estimados e podem variar. O índice de desempenho é calculado diretamente por essas métricas.Ver calculadora.
+0–49
+50–89
+90–100
+Final Screenshot
+
+Métricas
+Abrir visualização
+First Contentful Paint
+1,5 s
+Largest Contentful Paint
+3,3 s
+Total Blocking Time
+570 ms
+Cumulative Layout Shift
+0
+Speed Index
+6,8 s
+Captured at 15 de mai. de 2025, 11:39 BRT
+Moto G Power emulado with Lighthouse 12.6.0
+Sessão de uma única página
+Carregamento inicial da página
+Limitação lenta de 4G
+Using HeadlessChromium 135.0.7049.114 with lr
+Ver Treemap
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Later this year, insights will replace performance audits. Learn more and provide feedback here.
+Try insights
+Mostrar auditorias relevantes para:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+Diagnóstico
+Minimize o trabalho da thread principal 3,1 s
+Considere diminuir o tempo gasto na análise, compilação e execução de JS. Você vai perceber que a entrega de payloads JS menores ajuda a fazer isso. Aprenda a minimizar o trabalho da linha de execução principal.TBT
+Categoria
+Tempo gasto
+Script Evaluation
+1.132 ms
+Style & Layout
+760 ms
+Other
+657 ms
+Rendering
+487 ms
+Garbage Collection
+36 ms
+Parse HTML & CSS
+5 ms
+Script Parsing & Compilation
+2 ms
+A imagem da Maior exibição de conteúdo foi carregada lentamente
+As imagens acima da dobra com carregamento lento são renderizadas mais tarde no ciclo de vida da página, podendo atrasar a métrica "Maior exibição de conteúdo." Saiba mais sobre o carregamento lento ideal.LCP
+Elemento
+Carteira de Trabalho Digital: Verificando cadastro - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/S5DxjggO…" srcset="/proxy-image/v3/u/41/41/1747324800000/S5DxjggOjnujJ5P3qOf_IA/tFk_kwSoCQnvn…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Carteira de Trabalho Digital: Verificando cadastro - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+Elemento de Maior exibição de conteúdo 3.300 ms
+Este é o maior elemento com conteúdo na janela de visualização. Saiba mais sobre o elemento Maior exibição de conteúdo.LCP
+Elemento
+Carteira de Trabalho Digital: Verificando cadastro - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/S5DxjggO…" srcset="/proxy-image/v3/u/41/41/1747324800000/S5DxjggOjnujJ5P3qOf_IA/tFk_kwSoCQnvn…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Carteira de Trabalho Digital: Verificando cadastro - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+Fase
+% de LCP
+Tempo
+TTFB
+18%
+600 ms
+Atraso no carregamento
+50%
+1.650 ms
+Tempo de carregamento
+24%
+790 ms
+Atraso na renderização
+8%
+260 ms
+Evite DOM de tamanho excessivo 8.182 elementos
+Um DOM grande aumenta o uso da memória, causa cálculos de estilo mais longos e produz reflows de layout dispendiosos. Aprenda a evitar um DOM com um tamanho grande demais.TBT
+Estatística
+Elemento
+Valor
+Total de elementos DOM
+8.182
+Profundidade máxima de DOM
+div.opacity-0 > button.bg-white > svg.lucide > polyline
+<polyline points="15 3 21 3 21 9">
+14
+Máximo de elementos filhos
+Carteira Digital de Transito Carteira de Trabalho Digital Conecta Recife Cor…
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10" role="grid" aria-label="Todas as telas">
+448
+Reduza o JavaScript não usado Possível economia de 67 KiB
+Para diminuir o consumo de bytes da atividade da rede, reduza o JavaScript não usado e adie o carregamento de scripts até que eles sejam necessários. Aprenda a reduzir o JavaScript não usado.LCPFCP
+URL
+Tamanho da transferência
+Possível economia
+designpublico.com.br Própria
+135,8 KiB	66,9 KiB
+/assets/index-CcjWAV4a.js(designpublico.com.br)
+135,8 KiB
+66,9 KiB
+Defina um tamanho adequado para as imagens Possível economia de 397 KiB
+Veicule imagens que tenham o tamanho adequado para economizar dados da rede celular e melhorar o tempo de carregamento. Aprenda a redimensionar imagens.LCPFCP
+URL
+Tamanho do recurso
+Possível economia
+designpublico.com.br Própria
+511,3 KiB	396,6 KiB
+Conecta Recife: Detalhes do perfil Criança - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/GqyikbTw…" srcset="/proxy-image/v3/u/41/41/1747324800000/GqyikbTwpeBFFxvoMY5gMA/yo5KBnqCIT3BD…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Conecta Recife: Detalhes do perfil Criança - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…yo5KBnqCI…/xPB27aQ2-…(designpublico.com.br)
+63,2 KiB
+48,6 KiB
+Meu SUS Digital: Guia de Vigilância em Saúde - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/mBlneoMN…" srcset="/proxy-image/v3/u/41/41/1747324800000/mBlneoMNGzQHUUqpfbnmrQ/XMLbk-I46YTN6…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Meu SUS Digital: Guia de Vigilância em Saúde - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…XMLbk-I46…/dpGaNP(designpublico.com.br)
+52,4 KiB
+40,3 KiB
+Correios: 042.jpg - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/fXc83lk5…" srcset="/proxy-image/v3/u/41/41/1747324800000/fXc83lk5BZp1oStAJ8iG4g/Op2PSJqdQnarS…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Correios: 042.jpg - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…Op2PSJqdQ…/B3YEU-O8C…?widt(designpublico.com.br)
+48,0 KiB
+36,9 KiB
+Carteira Digital de Transito: Visualização da CNH digital - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/CSMIBgXD…" srcset="/proxy-image/v3/u/41/41/1747324800000/CSMIBgXDJvOKcKQEO6_K_Q/jB-9roerH-c61…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Carteira Digital de Transito: Visualização da CNH digital - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…jB-9roerH…/bT3w5d(designpublico.com.br)
+44,3 KiB
+34,1 KiB
+Meu INSS: Resultado da simulação com avaliação - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/_SzMjbH1…" srcset="/proxy-image/v3/u/41/41/1747324800000/_SzMjbH1Tkgv6hFMbKJ2wg/3Vi0C4IP-wVGp…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Meu INSS: Resultado da simulação com avaliação - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…3Vi0C4IP-…/w9LTPAv5g…(designpublico.com.br)
+38,9 KiB
+29,9 KiB
+Meu INSS: Autorização de uso de dados - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/Ozt4UR95…" srcset="/proxy-image/v3/u/41/41/1747324800000/Ozt4UR95vWKmW2fGzrq3iA/obEG1meCX7D4x…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Meu INSS: Autorização de uso de dados - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…obEG1meCX…/woMLY8IEi…(designpublico.com.br)
+37,8 KiB
+29,0 KiB
+Carteira de Trabalho Digital: Menu e versão do aplicativo - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/gptLTUbg…" srcset="/proxy-image/v3/u/41/41/1747324800000/gptLTUbgmI9BXQtCZSa0yA/yMP5Z-78Nybe3…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Carteira de Trabalho Digital: Menu e versão do aplicativo - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…yMP5Z-78N…/OvqkH7S3i…(designpublico.com.br)
+34,5 KiB
+26,5 KiB
+Conecta Recife: Serviços de cidadania - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/cv71Q9wJ…" srcset="/proxy-image/v3/u/41/41/1747324800000/cv71Q9wJjJcxQDZmT2eC9Q/lAXEguCabEqqD…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Conecta Recife: Serviços de cidadania - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…lAXEguCab…/VT2Kid(designpublico.com.br)
+33,9 KiB
+26,0 KiB
+CAIXA: Lista de serviços - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/kNcdLBeW…" srcset="/proxy-image/v3/u/41/41/1747324800000/kNcdLBeWUyypbq796bW_IA/IdmEYSy7hE7fu…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="CAIXA: Lista de serviços - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…IdmEYSy7h…/q2YNd4s55…(designpublico.com.br)
+33,2 KiB
+25,5 KiB
+Correios: 073.jpg - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/2naD5LKI…" srcset="/proxy-image/v3/u/41/41/1747324800000/2naD5LKIVondLJYjgD6cfQ/_ya0e2QAR6zi3…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Correios: 073.jpg - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…_ya0e2QAR…/rc2XtP78v…?widt(designpublico.com.br)
+31,2 KiB
+24,0 KiB
+Meu SUS Digital: Notificações abertas - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/LPk9XPIo…" srcset="/proxy-image/v3/u/41/41/1747324800000/LPk9XPIoP66y0P84UaMd7A/hZIN4w1ZSHtHb…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Meu SUS Digital: Notificações abertas - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…hZIN4w1ZS…/rEcT93(designpublico.com.br)
+28,5 KiB
+21,9 KiB
+Carteira de Trabalho Digital: Menu - seção de benefícios - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/Vlq_9xM3…" srcset="/proxy-image/v3/u/41/41/1747324800000/Vlq_9xM38RQ51hKrjCDtLw/bwetTZrbJQ2_F…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Carteira de Trabalho Digital: Menu - seção de benefícios - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…bwetTZrbJ…/pxmuHxHxL…(designpublico.com.br)
+27,3 KiB
+21,0 KiB
+Correios: 004.jpg - Screen view
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747324800000/KWx0TnAa…" srcset="/proxy-image/v3/u/41/41/1747324800000/KWx0TnAafa23NPhAeVRD4Q/8q_GRVvvnvBH6…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Correios: 004.jpg - Screen view" loading="lazy" class="w-full h-full object-contain opacity-100" style="transition: opacity 0.3s;">
+…8q_GRVvvn…/e4oQasteH…?widt(designpublico.com.br)
+21,9 KiB
+16,8 KiB
+Símbolo da Design Público
+<img src="/designpublico-symbol.png" alt="Símbolo da Design Público" class="h-full w-auto" aria-hidden="true">
+/designpublico-symbol.png(designpublico.com.br)
+16,3 KiB
+16,1 KiB
+Os elementos de imagem não têm width e height explícitas
+Defina uma largura e altura explícitas em elementos de imagem para reduzir mudanças de layout e melhorar a CLS. Aprenda a definir as dimensões de uma imagem.CLS
+URL
+designpublico.com.br Própria
+Símbolo da Design Público
+<img src="/designpublico-symbol.png" alt="Símbolo da Design Público" class="h-full w-auto" aria-hidden="true">
+/designpublico-symbol.png(designpublico.com.br)
+Símbolo da Design Público
+<img src="/designpublico-symbol.png" alt="Símbolo da Design Público" class="h-full w-auto" aria-hidden="true">
+/designpublico-symbol.png(designpublico.com.br)
+Evitar tarefas longas da linha de execução principal 4 tarefas longas encontradas
+Lista as tarefas mais longas na linha de execução principal. Útil para identificar os piores contribuidores para a latência de entrada. Aprenda a evitar tarefas mais longas da linha de execução principalTBT
+URL
+Horário de início
+Duração
+designpublico.com.br Própria
+791 ms
+/assets/index-CcjWAV4a.js(designpublico.com.br)
+2.174 ms
+462 ms
+/assets/index-CcjWAV4a.js(designpublico.com.br)
+2.636 ms
+192 ms
+/screens(designpublico.com.br)
+816 ms
+74 ms
+/assets/index-CcjWAV4a.js(designpublico.com.br)
+2.101 ms
+63 ms
+Evite grandes mudanças no layout 2 trocas de layout encontradas
+Essas são as maiores trocas de layout observadas na página. Cada item da tabela representa uma única troca de layout e mostra o elemento que mais mudou. Abaixo de cada item estão as possíveis causas para a troca de layout. Algumas dessas trocas podem não ser incluídas no valor da métrica de CLS devido ao janelamento. Aprenda a melhorar o CLSCLS
+Elemento
+Pontuação da troca de layout
+Componentes Categoria 448 telas
+<div class="mb-4 flex flex-wrap items-center justify-between">
+0,000
+Símbolo da Design Público
+<img src="/designpublico-symbol.png" alt="Símbolo da Design Público" class="h-full w-auto" aria-hidden="true">
+Elemento de mídia sem tamanho explícito
+0,000
+Evitar encadeamento de solicitações críticas 2 redes encontradas
+As cadeias de solicitação críticas abaixo mostram quais recursos são carregados com prioridade alta. Diminua o tamanho das cadeias, reduza o tamanho do download de recursos ou adie o download de recursos desnecessários para melhorar o carregamento de página. Aprenda a evitar encadeamento de solicitações críticas.
+Latência máxima do caminho crítico: 539,498 ms
+Navegação inicial
+/screens(designpublico.com.br)
+/assets/index-CcjWAV4a.js(designpublico.com.br) - 201,463 ms, 136,52 KiB
+/assets/index-C58-GFhI.css(designpublico.com.br) - 312,144 ms, 11,99 KiB
+Reduzir o uso de terceiros A linha de execução principal foi bloqueada por 0 ms pelo código de terceiros
+Código de terceiros pode afetar significativamente a performance de carregamento. Limite o número de provedores terceirizados redundantes e carregue o código de terceiros depois que a página tiver sido carregada. Aprenda a minimizar o impacto de terceiros.TBT
+Terceiros
+Tamanho da transferência
+Tempo de bloqueio da linha de execução principal
+replit.com
+5 KiB	0 ms
+…js/replit-badge-v3.js(replit.com)
+5 KiB
+0 ms
+Mais informações sobre o desempenho do seu aplicativo. Esses números não afetam diretamente o índice de desempenho.
