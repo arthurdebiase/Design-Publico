@@ -30,15 +30,16 @@ export default function Header() {
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
       <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2" aria-label="Ir para página inicial">
             <div className="h-8 w-8 flex items-center justify-center">
               <img 
                 src={symbolLogo} 
-                alt="Design Público Logo" 
+                alt="Símbolo da Design Público" 
                 className="h-full w-auto"
+                aria-hidden="true" /* O texto do logo já fornece o conteúdo, portanto a imagem é decorativa */
               />
             </div>
-            <span className="flex items-center">
+            <span className="flex items-center" aria-label="Design Público">
               <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900 }}>DESIGN</span>
               <span style={{ fontFamily: 'Arial', fontWeight: 700 }} className="ml-1">PÚBLICO</span>
             </span>

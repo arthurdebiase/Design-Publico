@@ -145,15 +145,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
           {/* Logo and description column */}
           <div className="md:col-span-6 space-y-4">
-            <Link href="/" className="flex items-center space-x-2 mb-4">
+            <Link href="/" className="flex items-center space-x-2 mb-4" aria-label="Ir para página inicial">
               <div className="w-8 h-8 flex items-center justify-center">
                 <img 
                   src={symbolLogo} 
-                  alt="Design Público Logo" 
+                  alt="Símbolo da Design Público" 
                   className="h-full w-auto"
+                  aria-hidden="true" /* O texto do logo já fornece o conteúdo, portanto a imagem é decorativa */
                 />
               </div>
-              <span className="flex items-center">
+              <span className="flex items-center" aria-label="Design Público">
                 <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900 }}>DESIGN</span>
                 <span style={{ fontFamily: 'Arial', fontWeight: 700 }} className="ml-1">PÚBLICO</span>
               </span>
@@ -173,10 +174,13 @@ export default function Footer() {
               {t('newsletter.subtitle')}
             </p>
             
-            <form onSubmit={handleSubscribe} className="space-y-3">
+            <form onSubmit={handleSubscribe} className="space-y-3" aria-label="Formulário de inscrição na newsletter">
               <div className="flex gap-2">
                 <div className="relative flex-grow">
+                  <label htmlFor="newsletter-email" className="sr-only">E-mail para newsletter</label>
                   <Input
+                    id="newsletter-email"
+                    name="email"
                     type="email"
                     placeholder={t('newsletter.placeholder')}
                     value={email}
@@ -192,16 +196,19 @@ export default function Footer() {
                     disabled={isSubmitting || formStatus === "success"}
                   />
                   {formStatus === "success" && (
-                    <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" />
+                    <CheckCircle2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 h-4 w-4" aria-hidden="true" />
                   )}
                   {formStatus === "error" && (
-                    <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500 h-4 w-4" />
+                    <AlertCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 text-red-500 h-4 w-4" aria-hidden="true" />
                   )}
                 </div>
                 <Button 
                   type="submit" 
                   className="bg-[#0066FF] hover:bg-blue-700"
                   disabled={isSubmitting || formStatus === "success"}
+                  aria-label={isSubmitting ? t('newsletter.submitting') : 
+                             formStatus === "success" ? t('newsletter.subscribed') : 
+                             t('newsletter.button')}
                 >
                   {isSubmitting ? t('newsletter.submitting') : 
                    formStatus === "success" ? t('newsletter.subscribed') : 
