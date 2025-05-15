@@ -142,7 +142,7 @@ export function ResponsiveImage({
         sizes={sizes}
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
-        {...(priority ? { 'fetchpriority': 'high' } : {})}
+        {...(priority ? { fetchpriority: 'high' } : {})}
         className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={handleLoad}
         onError={handleError}

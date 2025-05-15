@@ -62,9 +62,9 @@ export const OptimizedImageLoader: React.FC<OptimizedImageLoaderProps> = ({
     // Criar nova imagem e configurar handlers
     const img = new Image();
     
-    // Definir fetchPriority se suportado pelo navegador
+    // Definir fetchpriority se suportado pelo navegador (usando lowercase conforme o padrão do DOM)
     if ('fetchPriority' in HTMLImageElement.prototype) {
-      (img as any).fetchPriority = priority;
+      (img as any).fetchpriority = priority;
     }
     
     img.onload = img.onerror = () => {
