@@ -91,11 +91,24 @@ Crawl-delay: 2`);
       const path = req.path.replace("/proxy-image", "");
       
       // Parse query parameters for image optimization
-      const width = parseInt(req.query.width as string) || null;
-      const height = parseInt(req.query.height as string) || null;
+      let width = parseInt(req.query.width as string) || null;
+      let height = parseInt(req.query.height as string) || null;
       const format = (req.query.format as string) || null;
-      const quality = parseInt(req.query.quality as string) || 80;
+      let quality = parseInt(req.query.quality as string) || 80;
       const isPriority = req.query.priority === 'true';
+      
+      // Limite máximo de tamanho para evitar imagens muito grandes
+      // O relatório do Lighthouse indica que estamos servindo imagens grandes demais
+      if (width && width > 1000) {
+        // Se a imagem for muito grande, reduzir para máximo de 1000px de largura
+        // e ajustar a qualidade para baixo em imagens maiores (salvando bandwidth)
+        const originalWidth = width;
+        width = 1000;
+        // Reduzir ainda mais a qualidade para imagens muito grandes
+        if (originalWidth > 1500 && quality > 75) {
+          quality = 75;
+        }
+      }
       
       // Check if browser supports WebP
       const acceptHeader = req.headers.accept || '';
@@ -108,8 +121,12 @@ Crawl-delay: 2`);
       if (!outputFormat || outputFormat === 'auto') {
         if (supportsAvif) {
           outputFormat = 'avif';
+          // AVIF permite qualidade menor com a mesma percepção visual
+          if (quality > 70) quality = 70;
         } else if (supportsWebP) {
           outputFormat = 'webp';
+          // WebP também pode usar qualidade um pouco menor
+          if (quality > 80) quality = 80;
         } else {
           outputFormat = 'jpeg';
         }

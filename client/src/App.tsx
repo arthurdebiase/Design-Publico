@@ -15,6 +15,7 @@ import { CriticalCSS } from "@/components/ui/critical-css";
 import { ResourcePreloader } from "@/components/ui/resource-preloader";
 import { ScriptOptimizer } from "@/components/ui/script-optimizer";
 import { AccessibilityEnhancer } from "@/components/ui/accessibility-enhancer";
+import { OptimizedImageLoader } from "@/components/ui/optimized-image-loader";
 
 function Router() {
   return (
@@ -40,6 +41,8 @@ function App() {
         <ResourcePreloader />
         {/* Otimização de carregamento de scripts */}
         <ScriptOptimizer />
+        {/* Otimização de carregamento de imagens */}
+        <OptimizedImageLoader />
         {/* Melhorias de acessibilidade */}
         <AccessibilityEnhancer />
         <div className="flex flex-col">
