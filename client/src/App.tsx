@@ -10,6 +10,7 @@ import About from "@/pages/about";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import ScrollToTop from "@/components/scroll-to-top";
+import MetaTags from "@/components/seo/meta-tags";
 
 function Router() {
   return (
@@ -27,6 +28,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ScrollToTop>
+        {/* Default SEO meta tags */}
+        <MetaTags />
         <div className="flex flex-col">
           <Header />
           <main className="flex-grow">

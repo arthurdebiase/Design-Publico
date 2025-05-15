@@ -27,6 +27,7 @@ export const screens = pgTable("screens", {
   name: text("name").notNull(),
   description: text("description"),
   imageUrl: text("image_url").notNull(),
+  altText: text("alt_text"),  // Alt text for image accessibility
   flow: text("flow"),
   order: integer("order").notNull().default(0),
   tags: text("tags").array(),
