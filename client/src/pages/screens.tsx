@@ -429,7 +429,7 @@ export default function ScreensPage() {
         
         {/* Screen counter */}
         <div className="text-gray-600 font-medium">
-          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}{selectedTags.length > 0 || selectedCategories.length > 0 ? ` (${filteredScreens.length} filtradas)` : ''}
+          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}
         </div>
       </div>
       
