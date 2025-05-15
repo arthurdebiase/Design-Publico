@@ -46,11 +46,13 @@ export default function Home() {
           ) : (
             <>
               {layout === "masonry" ? (
-                <ResponsiveMasonryGrid>
-                  {apps && apps.map((app, index) => (
-                    <AppCard key={app.id} app={app} isPriority={index < 4} />
-                  ))}
-                </ResponsiveMasonryGrid>
+                <div className="w-full">
+                  <ResponsiveMasonryGrid>
+                    {apps && apps.map((app, index) => (
+                      <AppCard key={app.id} app={app} isPriority={index < 4} />
+                    ))}
+                  </ResponsiveMasonryGrid>
+                </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {apps && apps.map((app, index) => (
