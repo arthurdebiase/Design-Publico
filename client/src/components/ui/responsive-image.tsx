@@ -42,6 +42,11 @@ interface ResponsiveImageProps extends React.ImgHTMLAttributes<HTMLImageElement>
    * Optional placeholder component
    */
   placeholder?: React.ReactNode;
+  
+  /**
+   * Whether this image is a priority image that should load eagerly (for LCP)
+   */
+  priority?: boolean;
 }
 
 const DEFAULT_WIDTHS = [640, 960, 1280];
@@ -60,6 +65,7 @@ export function ResponsiveImage({
   className = '',
   placeholderClassName = '',
   placeholder,
+  priority = false,
   onLoad,
   onError,
   style,
@@ -135,7 +141,8 @@ export function ResponsiveImage({
         srcSet={generateSrcSet()}
         sizes={sizes}
         alt={alt}
-        loading="lazy"
+        loading={priority ? 'eager' : 'lazy'}
+        fetchPriority={priority ? 'high' : 'auto'}
         className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
         onLoad={handleLoad}
         onError={handleError}

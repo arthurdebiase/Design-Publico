@@ -10,9 +10,10 @@ import { createSlug } from "@/lib/slugUtils";
 
 interface AppCardProps {
   app: App;
+  isPriority?: boolean;
 }
 
-function AppScreenImage({ appId, appName }: { appId: string, appName?: string }) {
+function AppScreenImage({ appId, appName, isPriority = false }: { appId: string, appName?: string, isPriority?: boolean }) {
   const { data: screens, isLoading, error } = useQuery({
     queryKey: [`/api/apps/${appId}/screens`],
     queryFn: () => fetchScreensByAppId(appId),
@@ -66,6 +67,7 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
             widths={[250, 350, 480]}
             format="webp"
             quality={80}
+            priority={isPriority}
             placeholder={
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
                 <span className="text-gray-400 text-sm">Loading...</span>

@@ -1,0 +1,155 @@
+FCP
++3
+LCP
++9
+TBT
++30
+CLS
++25
+SI
++6
+Performance
+Values are estimated and may vary. The performance score is calculated directly from these metrics.See calculator.
+0–49
+50–89
+90–100
+Final Screenshot
+
+METRICS
+Expand view
+First Contentful Paint
+3.8 s
+Largest Contentful Paint
+4.5 s
+Total Blocking Time
+20 ms
+Cumulative Layout Shift
+0
+Speed Index
+5.2 s
+Captured at May 15, 2025 at 8:22 AM GMT-3
+Emulated Moto G Power with Lighthouse 12.6.0
+Single page session
+Initial page load
+Slow 4G throttling
+Using HeadlessChromium 135.0.7049.114 with lr
+View Treemap
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Screenshot
+Later this year, insights will replace performance audits. Learn more and provide feedback here.
+Try insights
+Show audits relevant to:
+
+All
+
+FCP
+
+LCP
+
+TBT
+
+CLS
+DIAGNOSTICS
+Enable text compression Est savings of 383 KiB
+Text-based resources should be served with compression (gzip, deflate or brotli) to minimize total network bytes. Learn more about text compression.LCPFCP
+URL
+Transfer Size
+Est Savings
+designpublico.com.br 1st Party
+545.2 KiB	382.8 KiB
+/assets/index-C1-vQN8q.js(designpublico.com.br)
+427.9 KiB
+294.9 KiB
+/assets/index-DCWKScbI.css(designpublico.com.br)
+64.2 KiB
+53.1 KiB
+…8/screens(designpublico.com.br)
+49.4 KiB
+32.4 KiB
+/app/8(designpublico.com.br)
+3.6 KiB
+2.5 KiB
+Largest Contentful Paint image was lazily loaded
+Above-the-fold images that are lazily loaded render later in the page lifecycle, which can delay the largest contentful paint. Learn more about optimal lazy loading.LCP
+Element
+Tela de login do app com fundo gradiente roxo e o logo "X" no topo. A mensagem …
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747317600000/YJzz5Fp8…" srcset="/proxy-image/v3/u/41/41/1747317600000/YJzz5Fp8jrW_Tw3h3qJZqw/YfihzZAf9-Han…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Tela de login do app com fundo gradiente roxo e o logo &quot;X&quot; no topo. A mens…" loading="lazy" class="w-full h-full object-contain opacity-100" aria-label="Tela de login do app com fundo gradiente roxo e o logo &quot;X&quot; no topo. A mens…" style="aspect-ratio: 9 / 16; transition: opacity 0.3s;">
+Largest Contentful Paint element 4,530 ms
+This is the largest contentful element painted within the viewport. Learn more about the Largest Contentful Paint elementLCP
+Element
+Tela de login do app com fundo gradiente roxo e o logo "X" no topo. A mensagem …
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747317600000/YJzz5Fp8…" srcset="/proxy-image/v3/u/41/41/1747317600000/YJzz5Fp8jrW_Tw3h3qJZqw/YfihzZAf9-Han…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Tela de login do app com fundo gradiente roxo e o logo &quot;X&quot; no topo. A mens…" loading="lazy" class="w-full h-full object-contain opacity-100" aria-label="Tela de login do app com fundo gradiente roxo e o logo &quot;X&quot; no topo. A mens…" style="aspect-ratio: 9 / 16; transition: opacity 0.3s;">
+Phase
+% of LCP
+Timing
+TTFB
+13%
+600 ms
+Load Delay
+37%
+1,690 ms
+Load Time
+18%
+800 ms
+Render Delay
+32%
+1,430 ms
+Reduce unused JavaScript Est savings of 192 KiB
+Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. Learn how to reduce unused JavaScript.LCPFCP
+URL
+Transfer Size
+Est Savings
+designpublico.com.br 1st Party
+427.8 KiB	191.6 KiB
+/assets/index-C1-vQN8q.js(designpublico.com.br)
+427.8 KiB
+191.6 KiB
+Eliminate render-blocking resources Est savings of 740 ms
+Resources are blocking the first paint of your page. Consider delivering critical JS/CSS inline and deferring all non-critical JS/styles. Learn how to eliminate render-blocking resources.LCPFCP
+  Show 3rd-party resources (1)
+URL
+Transfer Size
+Est Savings
+designpublico.com.br 1st Party
+64.7 KiB	610 ms
+/assets/index-DCWKScbI.css(designpublico.com.br)
+64.7 KiB
+610 ms
+replit.com
+5.0 KiB	790 ms
+…js/replit-badge-v3.js(replit.com)
+5.0 KiB
+790 ms
+Reduce unused CSS Est savings of 55 KiB
+Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. Learn how to reduce unused CSS.LCPFCP
+URL
+Transfer Size
+Est Savings
+designpublico.com.br 1st Party
+64.2 KiB	54.9 KiB
+/assets/index-DCWKScbI.css(designpublico.com.br)
+64.2 KiB
+54.9 KiB
+Properly size images Est savings of 579 KiB
+Serve images that are appropriately-sized to save cellular data and improve load time. Learn how to size images.LCPFCP
+  Show 3rd-party resources (1)
+URL
+Resource Size
+Est Savings
+designpublico.com.br 1st Party
+570.0 KiB	441.7 KiB
+Tela do app Caixa Econômica com cabeçalho azul e logo "CAIXA". A seção "Previdê…
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747317600000/rmvmjyyc…" srcset="/proxy-image/v3/u/41/41/1747317600000/rmvmjyycSFgO_oEFNkiSqQ/YuFdHDLrFI5Pu…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Tela do app Caixa Econômica com cabeçalho azul e logo &quot;CAIXA&quot;. A seção &quot;Pr…" loading="lazy" class="w-full h-full object-contain opacity-100" aria-label="Tela do app Caixa Econômica com cabeçalho azul e logo &quot;CAIXA&quot;. A seção &quot;Pr…" style="aspect-ratio: 9 / 16; transition: opacity 0.3s;">
+…YuFdHDLrF…/bc5h4SXxH…(designpublico.com.br)
+44.3 KiB
+34.1 KiB
+Tela de login do app com fundo gradiente roxo e o logo "X" no topo. A mensagem …
+<img src="https://designpublico.com.br/proxy-image/v3/u/41/41/1747317600000/YJzz5Fp8…" srcset="/proxy-image/v3/u/41/41/1747317600000/YJzz5Fp8jrW_Tw3h3qJZqw/YfihzZAf9-Han…" sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw" alt="Tela de login do app com fundo gradiente roxo e o logo &quot;X&quot; no topo. A mens…" loading="lazy" class="w-full h-full object-contain opacity-100" aria-label="Tela de login do app com fundo gradiente roxo e o logo &quot;X&quot; no topo. A mens…" style="aspect-ratio: 9 / 16; transition: opacity 0.3s;">
+…YfihzZAf9…/n1sbHv5po…(designpublico.com.br)
+43.5 KiB
