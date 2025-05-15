@@ -45,28 +45,34 @@ export function getProcessedImageUrl(
   
   // For Airtable CDN URLs, use our proxy route
   if (url.includes('airtableusercontent.com')) {
-    // Extract the path after the domain
-    const urlObj = new URL(url);
-    const path = urlObj.pathname;
-    
-    // Base proxy URL
-    let proxyUrl = `/proxy-image${path}`;
-    
-    // Add query parameters for optimization if provided
-    if (options) {
-      const params: string[] = [];
+    try {
+      // Extract the path after the domain
+      const urlObj = new URL(url);
+      const path = urlObj.pathname;
       
-      if (options.width) params.push(`width=${options.width}`);
-      if (options.height) params.push(`height=${options.height}`);
-      if (options.format) params.push(`format=${options.format}`);
-      if (options.quality) params.push(`quality=${options.quality}`);
+      // Base proxy URL - add the origin for absolute URLs in production environment
+      let proxyUrl = `/proxy-image${path}`;
       
-      if (params.length > 0) {
-        proxyUrl += `?${params.join('&')}`;
+      // Add query parameters for optimization if provided
+      if (options) {
+        const params: string[] = [];
+        
+        if (options.width) params.push(`width=${options.width}`);
+        if (options.height) params.push(`height=${options.height}`);
+        if (options.format) params.push(`format=${options.format}`);
+        if (options.quality) params.push(`quality=${options.quality}`);
+        
+        if (params.length > 0) {
+          proxyUrl += `?${params.join('&')}`;
+        }
       }
+      
+      return proxyUrl;
+    } catch (error) {
+      console.error("Error processing Airtable URL:", error);
+      // Fall back to original URL if there's an error parsing
+      return url;
     }
-    
-    return proxyUrl;
   }
   
   return url;
