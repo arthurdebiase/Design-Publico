@@ -15,6 +15,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
+  
+  // Create routes for SEO files
+  app.get('/robots.txt', (req, res) => {
+    res.type('text/plain');
+    res.send('User-agent: *\nAllow: /\n\nSitemap: https://designpublico.com.br/sitemap.xml');
+  });
+  
+  app.get('/sitemap.xml', (req, res) => {
+    res.type('application/xml');
+    res.send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://designpublico.com.br/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url><url><loc>https://designpublico.com.br/screens</loc><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://designpublico.com.br/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url></urlset>');
+  });
 
   // Proxy for Airtable images with optimization
   app.get("/proxy-image/*", async (req, res) => {

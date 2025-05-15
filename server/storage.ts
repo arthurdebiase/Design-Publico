@@ -161,8 +161,26 @@ export class MemStorage implements IStorage {
 
   // Airtable Sync
   async syncFromAirtable(apiKey: string, baseId: string): Promise<void> {
+    // We'll move the sync process to a background task so it doesn't block server startup
+    // This will allow the server to start up quickly while data syncs in the background
+    setTimeout(async () => {
+      try {
+        await this.performAirtableSync(apiKey, baseId);
+      } catch (error) {
+        console.error("Error in background Airtable sync:", error);
+      }
+    }, 100);
+    
+    // Initialize with sample data immediately for faster startup
+    this.initializeSampleData();
+    
+    // Return immediately to allow server to start
+    return Promise.resolve();
+  }
+  
+  private async performAirtableSync(apiKey: string, baseId: string): Promise<void> {
     try {
-      console.log(`Syncing data from Airtable base ${baseId}...`);
+      console.log(`Syncing data from Airtable base ${baseId} in background...`);
 
       // Define the Airtable field mappings - these must match exactly with your Airtable column names
       const AIRTABLE_TABLE_NAME = "screens"; // Table containing screen images and details
@@ -195,41 +213,47 @@ export class MemStorage implements IStorage {
       let offset: string | undefined = undefined;
       let recordCounter = 0; // Use this to track the original position in the Airtable list
 
-      do {
-        const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
-        const params: any = { 
-          pageSize: 100,
-          // Use the specific view to maintain the exact order as seen in Airtable UI
-          view: "viwyDosqJV0fgIUf2" // This is the view ID you shared
-        };
-        if (offset) {
-          params.offset = offset;
-        }
+      try {
+        do {
+          const url = `https://api.airtable.com/v0/${baseId}/${AIRTABLE_TABLE_NAME}`;
+          const params: any = { 
+            pageSize: 100,
+            // Use the specific view to maintain the exact order as seen in Airtable UI
+            view: "viwyDosqJV0fgIUf2" // This is the view ID you shared
+          };
+          if (offset) {
+            params.offset = offset;
+          }
 
-        const screensResponse = await axios.get(url, { 
-          headers: { 
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
-          },
-          params
-        });
-
-        // Use a simpler approach - add each record with its exact index from Airtable's record list
-        for (let i = 0; i < screensResponse.data.records.length; i++) {
-          const record = screensResponse.data.records[i];
-          // Add the absolute position (recordCounter + i) as the order
-          allScreenRecords.push({
-            ...record,
-            airtableOrder: recordCounter + i
+          const screensResponse = await axios.get(url, { 
+            headers: { 
+              Authorization: `Bearer ${apiKey}`,
+              "Content-Type": "application/json"
+            },
+            params,
+            timeout: 10000 // Add 10 second timeout to avoid hanging
           });
-        }
-        
-        // Move the counter forward by the number of records processed
-        recordCounter += screensResponse.data.records.length;
-        offset = screensResponse.data.offset;
 
-        console.log(`Fetched batch of ${screensResponse.data.records.length} screen records from Airtable`);
-      } while (offset);
+          // Use a simpler approach - add each record with its exact index from Airtable's record list
+          for (let i = 0; i < screensResponse.data.records.length; i++) {
+            const record = screensResponse.data.records[i];
+            // Add the absolute position (recordCounter + i) as the order
+            allScreenRecords.push({
+              ...record,
+              airtableOrder: recordCounter + i
+            });
+          }
+          
+          // Move the counter forward by the number of records processed
+          recordCounter += screensResponse.data.records.length;
+          offset = screensResponse.data.offset;
+
+          console.log(`Fetched batch of ${screensResponse.data.records.length} screen records from Airtable`);
+        } while (offset);
+      } catch (error) {
+        console.error("Error fetching screens from Airtable:", error);
+        // Continue with the sync process with what we have
+      }
 
       console.log(`Fetched a total of ${allScreenRecords.length} screen records from Airtable`);
       
@@ -262,26 +286,32 @@ export class MemStorage implements IStorage {
       let allAppRecords: any[] = [];
       let appOffset: string | undefined = undefined;
 
-      do {
-        const url = `https://api.airtable.com/v0/${baseId}/${APPS_TABLE_NAME}`;
-        const params: any = { pageSize: 100 };
-        if (appOffset) {
-          params.offset = appOffset;
-        }
+      try {
+        do {
+          const url = `https://api.airtable.com/v0/${baseId}/${APPS_TABLE_NAME}`;
+          const params: any = { pageSize: 100 };
+          if (appOffset) {
+            params.offset = appOffset;
+          }
 
-        const appsResponse = await axios.get(url, { 
-          headers: { 
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
-          },
-          params
-        });
+          const appsResponse = await axios.get(url, { 
+            headers: { 
+              Authorization: `Bearer ${apiKey}`,
+              "Content-Type": "application/json"
+            },
+            params,
+            timeout: 10000 // Add 10 second timeout
+          });
 
-        allAppRecords = [...allAppRecords, ...appsResponse.data.records];
-        appOffset = appsResponse.data.offset;
+          allAppRecords = [...allAppRecords, ...appsResponse.data.records];
+          appOffset = appsResponse.data.offset;
 
-        console.log(`Fetched batch of ${appsResponse.data.records.length} app records from Airtable`);
-      } while (appOffset);
+          console.log(`Fetched batch of ${appsResponse.data.records.length} app records from Airtable`);
+        } while (appOffset);
+      } catch (error) {
+        console.error("Error fetching apps from Airtable:", error);
+        // Continue with the sync process with what we have
+      }
 
       console.log(`Fetched a total of ${allAppRecords.length} app records from Airtable`);
 

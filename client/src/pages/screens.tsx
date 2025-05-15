@@ -75,25 +75,29 @@ export default function ScreensPage() {
         if (!screen.tags || !Array.isArray(screen.tags)) return false;
         
         // At least one of the selected tags must be present in the screen's tags
-        return selectedTags.some(tag => screen.tags.includes(tag));
+        return selectedTags.some(tag => screen.tags && screen.tags.includes(tag));
       });
     }
     
     if (selectedCategories.length > 0) {
       filtered = filtered.filter(screen => {
         // Check for category match in screen category
-        if (typeof screen.category === 'string') {
-          if (selectedCategories.includes(screen.category)) return true;
-        } else if (screen.category && Array.isArray(screen.category)) {
-          // Check if any selected category exists in the screen's categories
-          if (selectedCategories.some(cat => screen.category.includes(cat))) return true;
+        if (screen.category) {
+          if (typeof screen.category === 'string') {
+            if (selectedCategories.includes(screen.category)) return true;
+          } else if (Array.isArray(screen.category)) {
+            // Check if any selected category exists in the screen's categories
+            if (selectedCategories.some(cat => screen.category?.includes(cat))) return true;
+          }
         }
         
         // Check for category match in app category
-        if (typeof screen.app?.category === 'string') {
-          if (selectedCategories.includes(screen.app.category)) return true;
-        } else if (screen.app?.category && Array.isArray(screen.app.category)) {
-          if (selectedCategories.some(cat => screen.app.category.includes(cat))) return true;
+        if (screen.app?.category) {
+          if (typeof screen.app.category === 'string') {
+            if (selectedCategories.includes(screen.app.category)) return true;
+          } else if (Array.isArray(screen.app.category)) {
+            if (selectedCategories.some(cat => screen.app?.category?.includes(cat))) return true;
+          }
         }
         
         return false;

@@ -1,0 +1,117 @@
+Acessibilidade
+Essas verificações destacam oportunidades para melhorar a acessibilidade do seu app da Web. A detecção automática só detecta um subconjunto de problemas e não garante a acessibilidade do seu app da Web. Portanto, também recomendamos o teste manual.
+Nomes e etiquetas
+Os botões não têm um nome acessível
+Quando um botão não tem um nome acessível, os leitores de tela o enunciam como "botão", o que o inutiliza para usuários que dependem desses leitores. Aprenda a tornar os botões mais acessíveis.
+Elementos com falha
+header.bg-white > div.container > div.md:hidden > button.inline-flex
+<button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md…" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="radix-:r2:" data-state="closed">
+div.mb-4 > div.flex > div.flex > button.peer
+<button type="button" role="switch" aria-checked="false" data-state="unchecked" value="on" class="peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-ful…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+div.bg-gray-100 > div.absolute > div.opacity-0 > button.bg-white
+<button class="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-ce…">
+Veja aqui oportunidades de melhorar a semântica dos controles do seu aplicativo. Isso pode melhorar a experiência de usuários de tecnologias assistivas, como leitores de tela.
+Práticas recomendadas
+[user-scalable="no"] é usado no elemento <meta name="viewport"> ou o atributo [maximum-scale] é menor que 5.
+A desativação do zoom gera problemas para usuários com baixa visão que utilizam a ampliação de tela para enxergar corretamente o conteúdo de uma página da Web. Saiba mais sobre a metatag viewport.
+Elementos com falha
+head > meta
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+Esses itens destacam as práticas recomendadas comuns para acessibilidade.
+Navegação
+Os elementos de título não aparecem em uma ordem sequencial descendente
+Títulos propriamente ordenados que não pulam níveis comunicam a estrutura semântica da página, facilitando a navegação e compreensão ao usar tecnologias adaptativas. Saiba mais sobre ordem de títulos.
+Elementos com falha
+Assine nossa newsletter
+<h3 class="font-semibold text-gray-900 mb-4">
+Veja aqui oportunidades de melhorar a navegação por teclado no seu aplicativo.

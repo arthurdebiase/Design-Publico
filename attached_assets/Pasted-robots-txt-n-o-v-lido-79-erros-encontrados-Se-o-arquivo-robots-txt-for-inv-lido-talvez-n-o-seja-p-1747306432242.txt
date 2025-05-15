@@ -1,0 +1,243 @@
+robots.txt não é válido 79 erros encontrados
+Se o arquivo robots.txt for inválido, talvez não seja possível aos rastreadores entender como você quer que seu site seja rastreado ou indexado. Saiba mais sobre o arquivo robots.txt.
+Line #
+Content
+Error
+1
+<!DOCTYPE html>
+Syntax not understood
+2
+<html lang="en">
+Syntax not understood
+3
+<head>
+Syntax not understood
+4
+<style data-vite-theme="" data-inject-first="">:root {
+Unknown directive
+5
+--background: 0 0% 100%;
+Unknown directive
+6
+--foreground: 20 14.3% 4.1%;
+Unknown directive
+7
+--muted: 60 4.8% 95.9%;
+Unknown directive
+8
+--muted-foreground: 25 5.3% 44.7%;
+Unknown directive
+9
+--popover: 0 0% 100%;
+Unknown directive
+10
+--popover-foreground: 20 14.3% 4.1%;
+Unknown directive
+11
+--card: 0 0% 100%;
+Unknown directive
+12
+--card-foreground: 20 14.3% 4.1%;
+Unknown directive
+13
+--border: 20 5.9% 90%;
+Unknown directive
+14
+--input: 20 5.9% 90%;
+Unknown directive
+15
+--primary: 152 79% 35%;
+Unknown directive
+16
+--primary-foreground: 138 36% 98%;
+Unknown directive
+17
+--secondary: 60 4.8% 95.9%;
+Unknown directive
+18
+--secondary-foreground: 24 9.8% 10%;
+Unknown directive
+19
+--accent: 60 4.8% 95.9%;
+Unknown directive
+20
+--accent-foreground: 24 9.8% 10%;
+Unknown directive
+21
+--destructive: 0 84.2% 60.2%;
+Unknown directive
+22
+--destructive-foreground: 60 9.1% 97.8%;
+Unknown directive
+23
+--ring: 20 14.3% 4.1%;
+Unknown directive
+24
+--radius: 0.5rem;
+Unknown directive
+25
+}
+Syntax not understood
+26
+.dark {
+Syntax not understood
+27
+--background: 240 10% 3.9%;
+Unknown directive
+28
+--foreground: 0 0% 98%;
+Unknown directive
+29
+--muted: 240 3.7% 15.9%;
+Unknown directive
+30
+--muted-foreground: 240 5% 64.9%;
+Unknown directive
+31
+--popover: 240 10% 3.9%;
+Unknown directive
+32
+--popover-foreground: 0 0% 98%;
+Unknown directive
+33
+--card: 240 10% 3.9%;
+Unknown directive
+34
+--card-foreground: 0 0% 98%;
+Unknown directive
+35
+--border: 240 3.7% 15.9%;
+Unknown directive
+36
+--input: 240 3.7% 15.9%;
+Unknown directive
+37
+--primary: 152 79% 35%;
+Unknown directive
+38
+--primary-foreground: 138 36% 98%;
+Unknown directive
+39
+--secondary: 240 3.7% 15.9%;
+Unknown directive
+40
+--secondary-foreground: 0 0% 98%;
+Unknown directive
+41
+--accent: 240 3.7% 15.9%;
+Unknown directive
+42
+--accent-foreground: 0 0% 98%;
+Unknown directive
+43
+--destructive: 0 62.8% 30.6%;
+Unknown directive
+44
+--destructive-foreground: 0 0% 98%;
+Unknown directive
+45
+--ring: 240 4.9% 83.9%;
+Unknown directive
+46
+--radius: 0.5rem;
+Unknown directive
+47
+}</style>
+Syntax not understood
+49
+<meta charset="UTF-8" />
+Syntax not understood
+50
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+Syntax not understood
+51
+<title>DESIGN PÚBLICO - Referências de Interfaces Públicas Digitais</title>
+Syntax not understood
+52
+<meta name="description" content="Uma base de referências visuais de interfaces públicas digitais. Reunimos bons exemplos de design para inspirar quem cria serviços digitais para a população." />
+Syntax not understood
+53
+<meta name="keywords" content="design público, interface pública, design de serviços, governo digital, ux design, design de aplicativos, design de interfaces, design inclusivo" />
+Syntax not understood
+54
+<meta name="author" content="DESIGN PÚBLICO" />
+Syntax not understood
+55
+<!-- Open Graph / Facebook -->
+Syntax not understood
+56
+<meta property="og:type" content="website" />
+Unknown directive
+57
+<meta property="og:url" content="https://designpublico.com.br/" />
+Unknown directive
+58
+<meta property="og:title" content="DESIGN PÚBLICO - Referências de Interfaces Públicas Digitais" />
+Unknown directive
+59
+<meta property="og:description" content="Uma base de referências visuais de interfaces públicas digitais. Reunimos bons exemplos de design para inspirar quem cria serviços digitais para a população." />
+Unknown directive
+60
+<meta property="og:image" content="/designpublico-social.png" />
+Unknown directive
+61
+<!-- Twitter -->
+Syntax not understood
+62
+<meta property="twitter:card" content="summary_large_image" />
+Unknown directive
+63
+<meta property="twitter:url" content="https://designpublico.com.br/" />
+Unknown directive
+64
+<meta property="twitter:title" content="DESIGN PÚBLICO - Referências de Interfaces Públicas Digitais" />
+Unknown directive
+65
+<meta property="twitter:description" content="Uma base de referências visuais de interfaces públicas digitais. Reunimos bons exemplos de design para inspirar quem cria serviços digitais para a população." />
+Unknown directive
+66
+<meta property="twitter:image" content="/designpublico-social.png" />
+Unknown directive
+67
+<!-- Favicon -->
+Syntax not understood
+68
+<link rel="icon" type="image/png" href="/designpublico-symbol.png" />
+Syntax not understood
+69
+<link rel="apple-touch-icon" sizes="180x180" href="/designpublico-symbol.png" />
+Syntax not understood
+70
+<!-- Canonical URL -->
+Syntax not understood
+71
+<link rel="canonical" href="https://designpublico.com.br/" />
+Unknown directive
+72
+<script type="module" crossorigin src="/assets/index-BwdXZo57.js"></script>
+Syntax not understood
+73
+<link rel="stylesheet" crossorigin href="/assets/index-DCWKScbI.css">
+Syntax not understood
+74
+</head>
+Syntax not understood
+75
+<body>
+Syntax not understood
+76
+<div id="root"></div>
+Syntax not understood
+77
+<!-- This script injects a replit badge into the page, please feel free to remove this line -->
+Syntax not understood
+78
+<script type="text/javascript" src="https://replit.com/public/js/replit-badge-v3.js"></script>
+Unknown directive
+79
+</body>
+Syntax not understood
+80
+</html>
+Syntax not understood
+Para que seu app seja exibido nos resultados da pesquisa, é necessário que os rastreadores tenham acesso a ele.
