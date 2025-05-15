@@ -8,10 +8,28 @@ interface ScreenThumbnailProps {
 }
 
 export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
+  const handleClick = () => onClick(screen);
+  
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick();
+    }
+  };
   
   return (
-    <div className="cursor-pointer hover:opacity-90 transition-all" onClick={() => onClick(screen)}>
-      <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" style={{ aspectRatio: "9/16" }}>
+    <div 
+      className="cursor-pointer hover:opacity-90 transition-all" 
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver detalhes de ${screen.name || 'tela'}`}
+    >
+      <div 
+        className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" 
+        style={{ aspectRatio: "9/16" }}
+      >
         <ResponsiveImage 
           src={screen.imageUrl}
           alt={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
@@ -27,13 +45,16 @@ export default function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProp
         
         <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all">
-            <button className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center">
-              <Maximize2 className="h-5 w-5" />
+            <button 
+              className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center"
+              aria-label={`Ver tela em tela cheia: ${screen.name || 'Tela de aplicativo'}`}
+              title={`Ampliar ${screen.name || 'tela'}`}
+            >
+              <Maximize2 className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         </div>
       </div>
-      {/* Image title removed */}
     </div>
   );
 }
