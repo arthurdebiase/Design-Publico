@@ -31,9 +31,58 @@ Sitemap: https://designpublico.com.br/sitemap.xml
 Crawl-delay: 2`);
   });
   
-  app.get('/sitemap.xml', (req, res) => {
-    res.type('application/xml');
-    res.send('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://designpublico.com.br/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url><url><loc>https://designpublico.com.br/screens</loc><changefreq>weekly</changefreq><priority>0.8</priority></url><url><loc>https://designpublico.com.br/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url></urlset>');
+  app.get('/sitemap.xml', async (req, res) => {
+    try {
+      // Buscar todos os apps para incluir no sitemap
+      const apps = await storage.getApps();
+      
+      let sitemapContent = '<?xml version="1.0" encoding="UTF-8"?>';
+      sitemapContent += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+      
+      // Páginas principais
+      sitemapContent += `
+        <url>
+          <loc>https://designpublico.com.br/</loc>
+          <changefreq>weekly</changefreq>
+          <priority>1.0</priority>
+        </url>
+        <url>
+          <loc>https://designpublico.com.br/screens</loc>
+          <changefreq>weekly</changefreq>
+          <priority>0.8</priority>
+        </url>
+        <url>
+          <loc>https://designpublico.com.br/about</loc>
+          <changefreq>monthly</changefreq>
+          <priority>0.7</priority>
+        </url>
+      `;
+      
+      // Adicionar URLs para cada app
+      for (const app of apps) {
+        // Usar nome convertido para slug ou id
+        const slug = app.name.toLowerCase()
+          .replace(/[^\w\s-]/g, '') // Remover caracteres especiais
+          .replace(/\s+/g, '-') // Substituir espaços por hífens
+          .replace(/--+/g, '-') // Substituir múltiplos hífens por um único
+          || app.id.toString();
+        sitemapContent += `
+          <url>
+            <loc>https://designpublico.com.br/app/${slug}</loc>
+            <changefreq>monthly</changefreq>
+            <priority>0.6</priority>
+          </url>
+        `;
+      }
+      
+      sitemapContent += '</urlset>';
+      
+      res.type('application/xml');
+      res.send(sitemapContent);
+    } catch (error) {
+      console.error("Error generating sitemap:", error);
+      res.status(500).send('Error generating sitemap');
+    }
   });
 
   // Proxy for Airtable images with optimization

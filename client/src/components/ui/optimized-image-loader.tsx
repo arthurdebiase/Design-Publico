@@ -36,7 +36,8 @@ export function OptimizedImage({
       .map(size => {
         const url = getProcessedImageUrl(src, {
           width: size,
-          format: 'auto', // Deixar o servidor decidir o melhor formato
+          // Usar formato webp como base, servidor decide melhor formato via accept header
+          format: 'webp',
           quality: size < 640 ? 80 : 85, // Qualidade ligeiramente maior para imagens maiores
           priority
         });
@@ -48,7 +49,7 @@ export function OptimizedImage({
   // Processar URL base com tamanho padrão
   const optimizedSrc = getProcessedImageUrl(src, {
     width: width || 800, // Tamanho padrão razoável
-    format: 'auto',
+    format: 'webp',
     quality: 85,
     priority
   });
