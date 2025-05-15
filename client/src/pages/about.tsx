@@ -13,22 +13,31 @@ interface CounterAnimationProps {
   className?: string;
 }
 
-function CounterAnimation({ end, duration = 2000, className = "" }: CounterAnimationProps) {
+function CounterAnimation({ end, duration = 1000, className = "" }: CounterAnimationProps) {
   const [count, setCount] = useState(0);
   const shouldAnimate = useContext(AnimationContext);
   
   useEffect(() => {
-    // Start animation when the shared animation state is true
-    if (!shouldAnimate) return;
+    // Return early if animation should not start yet, or if end value is 0
+    if (!shouldAnimate || end === 0) return;
     
-    let startTimestamp: number | null = null;
-    const step = (timestamp: number) => {
-      if (!startTimestamp) startTimestamp = timestamp;
-      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    // Short-circuit to end value if it's very small
+    if (end < 5) {
+      setCount(end);
+      return;
+    }
+    
+    // Use a fixed start time for all animations
+    const startTime = performance.now();
+    
+    const step = () => {
+      const now = performance.now();
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
       
-      // Use easeOutQuad for a nice deceleration effect
-      const easeOutQuad = (t: number) => t * (2 - t);
-      const easedProgress = easeOutQuad(progress);
+      // Use easeOutExpo for faster start and smooth finish
+      const easeOutExpo = (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      const easedProgress = easeOutExpo(progress);
       
       setCount(Math.floor(easedProgress * end));
       
@@ -37,10 +46,14 @@ function CounterAnimation({ end, duration = 2000, className = "" }: CounterAnima
       }
     };
     
+    // Start animation immediately
     window.requestAnimationFrame(step);
   }, [end, duration, shouldAnimate]);
   
-  return <span className={className}>{count}</span>;
+  // Format number with thousand separators for better readability
+  const formattedCount = count.toLocaleString();
+  
+  return <span className={className}>{formattedCount}</span>;
 }
 
 export default function About() {
@@ -82,7 +95,7 @@ export default function About() {
     };
   }, []);
   
-  // Calculate total screens, unique tags and categories
+  // Calculate total screens, unique tags and categories - optimized to fetch in parallel
   useEffect(() => {
     const fetchData = async () => {
       if (!apps.length) return;
@@ -91,12 +104,37 @@ export default function About() {
       const categories = new Set<string>();
       let screenCount = 0;
       
-      // For each app, fetch its screens
-      for (const app of apps) {
-        try {
-          const screensResponse = await fetch(`/api/apps/${app.id}/screens`);
-          const appScreens = await screensResponse.json() as Screen[];
-          
+      // Pre-fetch all app categories
+      apps.forEach(app => {
+        if (app.category) {
+          if (typeof app.category === 'string' && app.category.trim()) {
+            categories.add(app.category.trim());
+          } else if (Array.isArray(app.category)) {
+            app.category.forEach(cat => {
+              if (cat && typeof cat === 'string' && cat.trim()) {
+                categories.add(cat.trim());
+              }
+            });
+          }
+        }
+      });
+
+      try {
+        // Fetch all screens in parallel instead of sequentially
+        const fetchPromises = apps.map(app => 
+          fetch(`/api/apps/${app.id}/screens`)
+            .then(res => res.json())
+            .catch(err => {
+              console.error(`Error fetching screens for app ${app.id}:`, err);
+              return []; // Return empty array on error
+            })
+        );
+        
+        // Wait for all fetches to complete
+        const allScreensData = await Promise.all(fetchPromises);
+        
+        // Process all screen data at once
+        allScreensData.forEach(appScreens => {
           if (Array.isArray(appScreens)) {
             // Count screens
             screenCount += appScreens.length;
@@ -126,29 +164,16 @@ export default function About() {
               }
             });
           }
-        } catch (error) {
-          console.error(`Error fetching screens for app ${app.id}:`, error);
-        }
+        });
+        
+        // Update all state values at once
+        setTotalScreens(screenCount);
+        setTotalTags(tags.size);
+        setTotalCategories(categories.size);
+        
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
-      
-      // Add app categories too
-      apps.forEach(app => {
-        if (app.category) {
-          if (typeof app.category === 'string' && app.category.trim()) {
-            categories.add(app.category.trim());
-          } else if (Array.isArray(app.category)) {
-            app.category.forEach(cat => {
-              if (cat && typeof cat === 'string' && cat.trim()) {
-                categories.add(cat.trim());
-              }
-            });
-          }
-        }
-      });
-      
-      setTotalScreens(screenCount);
-      setTotalTags(tags.size);
-      setTotalCategories(categories.size);
     };
     
     fetchData();
