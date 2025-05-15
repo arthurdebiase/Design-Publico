@@ -5,11 +5,19 @@
 [functions]
   directory = "netlify/functions"
 
+# API route redirects
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
   status = 200
 
+# Image proxy redirects
+[[redirects]]
+  from = "/proxy-image/*"
+  to = "/.netlify/functions/image-proxy/:splat"
+  status = 200
+
+# Fallback for all other routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
