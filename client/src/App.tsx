@@ -14,6 +14,7 @@ import MetaTags from "@/components/seo/meta-tags";
 import { CriticalCSS } from "@/components/ui/critical-css";
 import { ResourcePreloader } from "@/components/ui/resource-preloader";
 import { ScriptOptimizer } from "@/components/ui/script-optimizer";
+import { AccessibilityEnhancer } from "@/components/ui/accessibility-enhancer";
 
 function Router() {
   return (
@@ -39,6 +40,8 @@ function App() {
         <ResourcePreloader />
         {/* Otimização de carregamento de scripts */}
         <ScriptOptimizer />
+        {/* Melhorias de acessibilidade */}
+        <AccessibilityEnhancer />
         <div className="flex flex-col">
           <Header />
           <main className="flex-grow">

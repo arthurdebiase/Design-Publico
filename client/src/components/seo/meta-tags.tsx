@@ -55,6 +55,26 @@ export default function MetaTags({
     updateMetaTag('description', finalDescription);
     updateMetaTag('keywords', finalKeywords);
     
+    // Corrigir a meta viewport para permitir zoom (acessibilidade)
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    if (viewportMeta) {
+      const content = viewportMeta.getAttribute('content') || '';
+      if (content.includes('maximum-scale=1') || content.includes('user-scalable=no')) {
+        // Remover essas limitações restritivas de acessibilidade
+        const newContent = content
+          .replace(/maximum-scale=[^,]*,?/g, '')
+          .replace(/user-scalable=[^,]*,?/g, '')
+          .replace(/,\s*$/, '');
+        viewportMeta.setAttribute('content', newContent);
+      }
+    } else {
+      // Se não existir, criar uma com valores acessíveis
+      const meta = document.createElement('meta');
+      meta.setAttribute('name', 'viewport');
+      meta.setAttribute('content', 'width=device-width, initial-scale=1.0');
+      document.head.appendChild(meta);
+    }
+    
     // Open Graph / Facebook
     updateMetaTag('og:title', finalTitle, 'property');
     updateMetaTag('og:description', finalDescription, 'property');
