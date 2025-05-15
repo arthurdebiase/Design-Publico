@@ -562,7 +562,7 @@ export default function ScreensPage() {
                       <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
                     )}
                   </div>
-                  <span className="text-sm text-black truncate group-hover:underline">{screen.app.name}</span>
+                  <span className="text-sm text-black truncate hover:underline">{screen.app.name}</span>
                 </Link>
               )}
             </div>
@@ -718,7 +718,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
                 </div>
               )}
             </div>
-            <p className="text-xs text-black truncate group-hover:underline">{screen.app.name}</p>
+            <p className="text-xs text-black truncate hover:underline">{screen.app.name}</p>
           </Link>
         )}
         
