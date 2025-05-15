@@ -153,12 +153,12 @@ export function ScreenModal({
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
-            <Link href={`/app/${createSlug(app.name)}`} onClick={() => {
+            <Link href={`/app/${createSlug(app.name)}`} className="no-underline" onClick={() => {
               onClose();
               // Ensure we scroll to top when navigating to app details
               window.scrollTo(0, 0);
             }}>
-              <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity" 
+              <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity rounded-sm bg-gray-100 p-0.5" 
                 title={`View ${app.name} details`}
                 role="button"
                 tabIndex={0}
@@ -167,7 +167,7 @@ export function ScreenModal({
                   <ResponsiveImage 
                     src={app.logo} 
                     alt={`${app.name} logo`} 
-                    className="w-8 h-8"
+                    className="w-8 h-8 object-contain"
                     widths={[32, 64, 96]}
                     quality={90}
                     placeholder={

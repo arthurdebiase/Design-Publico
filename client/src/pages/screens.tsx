@@ -556,7 +556,7 @@ export default function ScreensPage() {
                   }}
                   title={`Ver detalhes do app ${screen.app.name}`}
                 >
-                  <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center overflow-hidden p-0.5">
                     {screen.app.logo ? (
                       <ResponsiveImage 
                         src={screen.app.logo}
@@ -715,7 +715,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
             }}
             title={`Ver detalhes do app ${screen.app.name}`}
           >
-            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center overflow-hidden rounded-sm">
+            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center overflow-hidden rounded-sm p-0.5 bg-gray-100">
               {screen.app.logo ? (
                 <ResponsiveImage 
                   src={screen.app.logo}

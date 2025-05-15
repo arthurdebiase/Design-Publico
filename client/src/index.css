@@ -16,8 +16,8 @@
     @apply no-underline;
   }
   
-  /* Add underline only on hover */
+  /* No underline on hover by default */
   a:hover {
-    @apply underline;
+    @apply no-underline;
   }
 }
