@@ -34,6 +34,7 @@ export default function ScreensPage() {
   const [currentAppScreens, setCurrentAppScreens] = useState<Screen[]>([]);
   const [currentApp, setCurrentApp] = useState<App | null>(null);
   const [displayedScreenCount, setDisplayedScreenCount] = useState(50); // Número inicial de telas a mostrar
+  const [totalAirtableScreens, setTotalAirtableScreens] = useState(0); // Número total de telas no Airtable
   const [location] = useLocation();
   const search = useSearch();
   const { t } = useTranslation();
@@ -148,6 +149,9 @@ export default function ScreensPage() {
         
         // Combina todos os arrays de telas em um único array
         const fetchedScreens = screensByApp.flat();
+        
+        // Armazenar o número total de telas do Airtable
+        setTotalAirtableScreens(fetchedScreens.length);
         
         // Otimização: Limita o número de telas para reduzir o DOM e melhorar a performance
         // Fisher-Yates shuffle algorithm - mais eficiente para grandes arrays
@@ -427,7 +431,7 @@ export default function ScreensPage() {
         
         {/* Screen counter */}
         <div className="text-gray-600 font-medium">
-          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
+          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}
         </div>
       </div>
       
