@@ -1,10 +1,10 @@
-import { Screen } from "@/types";
+import { Screen, App } from "@/types";
 import { Maximize2 } from "lucide-react";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 
 interface ScreenThumbnailProps {
-  screen: Screen;
-  onClick: (screen: Screen) => void;
+  screen: Screen & { app?: App };
+  onClick: (screen: Screen & { app?: App }) => void;
   isPriority?: boolean; // Adicionado para priorizar carregamento de imagens LCP
   index?: number; // Para rastrear posição do item na grade
 }
