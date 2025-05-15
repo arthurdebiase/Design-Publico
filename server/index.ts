@@ -42,17 +42,33 @@ app.use((req, res, next) => {
 
 // Aplicar compressão gzip/deflate para melhorar performance
 app.use(compression({
-  // Comprimir tudo acima de 1kb
-  threshold: 1024,
-  // Nível 6 é um bom equilíbrio entre compressão e velocidade
-  level: 6,
-  // Não comprimir imagens já comprimidas
+  // Comprimir tudo acima de 100 bytes (mais agressivo)
+  threshold: 100,
+  // Nível 9 para máxima compressão (prioriza tamanho sobre velocidade)
+  level: 9,
+  // Comprimir todos os tipos de conteúdo exceto imagens já comprimidas
   filter: (req, res) => {
-    if (req.headers['accept']?.includes('image/')) {
+    const path = req.path;
+    
+    // Não comprimir imagens que já estão comprimidas
+    if (path.match(/\.(jpg|jpeg|png|gif|webp|avif|svg|ico)$/i)) {
       return false;
     }
+    
+    // Comprimir de forma mais agressiva assets com hash no nome (JS/CSS)
+    if (path.match(/\.(js|css|json|txt|html|xml)$/i)) {
+      return true;
+    }
+    
+    // Para outros tipos, usar o filtro padrão
     return compression.filter(req, res);
-  }
+  },
+  // Algoritmo preferencial Brotli para maior compressão, fallback para gzip
+  // Esta opção só está disponível se o cliente suportar
+  algorithm: 'brotli',
+  
+  // Comprimir todos os métodos HTTP, não apenas GET
+  method: 'GET, POST, PUT, DELETE, OPTIONS',
 }));
 
 app.use(express.json());
