@@ -159,9 +159,9 @@ export default function AppDetail() {
     setCurrentScreenIndex(index);
     setIsModalOpen(true);
     
-    // Update URL with screen ID
+    // Update URL with Airtable screen ID for better link sharing
     const url = new URL(window.location.href);
-    url.searchParams.set('screen', screen.id);
+    url.searchParams.set('screen', screen.airtableId);
     window.history.replaceState({}, '', url.toString());
   };
   
@@ -170,7 +170,14 @@ export default function AppDetail() {
     if (screens && screens.length > 0) {
       const screenId = getScreenIdFromUrl();
       if (screenId) {
-        const screenIndex = screens.findIndex(s => s.id === screenId);
+        // First try to find by airtableId
+        let screenIndex = screens.findIndex(s => s.airtableId === screenId);
+        
+        // If not found by airtableId, try the regular id (for backward compatibility)
+        if (screenIndex === -1) {
+          screenIndex = screens.findIndex(s => String(s.id) === screenId);
+        }
+        
         if (screenIndex !== -1) {
           // Open modal with the specified screen
           setCurrentScreenIndex(screenIndex);
@@ -406,10 +413,11 @@ export default function AppDetail() {
               screens={screens}
               currentScreenIndex={currentScreenIndex}
               onScreenChange={(index) => {
-                // Update URL when screen changes
+                // Update URL when screen changes, using the Airtable ID for more stability
                 setCurrentScreenIndex(index);
                 const url = new URL(window.location.href);
-                url.searchParams.set('screen', screens[index].id);
+                // Use Airtable ID instead of local DB ID for better link sharing
+                url.searchParams.set('screen', screens[index].airtableId);
                 window.history.replaceState({}, '', url.toString());
               }}
               app={app}
