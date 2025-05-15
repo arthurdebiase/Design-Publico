@@ -525,7 +525,7 @@ export default function ScreensPage() {
                   width={300}
                   height={534}
                   loading={index < 5 ? "eager" : "lazy"}
-                  fetchPriority={index < 5 ? "high" : "auto"}
+                  fetchpriority={index < 5 ? "high" : "auto"}
                   style={{ aspectRatio: "9/16", backgroundColor: "#f8f8f8" }}
                 />
                 
