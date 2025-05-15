@@ -6,6 +6,7 @@ import { fetchScreensByAppId } from "@/lib/airtable";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
+import { createSlug } from "@/lib/slugUtils";
 
 interface AppCardProps {
   app: App;
@@ -91,7 +92,8 @@ export default function AppCard({ app }: AppCardProps) {
   
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(`/app/${app.id}`);
+    const appSlug = createSlug(app.name);
+    navigate(`/app/${appSlug}`);
   };
   
   return (
