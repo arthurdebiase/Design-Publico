@@ -58,12 +58,15 @@ export function ScreenModal({
 }: ScreenModalProps) {
   const [localIndex, setLocalIndex] = useState(currentScreenIndex);
   const [showTags, setShowTags] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(true);
   const [location] = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
   
   useEffect(() => {
     setLocalIndex(currentScreenIndex);
+    // Sempre que mudar de tela, reiniciar o estado de carregamento
+    setIsImageLoading(true);
   }, [currentScreenIndex]);
   
   const currentScreen = screens[localIndex];
@@ -249,20 +252,33 @@ export function ScreenModal({
           )}
           
           <div className="relative max-w-full">
-            <ResponsiveImage 
-              src={currentScreen.imageUrl}
-              alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-              className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
-              aria-label={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-              placeholderClassName="w-full h-[70vh] flex items-center justify-center bg-gray-200 rounded-lg"
-              placeholder={
-                <div className="text-gray-500">Loading...</div>
-              }
-              sizes="(min-width: 1280px) 60vw, 90vw"
-              widths={[480, 768, 1024, 1280]}
-              format="webp"
-              quality={90}
-            />
+            {/* Container com dimensões fixas para evitar CLS */}
+            <div 
+              className="w-full max-h-[70vh] rounded-lg overflow-hidden flex items-center justify-center"
+              style={{ minHeight: '70vh', minWidth: '320px' }}
+            >
+              {/* Skeleton que só aparece durante o carregamento */}
+              {isImageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div 
+                    className="animate-pulse bg-gray-200 rounded-lg" 
+                    style={{ width: '320px', height: '568px', aspectRatio: '9/16' }}
+                  />
+                </div>
+              )}
+              
+              <ResponsiveImage 
+                src={currentScreen.imageUrl}
+                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain relative z-10"
+                aria-label={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                onLoad={() => setIsImageLoading(false)}
+                sizes="(min-width: 1280px) 60vw, 90vw"
+                widths={[480, 768, 1024, 1280]}
+                format="webp"
+                quality={90}
+              />
+            </div>
           </div>
           
           {/* Tags and categories displayed here */}
