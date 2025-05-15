@@ -33,6 +33,7 @@ export default function ScreensPage() {
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   const [currentAppScreens, setCurrentAppScreens] = useState<Screen[]>([]);
   const [currentApp, setCurrentApp] = useState<App | null>(null);
+  const [displayedScreenCount, setDisplayedScreenCount] = useState(50); // Número inicial de telas a mostrar
   const [location] = useLocation();
   const search = useSearch();
   const { t } = useTranslation();
@@ -106,6 +107,8 @@ export default function ScreensPage() {
     }
     
     setFilteredScreens(filtered);
+    // Redefinir o número de telas exibidas para o valor inicial quando os filtros mudam
+    setDisplayedScreenCount(50);
   }, [selectedTags, selectedCategories, allScreens]);
 
   // Otimização: uso de Promise.all para paralelizar requisições
@@ -493,7 +496,7 @@ export default function ScreensPage() {
             Carregamos apenas um subconjunto das telas para reduzir o tamanho do DOM
             e aumentar a performance - isto reduzirá o TBT (Total Blocking Time)
           */}
-          {filteredScreens.slice(0, 50).map((screen: Screen & { app?: App }, index) => (
+          {filteredScreens.slice(0, displayedScreenCount).map((screen: Screen & { app?: App }, index) => (
             <div 
               key={screen.id} 
               role="gridcell"
@@ -568,19 +571,24 @@ export default function ScreensPage() {
             </div>
           ))}
           
-          {/* Botão para carregar mais telas se houver mais de 50 */}
-          {filteredScreens.length > 50 && (
+          {/* Botão para carregar mais telas se ainda houver mais telas para mostrar */}
+          {filteredScreens.length > displayedScreenCount && (
             <div className="col-span-full text-center py-6">
               <button
                 onClick={() => {
-                  // Implementação seria expandir a visualização com mais telas
-                  // Mas por questões de performance, mantemos o limite
-                  alert(`Limitamos a visualização a 50 telas para melhor performance.
-                  Use os filtros para encontrar telas específicas.`);
+                  // Incrementar o número de telas mostradas em 50
+                  const nextBatch = Math.min(displayedScreenCount + 50, filteredScreens.length);
+                  setDisplayedScreenCount(nextBatch);
+                  
+                  // Scroll suave para mostrar as novas telas
+                  window.scrollBy({
+                    top: 200,
+                    behavior: 'smooth'
+                  });
                 }}
                 className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded"
               >
-                Mostrar mais telas ({filteredScreens.length - 50} restantes)
+                Mostrar mais telas ({filteredScreens.length - displayedScreenCount} restantes)
               </button>
             </div>
           )}
