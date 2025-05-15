@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation, useSearch } from 'wouter';
 import { ResponsiveImage } from '@/components/ui/responsive-image';
+import { createSlug } from '@/lib/slugUtils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -538,12 +539,31 @@ export default function ScreensPage() {
               
               {/* Informações do app relacionado */}
               {screen.app && (
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="w-4 h-4 rounded-sm bg-gray-100 flex items-center justify-center">
-                    <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+                <Link 
+                  href={`/app/${createSlug(screen.app.name)}`}
+                  className="flex items-center gap-2 mt-2 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Evita que a tela seja aberta ao clicar no app
+                    // Garantir scroll para o topo ao navegar
+                    window.scrollTo(0, 0);
+                  }}
+                  title={`Ver detalhes do app ${screen.app.name}`}
+                >
+                  <div className="w-4 h-4 rounded-sm bg-gray-100 flex items-center justify-center overflow-hidden">
+                    {screen.app.logo ? (
+                      <ResponsiveImage 
+                        src={screen.app.logo}
+                        alt={`${screen.app.name} Logo`}
+                        className="w-4 h-4 object-cover"
+                        widths={[16, 32, 64]}
+                        quality={90}
+                      />
+                    ) : (
+                      <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+                    )}
                   </div>
                   <span className="text-sm text-gray-600 truncate">{screen.app.name}</span>
-                </div>
+                </Link>
               )}
             </div>
           ))}
@@ -673,20 +693,24 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         
         {/* App name and logo */}
         {screen.app && (
-          <div className="flex items-center gap-2 mt-0">
-            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center">
+          <Link 
+            href={`/app/${createSlug(screen.app.name)}`} 
+            className="flex items-center gap-2 mt-0 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors"
+            onClick={(e) => {
+              e.stopPropagation(); // Evita que a tela seja aberta ao clicar no app
+              // Garantir scroll para o topo ao navegar
+              window.scrollTo(0, 0);
+            }}
+            title={`Ver detalhes do app ${screen.app.name}`}
+          >
+            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center overflow-hidden rounded-sm">
               {screen.app.logo ? (
                 <ResponsiveImage 
                   src={screen.app.logo}
                   alt={`${screen.app.name} Logo`}
-                  className="w-5 h-5"
+                  className="w-5 h-5 object-cover"
                   widths={[20, 40, 60]}
                   quality={90}
-                  placeholder={
-                    <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center">
-                      <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
-                    </div>
-                  }
                 />
               ) : (
                 <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center">
@@ -695,7 +719,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
               )}
             </div>
             <p className="text-xs text-gray-500 truncate">{screen.app.name}</p>
-          </div>
+          </Link>
         )}
         
         {/* Tags and Categories removed from thumbnails and moved to modal */}
