@@ -592,13 +592,10 @@ export default function ScreensPage() {
                     behavior: 'smooth'
                   });
                 }}
-                className="bg-[#0066FF] hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-md shadow-sm transition-colors flex items-center justify-center"
+                className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-md shadow-sm transition-colors"
                 aria-label="Carregar mais 50 telas"
               >
-                <span>Mostrar mais</span>
-                <span className="ml-2 text-xs bg-white bg-opacity-20 rounded-full px-2 py-1">
-                  +50
-                </span>
+                Mostrar mais
               </button>
             </div>
           )}
