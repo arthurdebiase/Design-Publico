@@ -30,7 +30,7 @@ export default function Header() {
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
       <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Link href="/" className="flex items-center space-x-2" aria-label="Ir para página inicial">
+          <Link href="/" className="flex items-center space-x-2 no-underline" aria-label="Ir para página inicial">
             <div className="h-8 w-8 flex items-center justify-center">
               <img 
                 src={symbolLogo} 
