@@ -83,7 +83,7 @@ function AppScreenImage({ appId, appName, isPriority = false }: { appId: string,
   );
 }
 
-export default function AppCard({ app }: AppCardProps) {
+export default function AppCard({ app, isPriority = false }: AppCardProps) {
   const isMobile = useIsMobile();
   const [, navigate] = useLocation();
   
@@ -118,7 +118,7 @@ export default function AppCard({ app }: AppCardProps) {
         aria-labelledby={`app-name-${app.id}`}
       >
         <div className="relative flex-grow overflow-hidden" style={imageContainerStyle}>
-          <AppScreenImage appId={app.id.toString()} appName={app.name} />
+          <AppScreenImage appId={app.id.toString()} appName={app.name} isPriority={isPriority} />
         </div>
         <div className={`${isMobile ? 'p-2' : 'p-3'} flex-shrink-0`}>
           <div className="flex items-center gap-3">

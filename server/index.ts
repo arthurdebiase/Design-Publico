@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import dotenv from "dotenv";
 import { initMailerLite } from "./mailerlite";
+import compression from "compression";
 
 // Load environment variables from .env file
 dotenv.config();
@@ -11,6 +12,15 @@ dotenv.config();
 initMailerLite();
 
 const app = express();
+
+// Aplicar compressão gzip/deflate para melhorar performance
+app.use(compression({
+  // Comprimir tudo acima de 1kb
+  threshold: 1024,
+  // Nível 6 é um bom equilíbrio entre compressão e velocidade
+  level: 6
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
