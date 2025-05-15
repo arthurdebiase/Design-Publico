@@ -7,6 +7,7 @@ import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { getProcessedImageUrl } from "@/lib/imageUtils";
+import { ResponsiveImage } from "@/components/ui/responsive-image";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -285,34 +286,20 @@ export function ScreenModal({
           )}
           
           <div className="relative max-w-full">
-            {!imageLoaded && !imageError && (
-              <div className="w-full h-[70vh] flex items-center justify-center bg-gray-200 animate-pulse rounded-lg">
-                <span className="text-gray-500">Loading...</span>
-              </div>
-            )}
-            
-            {imageError ? (
-              <div className="w-full h-[70vh] flex items-center justify-center bg-gray-200 rounded-lg">
-                <div className="text-center">
-                  <div className="text-gray-500 font-medium mb-2">
-                    {currentScreen.name ? `${currentScreen.name} image not available` : 'Image not available'}
-                  </div>
-                  <p className="text-gray-400 text-sm max-w-md px-4">
-                    The image could not be loaded. This may be due to Airtable connection issues.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <img 
-                src={imageSrc} 
-                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`} 
-                className={`max-h-[70vh] max-w-full rounded-lg shadow-md object-contain ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                onLoad={handleImageLoad}
-                onError={handleImageError}
-                aria-label={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                loading="lazy"
-              />
-            )}
+            <ResponsiveImage 
+              src={currentScreen.imageUrl}
+              alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+              className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain"
+              aria-label={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+              placeholderClassName="w-full h-[70vh] flex items-center justify-center bg-gray-200 rounded-lg"
+              placeholder={
+                <div className="text-gray-500">Loading...</div>
+              }
+              sizes="(min-width: 1280px) 60vw, 90vw"
+              widths={[480, 768, 1024, 1280]}
+              format="webp"
+              quality={90}
+            />
           </div>
           
           {/* Tags and categories displayed here */}
