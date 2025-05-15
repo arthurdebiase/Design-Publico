@@ -25,6 +25,7 @@ export interface Screen {
   name: string;
   description: string;
   imageUrl: string;
+  altText?: string;   // Alt text for image accessibility
   flow?: string;
   order: number;
   tags?: string[];

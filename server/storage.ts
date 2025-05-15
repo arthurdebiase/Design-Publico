@@ -124,6 +124,7 @@ export class MemStorage implements IStorage {
       name: insertScreen.name,
       description: insertScreen.description ?? null,
       imageUrl: insertScreen.imageUrl,
+      altText: insertScreen.altText ?? `Screen from ${insertScreen.name}`,
       flow: insertScreen.flow ?? null,
       order: insertScreen.order ?? 0,
       tags: insertScreen.tags ?? null,
@@ -773,11 +774,20 @@ export class MemStorage implements IStorage {
             category = app.category;
           }
 
+          // Extract alt text for accessibility
+          let altText = fields.alttext || null;
+          
+          // If no alttext is provided, create a descriptive one based on screen name and app
+          if (!altText) {
+            altText = `${screenName} screen from ${appName} application`;
+          }
+          
           const screenData: InsertScreen = {
             appId: app.id,
             name: screenName,
             description: fields.description || null,
             imageUrl: attachment.url,
+            altText: altText,
             flow: fields.flow || null,
             order: screenOrder,
             tags: tags,
@@ -929,6 +939,7 @@ export class MemStorage implements IStorage {
         name: screenType.name,
         description: screenType.description,
         imageUrl: `https://random.imagecdn.app/400/800?image=${20 + index}`,
+        altText: `${screenType.name} screen from Meu SUS Digital application`,
         flow: "Main",
         order: index,
         tags: ["healthcare", "digital"],
@@ -960,6 +971,7 @@ export class MemStorage implements IStorage {
         name: screenType.name,
         description: screenType.description,
         imageUrl: `https://random.imagecdn.app/400/800?image=${30 + index}`,
+        altText: `${screenType.name} screen from Carteira de Trabalho Digital application`,
         flow: "Main",
         order: index,
         tags: ["employment", "documents"],
