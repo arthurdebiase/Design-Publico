@@ -3,6 +3,17 @@
  */
 
 /**
+ * Tamanhos padrão para dimensionamento responsivo de imagens
+ * Esses tamanhos são otimizados para diferentes breakpoints
+ */
+export const RESPONSIVE_IMAGE_SIZES = {
+  small: [320, 480, 640],
+  medium: [640, 768, 1024],
+  large: [1024, 1280, 1536, 1920],
+  thumbnail: [80, 160, 240],
+};
+
+/**
  * Options for image processing
  */
 export interface ImageProcessingOptions {
@@ -14,6 +25,8 @@ export interface ImageProcessingOptions {
   format?: 'webp' | 'avif' | 'jpeg' | 'png' | 'original';
   /** Quality of the image compression (1-100) */
   quality?: number;
+  /** Whether this is a priority image for LCP */
+  priority?: boolean;
 }
 
 /**

@@ -11,6 +11,8 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import ScrollToTop from "@/components/scroll-to-top";
 import MetaTags from "@/components/seo/meta-tags";
+import { CriticalCSS } from "@/components/ui/critical-css";
+import { ResourcePreloader } from "@/components/ui/resource-preloader";
 
 function Router() {
   return (
@@ -30,6 +32,10 @@ function App() {
       <ScrollToTop>
         {/* Default SEO meta tags */}
         <MetaTags />
+        {/* Gerenciamento de carregamento CSS não-crítico */}
+        <CriticalCSS />
+        {/* Pré-carregamento de recursos críticos */}
+        <ResourcePreloader />
         <div className="flex flex-col">
           <Header />
           <main className="flex-grow">
