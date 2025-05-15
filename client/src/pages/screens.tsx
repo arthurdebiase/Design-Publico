@@ -33,7 +33,7 @@ export default function ScreensPage() {
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   const [currentAppScreens, setCurrentAppScreens] = useState<Screen[]>([]);
   const [currentApp, setCurrentApp] = useState<App | null>(null);
-  const [displayedScreenCount, setDisplayedScreenCount] = useState(10000); // Exibir praticamente todas as telas de uma vez
+  const [displayedScreenCount, setDisplayedScreenCount] = useState(50); // Exibir um número inicial razoável de telas
   const [totalAirtableScreens, setTotalAirtableScreens] = useState(0); // Número total de telas no Airtable
   const [location] = useLocation();
   const search = useSearch();
@@ -427,9 +427,14 @@ export default function ScreensPage() {
           </div>
         </div>
         
-        {/* Screen counter */}
-        <div className="text-gray-600 font-medium">
-          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}{selectedTags.length > 0 || selectedCategories.length > 0 ? ` (${filteredScreens.length} filtradas)` : ''}
+        {/* Screen counter with improved pagination information */}
+        <div className="flex justify-between items-center">
+          <div className="bg-blue-50 border border-blue-100 rounded-md px-3 py-2 text-blue-700 text-sm">
+            <span className="font-semibold">Paginação:</span> Exibindo {Math.min(displayedScreenCount, filteredScreens.length)} de {filteredScreens.length} telas{selectedTags.length > 0 || selectedCategories.length > 0 ? ` filtradas` : ''}
+          </div>
+          <div className="text-gray-600 font-medium">
+            <span className="font-semibold">Total da base:</span> {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}
+          </div>
         </div>
       </div>
       
@@ -575,7 +580,7 @@ export default function ScreensPage() {
           
           {/* Botão para carregar mais telas se ainda houver mais telas para mostrar */}
           {filteredScreens.length > displayedScreenCount && (
-            <div className="col-span-full text-center py-6">
+            <div className="col-span-full text-center py-10">
               <button
                 onClick={() => {
                   // Incrementar o número de telas mostradas em 50
@@ -588,10 +593,16 @@ export default function ScreensPage() {
                     behavior: 'smooth'
                   });
                 }}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg shadow-md flex items-center mx-auto"
               >
-                Mostrar mais
+                <span>Mostrar mais</span>
+                <span className="ml-2 px-2 py-1 bg-blue-500 rounded-full text-xs font-bold">
+                  {filteredScreens.length - displayedScreenCount} restantes
+                </span>
               </button>
+              <p className="text-gray-500 text-sm mt-2">
+                Exibindo {displayedScreenCount} de {filteredScreens.length} telas
+              </p>
             </div>
           )}
         </div>
