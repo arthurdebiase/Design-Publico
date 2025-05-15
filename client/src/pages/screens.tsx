@@ -135,22 +135,23 @@ export default function ScreensPage() {
           }
         }
         
-        // Sort all screens alphabetically by screen name
-        const sortedScreens = fetchedScreens.sort((a, b) => {
-          // Ensure there's a name value to sort by
-          const nameA = a.name?.toLowerCase() || '';
-          const nameB = b.name?.toLowerCase() || '';
-          return nameA.localeCompare(nameB);
-        });
+        // Randomize screens for the screens page
+        const randomizedScreens = [...fetchedScreens];
+        
+        // Fisher-Yates shuffle algorithm
+        for (let i = randomizedScreens.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [randomizedScreens[i], randomizedScreens[j]] = [randomizedScreens[j], randomizedScreens[i]];
+        }
         
         // Extract unique tags and categories
         const tags = new Set<string>();
         const categories = new Set<string>();
         
-        sortedScreens.forEach(screen => {
+        randomizedScreens.forEach((screen: Screen & { app?: App }) => {
           // Extract tags
           if (screen.tags && Array.isArray(screen.tags)) {
-            screen.tags.forEach(tag => {
+            screen.tags.forEach((tag: string) => {
               if (tag && typeof tag === 'string' && tag.trim()) {
                 tags.add(tag.trim());
               }
@@ -162,7 +163,7 @@ export default function ScreensPage() {
             if (typeof screen.category === 'string' && screen.category.trim()) {
               categories.add(screen.category.trim());
             } else if (Array.isArray(screen.category)) {
-              screen.category.forEach(cat => {
+              screen.category.forEach((cat: string) => {
                 if (cat && typeof cat === 'string' && cat.trim()) {
                   categories.add(cat.trim());
                 }
@@ -188,8 +189,8 @@ export default function ScreensPage() {
         
         setAvailableTags(Array.from(tags).sort());
         setAvailableCategories(Array.from(categories).sort());
-        setAllScreens(sortedScreens);
-        setFilteredScreens(sortedScreens);
+        setAllScreens(randomizedScreens);
+        setFilteredScreens(randomizedScreens);
       } catch (err) {
         console.error('Error fetching screens:', err);
         setError('Failed to load screens. Please try again later.');
