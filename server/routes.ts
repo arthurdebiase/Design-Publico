@@ -15,10 +15,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
 
-  // Proxy for Airtable images
+  // Proxy for Airtable images with optimization
   app.get("/proxy-image/*", async (req, res) => {
     try {
       const path = req.path.replace("/proxy-image", "");
+      
+      // Parse query parameters for image optimization
+      const width = parseInt(req.query.width as string) || null;
+      const height = parseInt(req.query.height as string) || null;
+      const format = (req.query.format as string) || null;
+      const quality = parseInt(req.query.quality as string) || 80;
+      
+      // Check if browser supports WebP
+      const acceptHeader = req.headers.accept || '';
+      const supportsWebP = acceptHeader.includes('image/webp');
+      
+      // Default format is WebP for browsers that support it
+      const outputFormat = format || (supportsWebP ? 'webp' : 'jpeg');
+      
+      // Fetch the image from Airtable
       const response = await axios.get(`https://v5.airtableusercontent.com${path}`, {
         responseType: 'arraybuffer',
         headers: {
@@ -26,11 +41,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
           'Cache-Control': 'no-cache'
         }
       });
-
-      // Set caching headers
-      res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
-      res.set('Content-Type', response.headers['content-type']);
-      res.send(response.data);
+      
+      // If resizing or format conversion is requested, use Sharp
+      if ((width || height) || outputFormat !== 'original') {
+        const sharp = require('sharp');
+        let imageProcessor = sharp(response.data);
+        
+        // Resize if dimensions are provided
+        if (width || height) {
+          imageProcessor = imageProcessor.resize({
+            width: width || undefined,
+            height: height || undefined,
+            fit: 'inside',
+            withoutEnlargement: true
+          });
+        }
+        
+        // Convert to the requested format
+        switch(outputFormat) {
+          case 'webp':
+            imageProcessor = imageProcessor.webp({ quality });
+            res.set('Content-Type', 'image/webp');
+            break;
+          case 'avif':
+            imageProcessor = imageProcessor.avif({ quality });
+            res.set('Content-Type', 'image/avif');
+            break;
+          case 'jpeg':
+          case 'jpg':
+            imageProcessor = imageProcessor.jpeg({ quality });
+            res.set('Content-Type', 'image/jpeg');
+            break;
+          case 'png':
+            imageProcessor = imageProcessor.png({ quality });
+            res.set('Content-Type', 'image/png');
+            break;
+          default:
+            // Keep original format
+            res.set('Content-Type', response.headers['content-type']);
+        }
+        
+        // Process and send the optimized image
+        const optimizedImageBuffer = await imageProcessor.toBuffer();
+        
+        // Set caching headers
+        res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+        res.send(optimizedImageBuffer);
+      } else {
+        // No optimization requested, just pass through the original image
+        res.set('Cache-Control', 'public, max-age=31536000'); // Cache for 1 year
+        res.set('Content-Type', response.headers['content-type']);
+        res.send(response.data);
+      }
     } catch (error) {
       console.error("Error proxying Airtable image:", error);
       res.status(500).send("Failed to load image");

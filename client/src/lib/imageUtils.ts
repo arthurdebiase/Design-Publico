@@ -3,13 +3,31 @@
  */
 
 /**
+ * Options for image processing
+ */
+export interface ImageProcessingOptions {
+  /** Width of the image in pixels */
+  width?: number;
+  /** Height of the image in pixels */
+  height?: number;
+  /** Output format (webp, avif, jpeg, png, or original) */
+  format?: 'webp' | 'avif' | 'jpeg' | 'png' | 'original';
+  /** Quality of the image compression (1-100) */
+  quality?: number;
+}
+
+/**
  * Process an image URL to ensure it will load properly
- * This handles Airtable CDN URLs by routing them through our proxy if needed
+ * This handles Airtable CDN URLs by routing them through our proxy with optimization
  * 
  * @param url The original image URL
+ * @param options Optional image processing options
  * @returns A processed URL that should load reliably
  */
-export function getProcessedImageUrl(url: string | null | undefined): string {
+export function getProcessedImageUrl(
+  url: string | null | undefined, 
+  options?: ImageProcessingOptions
+): string {
   if (!url) return '';
   
   // For Airtable CDN URLs, use our proxy route
@@ -17,8 +35,25 @@ export function getProcessedImageUrl(url: string | null | undefined): string {
     // Extract the path after the domain
     const urlObj = new URL(url);
     const path = urlObj.pathname;
-    // Return proxied path
-    return `/proxy-image${path}`;
+    
+    // Base proxy URL
+    let proxyUrl = `/proxy-image${path}`;
+    
+    // Add query parameters for optimization if provided
+    if (options) {
+      const params: string[] = [];
+      
+      if (options.width) params.push(`width=${options.width}`);
+      if (options.height) params.push(`height=${options.height}`);
+      if (options.format) params.push(`format=${options.format}`);
+      if (options.quality) params.push(`quality=${options.quality}`);
+      
+      if (params.length > 0) {
+        proxyUrl += `?${params.join('&')}`;
+      }
+    }
+    
+    return proxyUrl;
   }
   
   return url;
