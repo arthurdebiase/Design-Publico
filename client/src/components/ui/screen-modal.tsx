@@ -211,7 +211,8 @@ export function ScreenModal({
               size="icon" 
               onClick={onClose} 
               className="h-9 w-9" 
-              aria-label="Close modal"
+              aria-label="Fechar modal"
+              title="Fechar"
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </Button>
@@ -226,8 +227,8 @@ export function ScreenModal({
                 size="icon" 
                 className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
                 onClick={handlePrevious}
-                aria-label="View previous screen"
-                title={`View previous screen: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
+                aria-label="Ver tela anterior"
+                title={`Ver tela anterior: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
               >
                 <ChevronLeft className="h-5 w-5" aria-hidden="true" />
               </Button>
@@ -237,8 +238,8 @@ export function ScreenModal({
                 size="icon" 
                 className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
                 onClick={handleNext}
-                aria-label="View next screen"
-                title={`View next screen: ${screens[(localIndex + 1) % screens.length].name}`}
+                aria-label="Ver próxima tela"
+                title={`Ver próxima tela: ${screens[(localIndex + 1) % screens.length].name}`}
               >
                 <ChevronRight className="h-5 w-5" aria-hidden="true" />
               </Button>
