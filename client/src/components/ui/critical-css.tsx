@@ -18,6 +18,23 @@ export const CriticalCSS: React.FC = () => {
     
     // CSS crítico para o layout principal e componentes acima da dobra
     const criticalStyles = `
+      /* Importação de fontes críticas para o logo */
+      @font-face {
+        font-family: 'Arial Black';
+        src: url('https://fonts.cdnfonts.com/s/30159/ArialBlack.woff') format('woff');
+        font-display: swap;
+        font-weight: 900;
+        font-style: normal;
+      }
+      
+      @font-face {
+        font-family: 'Arial';
+        src: url('https://fonts.cdnfonts.com/s/13444/Arial-Bold.woff') format('woff');
+        font-display: swap;
+        font-weight: 700;
+        font-style: normal;
+      }
+      
       /* Estilos críticos para layout e componentes visíveis inicialmente */
       body {
         margin: 0;

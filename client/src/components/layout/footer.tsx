@@ -154,9 +154,9 @@ export default function Footer() {
                   aria-hidden="true" /* O texto do logo já fornece o conteúdo, portanto a imagem é decorativa */
                 />
               </div>
-              <span className="flex items-center" aria-label="Design Público">
-                <span style={{ fontFamily: 'Arial Black, Arial', fontWeight: 900 }}>DESIGN</span>
-                <span style={{ fontFamily: 'Arial', fontWeight: 700 }} className="ml-1">PÚBLICO</span>
+              <span className="flex items-center text-black" aria-label="Design Público">
+                <span style={{ fontFamily: '"Arial Black", sans-serif', fontWeight: 900 }}>DESIGN</span>
+                <span style={{ fontFamily: 'Arial, sans-serif', fontWeight: 700 }} className="ml-1">PÚBLICO</span>
               </span>
             </Link>
             

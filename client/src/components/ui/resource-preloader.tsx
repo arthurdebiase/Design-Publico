@@ -35,7 +35,21 @@ export const ResourcePreloader: React.FC<ResourcePreloaderProps> = ({
     images: [],
     domains: ['airtable.com', 'dl.airtable.com'],
     connections: ['https://dl.airtable.com'],
-    preloads: []
+    preloads: [
+      // Adicionar fontes críticas para o logo do site
+      { 
+        url: 'https://fonts.cdnfonts.com/s/30159/ArialBlack.woff',
+        as: 'font',
+        type: 'font/woff',
+        crossOrigin: 'anonymous'
+      },
+      {
+        url: 'https://fonts.cdnfonts.com/s/13444/Arial-Bold.woff',
+        as: 'font',
+        type: 'font/woff',
+        crossOrigin: 'anonymous'
+      }
+    ]
   } 
 }) => {
   // Adicionar elementos <link> para preload, preconnect, dns-prefetch
