@@ -33,7 +33,7 @@ export default function ScreensPage() {
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   const [currentAppScreens, setCurrentAppScreens] = useState<Screen[]>([]);
   const [currentApp, setCurrentApp] = useState<App | null>(null);
-  const [displayedScreenCount, setDisplayedScreenCount] = useState(10000); // Exibir praticamente todas as telas de uma vez
+  const [displayedScreenCount, setDisplayedScreenCount] = useState(50); // Exibir inicialmente apenas 50 telas para melhorar performance
   const [totalAirtableScreens, setTotalAirtableScreens] = useState(0); // Número total de telas no Airtable
   const [location] = useLocation();
   const search = useSearch();
@@ -576,7 +576,10 @@ export default function ScreensPage() {
           
           {/* Botão para carregar mais telas se ainda houver mais telas para mostrar */}
           {filteredScreens.length > displayedScreenCount && (
-            <div className="col-span-full text-center py-6">
+            <div className="col-span-full text-center py-6 flex flex-col items-center">
+              <p className="text-gray-500 mb-3 text-sm">
+                Mostrando {displayedScreenCount} de {filteredScreens.length} telas
+              </p>
               <button
                 onClick={() => {
                   // Incrementar o número de telas mostradas em 50
@@ -589,9 +592,13 @@ export default function ScreensPage() {
                     behavior: 'smooth'
                   });
                 }}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded"
+                className="bg-[#0066FF] hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-md shadow-sm transition-colors flex items-center justify-center"
+                aria-label="Carregar mais 50 telas"
               >
-                Mostrar mais
+                <span>Mostrar mais</span>
+                <span className="ml-2 text-xs bg-white bg-opacity-20 rounded-full px-2 py-1">
+                  +50
+                </span>
               </button>
             </div>
           )}
