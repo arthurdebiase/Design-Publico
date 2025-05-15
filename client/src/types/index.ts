@@ -29,6 +29,7 @@ export interface Screen {
   order: number;
   tags?: string[];
   category?: string | string[];
+  airtableId: string;  // Airtable record ID for more stable links
   createdAt: string;
   updatedAt: string;
 }

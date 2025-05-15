@@ -115,9 +115,9 @@ export function ScreenModal({
   };
   
   const handleCopyLink = () => {
-    // Create shareable URL with app ID and screen ID
+    // Create shareable URL with app ID and Airtable screen ID for better link sharing
     const baseUrl = window.location.origin;
-    const shareableUrl = `${baseUrl}/app/${app.id}?screen=${currentScreen.id}`;
+    const shareableUrl = `${baseUrl}/app/${app.id}?screen=${currentScreen.airtableId}`;
     
     // Copy to clipboard
     navigator.clipboard.writeText(shareableUrl)
