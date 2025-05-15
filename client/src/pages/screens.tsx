@@ -431,7 +431,7 @@ export default function ScreensPage() {
         
         {/* Screen counter */}
         <div className="text-gray-600 font-medium">
-          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}
+          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}{selectedTags.length > 0 || selectedCategories.length > 0 ? ` (${filteredScreens.length} filtradas)` : ''}
         </div>
       </div>
       
@@ -548,7 +548,7 @@ export default function ScreensPage() {
               {screen.app && (
                 <Link 
                   href={`/app/${createSlug(screen.app.name)}`}
-                  className="flex items-center gap-2 mt-2 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors no-underline group"
+                  className="flex items-center gap-2 mt-2 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors no-underline"
                   onClick={(e) => {
                     e.stopPropagation(); // Evita que a tela seja aberta ao clicar no app
                     // Garantir scroll para o topo ao navegar
@@ -556,12 +556,12 @@ export default function ScreensPage() {
                   }}
                   title={`Ver detalhes do app ${screen.app.name}`}
                 >
-                  <div className="w-4 h-4 rounded-sm bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center overflow-hidden">
                     {screen.app.logo ? (
                       <ResponsiveImage 
                         src={screen.app.logo}
                         alt={`${screen.app.name} Logo`}
-                        className="w-4 h-4 object-cover"
+                        className="w-5 h-5 object-contain"
                         widths={[16, 32, 64]}
                         quality={90}
                       />
@@ -592,7 +592,7 @@ export default function ScreensPage() {
                 }}
                 className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-2 px-4 rounded"
               >
-                Mostrar mais telas ({filteredScreens.length - displayedScreenCount} restantes)
+                Mostrar mais
               </button>
             </div>
           )}
@@ -707,7 +707,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         {screen.app && (
           <Link 
             href={`/app/${createSlug(screen.app.name)}`} 
-            className="flex items-center gap-2 mt-0 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors no-underline group"
+            className="flex items-center gap-2 mt-0 hover:bg-gray-50 p-1 rounded-md cursor-pointer transition-colors no-underline"
             onClick={(e) => {
               e.stopPropagation(); // Evita que a tela seja aberta ao clicar no app
               // Garantir scroll para o topo ao navegar
@@ -720,7 +720,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
                 <ResponsiveImage 
                   src={screen.app.logo}
                   alt={`${screen.app.name} Logo`}
-                  className="w-5 h-5 object-cover"
+                  className="w-5 h-5 object-contain"
                   widths={[20, 40, 60]}
                   quality={90}
                 />
