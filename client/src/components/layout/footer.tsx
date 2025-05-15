@@ -145,7 +145,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
           {/* Logo and description column */}
           <div className="md:col-span-6 space-y-4">
-            <Link href="/" className="flex items-center space-x-2 mb-4" aria-label="Ir para página inicial">
+            <Link href="/" className="flex items-center space-x-2 mb-4 no-underline" aria-label="Ir para página inicial">
               <div className="w-8 h-8 flex items-center justify-center">
                 <img 
                   src={symbolLogo} 

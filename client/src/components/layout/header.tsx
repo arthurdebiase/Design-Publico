@@ -49,13 +49,13 @@ export default function Header() {
         {/* Navigation (Desktop) */}
         <div className="hidden md:flex items-center">
           <nav className="flex items-center space-x-6 mr-6">
-            <Link href="/" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/' ? 'text-[#0066FF]' : ''}`}>
+            <Link href="/" className={`text-[#333333] hover:text-[#0066FF] font-medium no-underline ${location === '/' ? 'text-[#0066FF]' : ''}`}>
               {t('header.apps')}
             </Link>
-            <Link href="/screens" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/screens' ? 'text-[#0066FF]' : ''}`}>
+            <Link href="/screens" className={`text-[#333333] hover:text-[#0066FF] font-medium no-underline ${location === '/screens' ? 'text-[#0066FF]' : ''}`}>
               {t('header.screens')}
             </Link>
-            <Link href="/about" className={`text-[#333333] hover:text-[#0066FF] font-medium ${location === '/about' ? 'text-[#0066FF]' : ''}`}>
+            <Link href="/about" className={`text-[#333333] hover:text-[#0066FF] font-medium no-underline ${location === '/about' ? 'text-[#0066FF]' : ''}`}>
               {t('header.about')}
             </Link>
           </nav>
@@ -77,13 +77,13 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent>
               <div className="mt-8 flex flex-col space-y-4">
-                <Link href="/" className="text-lg font-medium hover:text-[#0066FF]">
+                <Link href="/" className="text-lg font-medium hover:text-[#0066FF] no-underline">
                   {t('header.apps')}
                 </Link>
-                <Link href="/screens" className="text-lg font-medium hover:text-[#0066FF]">
+                <Link href="/screens" className="text-lg font-medium hover:text-[#0066FF] no-underline">
                   {t('header.screens')}
                 </Link>
-                <Link href="/about" className="text-lg font-medium hover:text-[#0066FF]">
+                <Link href="/about" className="text-lg font-medium hover:text-[#0066FF] no-underline">
                   {t('header.about')}
                 </Link>
                 

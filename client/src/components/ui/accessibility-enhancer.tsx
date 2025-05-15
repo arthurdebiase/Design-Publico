@@ -52,8 +52,8 @@ export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({
           color: #6b7280 !important; /* Cinza mais escuro para melhor contraste */
         }
         
-        /* Garantir que links são distinguíveis do texto ao redor */
-        a:not(.btn):not([role="button"]) {
+        /* Garantir que links são distinguíveis do texto ao redor, exceto no cabeçalho e rodapé */
+        a:not(.btn):not([role="button"]):not(header a):not(footer a) {
           text-decoration: underline;
           text-underline-offset: 2px;
         }

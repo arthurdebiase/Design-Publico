@@ -56,6 +56,11 @@ export const CriticalCSS: React.FC = () => {
         text-decoration: none;
       }
       
+      /* Removendo sublinhado de links no cabeçalho e rodapé */
+      header a, footer a {
+        text-decoration: none !important;
+      }
+      
       /* Estilos para elementos de carregamento */
       .skeleton {
         background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
