@@ -44,9 +44,8 @@ app.use((req, res, next) => {
 app.use(compression({
   // Comprimir tudo acima de 1 byte (máxima agressividade)
   threshold: 1,
-  // Nível 11 para máxima compressão Brotli (valores válidos 0-11)
-  // ou nível 9 para Gzip/Deflate (valores válidos 0-9)
-  level: 11,
+  // Nível 9 para máxima compressão Gzip/Deflate (valores válidos 0-9)
+  level: 9,
   // Comprimir todos os tipos de conteúdo exceto imagens já comprimidas
   filter: (req, res) => {
     const path = req.path;
