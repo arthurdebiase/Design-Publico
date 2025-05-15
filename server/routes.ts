@@ -97,6 +97,8 @@ Crawl-delay: 2`);
       let quality = parseInt(req.query.quality as string) || 80;
       const isPriority = req.query.priority === 'true';
       
+      console.log(`Proxying image: ${path}, width: ${width}, format: ${format}`);
+      
       // Limite máximo de tamanho para evitar imagens muito grandes
       // O relatório do Lighthouse indica que estamos servindo imagens grandes demais
       if (width && width > 1000) {
@@ -143,7 +145,15 @@ Crawl-delay: 2`);
       }
       
       // Fetch the image from Airtable
-      const response = await axios.get(`https://v5.airtableusercontent.com${path}`, {
+      // Construct the Airtable URL
+      // First, check if the path is a complete URL (starts with https://)
+      let airtableUrl = path.startsWith('https://') 
+        ? path  // Use the full URL as provided
+        : `https://v5.airtableusercontent.com${path}`; // Add the base domain
+      
+      console.log(`Fetching Airtable image from: ${airtableUrl}`);
+      
+      const response = await axios.get(airtableUrl, {
         responseType: 'arraybuffer',
         headers: {
           'Accept': 'image/*',
@@ -255,7 +265,19 @@ Crawl-delay: 2`);
         res.send(response.data);
       }
     } catch (error) {
-      console.error("Error proxying Airtable image:", error);
+      // Extract more detailed information about the error
+      const errorMessage = error.message || 'Unknown error';
+      const errorStack = error.stack || '';
+      const errorStatus = error.response?.status || 'No status';
+      const errorData = error.response?.data ? 'Data available' : 'No data';
+      
+      console.error("Error proxying Airtable image:", {
+        path: req.path,
+        error: errorMessage,
+        status: errorStatus,
+        data: errorData,
+        stack: errorStack
+      });
       
       // Send a 1x1 pixel transparent fallback image instead of text
       const fallbackImage = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');

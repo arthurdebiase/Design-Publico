@@ -525,8 +525,9 @@ export default function ScreensPage() {
                   width={300}
                   height={534}
                   loading={index < 5 ? "eager" : "lazy"}
-                  fetchpriority={index < 5 ? "high" : "auto"}
                   style={{ aspectRatio: "9/16", backgroundColor: "#f8f8f8" }}
+                  // Use data-fetchpriority instead to avoid TypeScript errors
+                  data-fetchpriority={index < 5 ? "high" : "auto"}
                 />
                 
                 {/* Overlay com ícone de maximizar */}

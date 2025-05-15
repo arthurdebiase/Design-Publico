@@ -50,28 +50,44 @@ export function getProcessedImageUrl(
       const urlObj = new URL(url);
       const path = urlObj.pathname;
       
-      // Base proxy URL - add the origin for absolute URLs in production environment
+      // Base proxy URL
       let proxyUrl = `/proxy-image${path}`;
       
       // Add query parameters for optimization if provided
+      const params: string[] = [];
+      
       if (options) {
-        const params: string[] = [];
-        
         if (options.width) params.push(`width=${options.width}`);
         if (options.height) params.push(`height=${options.height}`);
         if (options.format) params.push(`format=${options.format}`);
         if (options.quality) params.push(`quality=${options.quality}`);
-        
-        if (params.length > 0) {
-          proxyUrl += `?${params.join('&')}`;
-        }
+        if (options.priority) params.push(`priority=true`);
+      }
+      
+      // Add timestamp to prevent caching of broken images in production
+      // This helps ensure fresh requests when deploying fixes
+      params.push(`_ts=${Date.now()}`);
+      
+      if (params.length > 0) {
+        proxyUrl += `?${params.join('&')}`;
       }
       
       return proxyUrl;
     } catch (error) {
       console.error("Error processing Airtable URL:", error);
-      // Fall back to original URL if there's an error parsing
-      return url;
+      // If there's an error parsing, try to extract the path manually
+      try {
+        // Remove the protocol and domain part to get just the path
+        const fullUrl = url;
+        const pathStart = fullUrl.indexOf('airtableusercontent.com') + 'airtableusercontent.com'.length;
+        const path = fullUrl.substring(pathStart);
+        
+        return `/proxy-image${path}?_ts=${Date.now()}`;
+      } catch (fallbackError) {
+        console.error("Fallback extraction failed:", fallbackError);
+        // Last resort - return the original URL
+        return url;
+      }
     }
   }
   
