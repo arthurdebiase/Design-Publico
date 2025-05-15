@@ -70,7 +70,7 @@ function AppScreenImage({ appId, appName, isPriority = false }: { appId: string,
             priority={isPriority}
             placeholder={
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
-                <span className="text-gray-400 text-sm">Loading...</span>
+                <span className="sr-only">Loading image for {appName || 'app'}</span>
               </div>
             }
             placeholderClassName="w-full h-full flex items-center justify-center bg-gray-100"
