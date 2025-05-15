@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+[[plugins]]
+  package = "./netlify/plugins/asset-headers"
+
 [functions]
   directory = "netlify/functions"
 
@@ -22,3 +25,29 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Fix MIME type issues for assets
+[[headers]]
+  for = "/assets/*.css"
+  [headers.values]
+    Content-Type = "text/css"
+
+[[headers]]
+  for = "/assets/*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+
+[[headers]]
+  for = "/assets/*.json"
+  [headers.values]
+    Content-Type = "application/json"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Content-Type = "text/css"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
