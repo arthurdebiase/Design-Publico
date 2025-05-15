@@ -33,7 +33,7 @@ export default function ScreensPage() {
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
   const [currentAppScreens, setCurrentAppScreens] = useState<Screen[]>([]);
   const [currentApp, setCurrentApp] = useState<App | null>(null);
-  const [displayedScreenCount, setDisplayedScreenCount] = useState(50); // Número inicial de telas a mostrar
+  const [displayedScreenCount, setDisplayedScreenCount] = useState(10000); // Exibir praticamente todas as telas de uma vez
   const [totalAirtableScreens, setTotalAirtableScreens] = useState(0); // Número total de telas no Airtable
   const [location] = useLocation();
   const search = useSearch();
@@ -108,8 +108,7 @@ export default function ScreensPage() {
     }
     
     setFilteredScreens(filtered);
-    // Redefinir o número de telas exibidas para o valor inicial quando os filtros mudam
-    setDisplayedScreenCount(50);
+    // Mantém o mesmo número de telas exibidas, sem redefinir
   }, [selectedTags, selectedCategories, allScreens]);
 
   // Otimização: uso de Promise.all para paralelizar requisições
@@ -156,9 +155,8 @@ export default function ScreensPage() {
         // Otimização: Limita o número de telas para reduzir o DOM e melhorar a performance
         // Fisher-Yates shuffle algorithm - mais eficiente para grandes arrays
         const shuffleArray = (array: any[]) => {
-          // Otimização: aplicar o shuffle em um array limitado melhora a performance
-          const maxItems = Math.min(array.length, 200); // Limita o número máximo de itens para performar o shuffle
-          const result = array.slice(0, maxItems);
+          // Usando todo o array sem limitação
+          const result = [...array];
           
           for (let i = result.length - 1; i > 0; i--) {
             // Usando Bitwise OR 0 para converter para inteiro (mais rápido que Math.floor)
