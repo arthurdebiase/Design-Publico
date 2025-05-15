@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useLocation } from "wouter";
-import { App, Screen } from "@/types";
+import { App } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { fetchScreensByAppId } from "@/lib/airtable";
 import { useIsMobile } from "@/hooks/use-mobile";
-// No longer need carousel components
 import { Skeleton } from "@/components/ui/skeleton";
-import { getProcessedImageUrl } from "@/lib/imageUtils";
+import { ResponsiveImage } from "@/components/ui/responsive-image";
 
 interface AppCardProps {
   app: App;
@@ -53,8 +52,8 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
             }
           }}
         >
-          <img 
-            src={getProcessedImageUrl(firstScreen.imageUrl)} 
+          <ResponsiveImage 
+            src={firstScreen.imageUrl} 
             alt={`${appName ? appName + ': ' : ''}${firstScreen.name || 'Screen view'} - ${firstScreen.description || 'User interface example'}`}
             className="w-full h-full object-contain transition-transform hover:scale-[1.01]"
             style={{ 
@@ -62,12 +61,16 @@ function AppScreenImage({ appId, appName }: { appId: string, appName?: string })
               objectPosition: "center",
               aspectRatio: "9/16"
             }}
-            loading="lazy"
-            onError={(e) => {
-              console.error(`Failed to load image: ${firstScreen.imageUrl}`);
-              e.currentTarget.onerror = null; // Prevent infinite error loops
-              e.currentTarget.src = `data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='444' viewBox='0 0 250 444' fill='none'%3E%3Crect width='250' height='444' fill='%23F3F4F6'/%3E%3Ctext x='125' y='222' font-family='Arial' font-size='16' fill='%23D1D5DB' text-anchor='middle'%3EImage not available%3C/text%3E%3C/svg%3E`;
-            }}
+            sizes="(min-width: 1280px) 20vw, (min-width: 768px) 25vw, 33vw"
+            widths={[250, 350, 480]}
+            format="webp"
+            quality={80}
+            placeholder={
+              <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                <span className="text-gray-400 text-sm">Loading...</span>
+              </div>
+            }
+            placeholderClassName="w-full h-full flex items-center justify-center bg-gray-100"
           />
         </div>
         
@@ -117,21 +120,13 @@ export default function AppCard({ app }: AppCardProps) {
           <div className="flex items-center gap-3">
             <div className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} flex-shrink-0 flex items-center justify-center`}>
               {app.logo ? (
-                <img 
-                  src={getProcessedImageUrl(app.logo)} 
+                <ResponsiveImage 
+                  src={app.logo} 
                   alt={`${app.name} Logo`} 
                   className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} object-contain`}
-                  onError={(e) => {
-                    console.error(`Failed to load logo: ${app.logo}`);
-                    e.currentTarget.onerror = null; // Prevent infinite error loops
-                    // Use fallback placeholder
-                    e.currentTarget.style.display = 'none';
-                    // Show placeholder instead
-                    const placeholder = document.createElement('div');
-                    placeholder.className = `${isMobile ? 'w-8 h-8' : 'w-9 h-9'} flex items-center justify-center bg-gray-200 text-gray-600 font-bold rounded-md`;
-                    placeholder.textContent = app.name.charAt(0);
-                    e.currentTarget.parentNode?.appendChild(placeholder);
-                  }}
+                  widths={[32, 64, 96]}
+                  quality={90}
+                  placeholder={<LogoPlaceholder app={app} />}
                 />
               ) : (
                 <LogoPlaceholder app={app} />

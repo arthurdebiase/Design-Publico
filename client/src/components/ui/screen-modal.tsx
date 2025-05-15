@@ -159,21 +159,17 @@ export function ScreenModal({
                 tabIndex={0}
               >
                 {app.logo ? (
-                  <img 
-                    src={getProcessedImageUrl(app.logo)} 
+                  <ResponsiveImage 
+                    src={app.logo} 
                     alt={`${app.name} logo`} 
                     className="w-8 h-8"
-                    onError={(e) => {
-                      console.error(`Failed to load logo: ${app.logo}`);
-                      e.currentTarget.onerror = null; // Prevent infinite error loops
-                      // Use fallback placeholder
-                      e.currentTarget.style.display = 'none';
-                      // Show placeholder instead
-                      const placeholder = document.createElement('div');
-                      placeholder.className = 'w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700';
-                      placeholder.textContent = app.name.charAt(0);
-                      e.currentTarget.parentNode?.appendChild(placeholder);
-                    }}
+                    widths={[32, 64, 96]}
+                    quality={90}
+                    placeholder={
+                      <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">
+                        {app.name.charAt(0)}
+                      </div>
+                    }
                   />
                 ) : (
                   <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">{app.name.charAt(0)}</div>
