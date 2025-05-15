@@ -284,8 +284,9 @@ export default function AppDetail() {
                     
                     {/* Seções toggle */}
                     <div className="flex items-center">
-                      <span className="text-sm mr-2 text-gray-600">Seções</span>
+                      <label htmlFor="sections-toggle" className="text-sm mr-2 text-gray-600">Seções</label>
                       <Switch
+                        id="sections-toggle"
                         checked={showSections}
                         onCheckedChange={setShowSections}
                         className={showSections ? "bg-[#009440]" : ""}
