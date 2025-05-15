@@ -1,141 +1,110 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+
+interface ResourcePreloaderProps {
+  resources?: {
+    // URLs para precarregar imagens críticas
+    images?: string[];
+    // URLs para DNS prefetch (domínios de terceiros)
+    domains?: string[];
+    // URLs para preconectar (estabelecer conexão antecipada)
+    connections?: string[];
+    // URLs para pré-carregar (recursos que serão necessários em breve)
+    preloads?: Array<{
+      url: string;
+      as: 'script' | 'style' | 'image' | 'font' | 'fetch';
+      type?: string;
+      crossOrigin?: 'anonymous' | 'use-credentials';
+    }>;
+  };
+}
 
 /**
- * ResourcePreloader Component
+ * ResourcePreloader
  * 
- * Este componente implementa estratégias de pré-carregamento para melhorar performance:
- * - Pré-carrega imagens críticas para LCP (Largest Contentful Paint)
- * - Implementa DNS prefetch para domínios externos
- * - Implementa preconnect para conexões que serão necessárias logo
- * - Detecta e prioriza automaticamente elementos importantes
+ * Componente para otimizar o carregamento de recursos críticos:
+ * 1. Preconnect - estabelece conexões antecipadas com origens importantes
+ * 2. DNS-Prefetch - resolve DNS antecipadamente
+ * 3. Preload - carrega recursos críticos com alta prioridade
+ * 4. Preloadimg - carrega imagens importantes com JavaScript
+ * 
+ * Isso melhora significativamente as métricas LCP e FCP
  */
-export function ResourcePreloader() {
+export const ResourcePreloader: React.FC<ResourcePreloaderProps> = ({ 
+  resources = {
+    // Valores padrão para recursos críticos do site
+    images: [],
+    domains: ['airtable.com', 'dl.airtable.com'],
+    connections: ['https://dl.airtable.com'],
+    preloads: []
+  } 
+}) => {
+  // Adicionar elementos <link> para preload, preconnect, dns-prefetch
   useEffect(() => {
-    // Detectar imagens críticas para Largest Contentful Paint (LCP)
-    const detectLcpCandidates = (): HTMLImageElement[] => {
-      // Estratégias para encontrar elementos LCP potenciais
-      const candidates: HTMLImageElement[] = [];
-      
-      // 1. Imagens grandes acima da dobra são frequentemente LCP
-      document.querySelectorAll('img').forEach((img) => {
-        const rect = img.getBoundingClientRect();
-        
-        // Imagem visível e razoavelmente grande (provavelmente LCP)
-        if (
-          rect.top < window.innerHeight &&
-          rect.width > 100 &&
-          rect.height > 100
-        ) {
-          candidates.push(img);
-        }
+    if (typeof document === 'undefined') return;
+    
+    const head = document.head || document.getElementsByTagName('head')[0];
+    const linkElements: HTMLLinkElement[] = [];
+    
+    // 1. DNS Prefetch para domínios externos
+    if (resources.domains && resources.domains.length > 0) {
+      resources.domains.forEach(domain => {
+        const link = document.createElement('link');
+        link.rel = 'dns-prefetch';
+        link.href = `//${domain.replace(/^https?:\/\//, '')}`;
+        link.setAttribute('data-generated', 'true');
+        head.appendChild(link);
+        linkElements.push(link);
       });
-      
-      // 2. Imagem com classes que sugerem destaque (hero, banner, etc)
-      document.querySelectorAll('img.hero, img.banner, img.featured').forEach((img) => {
-        if (!candidates.includes(img as HTMLImageElement)) {
-          candidates.push(img as HTMLImageElement);
-        }
-      });
-      
-      // 3. Ordena por área visível (maior primeiro = mais provável LCP)
-      return candidates.sort((a, b) => {
-        const areaA = a.width * a.height;
-        const areaB = b.width * b.height;
-        return areaB - areaA;
-      });
-    };
-
-    // Preload de recursos críticos
-    const preloadCriticalResources = () => {
-      // Obter candidatos LCP
-      const lcpCandidates = detectLcpCandidates();
-      
-      // Preload das principais imagens (Top 3)
-      lcpCandidates.slice(0, 3).forEach((img) => {
-        // Só pré-carrega se tiver src e não estiver com loading=eager
-        if (img.src && img.loading !== 'eager' && !img.hasAttribute('fetchpriority')) {
-          // Marca como alta prioridade
-          img.setAttribute('fetchpriority', 'high');
-          img.loading = 'eager';
-          
-          // Também pré-carrega usando link preload
-          if (!document.querySelector(`link[rel="preload"][href="${img.src}"]`)) {
-            const preloadLink = document.createElement('link');
-            preloadLink.rel = 'preload';
-            preloadLink.as = 'image';
-            preloadLink.href = img.src;
-            preloadLink.crossOrigin = 'anonymous';
-            document.head.appendChild(preloadLink);
-          }
-        }
-      });
-      
-      // Preconnect para domínios de imagens
-      const airtableDomain = 'v5.airtableusercontent.com';
-      if (!document.querySelector(`link[rel="preconnect"][href="https://${airtableDomain}"]`)) {
-        const preconnect = document.createElement('link');
-        preconnect.rel = 'preconnect';
-        preconnect.href = `https://${airtableDomain}`;
-        preconnect.crossOrigin = 'anonymous';
-        document.head.appendChild(preconnect);
-      }
-    };
-
-    // Preload de recursos relacionados ao LCP (usando PerformanceObserver)
-    if ('PerformanceObserver' in window) {
-      try {
-        const lcpObserver = new PerformanceObserver((entryList) => {
-          const entries = entryList.getEntries();
-          const lastEntry = entries[entries.length - 1];
-          
-          if (lastEntry && 'element' in lastEntry) {
-            const element = (lastEntry as any).element;
-            
-            // Se o LCP for uma imagem, marcar para otimização futura
-            if (element && element.tagName === 'IMG') {
-              // Verifica se há imagens semelhantes para pré-carregar
-              const src = element.src;
-              const pathname = new URL(src).pathname;
-              const pathParts = pathname.split('/');
-              const filename = pathParts[pathParts.length - 1];
-              
-              // Detecta arquivos similares (mesmo padrão de nome)
-              const similarPattern = filename.replace(/\d+/g, '\\d+');
-              const regex = new RegExp(similarPattern);
-              
-              // Encontra e preload de imagens semelhantes
-              document.querySelectorAll('img').forEach((img) => {
-                if (img !== element && img.src && regex.test(img.src)) {
-                  const preloadLink = document.createElement('link');
-                  preloadLink.rel = 'preload';
-                  preloadLink.as = 'image';
-                  preloadLink.href = img.src;
-                  document.head.appendChild(preloadLink);
-                }
-              });
-            }
-          }
-          
-          lcpObserver.disconnect();
-        });
-        
-        // Registra o observer para o tipo LCP
-        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-      } catch (e) {
-        console.warn('PerformanceObserver for LCP not supported', e);
-      }
     }
     
-    // Executa o preload inicial
-    preloadCriticalResources();
+    // 2. Preconnect para origens externas importantes
+    if (resources.connections && resources.connections.length > 0) {
+      resources.connections.forEach(url => {
+        const link = document.createElement('link');
+        link.rel = 'preconnect';
+        link.href = url;
+        link.setAttribute('crossorigin', 'anonymous');
+        link.setAttribute('data-generated', 'true');
+        head.appendChild(link);
+        linkElements.push(link);
+      });
+    }
     
-    // Re-executar quando necessário (após lazy load ou atualização dinâmica)
-    window.addEventListener('lazyloaded', preloadCriticalResources);
+    // 3. Preload para recursos críticos
+    if (resources.preloads && resources.preloads.length > 0) {
+      resources.preloads.forEach(resource => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = resource.url;
+        link.as = resource.as;
+        if (resource.type) link.type = resource.type;
+        if (resource.crossOrigin) link.crossOrigin = resource.crossOrigin;
+        link.setAttribute('data-generated', 'true');
+        head.appendChild(link);
+        linkElements.push(link);
+      });
+    }
     
+    // 4. Pré-carregar imagens críticas com JavaScript
+    if (resources.images && resources.images.length > 0) {
+      resources.images.forEach(imageUrl => {
+        // Utilizamos o Image() API para pré-carregar imagens
+        const img = new Image();
+        img.src = imageUrl;
+      });
+    }
+    
+    // Limpar na desmontagem
     return () => {
-      window.removeEventListener('lazyloaded', preloadCriticalResources);
+      linkElements.forEach(link => {
+        if (link.parentNode) {
+          link.parentNode.removeChild(link);
+        }
+      });
     };
-  }, []);
+  }, [resources]);
+  
+  return null; // Componente não renderiza nada visualmente
+};
 
-  return null;
-}
+export default ResourcePreloader;

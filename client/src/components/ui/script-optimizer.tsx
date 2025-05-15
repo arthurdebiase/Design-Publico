@@ -1,147 +1,187 @@
-import { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
+
+interface ScriptOptimizerProps {
+  /**
+   * Scripts a serem otimizados, com diferentes níveis de prioridade
+   */
+  scripts?: {
+    // Scripts críticos que devem ser carregados imediatamente
+    critical?: Array<{
+      src?: string;
+      content?: string;
+      id?: string;
+      async?: boolean;
+      defer?: boolean;
+      strategy?: 'inline' | 'external';
+    }>;
+    
+    // Scripts importantes mas não críticos (carregamento com prioridade média)
+    important?: Array<{
+      src?: string;
+      content?: string;
+      id?: string;
+      async?: boolean;
+      defer?: boolean;
+    }>;
+    
+    // Scripts não críticos que podem ser carregados no final
+    lowPriority?: Array<{
+      src?: string;
+      content?: string;
+      id?: string;
+    }>;
+  };
+}
 
 /**
- * Script Optimizer
+ * ScriptOptimizer
  * 
- * Este componente otimiza o carregamento de scripts na aplicação para melhorar
- * o Total Blocking Time (TBT) e Time to Interactive (TTI).
+ * Componente para gerenciar o carregamento otimizado de scripts no site,
+ * usando técnicas como:
+ * - Scripts críticos carregados com prioridade alta
+ * - Scripts não críticos carregados após o load event
+ * - Inline de código crítico para evitar requests adicionais
  * 
- * Técnicas usadas:
- * 1. Script splitting - Divide scripts grandes em menores
- * 2. Carregamento assíncrono - Carrega scripts não críticos com async/defer
- * 3. Detecção de idle time - Carrega código não essencial quando o navegador está inativo
+ * Isso melhora o TBT (Total Blocking Time) e FID (First Input Delay)
  */
-export function ScriptOptimizer() {
+export const ScriptOptimizer: React.FC<ScriptOptimizerProps> = ({
+  scripts = {
+    critical: [],
+    important: [],
+    lowPriority: []
+  }
+}) => {
+  const loadedScripts = useRef(new Set<string>());
+  
   useEffect(() => {
-    // Função para detectar se o browser está com recursos livres
-    const isLowPriority = () => {
-      return !document.hidden && // Documento visível
-        (navigator as any).deviceMemory > 4 && // Dispositivo tem mais de 4GB de RAM
-        (navigator as any).hardwareConcurrency > 4; // CPU com mais de 4 cores
-    };
-
-    // Carrega scripts dinamicamente sem bloquear o thread principal
-    const loadScriptAsync = (src: string, defer = true, async = true): Promise<void> => {
-      return new Promise((resolve, reject) => {
+    if (typeof document === 'undefined') return;
+    
+    const head = document.head || document.getElementsByTagName('head')[0];
+    const loadedScriptsList = loadedScripts.current;
+    
+    // Monitorar scripts já inseridos para evitar duplicação
+    const scriptElements: HTMLScriptElement[] = [];
+    
+    // 1. Carregar scripts críticos imediatamente
+    if (scripts.critical && scripts.critical.length > 0) {
+      scripts.critical.forEach(scriptData => {
+        if (scriptData.src && loadedScriptsList.has(scriptData.src)) return;
+        
+        if (scriptData.src) loadedScriptsList.add(scriptData.src);
+        
         const script = document.createElement('script');
-        script.src = src;
-        if (defer) script.defer = true;
-        if (async) script.async = true;
         
-        script.onload = () => resolve();
-        script.onerror = (err) => reject(err);
-        
-        document.body.appendChild(script);
-      });
-    };
-
-    // Implementa um mecanismo para executar funções pesadas fora do thread principal
-    // Isso melhora significativamente o TBT (Total Blocking Time)
-    const executeOffMainThread = (fn: Function): void => {
-      // Cria uma URL para a função
-      const fnString = `self.onmessage = function(e) { 
-        (${fn.toString()})(); 
-        self.postMessage('done'); 
-      }`;
-      
-      const blob = new Blob([fnString], { type: 'application/javascript' });
-      const url = URL.createObjectURL(blob);
-      
-      // Cria um worker para executar a função
-      const worker = new Worker(url);
-      
-      // Limpa recursos quando terminar
-      worker.onmessage = () => {
-        worker.terminate();
-        URL.revokeObjectURL(url);
-      };
-      
-      // Inicia o worker
-      worker.postMessage('start');
-    };
-
-    // Função para adiar carregamento de recursos não essenciais
-    const deferNonEssentialWork = () => {
-      // Evento que dispara quando o navegador estiver ocioso
-      const onIdle = () => {
-        // Adiar o carregamento de análise e rastreamento para melhorar o LCP e FCP
-        setTimeout(() => {
-          // Exemplo de loading de scripts de terceiros (analytics, etc)
-          // Aqui poderia ser Google Analytics, Facebook Pixel, etc
-        }, 3000);
-      };
-      
-      // Usar requestIdleCallback se disponível, senão usar setTimeout
-      if ('requestIdleCallback' in window) {
-        (window as any).requestIdleCallback(onIdle, { timeout: 5000 });
-      } else {
-        setTimeout(onIdle, 5000);
-      }
-    };
-
-    // Implementa otimização de interação com UI (resolve jank)
-    const optimizeUiInteractions = () => {
-      // Melhora a performance de scrolling
-      let scrollTimeout: any = null;
-      const onScroll = () => {
-        // Cancela qualquer repaint não essencial durante scroll
-        if (scrollTimeout) {
-          clearTimeout(scrollTimeout);
+        if (scriptData.id) {
+          script.id = scriptData.id;
         }
-        // Reagenda atualizações depois que o scroll para
-        scrollTimeout = setTimeout(() => {
-          // Aciona updates visuais depois que o scroll parou
-          // Isso reduz CLS e TBT durante scroll
-        }, 150);
-      };
-      
-      // Otimiza rendering durante scroll
-      window.addEventListener('scroll', onScroll, { passive: true });
-      
-      // Limpeza quando componente for desmontado
-      return () => {
-        window.removeEventListener('scroll', onScroll);
-      };
-    };
-
-    // Evita long tasks bloqueantes dividindo o trabalho
-    const avoidLongTasks = (taskFn: Function, data: any[], chunkSize = 50) => {
-      return new Promise<void>((resolve) => {
-        const chunks = Math.ceil(data.length / chunkSize);
-        let currentChunk = 0;
         
-        const processNextChunk = () => {
-          if (currentChunk >= chunks) {
-            resolve();
-            return;
+        if (scriptData.strategy === 'inline' && scriptData.content) {
+          // Script inline - melhor para código crítico pequeno
+          script.textContent = scriptData.content;
+        } else if (scriptData.src) {
+          // Script externo
+          script.src = scriptData.src;
+          script.async = scriptData.async ?? true;
+          script.defer = scriptData.defer ?? false;
+        }
+        
+        head.appendChild(script);
+        scriptElements.push(script);
+      });
+    }
+    
+    // 2. Carregar scripts importantes depois de DOMContentLoaded
+    const loadImportantScripts = () => {
+      if (scripts.important && scripts.important.length > 0) {
+        scripts.important.forEach(scriptData => {
+          if (scriptData.src && loadedScriptsList.has(scriptData.src)) return;
+          
+          if (scriptData.src) loadedScriptsList.add(scriptData.src);
+          
+          const script = document.createElement('script');
+          
+          if (scriptData.id) {
+            script.id = scriptData.id;
           }
           
-          const start = currentChunk * chunkSize;
-          const end = Math.min(start + chunkSize, data.length);
-          const chunk = data.slice(start, end);
+          if (scriptData.src) {
+            script.src = scriptData.src;
+            script.async = scriptData.async ?? true;
+            script.defer = scriptData.defer ?? true;
+          } else if (scriptData.content) {
+            script.textContent = scriptData.content;
+          }
           
-          // Processa o chunk atual
-          taskFn(chunk);
-          
-          currentChunk++;
-          
-          // Agenda o próximo chunk usando setTimeout para permitir que o navegador respire
-          setTimeout(processNextChunk, 0);
-        };
+          head.appendChild(script);
+          scriptElements.push(script);
+        });
+      }
+    };
+    
+    // 3. Carregar scripts de baixa prioridade após o window.load
+    const loadLowPriorityScripts = () => {
+      if (scripts.lowPriority && scripts.lowPriority.length > 0) {
+        // Usar requestIdleCallback se disponível, ou setTimeout como fallback
+        const scheduleLoad = window.requestIdleCallback || 
+          ((cb) => setTimeout(cb, 1000)); // Fallback com 1 segundo de atraso
         
-        // Inicia o processamento
-        processNextChunk();
+        scheduleLoad(() => {
+          scripts.lowPriority?.forEach(scriptData => {
+            if (scriptData.src && loadedScriptsList.has(scriptData.src)) return;
+            
+            if (scriptData.src) loadedScriptsList.add(scriptData.src);
+            
+            const script = document.createElement('script');
+            
+            if (scriptData.id) {
+              script.id = scriptData.id;
+            }
+            
+            if (scriptData.src) {
+              script.src = scriptData.src;
+              script.async = true;
+              script.defer = true;
+            } else if (scriptData.content) {
+              script.textContent = scriptData.content;
+            }
+            
+            document.body.appendChild(script);
+            scriptElements.push(script);
+          });
+        });
+      }
+    };
+    
+    // Adicionar event listeners para as diferentes fases de carregamento
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadImportantScripts);
+      window.addEventListener('load', loadLowPriorityScripts);
+    } else {
+      // Documento já carregou, executar imediatamente mas em ordem
+      loadImportantScripts();
+      
+      if (document.readyState === 'complete') {
+        loadLowPriorityScripts();
+      } else {
+        window.addEventListener('load', loadLowPriorityScripts);
+      }
+    }
+    
+    // Limpeza na desmontagem
+    return () => {
+      document.removeEventListener('DOMContentLoaded', loadImportantScripts);
+      window.removeEventListener('load', loadLowPriorityScripts);
+      
+      // Remover scripts criados dinamicamente
+      scriptElements.forEach(script => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
       });
     };
-    
-    // Execute otimizações
-    deferNonEssentialWork();
-    const cleanup = optimizeUiInteractions();
-    
-    return () => {
-      cleanup();
-    };
-  }, []);
+  }, [scripts]);
+  
+  return null; // Componente não renderiza nada visualmente
+};
 
-  return null;
-}
+export default ScriptOptimizer;

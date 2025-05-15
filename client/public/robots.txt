@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /*.json$
 
+# Sitemap
 Sitemap: https://designpublico.com.br/sitemap.xml

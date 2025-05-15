@@ -1,120 +1,127 @@
-import { useEffect } from 'react';
-import { useLocation } from 'wouter';
+import React from 'react';
+import { Helmet } from 'react-helmet-async';
 
 interface MetaTagsProps {
+  /**
+   * Title da página - será combinado com o sufixo do site
+   */
   title?: string;
+  
+  /**
+   * Descrição da página para SEO
+   */
   description?: string;
+  
+  /**
+   * URL da imagem para compartilhamento em redes sociais
+   */
   image?: string;
-  type?: string;
+  
+  /**
+   * URL canônica da página
+   */
+  canonical?: string;
+  
+  /**
+   * Lista de palavras-chave para SEO
+   */
   keywords?: string[];
+  
+  /**
+   * Tipo de conteúdo para Open Graph (og:type)
+   */
+  type?: 'website' | 'article' | 'profile' | 'book' | 'video';
 }
 
 /**
- * MetaTags component dynamically updates the document metadata based on the current route
- * This helps with SEO by providing page-specific meta information
+ * MetaTags Component
+ * 
+ * Componente para gerenciar meta tags e SEO das páginas,
+ * com suporte para Open Graph, Twitter Cards, e schema.org
  */
-export default function MetaTags({
+export const MetaTags: React.FC<MetaTagsProps> = ({
   title,
-  description,
-  image,
-  type = 'website',
-  keywords = [],
-}: MetaTagsProps) {
-  const [location] = useLocation();
-  const baseTitle = 'DESIGN PÚBLICO';
-  const baseUrl = window.location.origin;
-  const currentUrl = baseUrl + location;
+  description = 'DESIGN PÚBLICO é uma base de referências visuais de interfaces públicas digitais. Reunimos bons exemplos de design para inspirar quem cria serviços digitais para a população.',
+  image = '/images/designpublico-share.jpg',
+  canonical,
+  keywords = ['design público', 'interfaces públicas', 'design gov', 'design de serviços', 'UX governo', 'UI governo'],
+  type = 'website'
+}) => {
+  // Nome do site para combinação com títulos de página
+  const siteName = 'DESIGN PÚBLICO';
   
+  // Título formatado, com limite para evitar cortes
   const finalTitle = title 
-    ? `${title} | ${baseTitle}` 
-    : `${baseTitle} - Referências de Interfaces Públicas Digitais`;
+    ? `${title} | ${siteName}` 
+    : `${siteName} - Base de referências visuais de interfaces públicas`;
   
-  const finalDescription = description || 'Uma base de referências visuais de interfaces públicas digitais. Reunimos bons exemplos de design para inspirar quem cria serviços digitais para a população.';
+  // Assegurar que a descrição não seja muito longa (recomendado: ~155-160 caracteres)
+  const finalDescription = description && description.length > 160 
+    ? `${description.substring(0, 157)}...` 
+    : description;
   
-  const finalImage = image 
-    ? (image.startsWith('http') ? image : `${baseUrl}${image}`) 
-    : `${baseUrl}/designpublico-social.png`;
-    
-  const finalKeywords = [
-    'design público',
-    'interface pública',
-    'design de serviços',
-    'governo digital',
-    'ux design',
-    'design de aplicativos',
-    'design de interfaces',
-    'design inclusivo',
-    ...keywords
-  ].join(', ');
+  // Garantir que imagem seja uma URL absoluta
+  const absoluteImageUrl = image && !image.startsWith('http') 
+    ? `https://designpublico.com.br${image}` 
+    : image;
+  
+  // URL canônica completa
+  const absoluteCanonical = canonical 
+    ? `https://designpublico.com.br${canonical}` 
+    : 'https://designpublico.com.br';
+  
+  return (
+    <Helmet>
+      {/* Título e metadados básicos */}
+      <title>{finalTitle}</title>
+      <meta name="description" content={finalDescription} />
+      
+      {/* Link canônico - importante para SEO e evitar conteúdo duplicado */}
+      <link rel="canonical" href={absoluteCanonical} />
+      
+      {/* Metadados para SEO avançado */}
+      <meta name="keywords" content={keywords.join(', ')} />
+      <meta name="author" content="Design Público" />
+      <meta name="robots" content="index, follow" />
+      
+      {/* Controle de viewport (já configurado para acessibilidade) */}
+      <meta 
+        name="viewport" 
+        content="width=device-width, initial-scale=1.0" 
+      />
+      
+      {/* Open Graph meta tags para compartilhamento em redes sociais */}
+      <meta property="og:title" content={finalTitle} />
+      <meta property="og:description" content={finalDescription} />
+      <meta property="og:image" content={absoluteImageUrl} />
+      <meta property="og:url" content={absoluteCanonical} />
+      <meta property="og:type" content={type} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content="pt_BR" />
+      
+      {/* Twitter Card meta tags para compartilhamento no Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={finalTitle} />
+      <meta name="twitter:description" content={finalDescription} />
+      <meta name="twitter:image" content={absoluteImageUrl} />
+      
+      {/* Dados estruturados com schema.org para Rich Snippets */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'WebSite',
+          'name': siteName,
+          'url': 'https://designpublico.com.br',
+          'description': description,
+          'potentialAction': {
+            '@type': 'SearchAction',
+            'target': 'https://designpublico.com.br/screens?search={search_term_string}',
+            'query-input': 'required name=search_term_string'
+          }
+        })}
+      </script>
+    </Helmet>
+  );
+};
 
-  useEffect(() => {
-    // Update all meta tags
-    document.title = finalTitle;
-    
-    // Basic meta tags
-    updateMetaTag('description', finalDescription);
-    updateMetaTag('keywords', finalKeywords);
-    
-    // Corrigir a meta viewport para permitir zoom (acessibilidade)
-    const viewportMeta = document.querySelector('meta[name="viewport"]');
-    if (viewportMeta) {
-      const content = viewportMeta.getAttribute('content') || '';
-      if (content.includes('maximum-scale=1') || content.includes('user-scalable=no')) {
-        // Remover essas limitações restritivas de acessibilidade
-        const newContent = content
-          .replace(/maximum-scale=[^,]*,?/g, '')
-          .replace(/user-scalable=[^,]*,?/g, '')
-          .replace(/,\s*$/, '');
-        viewportMeta.setAttribute('content', newContent);
-      }
-    } else {
-      // Se não existir, criar uma com valores acessíveis
-      const meta = document.createElement('meta');
-      meta.setAttribute('name', 'viewport');
-      meta.setAttribute('content', 'width=device-width, initial-scale=1.0');
-      document.head.appendChild(meta);
-    }
-    
-    // Open Graph / Facebook
-    updateMetaTag('og:title', finalTitle, 'property');
-    updateMetaTag('og:description', finalDescription, 'property');
-    updateMetaTag('og:image', finalImage, 'property');
-    updateMetaTag('og:url', currentUrl, 'property');
-    updateMetaTag('og:type', type, 'property');
-    
-    // Twitter
-    updateMetaTag('twitter:title', finalTitle, 'property');
-    updateMetaTag('twitter:description', finalDescription, 'property');
-    updateMetaTag('twitter:image', finalImage, 'property');
-    updateMetaTag('twitter:url', currentUrl, 'property');
-    updateMetaTag('twitter:card', 'summary_large_image', 'property');
-    
-    // Update canonical link
-    let canonicalElement = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
-    if (canonicalElement) {
-      canonicalElement.href = currentUrl;
-    } else {
-      canonicalElement = document.createElement('link');
-      canonicalElement.rel = 'canonical';
-      canonicalElement.href = currentUrl;
-      document.head.appendChild(canonicalElement);
-    }
-  }, [finalTitle, finalDescription, finalImage, currentUrl, finalKeywords, type]);
-
-  return null; // This component doesn't render anything
-}
-
-/**
- * Helper function to update or create a meta tag
- */
-function updateMetaTag(name: string, content: string, attributeName: 'name' | 'property' = 'name') {
-  let meta = document.querySelector(`meta[${attributeName}="${name}"]`) as HTMLMetaElement;
-  
-  if (!meta) {
-    meta = document.createElement('meta');
-    meta.setAttribute(attributeName, name);
-    document.head.appendChild(meta);
-  }
-  
-  meta.content = content;
-}
+export default MetaTags;

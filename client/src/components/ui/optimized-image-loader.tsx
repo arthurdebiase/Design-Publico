@@ -1,169 +1,113 @@
-import { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+
+interface OptimizedImageLoaderProps {
+  /**
+   * Lista de URLs de imagens para pré-carregar
+   * Observe que apenas devemos pré-carregar imagens críticas visíveis inicialmente
+   */
+  imageSrcs: string[];
+  
+  /**
+   * Especifica se deve modificar a prioridade de carregamento com fetchPriority
+   * Deve ser 'high' para imagens LCP (Largest Contentful Paint)
+   */
+  priority?: 'high' | 'low' | 'auto';
+  
+  /**
+   * Callback executado quando todas as imagens são carregadas
+   */
+  onAllLoaded?: () => void;
+  
+  /**
+   * Limita o número máximo de imagens carregadas simultaneamente
+   * para não sobrecarregar o navegador
+   */
+  concurrentLoads?: number;
+}
 
 /**
- * Componente para otimizar o carregamento de imagens
+ * OptimizedImageLoader
  * 
- * Este componente implementa otimizações avançadas para o carregamento de imagens:
- * 1. Prioriza imagens LCP (Largest Contentful Paint)
- * 2. Implementa lazy loading para imagens abaixo da barra de rolagem
- * 3. Detecta suporte a formatos modernos (WebP, AVIF)
- * 4. Pré-carrega imagens de tela que provavelmente serão vistas em seguida
+ * Gerencia o carregamento otimizado de imagens críticas para melhorar o LCP
+ * utilizando técnicas como:
+ * - Priorização com fetchPriority para imagens importantes
+ * - Carregamento concorrente limitado para reduzir o uso de CPU
+ * - Pré-carregamento de imagens acima da dobra (viewport)
  */
-export function OptimizedImageLoader() {
-  useEffect(() => {
-    // Detecta se o navegador suporta os novos formatos de imagem
-    const detectImageSupport = async () => {
-      // Detectar suporte a WebP
-      const webpSupport = document.createElement('canvas')
-        .toDataURL('image/webp')
-        .indexOf('data:image/webp') === 0;
-      
-      // Detectar suporte a AVIF (mais complexo, verifica se o browser pode decodificar uma imagem AVIF)
-      let avifSupport = false;
-      try {
-        const avifData = 'data:image/avif;base64,AAAAIGZ0eXBhdmlmAAAAAGF2aWZtaWYxbWlhZk1BMUIAAADybWV0YQAAAAAAAAAoaGRscgAAAAAAAAAAcGljdAAAAAAAAAAAAAAAAGxpYmF2aWYAAAAADnBpdG0AAAAAAAEAAAAeaWxvYwAAAABEAAABAAEAAAABAAABGgAAAB0AAAAoaWluZgAAAAAAAQAAABppbmZlAgAAAAABAABhdjAxQ29sb3IAAAAAamlwcnAAAABLaXBjbwAAABRpc3BlAAAAAAAAAAIAAAACAAAAEHBpeGkAAAAAAwgICAAAAAxhdjFDgQ0MAAAAABNjb2xybmNseAACAAIAAYAAAAAXaXBtYQAAAAAAAAABAAEEAQKDBAAAACVtZGF0EgAKCBgANogQEAwgMg8f8D///8WfhwB8+ErK42A=';
-        const img = new Image();
-        img.src = avifData;
-        await new Promise((resolve) => {
-          img.onload = () => {
-            avifSupport = (img.width > 0) && (img.height > 0);
-            resolve(avifSupport);
-          };
-          img.onerror = () => {
-            resolve(false);
-          };
-        });
-      } catch (e) {
-        avifSupport = false;
-      }
-
-      // Armazena a informação para ser usada pelo proxy de imagens
-      document.documentElement.dataset.webp = webpSupport.toString();
-      document.documentElement.dataset.avif = avifSupport.toString();
-      
-      // Log para debugging
-      console.log(`Browser suporta: WebP=${webpSupport}, AVIF=${avifSupport}`);
-    };
-
-    // Implementa o carregamento de imagens em fases, para melhorar o LCP
-    const optimizeImageLoading = () => {
-      // Primeiro, processa apenas imagens com fetchpriority='high' (LCP)
-      const highPriorityImages = document.querySelectorAll('img[fetchpriority="high"]');
-      
-      // Depois, processa imagens com loading='eager' (acima da dobra)
-      const eagerImages = document.querySelectorAll('img[loading="eager"]:not([fetchpriority="high"])');
-      
-      // Implementa um IntersectionObserver para lazy loading avançado
-      if ('IntersectionObserver' in window) {
-        const lazyImageObserver = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              const lazyImage = entry.target as HTMLImageElement;
-              if (lazyImage.dataset.src) {
-                lazyImage.src = lazyImage.dataset.src;
-                delete lazyImage.dataset.src;
-              }
-              if (lazyImage.dataset.srcset) {
-                lazyImage.srcset = lazyImage.dataset.srcset;
-                delete lazyImage.dataset.srcset;
-              }
-              lazyImage.classList.add('opacity-100');
-              lazyImage.classList.remove('opacity-0');
-              lazyImageObserver.unobserve(lazyImage);
-            }
-          });
-        }, {
-          rootMargin: '200px 0px', // Carrega imagens quando estão a 200px de entrar na tela
-          threshold: 0.01 // Dispara quando pelo menos 1% da imagem está visível
-        });
-        
-        // Encontra e observa imagens com loading='lazy'
-        const lazyImages = document.querySelectorAll('img[loading="lazy"]');
-        lazyImages.forEach((lazyImage) => {
-          lazyImageObserver.observe(lazyImage);
-        });
-      }
-      
-      // Pré-carregamento inteligente de imagens que provavelmente serão visualizadas
-      const preloadImagesOnIdle = () => {
-        // Implementa uma estratégia de pré-carregamento que não afeta o desempenho
-        const idleCallback = () => {
-          // Encontra imagens acima da dobra que ainda não foram carregadas
-          document.querySelectorAll('img[loading="lazy"]').forEach((element) => {
-            const img = element as HTMLImageElement;
-            
-            // Verifica se a imagem está visível na viewport
-            const rect = img.getBoundingClientRect();
-            const isVisible = 
-              rect.top >= 0 &&
-              rect.left >= 0 &&
-              rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-              rect.right <= (window.innerWidth || document.documentElement.clientWidth);
-              
-            if (isVisible && img.dataset.src) {
-              // Pré-carrega a imagem
-              const preloadLink = document.createElement('link');
-              preloadLink.rel = 'preload';
-              preloadLink.as = 'image';
-              preloadLink.href = img.dataset.src;
-              document.head.appendChild(preloadLink);
-            }
-          });
-        };
-        
-        // Usa requestIdleCallback se disponível, caso contrário setTimeout
-        if ('requestIdleCallback' in window) {
-          (window as any).requestIdleCallback(idleCallback, { timeout: 2000 });
-        } else {
-          setTimeout(idleCallback, 2000);
-        }
-      };
-      
-      // Adicionar eventos para detectar quando o usuário está prestes a interagir
-      // com elementos que mostrarão imagens adicionais (hover, etc)
-      document.addEventListener('mouseover', (e) => {
-        const target = e.target as HTMLElement;
-        // Verifica se o target é um elemento que pode revelar mais imagens
-        if (target.closest('a') || target.closest('button') || target.closest('.clickable')) {
-          preloadImagesOnIdle();
-        }
-      }, { passive: true });
-    };
-
-    // Executa as funções de otimização
-    detectImageSupport();
-    optimizeImageLoading();
-    
-    // Adiciona detecção automática de imagens LCP para otimizações futuras
-    if ('PerformanceObserver' in window) {
-      // Observe LCP
-      try {
-        const lcpObserver = new PerformanceObserver((entryList) => {
-          const entries = entryList.getEntries();
-          const lastEntry = entries[entries.length - 1];
-          
-          // Se o elemento LCP for uma imagem, marca para uso futuro
-          if (lastEntry && 'element' in lastEntry) {
-            const element = (lastEntry as any).element;
-            if (element && element.tagName === 'IMG') {
-              element.setAttribute('data-lcp', 'true');
-              console.log('LCP image detected:', element.src);
-            }
-          }
-          lcpObserver.disconnect();
-        });
-        
-        // Registra o observer para o tipo LCP
-        lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-      } catch (e) {
-        console.warn('PerformanceObserver for LCP not supported', e);
-      }
+export const OptimizedImageLoader: React.FC<OptimizedImageLoaderProps> = ({
+  imageSrcs,
+  priority = 'auto',
+  onAllLoaded,
+  concurrentLoads = 4
+}) => {
+  const [loadedCount, setLoadedCount] = useState(0);
+  const queueRef = useRef<string[]>([]);
+  const activeLoadsRef = useRef(0);
+  const loadedImagesRef = useRef(new Set<string>());
+  
+  // Processar a fila de carregamento de imagens com limite de concorrência
+  const processQueue = () => {
+    // Se não há mais imagens para carregar ou já atingimos o limite, sair
+    if (queueRef.current.length === 0 || activeLoadsRef.current >= concurrentLoads) {
+      return;
     }
     
-    return () => {
-      // Cleanup se necessário
+    // Obter próxima imagem da fila
+    const nextSrc = queueRef.current.shift();
+    if (!nextSrc) return;
+    
+    // Incrementar contador de carregamentos ativos
+    activeLoadsRef.current++;
+    
+    // Criar nova imagem e configurar handlers
+    const img = new Image();
+    
+    // Definir fetchPriority se suportado pelo navegador
+    if ('fetchPriority' in HTMLImageElement.prototype) {
+      (img as any).fetchPriority = priority;
+    }
+    
+    img.onload = img.onerror = () => {
+      // Decrementar contador de carregamentos ativos
+      activeLoadsRef.current--;
+      
+      // Marcar imagem como carregada
+      loadedImagesRef.current.add(nextSrc);
+      setLoadedCount(prev => prev + 1);
+      
+      // Processar próxima imagem na fila
+      processQueue();
+      
+      // Se todas as imagens foram carregadas, chamar callback
+      if (loadedImagesRef.current.size === imageSrcs.length) {
+        onAllLoaded?.();
+      }
     };
-  }, []);
-
+    
+    // Iniciar carregamento
+    img.src = nextSrc;
+  };
+  
+  useEffect(() => {
+    // Resetar o estado quando a lista de imagens muda
+    queueRef.current = [...imageSrcs];
+    loadedImagesRef.current.clear();
+    setLoadedCount(0);
+    activeLoadsRef.current = 0;
+    
+    // Iniciar processamento da fila com limite de concorrência
+    for (let i = 0; i < Math.min(concurrentLoads, imageSrcs.length); i++) {
+      processQueue();
+    }
+    
+    // Se não houver imagens para carregar, chamar callback imediatamente
+    if (imageSrcs.length === 0) {
+      onAllLoaded?.();
+    }
+  }, [imageSrcs, concurrentLoads, onAllLoaded]);
+  
+  // Este componente não renderiza nada visualmente
   return null;
-}
+};
+
+export default OptimizedImageLoader;

@@ -493,13 +493,58 @@ export default function ScreensPage() {
             e aumentar a performance - isto reduzirá o TBT (Total Blocking Time)
           */}
           {filteredScreens.slice(0, 50).map((screen: Screen & { app?: App }, index) => (
-            <div key={screen.id} role="gridcell">
-              <ScreenThumbnail 
-                screen={screen} 
-                onClick={handleOpenModal}
-                isPriority={index < 5} /* Prioriza as primeiras 5 imagens para melhorar LCP */
-                index={index}
-              />
+            <div 
+              key={screen.id} 
+              role="gridcell"
+              className="cursor-pointer hover:opacity-90 transition-all"
+              onClick={() => handleOpenModal(screen)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleOpenModal(screen);
+                }
+              }}
+              tabIndex={0}
+              aria-label={`Ver detalhes de ${screen.name || 'tela'}`}
+            >
+              <div 
+                className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" 
+                style={{ aspectRatio: "9/16", width: '100%', height: 'auto' }}
+              >
+                {/* Utilizando propriedades otimizadas diretamente */}
+                <img 
+                  src={screen.imageUrl}
+                  alt={screen.name || 'Tela de aplicativo'}
+                  className="w-full h-full object-contain"
+                  width={300}
+                  height={534}
+                  loading={index < 5 ? "eager" : "lazy"}
+                  fetchPriority={index < 5 ? "high" : "auto"}
+                  style={{ aspectRatio: "9/16", backgroundColor: "#f8f8f8" }}
+                />
+                
+                {/* Overlay com ícone de maximizar */}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all">
+                    <div 
+                      className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center"
+                      title={`Ampliar ${screen.name || 'tela'}`}
+                    >
+                      <Maximize2 className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Informações do app relacionado */}
+              {screen.app && (
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="w-4 h-4 rounded-sm bg-gray-100 flex items-center justify-center">
+                    <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+                  </div>
+                  <span className="text-sm text-gray-600 truncate">{screen.app.name}</span>
+                </div>
+              )}
             </div>
           ))}
           

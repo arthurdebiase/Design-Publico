@@ -1,252 +1,208 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+
+interface AccessibilityEnhancerProps {
+  /**
+   * Define se deve corrigir problemas de contraste automaticamente
+   */
+  fixContrast?: boolean;
+  
+  /**
+   * Define se deve aplicar correções para leitores de tela
+   */
+  enhanceScreenReaders?: boolean;
+  
+  /**
+   * Define se deve melhorar a navegação por teclado
+   */
+  improveKeyboardNavigation?: boolean;
+  
+  /**
+   * Define se deve adicionar descrições adicionais para elementos
+   */
+  addDescriptions?: boolean;
+}
 
 /**
- * AccessibilityEnhancer Component
+ * AccessibilityEnhancer
  * 
- * Este componente melhora a acessibilidade da aplicação:
- * - Adiciona atributos ARIA faltantes em elementos interativos
- * - Corrige contraste e tamanho de fontes com problemas
- * - Implementa tratamento de teclado para elementos interativos
- * - Corrige problemas com zoom em dispositivos móveis
+ * Componente para aplicar melhorias automáticas de acessibilidade no site,
+ * ajudando a corrigir problemas comuns encontrados em relatórios do Lighthouse
+ * e melhorando a experiência para usuários com tecnologias assistivas.
  */
-export function AccessibilityEnhancer() {
+export const AccessibilityEnhancer: React.FC<AccessibilityEnhancerProps> = ({
+  fixContrast = true,
+  enhanceScreenReaders = true,
+  improveKeyboardNavigation = true,
+  addDescriptions = true
+}) => {
   useEffect(() => {
-    // Corrige atributos aria faltantes em elementos interativos
-    const fixAriaAttributes = () => {
-      // 1. Botões sem rótulos
-      document.querySelectorAll('button:not([aria-label]):not([aria-labelledby])').forEach((btn) => {
-        const button = btn as HTMLButtonElement;
-        // Se não tem texto visível, tenta encontrar um rótulo baseado em ícones ou contexto
-        if (!button.innerText.trim()) {
-          // Checa ícones dentro do botão
-          const icon = button.querySelector('svg, img, i');
-          if (icon) {
-            // Determina uma descrição baseado na classe do ícone ou atributos
-            const iconClass = icon.className;
-            if (iconClass.includes('close') || iconClass.includes('x')) {
-              button.setAttribute('aria-label', 'Fechar');
-            } else if (iconClass.includes('menu') || iconClass.includes('hamburger')) {
-              button.setAttribute('aria-label', 'Menu');
-            } else if (iconClass.includes('search')) {
-              button.setAttribute('aria-label', 'Buscar');
-            } else {
-              // Tenta usar o title ou alt se disponível
-              const title = (icon as HTMLElement).getAttribute('title') || 
-                           (icon as HTMLImageElement).getAttribute('alt');
-              if (title) {
-                button.setAttribute('aria-label', title);
-              }
+    if (typeof document === 'undefined') return;
+    
+    // Conjunto de melhorias de acessibilidade a aplicar
+    const cleanup: Function[] = [];
+    
+    // 1. Melhoria de contraste para texto
+    if (fixContrast) {
+      const style = document.createElement('style');
+      style.setAttribute('data-a11y', 'true');
+      // Aplica regras CSS para melhorar contraste
+      style.textContent = `
+        /* Garantir contraste mínimo para texto pequeno (4.5:1) */
+        .text-gray-400, .text-gray-500 {
+          color: #6b7280 !important; /* Cinza mais escuro para melhor contraste */
+        }
+        
+        /* Garantir que links são distinguíveis do texto ao redor */
+        a:not(.btn):not([role="button"]) {
+          text-decoration: underline;
+          text-underline-offset: 2px;
+        }
+        
+        /* Melhorar visibilidade do foco no teclado */
+        *:focus-visible {
+          outline: 3px solid #13A15F !important;
+          outline-offset: 2px !important;
+        }
+      `;
+      document.head.appendChild(style);
+      
+      cleanup.push(() => {
+        document.head.removeChild(style);
+      });
+    }
+    
+    // 2. Melhorias para leitores de tela
+    if (enhanceScreenReaders) {
+      // Garantir que todas as imagens tenham alt text
+      const enhanceImages = () => {
+        document.querySelectorAll('img:not([alt])').forEach(img => {
+          const imgEl = img as HTMLImageElement;
+          // Obter texto alternativo do contexto
+          let altText = '';
+          
+          // Tentar obter do title, aria-label ou texto próximo
+          if (imgEl.title) {
+            altText = imgEl.title;
+          } else if (imgEl.parentElement?.textContent) {
+            // Simplificar o texto próximo para gerar um alt
+            const nearbyText = imgEl.parentElement.textContent.trim().substring(0, 50);
+            if (nearbyText) {
+              altText = `Imagem relacionada a: ${nearbyText}`;
             }
           }
-        }
-      });
-      
-      // 2. Links sem texto
-      document.querySelectorAll('a:not([aria-label]):not([aria-labelledby])').forEach((link) => {
-        if (!link.innerText.trim()) {
-          const img = link.querySelector('img');
-          if (img && img.alt) {
-            link.setAttribute('aria-label', img.alt);
-          }
-        }
-      });
-      
-      // 3. Inputs sem labels associados
-      document.querySelectorAll('input:not([type="hidden"])').forEach((input) => {
-        const inputId = input.id;
-        if (inputId) {
-          const hasLabel = document.querySelector(`label[for="${inputId}"]`);
-          if (!hasLabel && !input.getAttribute('aria-label')) {
-            // Tenta usar o placeholder como fallback
-            const placeholder = input.getAttribute('placeholder');
-            if (placeholder) {
-              input.setAttribute('aria-label', placeholder);
-            }
-          }
-        } else if (!input.getAttribute('aria-label')) {
-          // Input sem ID e sem aria-label
-          const placeholder = input.getAttribute('placeholder');
-          if (placeholder) {
-            input.setAttribute('aria-label', placeholder);
-          }
-        }
-      });
-    };
-
-    // Melhorar contraste e layout para acessibilidade
-    const fixContrastAndLayout = () => {
-      // 1. Garantir que a meta tag viewport permite zoom
-      const viewportMeta = document.querySelector('meta[name="viewport"]');
-      if (viewportMeta) {
-        const content = viewportMeta.getAttribute('content') || '';
-        if (content.includes('maximum-scale=1') || content.includes('user-scalable=no')) {
-          // Corrige para permitir zoom
-          const newContent = content
-            .replace(/maximum-scale=[^,]*,?/g, '')
-            .replace(/user-scalable=no,?/g, '')
-            .trim();
-          viewportMeta.setAttribute('content', newContent);
-        }
-      }
-      
-      // 2. Verificar tamanho mínimo de texto
-      document.querySelectorAll('p, span, div, button, a').forEach((element) => {
-        const style = window.getComputedStyle(element);
-        const fontSize = parseFloat(style.fontSize);
-        
-        // Texto menor que 12px pode ser difícil de ler
-        if (fontSize < 12 && element.innerText.trim()) {
-          element.style.fontSize = '12px';
-        }
-      });
-      
-      // 3. Melhorar contraste para elementos interativos
-      document.querySelectorAll('button, a, input, select, textarea').forEach((element) => {
-        const style = window.getComputedStyle(element);
-        const color = style.color;
-        const background = style.backgroundColor;
-        
-        // Análise simplificada - implementações mais robustas usariam WCAG contrast calculator
-        // Este é apenas um exemplo, não uma implementação completa
-        if (color === 'rgba(0, 0, 0, 0)' || background === 'rgba(0, 0, 0, 0)') {
-          // Elementos transparentes não precisam de ajuste
-          return;
-        }
-        
-        // Adicionar outline quando elemento recebe foco via teclado
-        element.addEventListener('focus', (e) => {
-          if (e.target && (e.target as HTMLElement).classList) {
-            (e.target as HTMLElement).classList.add('keyboard-focus');
-          }
-        });
-        
-        element.addEventListener('blur', (e) => {
-          if (e.target && (e.target as HTMLElement).classList) {
-            (e.target as HTMLElement).classList.remove('keyboard-focus');
-          }
-        });
-      });
-    };
-
-    // Adiciona suporte a navegação por teclado
-    const enhanceKeyboardNavigation = () => {
-      // Adiciona event listeners para elementos que não são nativamente focáveis
-      document.querySelectorAll('[role="button"]:not(button):not(a), [role="tab"]:not(button):not(a)').forEach((element) => {
-        if (!element.getAttribute('tabindex')) {
-          element.setAttribute('tabindex', '0');
-        }
-        
-        // Adiciona suporte a ativação por teclado
-        element.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            (element as HTMLElement).click();
-          }
-        });
-      });
-      
-      // Verifica se temos marcação adequada para regiões
-      if (!document.querySelector('main, [role="main"]')) {
-        const mainContent = document.querySelector('#root > div > div:not(header):not(footer)');
-        if (mainContent) {
-          mainContent.setAttribute('role', 'main');
-        }
-      }
-      
-      // Verifica se todas as imagens têm texto alternativo
-      document.querySelectorAll('img:not([alt])').forEach((img) => {
-        const parent = img.closest('figure');
-        if (parent) {
-          const figcaption = parent.querySelector('figcaption');
-          if (figcaption) {
-            img.alt = figcaption.innerText.trim();
+          
+          // Se não encontrou nada, usar um padrão que indica que é decorativa
+          if (!altText) {
+            imgEl.setAttribute('alt', '');
+            imgEl.setAttribute('aria-hidden', 'true');
+            imgEl.setAttribute('role', 'presentation');
           } else {
-            img.alt = ''; // Marca como decorativa
-          }
-        } else {
-          // Para imagens decorativas
-          img.alt = '';
-        }
-      });
-    };
-    
-    // Injetar estilos de acessibilidade no head
-    const injectAccessibilityStyles = () => {
-      const styleId = 'accessibility-styles';
-      if (!document.getElementById(styleId)) {
-        const style = document.createElement('style');
-        style.id = styleId;
-        style.innerHTML = `
-          /* Estilos para foco via teclado */
-          .keyboard-focus {
-            outline: 3px solid #13A15F !important;
-            outline-offset: 2px !important;
-          }
-          
-          /* Garante contraste adequado em elementos com foco */
-          :focus {
-            outline-color: #13A15F;
-            outline-style: solid;
-            outline-width: 2px;
-          }
-          
-          /* Oculta elementos focáveis apenas quando não têm foco via teclado */
-          .sr-only:not(:focus):not(:active) {
-            clip: rect(0, 0, 0, 0);
-            clip-path: inset(50%);
-            height: 1px;
-            width: 1px;
-            overflow: hidden;
-            position: absolute;
-            white-space: nowrap;
-          }
-        `;
-        document.head.appendChild(style);
-      }
-    };
-    
-    // Monitora alterações na DOM para continuar aplicando as melhorias
-    const setupMutationObserver = () => {
-      const observer = new MutationObserver((mutations) => {
-        // Verifica se as mutações são relevantes (adição de novos elementos)
-        let shouldUpdate = false;
-        mutations.forEach((mutation) => {
-          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-            shouldUpdate = true;
+            imgEl.setAttribute('alt', altText);
           }
         });
-        
-        if (shouldUpdate) {
-          // Aplica todas as melhorias aos novos elementos
-          fixAriaAttributes();
-          fixContrastAndLayout();
-          enhanceKeyboardNavigation();
-        }
+      };
+      
+      // Executar imediatamente
+      enhanceImages();
+      
+      // E também quando o DOM mudar
+      const observer = new MutationObserver(enhanceImages);
+      observer.observe(document.body, { 
+        childList: true, 
+        subtree: true 
       });
       
-      // Inicia a observação no elemento root
-      observer.observe(document.body, {
-        childList: true,
+      cleanup.push(() => {
+        observer.disconnect();
+      });
+    }
+    
+    // 3. Melhorias para navegação por teclado
+    if (improveKeyboardNavigation) {
+      // Adicionar role=button e tabindex para elementos clicáveis sem role
+      const enhanceButtons = () => {
+        document.querySelectorAll('[onClick]:not([role]):not(button):not(a):not(input):not(select):not(textarea)').forEach(el => {
+          if (!el.hasAttribute('tabindex')) {
+            el.setAttribute('tabindex', '0');
+          }
+          
+          if (!el.hasAttribute('role')) {
+            el.setAttribute('role', 'button');
+          }
+          
+          // Marcamos como já melhorado para acessibilidade
+          if (!el.hasAttribute('data-a11y-enhanced')) {
+            el.setAttribute('data-a11y-enhanced', 'true');
+            
+            // Nota: Não adicionamos event listeners dinamicamente para evitar
+            // problemas de tipagem e memória. Recomendamos implementar isso
+            // diretamente nos componentes React originais.
+          }
+        });
+      };
+      
+      // Executar imediatamente
+      enhanceButtons();
+      
+      // E também quando o DOM mudar
+      const observer = new MutationObserver(enhanceButtons);
+      observer.observe(document.body, { 
+        childList: true, 
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['onClick']
+      });
+      
+      cleanup.push(() => {
+        observer.disconnect();
+      });
+    }
+    
+    // 4. Adicionar descrições para elementos que precisam
+    if (addDescriptions) {
+      const enhanceDescriptions = () => {
+        // Para ícones sem texto, adicionar aria-label para leitores de tela
+        document.querySelectorAll('[class*="icon"]:not([aria-label]):not([aria-hidden="true"])').forEach(icon => {
+          // Tentar determinar o propósito do ícone
+          let label = '';
+          
+          // Se está dentro de um botão, usar o texto do botão
+          const buttonParent = icon.closest('button, [role="button"]');
+          if (buttonParent && buttonParent.textContent?.trim()) {
+            label = buttonParent.textContent.trim();
+          }
+          
+          // Se é um ícone puramente decorativo, esconder dos leitores
+          if (!label) {
+            icon.setAttribute('aria-hidden', 'true');
+          } else {
+            icon.setAttribute('aria-label', label);
+          }
+        });
+      };
+      
+      // Executar imediatamente
+      enhanceDescriptions();
+      
+      // E também quando o DOM mudar
+      const observer = new MutationObserver(enhanceDescriptions);
+      observer.observe(document.body, { 
+        childList: true, 
         subtree: true
       });
       
-      return observer;
-    };
+      cleanup.push(() => {
+        observer.disconnect();
+      });
+    }
     
-    // Executa todas as melhorias
-    injectAccessibilityStyles();
-    fixAriaAttributes();
-    fixContrastAndLayout();
-    enhanceKeyboardNavigation();
-    
-    // Observa mudanças na DOM para manter as melhorias
-    const observer = setupMutationObserver();
-    
+    // Limpar todas as melhorias na desmontagem
     return () => {
-      // Limpa o observer quando o componente for desmontado
-      observer.disconnect();
+      cleanup.forEach(fn => fn());
     };
-  }, []);
+  }, [fixContrast, enhanceScreenReaders, improveKeyboardNavigation, addDescriptions]);
+  
+  return null; // Componente não renderiza nada visualmente
+};
 
-  return null;
-}
+export default AccessibilityEnhancer;
