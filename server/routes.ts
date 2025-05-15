@@ -140,15 +140,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get app by ID
-  app.get("/api/apps/:id", async (req, res) => {
+  // Get app by ID ou Slug
+  app.get("/api/apps/:idOrSlug", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      if (isNaN(id)) {
-        return res.status(400).json({ message: "Invalid app ID" });
+      const idOrSlug = req.params.idOrSlug;
+      const id = parseInt(idOrSlug);
+      
+      let app;
+      
+      // Tentar buscar por ID se for um número
+      if (!isNaN(id)) {
+        app = await storage.getAppById(id);
+      } else {
+        // Se não for um número, tentar buscar por slug
+        app = await storage.getAppBySlug(idOrSlug);
       }
-
-      const app = await storage.getAppById(id);
+      
       if (!app) {
         return res.status(404).json({ message: "App not found" });
       }
@@ -160,12 +167,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get screens for an app
-  app.get("/api/apps/:id/screens", async (req, res) => {
+  // Get screens for an app (by ID or slug)
+  app.get("/api/apps/:idOrSlug/screens", async (req, res) => {
     try {
-      const appId = parseInt(req.params.id);
-      if (isNaN(appId)) {
-        return res.status(400).json({ message: "Invalid app ID" });
+      const idOrSlug = req.params.idOrSlug;
+      const id = parseInt(idOrSlug);
+      let appId;
+      
+      if (!isNaN(id)) {
+        // É um ID numérico
+        appId = id;
+      } else {
+        // É um slug, precisamos encontrar o app primeiro
+        const app = await storage.getAppBySlug(idOrSlug);
+        if (!app) {
+          return res.status(404).json({ message: "App not found" });
+        }
+        appId = app.id;
       }
 
       const screens = await storage.getScreensByAppId(appId);

@@ -39,8 +39,8 @@ function getPlatformBadgeClass(platform: string): string {
 }
 
 export default function AppDetail() {
-  const [match, params] = useRoute("/app/:id");
-  const appId = params?.id || "";
+  const [match, params] = useRoute("/app/:idOrSlug");
+  const idOrSlug = params?.idOrSlug || "";
   const { t } = useTranslation();
   const [location] = useLocation();
   
@@ -62,9 +62,9 @@ export default function AppDetail() {
     error: appError, 
     data: app 
   } = useQuery({
-    queryKey: [`/api/apps/${appId}`],
-    queryFn: () => fetchAppById(appId),
-    enabled: !!appId
+    queryKey: [`/api/apps/${idOrSlug}`],
+    queryFn: () => fetchAppById(idOrSlug),
+    enabled: !!idOrSlug
   });
   
   const { 
@@ -72,9 +72,9 @@ export default function AppDetail() {
     error: screensError, 
     data: screens 
   } = useQuery({
-    queryKey: [`/api/apps/${appId}/screens`],
-    queryFn: () => fetchScreensByAppId(appId),
-    enabled: !!appId
+    queryKey: [`/api/apps/${idOrSlug}/screens`],
+    queryFn: () => fetchScreensByAppId(idOrSlug),
+    enabled: !!idOrSlug
   });
   
   const isLoading = isAppLoading || isScreensLoading;

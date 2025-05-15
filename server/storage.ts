@@ -11,6 +11,7 @@ export interface IStorage {
   // Apps
   getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]>;
   getAppById(id: number): Promise<App | undefined>;
+  getAppBySlug(slug: string): Promise<App | undefined>;
   createApp(app: InsertApp): Promise<App>;
 
   // Screens
@@ -69,6 +70,35 @@ export class MemStorage implements IStorage {
 
   async getAppById(id: number): Promise<App | undefined> {
     return this.apps.get(id);
+  }
+  
+  async getAppBySlug(slug: string): Promise<App | undefined> {
+    // Converter o slug para minúsculas para comparação case-insensitive
+    const normalizedSlug = slug.toLowerCase();
+    
+    // Procurar por apps cujo nome convertido em slug corresponda ao slug fornecido
+    const apps = Array.from(this.apps.values());
+    for (let i = 0; i < apps.length; i++) {
+      const app = apps[i];
+      const appSlug = this.createSlugFromName(app.name);
+      if (appSlug === normalizedSlug) {
+        return app;
+      }
+    }
+    
+    return undefined;
+  }
+  
+  // Função auxiliar para criar slug a partir do nome do app
+  private createSlugFromName(name: string): string {
+    return name
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove acentos
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, '') // Remove caracteres especiais
+      .replace(/[\s_]+/g, '-') // Substitui espaços e underscores por hífens
+      .replace(/^-+|-+$/g, ''); // Remove hífens extras do início e fim
   }
 
   async createApp(insertApp: InsertApp): Promise<App> {
