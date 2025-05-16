@@ -157,7 +157,7 @@ export function ScreenModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className={`${isMobile 
-          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto translate-y-0 bottom-sheet-enter" 
+          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto dialog-content-from-bottom" 
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
         hideCloseButton={true}
