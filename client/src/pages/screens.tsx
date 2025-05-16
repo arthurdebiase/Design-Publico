@@ -563,9 +563,16 @@ export default function ScreensPage() {
                         className="w-5 h-5 object-contain"
                         widths={[16, 32, 64]}
                         quality={90}
+                        placeholder={
+                          <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center">
+                            <span className="sr-only">Loading logo for {screen.app.name}</span>
+                          </div>
+                        }
                       />
                     ) : (
-                      <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+                      <div className="w-5 h-5 bg-gray-200 rounded-sm">
+                        <span className="sr-only">Logo placeholder for {screen.app.name}</span>
+                      </div>
                     )}
                   </div>
                   <span className="text-sm text-black truncate">{screen.app.name}</span>
@@ -726,10 +733,15 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
                   className="w-5 h-5 object-contain"
                   widths={[20, 40, 60]}
                   quality={90}
+                  placeholder={
+                    <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center">
+                      <span className="sr-only">Loading logo for {screen.app.name}</span>
+                    </div>
+                  }
                 />
               ) : (
-                <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center">
-                  <span className="text-xs font-bold text-gray-600">{screen.app.name.charAt(0)}</span>
+                <div className="w-5 h-5 bg-gray-200 rounded-sm">
+                  <span className="sr-only">Logo placeholder for {screen.app.name}</span>
                 </div>
               )}
             </div>

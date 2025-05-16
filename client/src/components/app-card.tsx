@@ -154,85 +154,15 @@ function truncateDescription(description: string, maxLength: number = 80): strin
 
 function LogoPlaceholder({ app }: { app: App }) {
   const isMobile = useIsMobile();
-  const iconSize = isMobile ? "h-4 w-4" : "h-5 w-5";
   
-  const getIconByType = () => {
-    switch (app.type) {
-      case 'Federal':
-        return (
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className={`${iconSize} text-gray-600`}
-            aria-hidden="true"
-            role="img"
-            aria-label={`Federal government icon for ${app.name}`}
-          >
-            <path d="M2 20h20"></path>
-            <path d="M12 4L2 9h20L12 4z"></path>
-            <path d="M12 4v16"></path>
-            <path d="M8 9v11"></path>
-            <path d="M16 9v11"></path>
-          </svg>
-        );
-      case 'Municipal':
-        return (
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className={`${iconSize} text-gray-600`}
-            aria-hidden="true"
-            role="img"
-            aria-label={`Municipal government icon for ${app.name}`}
-          >
-            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-          </svg>
-        );
-      case 'State':
-        return (
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className={`${iconSize} text-gray-600`}
-            aria-hidden="true"
-            role="img"
-            aria-label={`State government icon for ${app.name}`}
-          >
-            <path d="M21.5 12H16c-.7 2-2 3-4 3s-3.3-1-4-3H2.5"></path>
-            <path d="M5.5 5.1L2 12v6c0 1.1.9 2 2 2h16a2 2 0 002-2v-6l-3.4-6.9A2 2 0 0016.8 4H7.2a2 2 0 00-1.8 1.1z"></path>
-          </svg>
-        );
-      default:
-        return (
-          <div 
-            className="text-gray-600 font-bold"
-            aria-hidden="true"
-          >
-            {app.name.charAt(0)}
-          </div>
-        );
-    }
-  };
-  
+  // Simple gray placeholder square
   return (
-    <div role="img" aria-label={`${app.name} logo placeholder`}>
-      {getIconByType()}
+    <div 
+      role="img" 
+      aria-label={`${app.name} logo placeholder`}
+      className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} bg-gray-200 rounded-sm flex items-center justify-center`}
+    >
+      <span className="sr-only">Loading logo for {app.name}</span>
     </div>
   );
 }
