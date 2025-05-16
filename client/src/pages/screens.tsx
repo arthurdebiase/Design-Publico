@@ -564,13 +564,13 @@ export default function ScreensPage() {
                         widths={[16, 32, 64]}
                         quality={90}
                         placeholder={
-                          <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center">
+                          <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                             <span className="sr-only">Loading logo for {screen.app.name}</span>
                           </div>
                         }
                       />
                     ) : (
-                      <div className="w-5 h-5 bg-gray-200 rounded-sm">
+                      <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                         <span className="sr-only">Logo placeholder for {screen.app.name}</span>
                       </div>
                     )}
@@ -734,13 +734,13 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
                   widths={[20, 40, 60]}
                   quality={90}
                   placeholder={
-                    <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center">
+                    <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                       <span className="sr-only">Loading logo for {screen.app.name}</span>
                     </div>
                   }
                 />
               ) : (
-                <div className="w-5 h-5 bg-gray-200 rounded-sm">
+                <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                   <span className="sr-only">Logo placeholder for {screen.app.name}</span>
                 </div>
               )}

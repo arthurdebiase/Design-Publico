@@ -154,13 +154,15 @@ function truncateDescription(description: string, maxLength: number = 80): strin
 
 function LogoPlaceholder({ app }: { app: App }) {
   const isMobile = useIsMobile();
+  const size = isMobile ? 'w-8 h-8' : 'w-9 h-9';
   
-  // Simple gray placeholder square
+  // Simple gray placeholder square with 1:1 aspect ratio
   return (
     <div 
       role="img" 
       aria-label={`${app.name} logo placeholder`}
-      className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} bg-gray-200 rounded-sm flex items-center justify-center`}
+      className={`${size} bg-gray-200 rounded-sm flex items-center justify-center`}
+      style={{ aspectRatio: '1/1' }}
     >
       <span className="sr-only">Loading logo for {app.name}</span>
     </div>
