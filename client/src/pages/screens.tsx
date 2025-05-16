@@ -687,6 +687,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
       <div className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" style={{ aspectRatio: "9/16" }}>
         <ResponsiveImage 
           src={screen.imageUrl} 
+          cloudinarySrc={screen.cloudinaryUrl}
           alt={`${screen.app?.name ? screen.app.name + ': ' : ''}${screen.name} - ${screen.description || 'Screen view'}`}
           className="w-full h-full object-contain"
           placeholderClassName="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse"
