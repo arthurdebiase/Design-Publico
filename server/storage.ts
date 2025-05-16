@@ -1019,6 +1019,7 @@ export class MemStorage implements IStorage {
         name: screenType.name,
         description: screenType.description,
         imageUrl: `https://random.imagecdn.app/400/800?image=${20 + index}`,
+        cloudinaryUrl: null, // Adding cloudinaryUrl field to sample data
         altText: `${screenType.name} screen from Meu SUS Digital application`,
         flow: "Main",
         order: index,

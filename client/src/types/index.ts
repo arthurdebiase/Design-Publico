@@ -25,6 +25,7 @@ export interface Screen {
   name: string;
   description: string;
   imageUrl: string;
+  cloudinaryUrl?: string; // URL from Cloudinary for reliable image hosting
   altText?: string;   // Alt text for image accessibility
   flow?: string;
   order: number;

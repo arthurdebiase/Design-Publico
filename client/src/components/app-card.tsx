@@ -55,7 +55,8 @@ function AppScreenImage({ appId, appName, isPriority = false }: { appId: string,
           }}
         >
           <ResponsiveImage 
-            src={firstScreen.imageUrl} 
+            src={firstScreen.imageUrl}
+            cloudinarySrc={firstScreen.cloudinaryUrl} // Use Cloudinary URL when available for reliable hosting
             alt={`${appName ? appName + ': ' : ''}${firstScreen.name || 'Screen view'} - ${firstScreen.description || 'User interface example'}`}
             className="w-full h-full object-contain transition-transform hover:scale-[1.01]"
             style={{ 
