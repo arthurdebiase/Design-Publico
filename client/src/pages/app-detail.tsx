@@ -483,39 +483,12 @@ function AppDetailSkeleton() {
 }
 
 function AppIconPlaceholder({ app }: { app: any }) {
-  const getIconByCategory = () => {
-    switch (app.category) {
-      case 'Healthcare':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-            <path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"></path>
-          </svg>
-        );
-      case 'Finance':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-            <rect x="2" y="5" width="20" height="14" rx="2"></rect>
-            <line x1="2" y1="10" x2="22" y2="10"></line>
-          </svg>
-        );
-      case 'Government':
-        return (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#0066FF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-8 w-8">
-            <path d="M2 20h20"></path>
-            <path d="M12 4L2 9h20L12 4z"></path>
-            <path d="M12 4v16"></path>
-            <path d="M8 9v11"></path>
-            <path d="M16 9v11"></path>
-          </svg>
-        );
-      default:
-        return (
-          <div className="text-[#0066FF] text-xl font-bold">{app.name.charAt(0)}</div>
-        );
-    }
-  };
-  
-  return getIconByCategory();
+  // Simple gray placeholder square with hidden text for screen readers
+  return (
+    <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+      <span className="sr-only">Logo placeholder for {app.name}</span>
+    </div>
+  );
 }
 
 function getPlatformIcon(platform: string) {

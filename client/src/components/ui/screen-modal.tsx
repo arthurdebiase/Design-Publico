@@ -177,7 +177,9 @@ export function ScreenModal({
                     }
                   />
                 ) : (
-                  <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">{app.name.charAt(0)}</div>
+                  <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
+                    <span className="sr-only">Logo placeholder for {app.name}</span>
+                  </div>
                 )}
               </div>
             </Link>
