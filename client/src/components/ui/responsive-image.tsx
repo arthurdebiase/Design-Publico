@@ -114,7 +114,7 @@ export function ResponsiveImage({
     return (
       <div 
         className={`bg-gray-200 animate-pulse ${placeholderClassName}`}
-        style={style}
+        style={{ ...style, aspectRatio: style?.aspectRatio || '1/1' }}
         aria-hidden="true"
       />
     );
@@ -124,7 +124,7 @@ export function ResponsiveImage({
   const renderError = () => (
     <div 
       className={`bg-gray-200 flex items-center justify-center text-gray-400 ${placeholderClassName}`}
-      style={style}
+      style={{ ...style, aspectRatio: style?.aspectRatio || '1/1' }}
       aria-hidden="true"
     >
       <span>Image not available</span>

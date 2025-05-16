@@ -485,7 +485,10 @@ function AppDetailSkeleton() {
 function AppIconPlaceholder({ app }: { app: any }) {
   // Simple gray placeholder square with hidden text for screen readers
   return (
-    <div className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center">
+    <div 
+      className="w-16 h-16 bg-gray-200 rounded-md flex items-center justify-center" 
+      style={{ aspectRatio: '1/1' }}
+    >
       <span className="sr-only">Logo placeholder for {app.name}</span>
     </div>
   );
