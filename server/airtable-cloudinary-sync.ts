@@ -102,14 +102,29 @@ async function fetchRecordsNeedingMigration(limit = 100, offset?: string, migrat
 
 /**
  * Updates a record in Airtable with the Cloudinary URL
+ * @param recordId - The ID of the record to update
+ * @param cloudinaryUrl - The Cloudinary URL to store
+ * @param migrationType - The type of migration being performed ('screens' or 'logos')
  */
-async function updateRecordWithCloudinaryUrl(recordId: string, cloudinaryUrl: string): Promise<boolean> {
-  const url = `${AIRTABLE_API_URL}/${AIRTABLE_BASE_ID}/${SCREENS_TABLE}/${recordId}`;
+async function updateRecordWithCloudinaryUrl(
+  recordId: string, 
+  cloudinaryUrl: string,
+  migrationType = 'screens'
+): Promise<boolean> {
+  // Determine which table and field to update based on migration type
+  const tableName = migrationType === 'screens' ? SCREENS_TABLE : APPS_TABLE;
+  const importingField = migrationType === 'screens' ? SCREENS_IMPORTING_FIELD : APPS_IMPORTING_FIELD;
+  const itemType = migrationType === 'screens' ? 'screen' : 'app logo';
+  
+  const url = `${AIRTABLE_API_URL}/${AIRTABLE_BASE_ID}/${tableName}/${recordId}`;
   
   try {
+    console.log(`Updating ${itemType} record ${recordId} with Cloudinary URL: ${cloudinaryUrl}`);
+    
+    // Update the importing field with the Cloudinary URL
     await axios.patch(url, {
       fields: {
-        importing: cloudinaryUrl,
+        [importingField]: cloudinaryUrl,
       },
     }, {
       headers: {
@@ -120,7 +135,7 @@ async function updateRecordWithCloudinaryUrl(recordId: string, cloudinaryUrl: st
     
     return true;
   } catch (error: any) {
-    console.error(`Error updating record ${recordId} in Airtable:`, error.message);
+    console.error(`Error updating ${itemType} record ${recordId} in Airtable:`, error.message);
     return false;
   }
 }
@@ -240,13 +255,13 @@ async function processBatch(records: AirtableRecord[], migrationType = 'screens'
       
       if (cloudinaryResult) {
         // Update the record in Airtable with the secure Cloudinary URL
-        const updated = await updateRecordWithCloudinaryUrl(record.id, cloudinaryResult.secure_url);
+        const updated = await updateRecordWithCloudinaryUrl(record.id, cloudinaryResult.secure_url, migrationType);
         
         if (updated) {
-          console.log(`Successfully updated record ${record.id} with Cloudinary URL: ${cloudinaryResult.secure_url}`);
+          console.log(`Successfully updated ${itemType} record ${record.id} with Cloudinary URL: ${cloudinaryResult.secure_url}`);
           success++;
         } else {
-          console.error(`Failed to update record ${record.id} in Airtable`);
+          console.error(`Failed to update ${itemType} record ${record.id} in Airtable`);
           failed++;
         }
       } else {
@@ -264,12 +279,18 @@ async function processBatch(records: AirtableRecord[], migrationType = 'screens'
 
 /**
  * Main function to run the migration
+ * @param maxRecords - Maximum number of records to process
+ * @param options - Options for the migration (batchSize, delayBetweenBatches, migrationType)
  */
 export async function migrateAirtableImagesToCloudinary(
   maxRecords = 100,
-  options = { batchSize: 10, delayBetweenBatches: 1000 }
+  options = { batchSize: 10, delayBetweenBatches: 1000, migrationType: 'screens' }
 ): Promise<{ total: number, success: number, failed: number }> {
-  console.log('Starting migration of Airtable images to Cloudinary...');
+  // Get the migration type from options (defaulting to screens if not specified)
+  const migrationType = options.migrationType || 'screens';
+  const itemType = migrationType === 'screens' ? 'screen images' : 'app logos';
+  
+  console.log(`Starting migration of Airtable ${itemType} to Cloudinary...`);
   
   // Check if Cloudinary and Airtable are properly configured
   if (!isCloudinaryConfigured()) {
@@ -291,7 +312,8 @@ export async function migrateAirtableImagesToCloudinary(
       // Fetch a batch of records from Airtable
       const response = await fetchRecordsNeedingMigration(
         Math.min(options.batchSize, maxRecords - totalProcessed),
-        offset
+        offset,
+        migrationType
       );
       
       if (!response.records || response.records.length === 0) {
@@ -299,7 +321,7 @@ export async function migrateAirtableImagesToCloudinary(
         break;
       }
       
-      const { success, failed } = await processBatch(response.records);
+      const { success, failed } = await processBatch(response.records, migrationType);
       
       totalSuccess += success;
       totalFailed += failed;

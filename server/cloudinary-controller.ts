@@ -35,7 +35,7 @@ export async function startMigration(req: Request, res: Response) {
     migrateAirtableImagesToCloudinary(maxRecords, {
       batchSize, 
       delayBetweenBatches,
-      migrationType // Pass the migration type to the function
+      migrationType
     }).then(result => {
       console.log(`Migration of ${migrationType} completed:`, result);
     }).catch(error => {
