@@ -20,21 +20,13 @@ export default function Home() {
   
   // Extract available categories from apps
   useEffect(() => {
-    if (apps) {
-      const categoriesSet = new Set<string>();
+    if (apps && apps.length > 0) {
+      // Predefined categories that we want to display
+      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"];
+      setAvailableCategories(predefinedCategories);
       
-      // Safely extract categories
-      apps.forEach(app => {
-        if (app.category && typeof app.category === 'string') {
-          categoriesSet.add(app.category);
-        }
-      });
-      
-      const sortedCategories = Array.from(categoriesSet).sort();
-      setAvailableCategories(sortedCategories);
-      
-      // Log categories for debugging
-      console.log("Available categories:", sortedCategories);
+      // Log categories
+      console.log("Available categories:", predefinedCategories);
     }
   }, [apps]);
   
