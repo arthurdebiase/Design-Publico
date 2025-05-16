@@ -423,12 +423,27 @@ export class MemStorage implements IStorage {
 
           // Handle logo attachments - check if the record has a logo field
           const logoField = fields.logo || null;
+          
+          // Also get the Cloudinary URL if available in the "importing" field
+          const cloudinaryLogoUrl = fields.importing || null;
 
           if (logoField && Array.isArray(logoField) && logoField.length > 0) {
             const logoAttachment = logoField[0];
             if (logoAttachment && logoAttachment.url) {
+              // Store both the original logo URL and the Cloudinary URL (if available)
               appLogosMap.set(appName, logoAttachment.url);
               appLogosMap.set(record.id, logoAttachment.url);
+              
+              // If we have a Cloudinary URL, store it in a separate map
+              if (cloudinaryLogoUrl) {
+                console.log(`Found Cloudinary logo URL for app: ${appName}: ${cloudinaryLogoUrl}`);
+                // Store Cloudinary URL with a special prefix to distinguish it
+                appLogosMap.set(`cloudinary:${appName}`, cloudinaryLogoUrl);
+                appLogosMap.set(`cloudinary:${record.id}`, cloudinaryLogoUrl);
+              } else {
+                console.log(`No Cloudinary logo URL found for app: ${appName}`);
+              }
+              
               console.log(`Found logo for app: ${appName}`);
             }
           }

@@ -8,6 +8,7 @@ export interface App {
   description: string;
   thumbnailUrl: string;
   logo?: string;
+  cloudinaryLogo?: string; // Cloudinary URL for the app logo - more reliable than Airtable URLs
   type: AppType;
   category: string | string[];
   platform: Platform;
