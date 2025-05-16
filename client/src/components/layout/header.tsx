@@ -89,10 +89,10 @@ export default function Header() {
         </div>
       </header>
       
-      {/* Mobile Menu - Expandable below header */}
+      {/* Mobile Menu - Overlay on content */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b border-gray-200 py-3 px-4">
-          <nav className="flex flex-col space-y-4">
+        <div className="md:hidden fixed inset-0 z-50 bg-white shadow-lg" style={{ top: "61px" }}>
+          <nav className="flex flex-col space-y-5 p-4">
             <Link 
               href="/" 
               className={`text-lg font-medium no-underline ${location === '/' ? 'text-[#0066FF]' : 'text-[#333333] hover:text-[#0066FF]'}`}
