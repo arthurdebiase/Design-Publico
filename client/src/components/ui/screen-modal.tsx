@@ -161,22 +161,15 @@ export function ScreenModal({
               window.scrollTo(0, 0);
             }}
           >
-            <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity rounded-sm" 
+            <div className="flex-shrink-0 w-8 h-8 mr-3 cursor-pointer hover:opacity-80 transition-opacity" 
               title={`View ${app.name} details`}
             >
               {app.logo ? (
-                <ResponsiveImage 
-                  src={app.logo} 
-                  cloudinarySrc={app.cloudinaryLogo || undefined}
+                <img 
+                  src={app.cloudinaryLogo || app.logo}
                   alt={`${app.name} logo`} 
                   className="w-8 h-8 object-contain"
-                  widths={[32, 64, 96]}
-                  quality={90}
-                  placeholder={
-                    <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
-                      <span className="sr-only">Logo placeholder for {app.name}</span>
-                    </div>
-                  }
+                  loading="eager"
                 />
               ) : (
                 <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
