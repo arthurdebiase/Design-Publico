@@ -32,25 +32,37 @@ const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
 // These field names need to match exactly what's in your Airtable
+// Screens table configuration
 const SCREENS_TABLE = 'screens'; // Table containing screen images
-const ATTACHMENT_FIELD = 'images'; // Field containing screen images (from your error message)
-const APP_NAME_FIELD = 'appname'; // Field linking screens to apps
+const SCREENS_ATTACHMENT_FIELD = 'images'; // Field containing screen images
+const SCREEN_APP_NAME_FIELD = 'appname'; // Field linking screens to apps
 const SCREEN_NAME_FIELD = 'imagetitle'; // Field containing screen names
+const SCREENS_IMPORTING_FIELD = 'importing'; // Field to store Cloudinary URLs for screens
+
+// Apps table configuration 
+const APPS_TABLE = 'apps'; // Table containing app information
+const APPS_LOGO_FIELD = 'logo'; // Field containing app logos
+const APPS_NAME_FIELD = 'appname'; // Field containing app names
+const APPS_IMPORTING_FIELD = 'importing'; // Field to store Cloudinary URLs for logos
 
 /**
- * Fetches records from Airtable screens table that have images but no Cloudinary URL
+ * Fetches records from Airtable that have images/logos but no Cloudinary URL
+ * @param migrationType - 'screens' for screen images or 'logos' for app logos
  */
-async function fetchRecordsNeedingMigration(limit = 100, offset?: string): Promise<AirtableResponse> {
-  const url = `${AIRTABLE_API_URL}/${AIRTABLE_BASE_ID}/${SCREENS_TABLE}`;
+async function fetchRecordsNeedingMigration(limit = 100, offset?: string, migrationType = 'screens'): Promise<AirtableResponse> {
+  // Determine which table and fields to use based on migration type
+  const tableName = migrationType === 'screens' ? SCREENS_TABLE : APPS_TABLE;
+  const attachmentField = migrationType === 'screens' ? SCREENS_ATTACHMENT_FIELD : APPS_LOGO_FIELD;
+  const importingField = migrationType === 'screens' ? SCREENS_IMPORTING_FIELD : APPS_IMPORTING_FIELD;
+  const viewName = migrationType === 'screens' ? 'screens-list' : 'apps-list';
   
-  // Build the query parameters - get all records that have images
-  // We'll filter out records with importing field in our processing code
+  const url = `${AIRTABLE_API_URL}/${AIRTABLE_BASE_ID}/${tableName}`;
+  
+  // Build the query parameters - get all records that have images/logos but no importing field
   const params: any = {
-    // Default Airtable view is "screens-list" based on the view from screenshot
-    view: 'screens-list',
+    view: viewName,
     // Query for records that don't have importing field filled yet
-    // Use the correct attachment field name (images) from error message
-    filterByFormula: 'AND(NOT(ISERROR({images})), {importing} = "")',
+    filterByFormula: `AND(NOT(ISERROR({${attachmentField}})), {${importingField}} = "")`,
     pageSize: limit,
   };
   

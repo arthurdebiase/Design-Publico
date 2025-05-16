@@ -19,25 +19,27 @@ export async function startMigration(req: Request, res: Response) {
     const maxRecords = parseInt(req.query.maxRecords as string) || 100;
     const batchSize = parseInt(req.query.batchSize as string) || 10;
     const delayBetweenBatches = parseInt(req.query.delayBetweenBatches as string) || 1000;
+    const migrationType = (req.query.type as string) || 'screens'; // Default to screens if not specified
 
     // Start migration process
-    console.log(`Starting migration with: maxRecords=${maxRecords}, batchSize=${batchSize}, delay=${delayBetweenBatches}ms`);
+    console.log(`Starting migration of ${migrationType} with: maxRecords=${maxRecords}, batchSize=${batchSize}, delay=${delayBetweenBatches}ms`);
     
     // For API response, we'll return immediately and run the migration in background
     res.status(202).json({
       success: true,
-      message: 'Migration started in the background',
-      params: { maxRecords, batchSize, delayBetweenBatches }
+      message: `Migration of ${migrationType} started in the background`,
+      params: { type: migrationType, maxRecords, batchSize, delayBetweenBatches }
     });
 
     // Start the migration process in the background
     migrateAirtableImagesToCloudinary(maxRecords, {
       batchSize, 
-      delayBetweenBatches
+      delayBetweenBatches,
+      migrationType // Pass the migration type to the function
     }).then(result => {
-      console.log('Migration completed:', result);
+      console.log(`Migration of ${migrationType} completed:`, result);
     }).catch(error => {
-      console.error('Migration failed:', error);
+      console.error(`Migration of ${migrationType} failed:`, error);
     });
   } catch (error: any) {
     console.error('Error starting migration:', error);

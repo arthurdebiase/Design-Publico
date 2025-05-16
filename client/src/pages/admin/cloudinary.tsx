@@ -15,6 +15,7 @@ export default function CloudinaryAdminPage() {
   const [maxRecords, setMaxRecords] = useState(100);
   const [batchSize, setBatchSize] = useState(10);
   const [delay, setDelay] = useState(1000);
+  const [migrationType, setMigrationType] = useState('screens'); // 'screens' or 'logos'
   const [testUrl, setTestUrl] = useState('');
   const [testAppName, setTestAppName] = useState('');
   const [testScreenName, setTestScreenName] = useState('');
@@ -31,7 +32,7 @@ export default function CloudinaryAdminPage() {
   // Migrate Mutation
   const migrationMutation = useMutation({
     mutationFn: async () => {
-      const response = await axios.post(`/api/cloudinary/migrate?maxRecords=${maxRecords}&batchSize=${batchSize}&delayBetweenBatches=${delay}`);
+      const response = await axios.post(`/api/cloudinary/migrate?maxRecords=${maxRecords}&batchSize=${batchSize}&delayBetweenBatches=${delay}&type=${migrationType}`);
       return response.data;
     },
     onSuccess: (data) => {
@@ -144,6 +145,22 @@ export default function CloudinaryAdminPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-4 mb-4">
+                <div className="space-y-2">
+                  <Label htmlFor="migrationType">Migration Type</Label>
+                  <select 
+                    id="migrationType"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={migrationType}
+                    onChange={(e) => setMigrationType(e.target.value)}
+                  >
+                    <option value="screens">Screen Images</option>
+                    <option value="logos">App Logos</option>
+                  </select>
+                  <p className="text-xs text-gray-500">Select whether to migrate screen images or app logos</p>
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="maxRecords">Max Records</Label>
