@@ -161,7 +161,7 @@ export function ScreenModal({
               window.scrollTo(0, 0);
             }}
           >
-            <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity rounded-sm mr-3" 
+            <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity rounded-sm" 
               title={`View ${app.name} details`}
             >
               {app.logo ? (
@@ -184,10 +184,10 @@ export function ScreenModal({
                 </div>
               )}
             </div>
-            <div>
+            <div className="flex-grow">
               {/* App and screen name - clickable */}
               <DialogTitle className="sr-only">{app.name}</DialogTitle>
-              <DialogDescription className="text-sm text-gray-500 m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogDescription>
+              <DialogDescription className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogDescription>
             </div>
           </Link>
           <div className="flex items-center gap-1">
