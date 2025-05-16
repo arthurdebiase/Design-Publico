@@ -172,8 +172,11 @@ async function processBatch(records: AirtableRecord[], migrationType = 'screens'
       // Safely check for importing field (might be string or array or undefined)
       const hasImportingField = record.fields[importingField] && 
         (typeof record.fields[importingField] === 'string' || 
-         (Array.isArray(record.fields[importingField]) && record.fields[importingField].length > 0) ||
-         (typeof record.fields[importingField] === 'object' && record.fields[importingField] !== null));
+         (Array.isArray(record.fields[importingField]) && 
+          record.fields[importingField].length > 0 && 
+          record.fields[importingField][0] !== '') ||
+         (typeof record.fields[importingField] === 'object' && 
+          record.fields[importingField] !== null));
          
       if (hasImportingField) {
         console.log(`Record ${record.id} already has a Cloudinary URL, skipping.`);
