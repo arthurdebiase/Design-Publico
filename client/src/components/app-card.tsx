@@ -88,10 +88,10 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
   const isMobile = useIsMobile();
   const [, navigate] = useLocation();
   
-  // Responsive heights that maintain a more compact aspect ratio (9:12) for better grid display
+  // Responsive heights that maintain a more compact aspect ratio for better grid display
   const cardHeight = isMobile ? "h-auto" : "h-auto";
   // Use aspect ratio to maintain proper proportions but more compact
-  const imageContainerStyle = { aspectRatio: "9/12" };
+  const imageContainerStyle = { aspectRatio: "9/10" };
   
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -138,9 +138,11 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
                 <LogoPlaceholder app={app} />
               )}
             </div>
-            <div className="text-sm">
-              <h3 id={`app-name-${app.id}`} className="font-medium">{app.name}</h3>
-              <p className="text-xs text-gray-500">{app.type}</p>
+            <div className="text-sm overflow-hidden">
+              <h3 id={`app-name-${app.id}`} className="font-medium truncate" title={app.name}>
+                {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
+              </h3>
+              <p className="text-xs text-gray-500 truncate">{app.type}</p>
             </div>
           </div>
         </div>
