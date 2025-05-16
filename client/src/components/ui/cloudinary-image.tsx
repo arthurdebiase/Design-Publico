@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 
 interface CloudinaryImageProps {
   src: string;
-  cloudinarySrc?: string; // From the "importing" field in Airtable
+  cloudinarySrc?: string | null; // From the "cloudinaryUrl" field in our schema
   alt: string;
   width?: number;
   height?: number;
@@ -32,11 +32,20 @@ export function CloudinaryImage({
   const [hasError, setHasError] = useState(false);
 
   // Determine the image source to use - prefer Cloudinary when available
-  const imageSource = cloudinarySrc || 
+  const useCloudinary = cloudinarySrc && cloudinarySrc.length > 0;
+  const imageSource = useCloudinary ? cloudinarySrc : 
     (src.startsWith('/proxy-image') ? src : `/proxy-image${src}`);
 
+  // For debugging - will be removed in production
+  console.debug("CloudinaryImage source selection:", {
+    useCloudinary,
+    cloudinarySrc,
+    originalSrc: src,
+    finalSrc: imageSource
+  });
+
   // Create URL parameter string for proxy requests (not needed for Cloudinary URLs)
-  const imageParams = !cloudinarySrc && src ? 
+  const imageParams = !useCloudinary && src ? 
     `${imageSource}${imageSource.includes('?') ? '&' : '?'}` +
     `${width ? `width=${width}` : ''}` +
     `${height ? `&height=${height}` : ''}` +

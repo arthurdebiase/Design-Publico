@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Screen, App } from "@/types";
+import { Screen, App } from "@shared/schema";
 import { X, Link2, ChevronLeft, ChevronRight, ExternalLink, Info } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
+import { CloudinaryImage } from "@/components/ui/cloudinary-image";
 import { createSlug } from "@/lib/slugUtils";
 
 interface ScreenModalProps {
@@ -269,16 +270,15 @@ export function ScreenModal({
                 </div>
               )}
               
-              <ResponsiveImage 
+              <CloudinaryImage 
                 src={currentScreen.imageUrl}
+                cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
                 alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
                 className="max-h-[70vh] max-w-full rounded-lg shadow-md object-contain relative z-10"
-                aria-label={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
                 onLoad={() => setIsImageLoading(false)}
-                sizes="(min-width: 1280px) 60vw, 90vw"
-                widths={[480, 768, 1024, 1280]}
-                format="webp"
-                quality={90}
+                priority={true}
+                width={1024}
+                height={1820}
               />
             </div>
           </div>
