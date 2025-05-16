@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Screen, App } from "@shared/schema";
-import { X, Link2, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import { X, Link2, ChevronLeft, ChevronRight, ExternalLink, Info } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "react-i18next";
+import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { CloudinaryImage } from "@/components/ui/cloudinary-image";
 import { createSlug } from "@/lib/slugUtils";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { motion, AnimatePresence } from "framer-motion";
+import "./bottom-sheet.css";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -152,281 +153,231 @@ export function ScreenModal({
   
   if (!currentScreen) return null;
   
-  // Animation variants for the mobile bottom sheet
-  const bottomSheetVariants = {
-    hidden: { y: "100%", opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        type: "spring", 
-        damping: 30, 
-        stiffness: 300,
-        duration: 0.3 
-      }
-    },
-    exit: { 
-      y: "100%", 
-      opacity: 0,
-      transition: { 
-        type: "spring", 
-        damping: 25, 
-        stiffness: 300,
-        duration: 0.2 
-      }
-    }
-  };
-
-  const ModalContent = () => (
-    <div>
-      {/* Handle indicator for mobile bottom sheet */}
-      {isMobile && (
-        <div className="w-full flex justify-center pt-2 pb-1">
-          <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent 
+        className={`${isMobile 
+          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto translate-y-0 bottom-sheet-enter" 
+          : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
+        }`}
+        hideCloseButton={true}
+        aria-labelledby="screen-modal-title"
+        aria-describedby="screen-modal-description"
+      >
+        {/* Handle indicator for mobile bottom sheet */}
+        {isMobile && (
+          <div className="w-full flex justify-center pt-2 pb-1">
+            <div className="bottom-sheet-handle"></div>
+          </div>
+        )}
+        {/* Add DialogTitle for accessibility */}
+        <DialogTitle id="screen-modal-title" className="sr-only">
+          {app.name}: {currentScreen.name || 'Screen Detail'}
+        </DialogTitle>
+        
+        {/* Add DialogDescription for accessibility */}
+        <div id="screen-modal-description" className="sr-only">
+          Detailed view of a screen from {app.name}. Use arrow keys to navigate between screens.
         </div>
-      )}
-      
-      {/* Add DialogTitle for accessibility */}
-      <DialogTitle id="screen-modal-title" className="sr-only">
-        {app.name}: {currentScreen.name || 'Screen Detail'}
-      </DialogTitle>
-      
-      {/* Add DialogDescription for accessibility */}
-      <div id="screen-modal-description" className="sr-only">
-        Detailed view of a screen from {app.name}. Use arrow keys to navigate between screens.
-      </div>
-      
-      <div className={`flex items-center justify-between p-4 ${isMobile ? 'pb-2' : 'border-b'}`}>
-        <Link href={`/app/${createSlug(app.name)}`} 
-          className="flex items-center group no-underline" 
-          onClick={() => {
-            onClose();
-            // Ensure we scroll to top when navigating to app details
-            window.scrollTo(0, 0);
-          }}
-        >
-          <div className="flex-shrink-0 w-8 h-8 mr-3 cursor-pointer hover:opacity-80 transition-opacity" 
-            title={`View ${app.name} details`}
+        
+        <div className={`flex items-center justify-between p-4 ${isMobile ? 'pb-2' : 'border-b'}`}>
+          <Link href={`/app/${createSlug(app.name)}`} 
+            className="flex items-center group no-underline" 
+            onClick={() => {
+              onClose();
+              // Ensure we scroll to top when navigating to app details
+              window.scrollTo(0, 0);
+            }}
           >
-            {app.logo ? (
-              <img 
-                src={app.cloudinaryLogo || app.logo}
-                alt={`${app.name} logo`} 
-                className="w-8 h-8 object-contain"
-                loading="eager"
-              />
-            ) : (
-              <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
-                <span className="sr-only">Logo placeholder for {app.name}</span>
-              </div>
+            <div className="flex-shrink-0 w-8 h-8 mr-3 cursor-pointer hover:opacity-80 transition-opacity" 
+              title={`View ${app.name} details`}
+            >
+              {app.logo ? (
+                <img 
+                  src={app.cloudinaryLogo || app.logo}
+                  alt={`${app.name} logo`} 
+                  className="w-8 h-8 object-contain"
+                  loading="eager"
+                />
+              ) : (
+                <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
+                  <span className="sr-only">Logo placeholder for {app.name}</span>
+                </div>
+              )}
+            </div>
+            <div className="flex-grow">
+              {/* App and screen name - clickable */}
+              <DialogTitle id="screen-modal-title" className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogTitle>
+              <DialogDescription id="screen-modal-description" className="text-xs text-gray-500 m-0">{app.name}</DialogDescription>
+            </div>
+          </Link>
+          <div className="flex items-center gap-1">
+            {/* Show info button if there are tags or categories to display */}
+            {((currentScreen.tags && currentScreen.tags.length > 0) || currentScreen.category) && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className={`h-9 w-9 ${showTags ? 'bg-gray-100' : ''}`} 
+                aria-label={showTags ? "Hide metadata" : "Show metadata"}
+                onClick={() => setShowTags(!showTags)}
+                title={showTags ? "Hide componentes and categories" : "Show componentes and categories"}
+              >
+                <Info className="h-4 w-4" aria-hidden="true" />
+              </Button>
             )}
-          </div>
-          <div className="flex-grow">
-            {/* App and screen name - clickable */}
-            <DialogTitle id="screen-modal-title" className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogTitle>
-            <DialogDescription id="screen-modal-description" className="text-xs text-gray-500 m-0">{app.name}</DialogDescription>
-          </div>
-        </Link>
-        <div className="flex items-center gap-1">
-          {/* Show info button if there are tags or categories to display */}
-          {((currentScreen.tags && currentScreen.tags.length > 0) || currentScreen.category) && (
             <Button 
               variant="ghost" 
               size="icon" 
-              className={`h-9 w-9 ${showTags ? 'bg-gray-100' : ''}`} 
-              aria-label={showTags ? "Hide metadata" : "Show metadata"}
-              onClick={() => setShowTags(!showTags)}
-              title={showTags ? "Hide componentes and categories" : "Show componentes and categories"}
+              className="h-9 w-9" 
+              aria-label={t("screens.linkCopiedDesc")}
+              onClick={handleCopyLink}
+              title={t("screens.linkCopiedDesc")}
             >
-              <Info className="h-4 w-4" aria-hidden="true" />
+              <Link2 className="h-4 w-4" aria-hidden="true" />
             </Button>
-          )}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-9 w-9" 
-            aria-label={t("screens.linkCopiedDesc")}
-            onClick={handleCopyLink}
-            title={t("screens.linkCopiedDesc")}
-          >
-            <Link2 className="h-4 w-4" aria-hidden="true" />
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={onClose} 
-            className="h-9 w-9" 
-            aria-label="Fechar modal"
-            title="Fechar"
-          >
-            <X className="h-4 w-4" aria-hidden="true" />
-          </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={onClose} 
+              className="h-9 w-9" 
+              aria-label="Fechar modal"
+              title="Fechar"
+            >
+              <X className="h-4 w-4" aria-hidden="true" />
+            </Button>
+          </div>
         </div>
-      </div>
-      
-      <div className="flex-1 p-0 flex flex-col items-center justify-center relative">
-        {screens.length > 1 && (
-          <>
-            <Button 
-              variant="secondary" 
-              size="icon" 
-              className={`absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/90 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full shadow-md z-10`}
-              onClick={handlePrevious}
-              aria-label="Ver tela anterior"
-              title={`Ver tela anterior: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
-            >
-              <ChevronLeft className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} aria-hidden="true" />
-            </Button>
-            
-            <Button 
-              variant="secondary" 
-              size="icon" 
-              className={`absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/90 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full shadow-md z-10`}
-              onClick={handleNext}
-              aria-label="Ver próxima tela"
-              title={`Ver próxima tela: ${screens[(localIndex + 1) % screens.length].name}`}
-            >
-              <ChevronRight className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} aria-hidden="true" />
-            </Button>
-          </>
-        )}
         
-        {/* Skeleton placeholder durante o carregamento */}
-        {isImageLoading && (
-          <div className="flex items-center justify-center w-full h-full py-6">
-            <div 
-              className="animate-pulse bg-gray-200 rounded-md" 
-              style={{ 
-                width: isMobile ? '280px' : '280px',
-                height: isMobile ? '520px' : '500px',
-                maxWidth: '95%'
-              }}
-            />
-          </div>
-        )}
-        
-        {/* Container for both image and tags */}
-        <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
-          {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
-          <div className={`${isMobile ? 'max-h-[70vh] w-full' : 'max-h-[68vh]'} flex items-center justify-center`}>
-            <a 
-              href={currentScreen.cloudinaryUrl || currentScreen.imageUrl} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="cursor-pointer hover:opacity-90 transition-opacity w-full flex justify-center"
-              title="Open full image in new tab"
-            >
-              <CloudinaryImage 
-                src={currentScreen.imageUrl}
-                cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
-                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                className={`${isMobile ? 'max-h-[70vh] max-w-[95%]' : 'max-h-[68vh]'} w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
-                onLoad={() => setIsImageLoading(false)}
-                priority={true}
-                width={1024}
-                height={1820}
-              />
-            </a>
-          </div>
+        <div className="flex-1 p-0 flex flex-col items-center justify-center relative">
+          {screens.length > 1 && (
+            <>
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                className={`absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/90 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full shadow-md z-10`}
+                onClick={handlePrevious}
+                aria-label="Ver tela anterior"
+                title={`Ver tela anterior: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
+              >
+                <ChevronLeft className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} aria-hidden="true" />
+              </Button>
+              
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                className={`absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/90 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full shadow-md z-10`}
+                onClick={handleNext}
+                aria-label="Ver próxima tela"
+                title={`Ver próxima tela: ${screens[(localIndex + 1) % screens.length].name}`}
+              >
+                <ChevronRight className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} aria-hidden="true" />
+              </Button>
+            </>
+          )}
           
-          {/* Mobile-specific toggle for details - removed */}
+          {/* Skeleton placeholder durante o carregamento */}
+          {isImageLoading && (
+            <div className="flex items-center justify-center w-full h-full py-6">
+              <div 
+                className="animate-pulse bg-gray-200 rounded-md" 
+                style={{ 
+                  width: isMobile ? '280px' : '280px',
+                  height: isMobile ? '520px' : '500px',
+                  maxWidth: '95%'
+                }}
+              />
+            </div>
+          )}
+          
+          {/* Container for both image and tags */}
+          <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
+            {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
+            <div className={`${isMobile ? 'max-h-[70vh] w-full' : 'max-h-[68vh]'} flex items-center justify-center`}>
+              <a 
+                href={currentScreen.cloudinaryUrl || currentScreen.imageUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="cursor-pointer hover:opacity-90 transition-opacity w-full flex justify-center"
+                title="Open full image in new tab"
+              >
+                <CloudinaryImage 
+                  src={currentScreen.imageUrl}
+                  cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
+                  alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                  className={`${isMobile ? 'max-h-[70vh] max-w-[95%]' : 'max-h-[68vh]'} w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                  onLoad={() => setIsImageLoading(false)}
+                  priority={true}
+                  width={1024}
+                  height={1820}
+                />
+              </a>
+            </div>
             
-          {/* Tags and categories displayed here */}
-          {showTags && (
-            <div className="flex flex-wrap gap-2 mt-2 justify-center px-4">
-              {/* Categories - Only visible when showTags is true */}
-              {currentScreen.category && (
-                <>
-                  {typeof currentScreen.category === 'string' ? (
-                    <Link 
-                      href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
-                      onClick={() => {
-                        onClose();
-                        // Ensure we scroll to top when navigating to filtered screens
-                        window.scrollTo(0, 0);
-                      }}
-                      className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
-                      title={`View all screens in ${currentScreen.category} category`}
-                    >
-                      {currentScreen.category}
-                    </Link>
-                  ) : (
-                    Array.isArray(currentScreen.category) && 
-                    currentScreen.category.map((cat, idx) => (
+            {/* Mobile-specific toggle for details - removed */}
+              
+            {/* Tags and categories displayed here */}
+            {showTags && (
+              <div className="flex flex-wrap gap-2 mt-2 justify-center px-4">
+                {/* Categories - Only visible when showTags is true */}
+                {currentScreen.category && (
+                  <>
+                    {typeof currentScreen.category === 'string' ? (
                       <Link 
-                        key={`modal-category-${idx}`}
-                        href={`/screens?category=${encodeURIComponent(cat)}`}
+                        href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
                         onClick={() => {
                           onClose();
                           // Ensure we scroll to top when navigating to filtered screens
                           window.scrollTo(0, 0);
                         }}
                         className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
-                        title={`View all screens in ${cat} category`}
+                        title={`View all screens in ${currentScreen.category} category`}
                       >
-                        {cat}
+                        {currentScreen.category}
                       </Link>
-                    ))
-                  )}
-                </>
-              )}
-              
-              {/* Tags - Only visible when showTags is true */}
-              {currentScreen.tags && currentScreen.tags.length > 0 && (
-                currentScreen.tags.map((tag, index) => (
-                  <Link 
-                    key={`modal-tag-${index}`}
-                    href={`/screens?tag=${encodeURIComponent(tag)}`}
-                    onClick={() => {
-                      onClose();
-                      // Ensure we scroll to top when navigating to filtered screens
-                      window.scrollTo(0, 0);
-                    }}
-                    className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer no-underline`}
-                    title={`View all screens with ${tag} componente`}
-                  >
-                    {tag}
-                  </Link>
-                ))
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AnimatePresence mode="wait">
-        {isOpen && (
-          <DialogContent 
-            className={`${isMobile 
-              ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto" 
-              : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
-            }`}
-            hideCloseButton={true}
-            aria-labelledby="screen-modal-title"
-            aria-describedby="screen-modal-description"
-            asChild
-          >
-            {isMobile ? (
-              <motion.div
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                variants={bottomSheetVariants}
-              >
-                <ModalContent />
-              </motion.div>
-            ) : (
-              <div>
-                <ModalContent />
+                    ) : (
+                      Array.isArray(currentScreen.category) && 
+                      currentScreen.category.map((cat, idx) => (
+                        <Link 
+                          key={`modal-category-${idx}`}
+                          href={`/screens?category=${encodeURIComponent(cat)}`}
+                          onClick={() => {
+                            onClose();
+                            // Ensure we scroll to top when navigating to filtered screens
+                            window.scrollTo(0, 0);
+                          }}
+                          className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
+                          title={`View all screens in ${cat} category`}
+                        >
+                          {cat}
+                        </Link>
+                      ))
+                    )}
+                  </>
+                )}
+                
+                {/* Tags - Only visible when showTags is true */}
+                {currentScreen.tags && currentScreen.tags.length > 0 && (
+                  currentScreen.tags.map((tag, index) => (
+                    <Link 
+                      key={`modal-tag-${index}`}
+                      href={`/screens?tag=${encodeURIComponent(tag)}`}
+                      onClick={() => {
+                        onClose();
+                        // Ensure we scroll to top when navigating to filtered screens
+                        window.scrollTo(0, 0);
+                      }}
+                      className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer no-underline`}
+                      title={`View all screens with ${tag} componente`}
+                    >
+                      {tag}
+                    </Link>
+                  ))
+                )}
               </div>
             )}
-          </DialogContent>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      </DialogContent>
     </Dialog>
   );
 }
