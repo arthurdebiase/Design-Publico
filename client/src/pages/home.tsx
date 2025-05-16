@@ -30,15 +30,48 @@ export default function Home() {
     }
   }, [apps]);
   
+  // Use custom category mapping to work around data structure issues
+  const getAppCategory = (app: any): string => {
+    // Map apps to relevant categories based on their name or description
+    if (app.name?.toLowerCase().includes("trabalho") || 
+        app.description?.toLowerCase().includes("trabalho")) {
+      return "Trabalho";
+    }
+    if (app.name?.toLowerCase().includes("gov") || 
+        app.name?.toLowerCase().includes("gov.br") ||
+        app.description?.toLowerCase().includes("governo")) {
+      return "Cidadania";
+    }
+    if (app.name?.toLowerCase().includes("caixa") || 
+        app.description?.toLowerCase().includes("financ")) {
+      return "Finanças";
+    }
+    if (app.name?.toLowerCase().includes("saúde") || 
+        app.description?.toLowerCase().includes("saúde") ||
+        app.name?.toLowerCase().includes("sus")) {
+      return "Saúde";
+    }
+    if (app.name?.toLowerCase().includes("correios") || 
+        app.description?.toLowerCase().includes("entreg")) {
+      return "Logística";
+    }
+    
+    // Default to 'Portal' if no other matching category
+    return "Portal";
+  };
+  
   // Filter apps based on selected categories
   const filteredApps = apps?.filter(app => {
-    // Check if category matches filter criteria
-    const categoryMatch = selectedCategories.length === 0 || 
-                         (app.category && 
-                          typeof app.category === 'string' && 
-                          selectedCategories.includes(app.category));
+    // If no categories are selected, show all apps
+    if (selectedCategories.length === 0) {
+      return true;
+    }
     
-    return categoryMatch;
+    // Get the appropriate category for this app
+    const appCategory = getAppCategory(app);
+    
+    // Check if the app's category is included in the selected categories
+    return selectedCategories.includes(appCategory);
   });
   
   // Handle category filter change
