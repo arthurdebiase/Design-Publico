@@ -157,6 +157,16 @@ export function ScreenModal({
         aria-labelledby="screen-modal-title"
         aria-describedby="screen-modal-description"
       >
+        {/* Add DialogTitle for accessibility */}
+        <DialogTitle id="screen-modal-title" className="sr-only">
+          {app.name}: {currentScreen.name || 'Screen Detail'}
+        </DialogTitle>
+        
+        {/* Add DialogDescription for accessibility */}
+        <div id="screen-modal-description" className="sr-only">
+          Detailed view of a screen from {app.name}. Use arrow keys to navigate between screens.
+        </div>
+        
         <div className="flex items-center justify-between p-4 border-b">
           <Link href={`/app/${createSlug(app.name)}`} 
             className="flex items-center group no-underline" 
