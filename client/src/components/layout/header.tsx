@@ -91,7 +91,7 @@ export default function Header() {
       
       {/* Mobile Menu - Overlay on content */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-white shadow-lg" style={{ top: "61px" }}>
+        <div className="md:hidden fixed z-50 bg-white shadow-lg right-0 left-0" style={{ top: "61px" }}>
           <nav className="flex flex-col space-y-5 p-4">
             <Link 
               href="/" 
