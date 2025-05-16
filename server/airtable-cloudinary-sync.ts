@@ -38,12 +38,12 @@ const SCREENS_TABLE = 'screens'; // Update this to match your Airtable table nam
 async function fetchRecordsNeedingMigration(limit = 100, offset?: string): Promise<AirtableResponse> {
   const url = `${AIRTABLE_API_URL}/${AIRTABLE_BASE_ID}/${SCREENS_TABLE}`;
   
-  // Build the query parameters - only get records that have images but no importing field (no Cloudinary URL yet)
+  // Build the query parameters - get all records that have images
+  // We'll filter out records with importing field in our processing code
   const params: any = {
     view: 'Grid view',
-    // Use a simpler filter formula that matches the Airtable structure
-    // AND({image} != '', NOT({importing}))
-    filterByFormula: 'AND({image} != "", ARRAYJOIN({importing}) = "")',
+    // Simplified formula - just get records with images
+    filterByFormula: 'AND(NOT(ISERROR({image})), NOT(image = ""))',
     pageSize: limit,
   };
   
@@ -102,32 +102,66 @@ async function processBatch(records: AirtableRecord[]): Promise<{success: number
   
   for (const record of records) {
     try {
+      console.log(`Processing record ${record.id}...`);
+      console.log(`Available fields: ${Object.keys(record.fields).join(', ')}`);
+      
       // Skip records without images
-      if (!record.fields.image || record.fields.image.length === 0) {
+      if (!record.fields.image || !Array.isArray(record.fields.image) || record.fields.image.length === 0) {
         console.log(`Record ${record.id} has no images, skipping.`);
         continue;
       }
       
-      // If already has a Cloudinary URL, skip
-      if (record.fields.importing) {
+      // If already has a Cloudinary URL in the "importing" field, skip
+      // Safely check for importing field (might be string or array or undefined)
+      const hasImportingField = record.fields.importing && 
+        (typeof record.fields.importing === 'string' || 
+         (Array.isArray(record.fields.importing) && record.fields.importing.length > 0));
+         
+      if (hasImportingField) {
         console.log(`Record ${record.id} already has a Cloudinary URL, skipping.`);
         continue;
       }
       
-      // Get app name and screen name for this record
-      // Handle different possible field names from Airtable
-      const appName = (record.fields.appname && record.fields.appname[0]) || 
-                     (record.fields['appname (from appname)'] && record.fields['appname (from appname)'][0]) || 
-                     'Unknown App';
-                     
-      const screenName = record.fields.imagetitle || record.fields.imagename || 'Unnamed Screen';
-      
-      // Get the first image from the record - with additional safety checks
-      if (!record.fields.image || !Array.isArray(record.fields.image) || record.fields.image.length === 0) {
-        console.log(`Record ${record.id} has invalid image format, skipping.`);
-        continue;
+      // Get app name using different possible field patterns
+      // App name might be a direct field, a linked record field, or in various formats
+      let appName = 'Unknown App';
+      if (record.fields.appname) {
+        if (Array.isArray(record.fields.appname)) {
+          appName = record.fields.appname[0] || appName;
+        } else if (typeof record.fields.appname === 'string') {
+          appName = record.fields.appname;
+        }
+      } else if (record.fields['appname (from appname)']) {
+        if (Array.isArray(record.fields['appname (from appname)'])) {
+          appName = record.fields['appname (from appname)'][0] || appName;
+        } else if (typeof record.fields['appname (from appname)'] === 'string') {
+          appName = record.fields['appname (from appname)'];
+        }
+      } else if (record.fields['App']) {
+        if (Array.isArray(record.fields['App'])) {
+          appName = record.fields['App'][0] || appName;
+        } else if (typeof record.fields['App'] === 'string') {
+          appName = record.fields['App'];
+        }
       }
       
+      console.log(`Using app name: ${appName}`);
+      
+      // Get screen name from various possible field names
+      let screenName = 'Unnamed Screen';
+      if (record.fields.imagetitle && typeof record.fields.imagetitle === 'string') {
+        screenName = record.fields.imagetitle;
+      } else if (record.fields.imagename && typeof record.fields.imagename === 'string') {
+        screenName = record.fields.imagename;
+      } else if (record.fields.name && typeof record.fields.name === 'string') {
+        screenName = record.fields.name;
+      } else if (record.fields.title && typeof record.fields.title === 'string') {
+        screenName = record.fields.title;
+      }
+      
+      console.log(`Using screen name: ${screenName}`);
+      
+      // Get the first image from the record
       const image = record.fields.image[0];
       console.log(`Processing image ${image.filename} from record ${record.id}`);
       
