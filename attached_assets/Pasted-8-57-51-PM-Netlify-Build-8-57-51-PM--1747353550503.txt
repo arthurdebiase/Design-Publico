@@ -1,0 +1,57 @@
+8:57:51 PM: Netlify Build                                                 
+8:57:51 PM: ────────────────────────────────────────────────────────────────
+8:57:51 PM: ​
+8:57:51 PM: ❯ Version
+8:57:51 PM:   @netlify/build 33.0.0
+8:57:51 PM: ​
+8:57:51 PM: ❯ Flags
+8:57:51 PM:   accountId: 67f0139e317a986619ead0dd
+8:57:51 PM:   baseRelDir: true
+8:57:51 PM:   buildId: 68267f6b2188442bd23412a9
+8:57:51 PM:   deployId: 68267f6b2188442bd23412ab
+8:57:51 PM: ​
+8:57:51 PM: ❯ Current directory
+8:57:51 PM:   /opt/build/repo
+8:57:51 PM: ​
+8:57:51 PM: ❯ Config file
+8:57:51 PM:   No config file was defined: using default values.
+8:57:51 PM: ​
+8:57:51 PM: ❯ Context
+8:57:51 PM:   production
+8:57:51 PM: ​
+8:57:51 PM: Build command from Netlify app                                
+8:57:51 PM: ────────────────────────────────────────────────────────────────
+8:57:51 PM: ​
+8:57:51 PM: $ npm run build
+8:57:51 PM: npm error code ENOENT
+8:57:51 PM: npm error syscall open
+8:57:51 PM: npm error path /opt/build/repo/package.json
+8:57:51 PM: npm error errno -2
+8:57:51 PM: npm error enoent Could not read package.json: Error: ENOENT: no such file or directory, open '/opt/build/repo/package.json'
+8:57:51 PM: npm error enoent This is related to npm not being able to find a file.
+8:57:51 PM: npm error enoent
+8:57:51 PM: npm error A complete log of this run can be found in: /opt/buildhome/.npm/_logs/2025-05-15T23_57_51_829Z-debug-0.log
+8:57:51 PM: ​
+8:57:51 PM: "build.command" failed                                        
+8:57:51 PM: ────────────────────────────────────────────────────────────────
+8:57:51 PM: ​
+8:57:51 PM:   Error message
+8:57:51 PM:   Command failed with exit code 254: npm run build (https://ntl.fyi/exit-code-254)
+8:57:51 PM: ​
+8:57:51 PM:   Error location
+8:57:51 PM:   In Build command from Netlify app:
+8:57:51 PM:   npm run build
+8:57:51 PM: ​
+8:57:51 PM:   Resolved config
+8:57:51 PM:   build:
+8:57:51 PM:     command: npm run build
+8:57:51 PM:     commandOrigin: ui
+8:57:51 PM:     environment:
+8:57:51 PM:       - AIRTABLE_API_KEY
+8:57:51 PM:       - AIRTABLE_BASE_ID
+8:57:51 PM:     publish: /opt/build/repo/dist
+8:57:51 PM:     publishOrigin: ui
+8:57:52 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+8:57:52 PM: Failing build: Failed to build site
+8:57:52 PM: Finished processing build request in 9.107s
+8:57:52 PM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
