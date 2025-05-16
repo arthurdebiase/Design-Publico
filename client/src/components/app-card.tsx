@@ -61,13 +61,12 @@ function AppScreenImage({ appId, appName, isPriority = false }: { appId: string,
             className="w-full h-full object-contain transition-transform hover:scale-[1.01]"
             style={{ 
               objectFit: "contain",
-              objectPosition: "center",
-              aspectRatio: "9/16"
+              objectPosition: "center"
             }}
-            sizes="(min-width: 1280px) 20vw, (min-width: 768px) 25vw, 33vw"
-            widths={[250, 350, 480]}
+            sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw"
+            widths={[320, 480, 640]}
             format="webp"
-            quality={80}
+            quality={85}
             priority={isPriority}
             placeholder={
               <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -88,10 +87,10 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
   const isMobile = useIsMobile();
   const [, navigate] = useLocation();
   
-  // Responsive heights that maintain a more compact aspect ratio for better grid display
+  // Responsive heights that maintain a compact aspect ratio with larger image size
   const cardHeight = isMobile ? "h-auto" : "h-auto";
-  // Use aspect ratio to maintain proper proportions but more compact
-  const imageContainerStyle = { aspectRatio: "9/10" };
+  // Use aspect ratio to maintain proper proportions with better size
+  const imageContainerStyle = { aspectRatio: "9/14" };
   
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
