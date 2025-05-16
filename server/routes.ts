@@ -10,6 +10,7 @@ import sharp from "sharp";
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { startMigration, getCloudinaryStatus, testCloudinaryUpload } from "./cloudinary-controller";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enable CORS for all routes
@@ -545,6 +546,11 @@ Crawl-delay: 2`);
   // Newsletter subscription endpoints
   app.post("/api/newsletter/subscribe", subscribeToNewsletter);
   app.get("/api/newsletter/subscribers", getNewsletterSubscribers);
+
+  // Cloudinary Migration Routes
+  app.get("/api/cloudinary/status", getCloudinaryStatus);
+  app.post("/api/cloudinary/test-upload", testCloudinaryUpload);
+  app.post("/api/cloudinary/migrate", startMigration);
 
   const httpServer = createServer(app);
   return httpServer;
