@@ -88,10 +88,10 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
   const isMobile = useIsMobile();
   const [, navigate] = useLocation();
   
-  // Responsive heights that maintain the proper aspect ratio (9:16)
+  // Responsive heights that maintain a more compact aspect ratio (9:12) for better grid display
   const cardHeight = isMobile ? "h-auto" : "h-auto";
-  // Use aspect ratio to maintain proper proportions
-  const imageContainerStyle = { aspectRatio: "9/18" };
+  // Use aspect ratio to maintain proper proportions but more compact
+  const imageContainerStyle = { aspectRatio: "9/12" };
   
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
