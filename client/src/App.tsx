@@ -8,6 +8,7 @@ import Home from "@/pages/home";
 import AppDetail from "@/pages/app-detail";
 import ScreensPage from "@/pages/screens";
 import About from "@/pages/about";
+import CloudinaryAdmin from "@/pages/admin/cloudinary";
 import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import ScrollToTop from "@/components/scroll-to-top";
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/app/:idOrSlug" component={AppDetail} />
       <Route path="/screens" component={ScreensPage} />
       <Route path="/about" component={About} />
+      <Route path="/admin/cloudinary" component={CloudinaryAdmin} />
       <Route component={NotFound} />
     </Switch>
   );
