@@ -67,6 +67,8 @@ export function ScreenModal({
   const { t } = useTranslation();
   // Use isMobile hook to adjust UI for mobile devices
   const isMobile = useIsMobile();
+  // Track animation state
+  const [isClosing, setIsClosing] = useState(false);
   
   useEffect(() => {
     setLocalIndex(currentScreenIndex);
@@ -157,7 +159,7 @@ export function ScreenModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className={`${isMobile 
-          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto dialog-content-from-bottom" 
+          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none radix-dialog-content-bottom" 
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
         hideCloseButton={true}
