@@ -11,37 +11,34 @@ import { useTranslation } from 'react-i18next';
 export default function Home() {
   const { t } = useTranslation();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
-  const [availableTypes, setAvailableTypes] = useState<string[]>([]);
   
   const { isLoading, error, data: apps } = useQuery({
     queryKey: ['/api/apps'],
     queryFn: () => fetchApps({})
   });
   
-  // Extract available categories and types from apps
+  // Extract available categories from apps
   useEffect(() => {
     if (apps) {
       const categoriesSet = new Set<string>();
-      const typesSet = new Set<string>();
       
-      // Safely extract categories and types
+      // Safely extract categories
       apps.forEach(app => {
         if (app.category && typeof app.category === 'string') {
           categoriesSet.add(app.category);
         }
-        if (app.type && typeof app.type === 'string') {
-          typesSet.add(app.type);
-        }
       });
       
-      setAvailableCategories(Array.from(categoriesSet));
-      setAvailableTypes(Array.from(typesSet));
+      const sortedCategories = Array.from(categoriesSet).sort();
+      setAvailableCategories(sortedCategories);
+      
+      // Log categories for debugging
+      console.log("Available categories:", sortedCategories);
     }
   }, [apps]);
   
-  // Filter apps based on selected categories and types
+  // Filter apps based on selected categories
   const filteredApps = apps?.filter(app => {
     // Check if category matches filter criteria
     const categoryMatch = selectedCategories.length === 0 || 
@@ -49,13 +46,7 @@ export default function Home() {
                           typeof app.category === 'string' && 
                           selectedCategories.includes(app.category));
     
-    // Check if type matches filter criteria
-    const typeMatch = selectedTypes.length === 0 || 
-                     (app.type && 
-                      typeof app.type === 'string' && 
-                      selectedTypes.includes(app.type));
-    
-    return categoryMatch && typeMatch;
+    return categoryMatch;
   });
   
   // Handle category filter change
@@ -69,25 +60,9 @@ export default function Home() {
     }
   };
   
-  // Handle type filter change
-  const handleTypeFilterChange = (type: string | null) => {
-    if (type === null) {
-      setSelectedTypes([]);
-    } else if (selectedTypes.includes(type)) {
-      setSelectedTypes(selectedTypes.filter(t => t !== type));
-    } else {
-      setSelectedTypes([...selectedTypes, type]);
-    }
-  };
-  
   // Handle remove category
   const handleRemoveCategory = (category: string) => {
     setSelectedCategories(selectedCategories.filter(c => c !== category));
-  };
-  
-  // Handle remove type
-  const handleRemoveType = (type: string) => {
-    setSelectedTypes(selectedTypes.filter(t => t !== type));
   };
   
   return (
@@ -100,43 +75,6 @@ export default function Home() {
         {/* Filter section */}
         <div className="mb-4 flex flex-wrap items-center justify-between">
           <div className="flex flex-wrap gap-4 items-center">
-            {/* Type filter dropdown */}
-            <div className="flex items-center">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="flex items-center gap-2"
-                    aria-label="Filtrar por tipo"
-                    aria-haspopup="true"
-                  >
-                    {'Tipo'}
-                    <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                  <DropdownMenuLabel>Tipo</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem 
-                    className={selectedTypes.length === 0 ? "bg-accent/50" : ""}
-                    onClick={() => handleTypeFilterChange(null)}
-                  >
-                    Todos os Tipos
-                  </DropdownMenuItem>
-                  {availableTypes.map((type: string, index: number) => (
-                    <DropdownMenuItem
-                      key={`type-${index}-${type}`}
-                      className={selectedTypes.includes(type) ? "bg-accent/50" : ""}
-                      onClick={() => handleTypeFilterChange(type)}
-                    >
-                      <span>{type}</span>
-                      {selectedTypes.includes(type) && <Check className="ml-auto h-4 w-4" />}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
             {/* Category filter dropdown */}
             <div className="flex items-center">
               <DropdownMenu>
@@ -160,7 +98,7 @@ export default function Home() {
                   >
                     Todas as Categorias
                   </DropdownMenuItem>
-                  {availableCategories.map((category: string, index: number) => (
+                  {availableCategories && availableCategories.map((category: string, index: number) => (
                     <DropdownMenuItem
                       key={`category-${index}-${category}`}
                       className={selectedCategories.includes(category) ? "bg-accent/50" : ""}
@@ -182,25 +120,8 @@ export default function Home() {
         </div>
         
         {/* Active filter chips */}
-        {(selectedTypes.length > 0 || selectedCategories.length > 0) && (
+        {selectedCategories.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {/* Type filter chips */}
-            {selectedTypes.map(type => (
-              <div 
-                key={`chip-type-${type}`}
-                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm"
-              >
-                <span>{type}</span>
-                <button 
-                  onClick={() => handleRemoveType(type)}
-                  className="rounded-full hover:bg-blue-200 p-1 transition-colors"
-                  aria-label={`Remover filtro de tipo ${type}`}
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            ))}
-            
             {/* Category filter chips */}
             {selectedCategories.map(category => (
               <div 
@@ -219,11 +140,9 @@ export default function Home() {
             ))}
             
             {/* Clear all filters button (shown only when multiple filters are active) */}
-            {(selectedTypes.length > 1 || selectedCategories.length > 1 || 
-              (selectedTypes.length > 0 && selectedCategories.length > 0)) && (
+            {selectedCategories.length > 1 && (
               <button
                 onClick={() => {
-                  setSelectedTypes([]);
                   setSelectedCategories([]);
                 }}
                 className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
