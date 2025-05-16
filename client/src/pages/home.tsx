@@ -140,7 +140,11 @@ export default function Home() {
           
           {/* App counter */}
           <div className="text-gray-600 font-medium">
-            Mostrando {filteredApps?.length || 0} de {apps?.length || 0} {(apps?.length || 0) === 1 ? 'aplicativo' : 'aplicativos'}
+            {selectedCategories.length > 0 ? (
+              `Mostrando ${filteredApps?.length || 0} de ${apps?.length || 0}`
+            ) : (
+              `Mostrando ${apps?.length || 0}`
+            )}
           </div>
         </div>
         
