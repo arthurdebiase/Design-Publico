@@ -30,7 +30,12 @@ interface AirtableResponse {
 const AIRTABLE_API_URL = 'https://api.airtable.com/v0';
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
-const SCREENS_TABLE = 'screens'; // Update this to match your Airtable table name
+
+// These field names need to match exactly what's in your Airtable
+const SCREENS_TABLE = 'screens'; // Table containing screen images
+const ATTACHMENT_FIELD = 'image'; // Field containing screen images
+const APP_NAME_FIELD = 'appname'; // Field linking screens to apps
+const SCREEN_NAME_FIELD = 'imagetitle'; // Field containing screen names
 
 /**
  * Fetches records from Airtable screens table that have images but no Cloudinary URL
@@ -42,8 +47,8 @@ async function fetchRecordsNeedingMigration(limit = 100, offset?: string): Promi
   // We'll filter out records with importing field in our processing code
   const params: any = {
     view: 'Grid view',
-    // Simplified formula - just get records with images
-    filterByFormula: 'AND(NOT(ISERROR({image})), NOT(image = ""))',
+    // Query for records with images, without referencing fields that might not exist
+    filterByFormula: 'NOT(ISERROR({image}))',
     pageSize: limit,
   };
   
@@ -52,16 +57,31 @@ async function fetchRecordsNeedingMigration(limit = 100, offset?: string): Promi
   }
   
   try {
+    console.log(`Sending request to Airtable: ${url} with params:`, JSON.stringify(params));
+    
     const response = await axios.get(url, {
       params,
       headers: {
         Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+        'Content-Type': 'application/json',
       },
     });
     
+    console.log(`Successfully fetched ${response.data.records?.length || 0} records from Airtable`);
     return response.data;
   } catch (error: any) {
     console.error('Error fetching records from Airtable:', error.message);
+    // Add more detailed error information
+    if (error.response) {
+      console.error('Response status:', error.response.status);
+      console.error('Response data:', JSON.stringify(error.response.data));
+      console.error('Response headers:', JSON.stringify(error.response.headers));
+    } else if (error.request) {
+      console.error('No response received from Airtable');
+    } else {
+      console.error('Error setting up request:', error.message);
+    }
+    
     throw error;
   }
 }
@@ -115,7 +135,8 @@ async function processBatch(records: AirtableRecord[]): Promise<{success: number
       // Safely check for importing field (might be string or array or undefined)
       const hasImportingField = record.fields.importing && 
         (typeof record.fields.importing === 'string' || 
-         (Array.isArray(record.fields.importing) && record.fields.importing.length > 0));
+         (Array.isArray(record.fields.importing) && record.fields.importing.length > 0) ||
+         (typeof record.fields.importing === 'object' && record.fields.importing !== null));
          
       if (hasImportingField) {
         console.log(`Record ${record.id} already has a Cloudinary URL, skipping.`);
