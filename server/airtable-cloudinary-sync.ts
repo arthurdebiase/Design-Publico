@@ -41,7 +41,9 @@ async function fetchRecordsNeedingMigration(limit = 100, offset?: string): Promi
   // Build the query parameters - only get records that have images but no importing field (no Cloudinary URL yet)
   const params: any = {
     view: 'Grid view',
-    filterByFormula: 'AND(image, NOT(importing))',
+    // Use a simpler filter formula that matches the Airtable structure
+    // AND({image} != '', NOT({importing}))
+    filterByFormula: 'AND({image} != "", ARRAYJOIN({importing}) = "")',
     pageSize: limit,
   };
   
@@ -113,10 +115,19 @@ async function processBatch(records: AirtableRecord[]): Promise<{success: number
       }
       
       // Get app name and screen name for this record
-      const appName = record.fields.appname || 'Unknown App';
-      const screenName = record.fields.imagetitle || 'Unnamed Screen';
+      // Handle different possible field names from Airtable
+      const appName = (record.fields.appname && record.fields.appname[0]) || 
+                     (record.fields['appname (from appname)'] && record.fields['appname (from appname)'][0]) || 
+                     'Unknown App';
+                     
+      const screenName = record.fields.imagetitle || record.fields.imagename || 'Unnamed Screen';
       
-      // Get the first image from the record
+      // Get the first image from the record - with additional safety checks
+      if (!record.fields.image || !Array.isArray(record.fields.image) || record.fields.image.length === 0) {
+        console.log(`Record ${record.id} has invalid image format, skipping.`);
+        continue;
+      }
+      
       const image = record.fields.image[0];
       console.log(`Processing image ${image.filename} from record ${record.id}`);
       
