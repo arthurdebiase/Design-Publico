@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { CloudinaryImage } from "@/components/ui/cloudinary-image";
 import { createSlug } from "@/lib/slugUtils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -63,6 +64,8 @@ export function ScreenModal({
   const [location] = useLocation();
   const { toast } = useToast();
   const { t } = useTranslation();
+  // Use isMobile hook to adjust UI for mobile devices
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     setLocalIndex(currentScreenIndex);
@@ -152,11 +155,20 @@ export function ScreenModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
-        className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" 
+        className={`${isMobile 
+          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto translate-y-0" 
+          : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
+        }`}
         hideCloseButton={true}
         aria-labelledby="screen-modal-title"
         aria-describedby="screen-modal-description"
       >
+        {/* Handle indicator for mobile bottom sheet */}
+        {isMobile && (
+          <div className="w-full flex justify-center pt-2 pb-1">
+            <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+          </div>
+        )}
         {/* Add DialogTitle for accessibility */}
         <DialogTitle id="screen-modal-title" className="sr-only">
           {app.name}: {currentScreen.name || 'Screen Detail'}
@@ -167,7 +179,7 @@ export function ScreenModal({
           Detailed view of a screen from {app.name}. Use arrow keys to navigate between screens.
         </div>
         
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className={`flex items-center justify-between p-4 ${isMobile ? 'pb-2' : 'border-b'}`}>
           <Link href={`/app/${createSlug(app.name)}`} 
             className="flex items-center group no-underline" 
             onClick={() => {
@@ -241,23 +253,23 @@ export function ScreenModal({
               <Button 
                 variant="secondary" 
                 size="icon" 
-                className="absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
+                className={`absolute left-1 top-1/2 transform -translate-y-1/2 bg-white/90 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full shadow-md z-10`}
                 onClick={handlePrevious}
                 aria-label="Ver tela anterior"
                 title={`Ver tela anterior: ${screens[(localIndex - 1 + screens.length) % screens.length].name}`}
               >
-                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                <ChevronLeft className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} aria-hidden="true" />
               </Button>
               
               <Button 
                 variant="secondary" 
                 size="icon" 
-                className="absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/90 w-10 h-10 rounded-full shadow-md z-10" 
+                className={`absolute right-1 top-1/2 transform -translate-y-1/2 bg-white/90 ${isMobile ? 'w-8 h-8' : 'w-10 h-10'} rounded-full shadow-md z-10`}
                 onClick={handleNext}
                 aria-label="Ver próxima tela"
                 title={`Ver próxima tela: ${screens[(localIndex + 1) % screens.length].name}`}
               >
-                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                <ChevronRight className={`${isMobile ? 'h-4 w-4' : 'h-5 w-5'}`} aria-hidden="true" />
               </Button>
             </>
           )}
@@ -279,7 +291,7 @@ export function ScreenModal({
           {/* Container for both image and tags */}
           <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
             {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
-            <div className="max-h-[68vh] flex items-center justify-center">
+            <div className={`${isMobile ? 'max-h-[60vh]' : 'max-h-[68vh]'} flex items-center justify-center`}>
               <a 
                 href={currentScreen.cloudinaryUrl || currentScreen.imageUrl} 
                 target="_blank" 
@@ -291,7 +303,7 @@ export function ScreenModal({
                   src={currentScreen.imageUrl}
                   cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
                   alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                  className={`max-h-[68vh] w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                  className={`${isMobile ? 'max-h-[60vh]' : 'max-h-[68vh]'} w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
                   onLoad={() => setIsImageLoading(false)}
                   priority={true}
                   width={1024}
