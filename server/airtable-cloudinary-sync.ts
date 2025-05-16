@@ -33,7 +33,7 @@ const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID;
 
 // These field names need to match exactly what's in your Airtable
 const SCREENS_TABLE = 'screens'; // Table containing screen images
-const ATTACHMENT_FIELD = 'image'; // Field containing screen images
+const ATTACHMENT_FIELD = 'images'; // Field containing screen images (from your error message)
 const APP_NAME_FIELD = 'appname'; // Field linking screens to apps
 const SCREEN_NAME_FIELD = 'imagetitle'; // Field containing screen names
 
@@ -46,11 +46,11 @@ async function fetchRecordsNeedingMigration(limit = 100, offset?: string): Promi
   // Build the query parameters - get all records that have images
   // We'll filter out records with importing field in our processing code
   const params: any = {
-    // Default Airtable view is "screens-list" based on the error message
+    // Default Airtable view is "screens-list" based on the view from screenshot
     view: 'screens-list',
-    // Query for records with images that don't have importing field filled yet
-    // This is now safe since we know the importing field exists
-    filterByFormula: 'AND(NOT(ISERROR({image})), {importing} = "")',
+    // Query for records that don't have importing field filled yet
+    // Use the correct attachment field name (images) from error message
+    filterByFormula: 'AND(NOT(ISERROR({images})), {importing} = "")',
     pageSize: limit,
   };
   
@@ -127,8 +127,8 @@ async function processBatch(records: AirtableRecord[]): Promise<{success: number
       console.log(`Processing record ${record.id}...`);
       console.log(`Available fields: ${Object.keys(record.fields).join(', ')}`);
       
-      // Skip records without images
-      if (!record.fields.image || !Array.isArray(record.fields.image) || record.fields.image.length === 0) {
+      // Skip records without images - use the correct field name "images" from error message
+      if (!record.fields.images || !Array.isArray(record.fields.images) || record.fields.images.length === 0) {
         console.log(`Record ${record.id} has no images, skipping.`);
         continue;
       }
@@ -184,8 +184,8 @@ async function processBatch(records: AirtableRecord[]): Promise<{success: number
       
       console.log(`Using screen name: ${screenName}`);
       
-      // Get the first image from the record
-      const image = record.fields.image[0];
+      // Get the first image from the record - using the correct "images" field
+      const image = record.fields.images[0];
       console.log(`Processing image ${image.filename} from record ${record.id}`);
       
       // Upload the image to Cloudinary
