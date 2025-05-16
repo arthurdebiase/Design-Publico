@@ -389,42 +389,7 @@ export default function ScreensPage() {
             </DropdownMenu>
           </div>
 
-          {/* Category filter dropdown */}
-          <div className="flex items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="flex items-center gap-2"
-                  aria-label="Filtrar por categoria"
-                  aria-haspopup="true"
-                >
-                  {'Categoria'}
-                  <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                <DropdownMenuLabel>Categoria</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
-                  onClick={() => handleCategoryFilterChange(null)}
-                >
-                  Todas as Categorias
-                </DropdownMenuItem>
-                {availableCategories.map((category: string, index: number) => (
-                  <DropdownMenuItem
-                    key={`category-${index}-${category}`}
-                    className={selectedCategories.includes(category) ? "bg-accent/50" : ""}
-                    onClick={() => handleCategoryFilterChange(category)}
-                  >
-                    <span>{category}</span>
-                    {selectedCategories.includes(category) && <Check className="ml-auto h-4 w-4" />}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {/* Category filter removed as requested */}
         </div>
         
         {/* Screen counter */}
@@ -434,7 +399,7 @@ export default function ScreensPage() {
       </div>
       
       {/* Active filter chips below filters */}
-      {(selectedTags.length > 0 || selectedCategories.length > 0) && (
+      {(selectedTags.length > 0) && (
         <div className="flex flex-wrap gap-2 mb-6">
           {/* Componente filter chips */}
           {selectedTags.map(tag => (
@@ -453,26 +418,10 @@ export default function ScreensPage() {
             </div>
           ))}
           
-          {/* Category filter chips */}
-          {selectedCategories.map(category => (
-            <div 
-              key={`chip-category-${category}`}
-              className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm"
-            >
-              <span>{category}</span>
-              <button 
-                onClick={() => handleRemoveCategory(category)}
-                className="rounded-full hover:bg-purple-200 p-1 transition-colors"
-                aria-label={`Remover filtro de categoria ${category}`}
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
+          {/* Category filter chips removed */}
           
           {/* Clear all filters button (shown only when multiple filters are active) */}
-          {(selectedTags.length > 1 || selectedCategories.length > 1 || 
-            (selectedTags.length > 0 && selectedCategories.length > 0)) && (
+          {selectedTags.length > 1 && (
             <button
               onClick={() => {
                 setSelectedTags([]);
