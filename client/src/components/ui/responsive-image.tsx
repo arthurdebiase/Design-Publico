@@ -131,11 +131,11 @@ export function ResponsiveImage({
     </div>
   );
   
-  if (hasError) return renderError();
+  if (hasError) return <div className="relative" style={{ width: '100%', height: '100%' }}>{renderError()}</div>;
   
   return (
-    <>
-      {!isLoaded && renderPlaceholder()}
+    <div className="relative" style={{ width: '100%', height: '100%' }}>
+      {!isLoaded && <div className="absolute inset-0">{renderPlaceholder()}</div>}
       <img
         src={defaultSrc}
         srcSet={generateSrcSet()}
@@ -143,7 +143,7 @@ export function ResponsiveImage({
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         {...(priority ? { fetchpriority: 'high' } : {})}
-        className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+        className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} relative`}
         onLoad={handleLoad}
         onError={handleError}
         style={{
@@ -152,6 +152,6 @@ export function ResponsiveImage({
         }}
         {...props}
       />
-    </>
+    </div>
   );
 }
