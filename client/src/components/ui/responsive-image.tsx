@@ -88,24 +88,7 @@ export function ResponsiveImage({
   
   // Generate srcset based on provided widths
   const generateSrcSet = () => {
-    // If using Cloudinary, we can let Cloudinary handle resizing via their URL parameters
-    if (useCloudinary && cloudinarySrc?.includes('cloudinary.com')) {
-      return widths
-        .map(width => {
-          // Extract the base Cloudinary URL to add transformation parameters
-          const baseUrl = cloudinarySrc.split('/upload/')[0] + '/upload/';
-          const imagePath = cloudinarySrc.split('/upload/')[1];
-          
-          // Add transformation parameters (width, format, quality)
-          const transformParams = `c_limit,w_${width},f_${format},q_${quality}/`;
-          const url = baseUrl + transformParams + imagePath;
-          
-          return `${url} ${width}w`;
-        })
-        .join(', ');
-    }
-    
-    // Otherwise use our existing proxy system
+    // Use the getProcessedImageUrl function which now handles both Cloudinary and Airtable URLs
     return widths
       .map(width => {
         const options: ImageProcessingOptions = {
@@ -114,20 +97,23 @@ export function ResponsiveImage({
           quality
         };
         
-        const url = getProcessedImageUrl(actualSrc, options);
+        // Use the cloudinarySrc if it exists, otherwise use the regular src
+        const sourceUrl = useCloudinary ? cloudinarySrc : actualSrc;
+        const url = getProcessedImageUrl(sourceUrl, options);
         return `${url} ${width}w`;
       })
       .join(', ');
   };
   
   // Generate a src with default parameters
-  const defaultSrc = useCloudinary && cloudinarySrc?.includes('cloudinary.com')
-    ? cloudinarySrc  // For Cloudinary, just use the URL as-is for default src
-    : getProcessedImageUrl(actualSrc, {
-        width: widths[0],
-        format,
-        quality
-      });
+  const defaultSrc = getProcessedImageUrl(
+    useCloudinary ? cloudinarySrc : actualSrc, 
+    {
+      width: widths[0],
+      format,
+      quality
+    }
+  );
   
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     setIsLoaded(true);

@@ -43,12 +43,54 @@ export function getProcessedImageUrl(
 ): string {
   if (!url) return '';
   
-  // For Airtable CDN URLs, use our proxy route
-  if (url.includes('airtableusercontent.com')) {
+  // For Cloudinary URLs, we'll optimize them directly using Cloudinary's URL parameters
+  if (url.includes('cloudinary.com') && url.includes('/upload/')) {
     try {
-      // Extract the path after the domain
-      const urlObj = new URL(url);
-      const path = urlObj.pathname;
+      // Extract the base URL and image path
+      const parts = url.split('/upload/');
+      if (parts.length === 2) {
+        const baseUrl = parts[0] + '/upload/';
+        const imagePath = parts[1];
+        
+        // Build transformation parameters
+        const transformParams: string[] = [];
+        
+        if (options) {
+          // Add crop and gravity for better control
+          transformParams.push('c_limit');
+          
+          // Add width and height if provided
+          if (options.width) transformParams.push(`w_${options.width}`);
+          if (options.height) transformParams.push(`h_${options.height}`);
+          
+          // Add format and quality if provided
+          if (options.format && options.format !== 'original') transformParams.push(`f_${options.format}`);
+          if (options.quality) transformParams.push(`q_${options.quality}`);
+        }
+        
+        // If we have transformations, add them to the URL
+        if (transformParams.length > 0) {
+          return `${baseUrl}${transformParams.join(',')}/${imagePath}`;
+        }
+      }
+    } catch (error) {
+      console.error("Error processing Cloudinary URL:", error);
+    }
+    
+    // If any errors or no transformations, return the original Cloudinary URL
+    return url;
+  }
+  
+  // For Airtable CDN URLs, use our proxy route
+  if (url.includes('airtableusercontent.com') || url.startsWith('/v3/')) {
+    try {
+      // If it's already a proxy URL that starts with /proxy-image, just use it
+      if (url.startsWith('/proxy-image')) {
+        return url;
+      }
+      
+      // For URLs that directly start with /v3/, they're already paths
+      const path = url.startsWith('/v3/') ? url : (new URL(url)).pathname;
       
       // Base proxy URL
       let proxyUrl = `/proxy-image${path}`;
@@ -64,8 +106,7 @@ export function getProcessedImageUrl(
         if (options.priority) params.push(`priority=true`);
       }
       
-      // Add timestamp to prevent caching of broken images in production
-      // This helps ensure fresh requests when deploying fixes
+      // Add timestamp to prevent caching of broken images
       params.push(`_ts=${Date.now()}`);
       
       if (params.length > 0) {
