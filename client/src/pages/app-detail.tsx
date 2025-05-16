@@ -12,6 +12,7 @@ import { ExternalLink, Bookmark,
          FileText, Smartphone, ChevronDown, Check, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { ResponsiveImage } from "@/components/ui/responsive-image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -205,7 +206,15 @@ export default function AppDetail() {
                 <div className="flex-shrink-0 mr-6">
                   <div className="w-20 h-20 flex items-center justify-center bg-white">
                     {app.logo ? (
-                      <img src={app.logo} alt={`${app.name} logo`} className="w-20 h-20" />
+                      <ResponsiveImage 
+                        src={app.logo} 
+                        cloudinarySrc={app.cloudinaryLogo} 
+                        alt={`${app.name} logo`} 
+                        className="w-20 h-20 object-contain" 
+                        widths={[80, 160]}
+                        quality={90}
+                        placeholder={<AppIconPlaceholder app={app} />}
+                      />
                     ) : (
                       <AppIconPlaceholder app={app} />
                     )}
