@@ -127,6 +127,7 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
               {app.logo ? (
                 <ResponsiveImage 
                   src={app.logo} 
+                  cloudinarySrc={app.cloudinaryLogo} // Add Cloudinary URL for reliable logo hosting
                   alt={`${app.name} Logo`} 
                   className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} object-contain`}
                   widths={[32, 64, 96]}
