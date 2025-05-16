@@ -268,80 +268,83 @@ export function ScreenModal({
             </div>
           )}
           
-          {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
-          <div className="w-full h-full flex items-center justify-center py-6">
-            <CloudinaryImage 
-              src={currentScreen.imageUrl}
-              cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
-              alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-              className={`max-h-[75vh] w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
-              onLoad={() => setIsImageLoading(false)}
-              priority={true}
-              width={1024}
-              height={1820}
-            />
-          </div>
-          
-          {/* Tags and categories displayed here */}
-          {showTags && (
-            <div className="flex flex-wrap gap-2 mt-4 justify-center">
-              {/* Categories - Only visible when showTags is true */}
-              {currentScreen.category && (
-                <>
-                  {typeof currentScreen.category === 'string' ? (
-                    <Link 
-                      href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
-                      onClick={() => {
-                        onClose();
-                        // Ensure we scroll to top when navigating to filtered screens
-                        window.scrollTo(0, 0);
-                      }}
-                      className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
-                      title={`View all screens in ${currentScreen.category} category`}
-                    >
-                      {currentScreen.category}
-                    </Link>
-                  ) : (
-                    Array.isArray(currentScreen.category) && 
-                    currentScreen.category.map((cat, idx) => (
+          {/* Container for both image and tags */}
+          <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
+            {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
+            <div className="max-h-[68vh] flex items-center justify-center">
+              <CloudinaryImage 
+                src={currentScreen.imageUrl}
+                cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
+                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                className={`max-h-[68vh] w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                onLoad={() => setIsImageLoading(false)}
+                priority={true}
+                width={1024}
+                height={1820}
+              />
+            </div>
+            
+            {/* Tags and categories displayed here */}
+            {showTags && (
+              <div className="flex flex-wrap gap-2 mt-3 justify-center px-4">
+                {/* Categories - Only visible when showTags is true */}
+                {currentScreen.category && (
+                  <>
+                    {typeof currentScreen.category === 'string' ? (
                       <Link 
-                        key={`modal-category-${idx}`}
-                        href={`/screens?category=${encodeURIComponent(cat)}`}
+                        href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
                         onClick={() => {
                           onClose();
                           // Ensure we scroll to top when navigating to filtered screens
                           window.scrollTo(0, 0);
                         }}
                         className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
-                        title={`View all screens in ${cat} category`}
+                        title={`View all screens in ${currentScreen.category} category`}
                       >
-                        {cat}
+                        {currentScreen.category}
                       </Link>
-                    ))
-                  )}
-                </>
-              )}
-              
-              {/* Tags - Only visible when showTags is true */}
-              {currentScreen.tags && currentScreen.tags.length > 0 && (
-                currentScreen.tags.map((tag, index) => (
-                  <Link 
-                    key={`modal-tag-${index}`}
-                    href={`/screens?tag=${encodeURIComponent(tag)}`}
-                    onClick={() => {
-                      onClose();
-                      // Ensure we scroll to top when navigating to filtered screens
-                      window.scrollTo(0, 0);
-                    }}
-                    className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer no-underline`}
-                    title={`View all screens with ${tag} componente`}
-                  >
-                    {tag}
-                  </Link>
-                ))
-              )}
-            </div>
-          )}
+                    ) : (
+                      Array.isArray(currentScreen.category) && 
+                      currentScreen.category.map((cat, idx) => (
+                        <Link 
+                          key={`modal-category-${idx}`}
+                          href={`/screens?category=${encodeURIComponent(cat)}`}
+                          onClick={() => {
+                            onClose();
+                            // Ensure we scroll to top when navigating to filtered screens
+                            window.scrollTo(0, 0);
+                          }}
+                          className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
+                          title={`View all screens in ${cat} category`}
+                        >
+                          {cat}
+                        </Link>
+                      ))
+                    )}
+                  </>
+                )}
+                
+                {/* Tags - Only visible when showTags is true */}
+                {currentScreen.tags && currentScreen.tags.length > 0 && (
+                  currentScreen.tags.map((tag, index) => (
+                    <Link 
+                      key={`modal-tag-${index}`}
+                      href={`/screens?tag=${encodeURIComponent(tag)}`}
+                      onClick={() => {
+                        onClose();
+                        // Ensure we scroll to top when navigating to filtered screens
+                        window.scrollTo(0, 0);
+                      }}
+                      className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer no-underline`}
+                      title={`View all screens with ${tag} componente`}
+                    >
+                      {tag}
+                    </Link>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>
