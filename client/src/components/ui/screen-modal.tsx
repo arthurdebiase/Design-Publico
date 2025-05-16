@@ -70,6 +70,9 @@ export function ScreenModal({
   // Track animation state
   const [isClosing, setIsClosing] = useState(false);
   
+  // Add a flag for the DOM mounting to help with animation timing
+  const [isMounted, setIsMounted] = useState(false);
+  
   useEffect(() => {
     setLocalIndex(currentScreenIndex);
     // Sempre que mudar de tela, reiniciar o estado de carregamento
@@ -156,10 +159,23 @@ export function ScreenModal({
   if (!currentScreen) return null;
   
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open && isMobile) {
+        // First start the closing animation
+        setIsClosing(true);
+        // Then close the dialog after animation completes
+        setTimeout(() => {
+          onClose();
+          setIsClosing(false);
+        }, 300);
+      } else if (!open) {
+        // For desktop, close immediately
+        onClose();
+      }
+    }}>
       <DialogContent 
         className={`${isMobile 
-          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none radix-dialog-content-bottom" 
+          ? `w-full p-0 overflow-hidden flex flex-col mobile-sheet ${isClosing ? 'animate-out' : 'animate-in'}`
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
         hideCloseButton={true}
@@ -172,15 +188,16 @@ export function ScreenModal({
             <div className="bottom-sheet-handle"></div>
           </div>
         )}
-        {/* Add DialogTitle for accessibility */}
+        
+        {/* Add proper DialogTitle and DialogDescription for accessibility */}
         <DialogTitle id="screen-modal-title" className="sr-only">
           {app.name}: {currentScreen.name || 'Screen Detail'}
         </DialogTitle>
+        <DialogDescription id="screen-modal-description" className="sr-only">
+          {t('screenModal.description', 'Detailed view of a screen from {{appName}}. Use arrow keys to navigate between screens.', { appName: app.name })}
+        </DialogDescription>
         
-        {/* Add DialogDescription for accessibility */}
-        <div id="screen-modal-description" className="sr-only">
-          Detailed view of a screen from {app.name}. Use arrow keys to navigate between screens.
-        </div>
+
         
         <div className={`flex items-center justify-between p-4 ${isMobile ? 'pb-2' : 'border-b'}`}>
           <Link href={`/app/${createSlug(app.name)}`} 
