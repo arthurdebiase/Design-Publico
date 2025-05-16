@@ -254,39 +254,31 @@ export function ScreenModal({
             </>
           )}
           
-          <div className="relative w-full max-w-full">
-            {/* Container com dimensões fixas para evitar CLS */}
-            <div 
-              className="w-full max-h-[70vh] rounded-lg overflow-hidden flex items-center justify-center mx-auto"
-              style={{ minHeight: '70vh', maxWidth: 'calc(100vw - 40px)' }}
-            >
-              {/* Skeleton que só aparece durante o carregamento */}
-              {isImageLoading && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div 
-                    className="animate-pulse bg-gray-200 rounded-lg" 
-                    style={{ 
-                      width: Math.min(320, window.innerWidth - 40), 
-                      height: Math.min(568, window.innerHeight * 0.7), 
-                      maxWidth: '100%',
-                      maxHeight: '70vh'
-                    }}
-                  />
-                </div>
-              )}
-              
-              <CloudinaryImage 
-                src={currentScreen.imageUrl}
-                cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
-                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                className="max-h-[70vh] w-auto mx-auto rounded-lg shadow-md object-contain relative z-10"
-                onLoad={() => setIsImageLoading(false)}
-                priority={true}
-                width={1024}
-                height={1820}
+          {/* Skeleton placeholder durante o carregamento */}
+          {isImageLoading && (
+            <div className="w-full flex items-center justify-center">
+              <div 
+                className="animate-pulse bg-gray-200 rounded-lg" 
+                style={{ 
+                  width: '320px',
+                  height: '568px',
+                  maxHeight: '70vh'
+                }}
               />
             </div>
-          </div>
+          )}
+          
+          {/* Imagem principal */}
+          <CloudinaryImage 
+            src={currentScreen.imageUrl}
+            cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
+            alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+            className={`max-h-[70vh] w-auto mx-auto rounded-lg shadow-md object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+            onLoad={() => setIsImageLoading(false)}
+            priority={true}
+            width={1024}
+            height={1820}
+          />
           
           {/* Tags and categories displayed here */}
           {showTags && (
