@@ -555,22 +555,23 @@ export default function ScreensPage() {
                   }}
                   title={`Ver detalhes do app ${screen.app.name}`}
                 >
-                  <div className="w-5 h-5 rounded-sm bg-gray-100 flex items-center justify-center overflow-hidden p-0.5">
+                  <div className="w-5 h-5 flex items-center justify-center overflow-hidden">
                     {screen.app.logo ? (
                       <ResponsiveImage 
                         src={screen.app.logo}
+                        cloudinarySrc={screen.app.cloudinaryLogo}
                         alt={`${screen.app.name} Logo`}
                         className="w-5 h-5 object-contain"
                         widths={[16, 32, 64]}
                         quality={90}
                         placeholder={
-                          <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
+                          <div className="w-5 h-5 flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                             <span className="sr-only">Loading logo for {screen.app.name}</span>
                           </div>
                         }
                       />
                     ) : (
-                      <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
+                      <div className="w-5 h-5 flex items-center justify-center opacity-50" style={{ aspectRatio: '1/1' }}>
                         <span className="sr-only">Logo placeholder for {screen.app.name}</span>
                       </div>
                     )}
@@ -725,22 +726,23 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
             }}
             title={`Ver detalhes do app ${screen.app.name}`}
           >
-            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center overflow-hidden rounded-sm p-0.5 bg-gray-100">
+            <div className="flex-shrink-0 w-5 h-5 flex items-center justify-center overflow-hidden">
               {screen.app.logo ? (
                 <ResponsiveImage 
                   src={screen.app.logo}
+                  cloudinarySrc={screen.app.cloudinaryLogo}
                   alt={`${screen.app.name} Logo`}
                   className="w-5 h-5 object-contain"
                   widths={[20, 40, 60]}
                   quality={90}
                   placeholder={
-                    <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
+                    <div className="w-5 h-5 flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                       <span className="sr-only">Loading logo for {screen.app.name}</span>
                     </div>
                   }
                 />
               ) : (
-                <div className="w-5 h-5 bg-gray-200 rounded-sm flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
+                <div className="w-5 h-5 flex items-center justify-center opacity-50" style={{ aspectRatio: '1/1' }}>
                   <span className="sr-only">Logo placeholder for {screen.app.name}</span>
                 </div>
               )}
