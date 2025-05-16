@@ -313,20 +313,7 @@ export function ScreenModal({
               </a>
             </div>
             
-            {/* Mobile-specific toggle button for showing details */}
-            {isMobile && (
-              <div className="mt-2 mb-1">
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setShowTags(!showTags)}
-                  className="text-xs text-gray-500 flex items-center gap-1 py-1"
-                >
-                  <Info className="h-3 w-3" />
-                  {showTags ? "Ocultar detalhes" : "Mostrar detalhes"}
-                </Button>
-              </div>
-            )}
+            {/* Mobile-specific toggle for details - removed */}
               
             {/* Tags and categories displayed here */}
             {showTags && (
