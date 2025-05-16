@@ -153,43 +153,43 @@ export function ScreenModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
         <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex items-center">
-            <Link href={`/app/${createSlug(app.name)}`} className="no-underline" onClick={() => {
+          <Link href={`/app/${createSlug(app.name)}`} 
+            className="flex items-center group no-underline" 
+            onClick={() => {
               onClose();
               // Ensure we scroll to top when navigating to app details
               window.scrollTo(0, 0);
-            }}>
-              <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity rounded-sm bg-gray-100 p-0.5" 
-                title={`View ${app.name} details`}
-                role="button"
-                tabIndex={0}
-              >
-                {app.logo ? (
-                  <ResponsiveImage 
-                    src={app.logo} 
-                    alt={`${app.name} logo`} 
-                    className="w-8 h-8 object-contain"
-                    widths={[32, 64, 96]}
-                    quality={90}
-                    placeholder={
-                      <div className="w-8 h-8 border rounded-md flex items-center justify-center font-bold text-gray-700">
-                        {app.name.charAt(0)}
-                      </div>
-                    }
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
-                    <span className="sr-only">Logo placeholder for {app.name}</span>
-                  </div>
-                )}
-              </div>
-            </Link>
-            <div>
-              {/* Logo only, no app name displayed as per requirements */}
-              <DialogTitle className="sr-only">{app.name}</DialogTitle>
-              <DialogDescription className="text-sm text-gray-500 m-0">{currentScreen.name}</DialogDescription>
+            }}
+          >
+            <div className="w-10 h-10 flex items-center justify-center mr-3 cursor-pointer hover:opacity-80 transition-opacity rounded-sm mr-3" 
+              title={`View ${app.name} details`}
+            >
+              {app.logo ? (
+                <ResponsiveImage 
+                  src={app.logo} 
+                  cloudinarySrc={app.cloudinaryLogo || undefined}
+                  alt={`${app.name} logo`} 
+                  className="w-8 h-8 object-contain"
+                  widths={[32, 64, 96]}
+                  quality={90}
+                  placeholder={
+                    <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
+                      <span className="sr-only">Logo placeholder for {app.name}</span>
+                    </div>
+                  }
+                />
+              ) : (
+                <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
+                  <span className="sr-only">Logo placeholder for {app.name}</span>
+                </div>
+              )}
             </div>
-          </div>
+            <div>
+              {/* App and screen name - clickable */}
+              <DialogTitle className="sr-only">{app.name}</DialogTitle>
+              <DialogDescription className="text-sm text-gray-500 m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogDescription>
+            </div>
+          </Link>
           <div className="flex items-center gap-1">
             {/* Show info button if there are tags or categories to display */}
             {((currentScreen.tags && currentScreen.tags.length > 0) || currentScreen.category) && (
@@ -227,7 +227,7 @@ export function ScreenModal({
           </div>
         </div>
         
-        <div className="flex-1 p-0 flex flex-col items-center justify-center relative bg-gray-50">
+        <div className="flex-1 p-0 flex flex-col items-center justify-center relative">
           {screens.length > 1 && (
             <>
               <Button 
@@ -272,16 +272,24 @@ export function ScreenModal({
           <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
             {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
             <div className="max-h-[68vh] flex items-center justify-center">
-              <CloudinaryImage 
-                src={currentScreen.imageUrl}
-                cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
-                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                className={`max-h-[68vh] w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
-                onLoad={() => setIsImageLoading(false)}
-                priority={true}
-                width={1024}
-                height={1820}
-              />
+              <a 
+                href={currentScreen.cloudinaryUrl || currentScreen.imageUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="cursor-pointer hover:opacity-90 transition-opacity"
+                title="Open full image in new tab"
+              >
+                <CloudinaryImage 
+                  src={currentScreen.imageUrl}
+                  cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
+                  alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                  className={`max-h-[68vh] w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                  onLoad={() => setIsImageLoading(false)}
+                  priority={true}
+                  width={1024}
+                  height={1820}
+                />
+              </a>
             </div>
             
             {/* Tags and categories displayed here */}
