@@ -43,6 +43,7 @@ export default function ScreenThumbnail({ screen, onClick, isPriority = false, i
       >
         <ResponsiveImage 
           src={screen.imageUrl}
+          cloudinarySrc={screen.cloudinaryUrl} // Use Cloudinary URL when available for reliable hosting
           alt={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
           aria-label={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
           className="w-full h-full object-contain"

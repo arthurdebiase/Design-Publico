@@ -8,6 +8,12 @@ interface ResponsiveImageProps extends React.ImgHTMLAttributes<HTMLImageElement>
   src: string;
   
   /**
+   * Optional Cloudinary URL that will be preferred over the src if available
+   * This helps with reliable image hosting when Airtable URLs might expire
+   */
+  cloudinarySrc?: string | null;
+  
+  /**
    * The alt text for accessibility
    */
   alt: string;
@@ -53,10 +59,12 @@ const DEFAULT_WIDTHS = [640, 960, 1280];
 
 /**
  * ResponsiveImage component that generates srcset and sizes attributes
- * for responsive images with WebP/AVIF support
+ * for responsive images with WebP/AVIF support.
+ * Will prioritize Cloudinary URLs when available for better reliability.
  */
 export function ResponsiveImage({
   src,
+  cloudinarySrc,
   alt,
   sizes = '100vw',
   widths = DEFAULT_WIDTHS,
@@ -74,8 +82,30 @@ export function ResponsiveImage({
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   
+  // Determine if we should use Cloudinary URL (reliable) or Airtable URL (via proxy)
+  const useCloudinary = !!cloudinarySrc && cloudinarySrc.length > 0;
+  const actualSrc = useCloudinary ? cloudinarySrc : src;
+  
   // Generate srcset based on provided widths
   const generateSrcSet = () => {
+    // If using Cloudinary, we can let Cloudinary handle resizing via their URL parameters
+    if (useCloudinary && cloudinarySrc?.includes('cloudinary.com')) {
+      return widths
+        .map(width => {
+          // Extract the base Cloudinary URL to add transformation parameters
+          const baseUrl = cloudinarySrc.split('/upload/')[0] + '/upload/';
+          const imagePath = cloudinarySrc.split('/upload/')[1];
+          
+          // Add transformation parameters (width, format, quality)
+          const transformParams = `c_limit,w_${width},f_${format},q_${quality}/`;
+          const url = baseUrl + transformParams + imagePath;
+          
+          return `${url} ${width}w`;
+        })
+        .join(', ');
+    }
+    
+    // Otherwise use our existing proxy system
     return widths
       .map(width => {
         const options: ImageProcessingOptions = {
@@ -84,18 +114,20 @@ export function ResponsiveImage({
           quality
         };
         
-        const url = getProcessedImageUrl(src, options);
+        const url = getProcessedImageUrl(actualSrc, options);
         return `${url} ${width}w`;
       })
       .join(', ');
   };
   
   // Generate a src with default parameters
-  const defaultSrc = getProcessedImageUrl(src, {
-    width: widths[0],
-    format,
-    quality
-  });
+  const defaultSrc = useCloudinary && cloudinarySrc?.includes('cloudinary.com')
+    ? cloudinarySrc  // For Cloudinary, just use the URL as-is for default src
+    : getProcessedImageUrl(actualSrc, {
+        width: widths[0],
+        format,
+        quality
+      });
   
   const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     setIsLoaded(true);
