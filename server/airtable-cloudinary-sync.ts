@@ -127,86 +127,113 @@ async function updateRecordWithCloudinaryUrl(recordId: string, cloudinaryUrl: st
 
 /**
  * Process a batch of records, uploading their images to Cloudinary and updating Airtable
+ * @param records - The records to process
+ * @param migrationType - The type of migration to perform ('screens' or 'logos')
  */
-async function processBatch(records: AirtableRecord[]): Promise<{success: number, failed: number}> {
+async function processBatch(records: AirtableRecord[], migrationType = 'screens'): Promise<{success: number, failed: number}> {
   let success = 0;
   let failed = 0;
   
-  console.log(`Processing batch of ${records.length} records...`);
+  // Determine which fields to use based on migration type
+  const attachmentField = migrationType === 'screens' ? SCREENS_ATTACHMENT_FIELD : APPS_LOGO_FIELD;
+  const importingField = migrationType === 'screens' ? SCREENS_IMPORTING_FIELD : APPS_IMPORTING_FIELD;
+  const folderPath = migrationType === 'screens' ? 'designpublico/screens' : 'designpublico/logos';
+  const itemType = migrationType === 'screens' ? 'screen' : 'app logo';
+  
+  console.log(`Processing batch of ${records.length} ${itemType} records...`);
   
   for (const record of records) {
     try {
-      console.log(`Processing record ${record.id}...`);
+      console.log(`Processing ${itemType} record ${record.id}...`);
       console.log(`Available fields: ${Object.keys(record.fields).join(', ')}`);
       
-      // Skip records without images - use the correct field name "images" from error message
-      if (!record.fields.images || !Array.isArray(record.fields.images) || record.fields.images.length === 0) {
-        console.log(`Record ${record.id} has no images, skipping.`);
+      // Skip records without images/logos - using the appropriate attachment field
+      if (!record.fields[attachmentField] || !Array.isArray(record.fields[attachmentField]) || record.fields[attachmentField].length === 0) {
+        console.log(`Record ${record.id} has no ${itemType} attachments, skipping.`);
         continue;
       }
       
-      // If already has a Cloudinary URL in the "importing" field, skip
+      // If already has a Cloudinary URL in the importing field, skip
       // Safely check for importing field (might be string or array or undefined)
-      const hasImportingField = record.fields.importing && 
-        (typeof record.fields.importing === 'string' || 
-         (Array.isArray(record.fields.importing) && record.fields.importing.length > 0) ||
-         (typeof record.fields.importing === 'object' && record.fields.importing !== null));
+      const hasImportingField = record.fields[importingField] && 
+        (typeof record.fields[importingField] === 'string' || 
+         (Array.isArray(record.fields[importingField]) && record.fields[importingField].length > 0) ||
+         (typeof record.fields[importingField] === 'object' && record.fields[importingField] !== null));
          
       if (hasImportingField) {
         console.log(`Record ${record.id} already has a Cloudinary URL, skipping.`);
         continue;
       }
       
-      // Get app name using different possible field patterns
-      // App name might be a direct field, a linked record field, or in various formats
-      let appName = 'Unknown App';
-      if (record.fields.appname) {
-        if (Array.isArray(record.fields.appname)) {
-          appName = record.fields.appname[0] || appName;
-        } else if (typeof record.fields.appname === 'string') {
-          appName = record.fields.appname;
+      // Get app/item name using different possible field patterns
+      let itemName = migrationType === 'screens' ? 'Unknown App' : 'Unknown Item';
+      
+      if (migrationType === 'screens') {
+        // For screens, try to get the app name from various field formats
+        if (record.fields.appname) {
+          if (Array.isArray(record.fields.appname)) {
+            itemName = record.fields.appname[0] || itemName;
+          } else if (typeof record.fields.appname === 'string') {
+            itemName = record.fields.appname;
+          }
+        } else if (record.fields['appname (from appname)']) {
+          if (Array.isArray(record.fields['appname (from appname)'])) {
+            itemName = record.fields['appname (from appname)'][0] || itemName;
+          } else if (typeof record.fields['appname (from appname)'] === 'string') {
+            itemName = record.fields['appname (from appname)'];
+          }
+        } else if (record.fields['App']) {
+          if (Array.isArray(record.fields['App'])) {
+            itemName = record.fields['App'][0] || itemName;
+          } else if (typeof record.fields['App'] === 'string') {
+            itemName = record.fields['App'];
+          }
         }
-      } else if (record.fields['appname (from appname)']) {
-        if (Array.isArray(record.fields['appname (from appname)'])) {
-          appName = record.fields['appname (from appname)'][0] || appName;
-        } else if (typeof record.fields['appname (from appname)'] === 'string') {
-          appName = record.fields['appname (from appname)'];
-        }
-      } else if (record.fields['App']) {
-        if (Array.isArray(record.fields['App'])) {
-          appName = record.fields['App'][0] || appName;
-        } else if (typeof record.fields['App'] === 'string') {
-          appName = record.fields['App'];
+      } else {
+        // For app logos, get the app name from the APPS_NAME_FIELD
+        if (record.fields[APPS_NAME_FIELD]) {
+          if (Array.isArray(record.fields[APPS_NAME_FIELD])) {
+            itemName = record.fields[APPS_NAME_FIELD][0] || itemName;
+          } else if (typeof record.fields[APPS_NAME_FIELD] === 'string') {
+            itemName = record.fields[APPS_NAME_FIELD];
+          }
         }
       }
       
-      console.log(`Using app name: ${appName}`);
+      console.log(`Using ${migrationType === 'screens' ? 'app' : 'item'} name: ${itemName}`);
       
-      // Get screen name from various possible field names
-      let screenName = 'Unnamed Screen';
-      if (record.fields.imagetitle && typeof record.fields.imagetitle === 'string') {
-        screenName = record.fields.imagetitle;
-      } else if (record.fields.imagename && typeof record.fields.imagename === 'string') {
-        screenName = record.fields.imagename;
-      } else if (record.fields.name && typeof record.fields.name === 'string') {
-        screenName = record.fields.name;
-      } else if (record.fields.title && typeof record.fields.title === 'string') {
-        screenName = record.fields.title;
+      // Get title from various possible field names
+      let itemTitle = migrationType === 'screens' ? 'Unnamed Screen' : 'Unnamed Logo';
+      
+      if (migrationType === 'screens') {
+        // For screens, try to get screen name from various fields
+        if (record.fields.imagetitle && typeof record.fields.imagetitle === 'string') {
+          itemTitle = record.fields.imagetitle;
+        } else if (record.fields.imagename && typeof record.fields.imagename === 'string') {
+          itemTitle = record.fields.imagename;
+        } else if (record.fields.name && typeof record.fields.name === 'string') {
+          itemTitle = record.fields.name;
+        } else if (record.fields.title && typeof record.fields.title === 'string') {
+          itemTitle = record.fields.title;
+        }
+      } else {
+        // For app logos, use the app name as the logo title
+        itemTitle = itemName;
       }
       
-      console.log(`Using screen name: ${screenName}`);
+      console.log(`Using ${migrationType === 'screens' ? 'screen' : 'logo'} title: ${itemTitle}`);
       
-      // Get the first image from the record - using the correct "images" field
-      const image = record.fields.images[0];
-      console.log(`Processing image ${image.filename} from record ${record.id}`);
+      // Get the first attachment from the record using the appropriate field
+      const attachment = record.fields[attachmentField][0];
+      console.log(`Processing ${itemType} ${attachment.filename} from record ${record.id}`);
       
       // Upload the image to Cloudinary
       const cloudinaryResult = await uploadImageFromUrl(
-        image.url,
-        appName,
-        screenName,
+        attachment.url,
+        itemName,
+        itemTitle,
         { 
-          folder: 'designpublico/screens',
+          folder: folderPath,
           transformation: { quality: 'auto:good', format: 'auto' } 
         }
       );
