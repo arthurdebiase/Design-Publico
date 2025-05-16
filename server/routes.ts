@@ -7,6 +7,9 @@ import { subscribeToNewsletter, getNewsletterSubscribers } from "./newsletter";
 import axios from "axios";
 import cors from "cors";
 import sharp from "sharp";
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Enable CORS for all routes
@@ -85,10 +88,75 @@ Crawl-delay: 2`);
     }
   });
 
+  // File system cache utility for images
+  
+  // Create cache directory if it doesn't exist
+  const CACHE_DIR = './.image-cache';
+  if (!fs.existsSync(CACHE_DIR)) {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  }
+  
+  // Function to get cached image path
+  const getCachedImagePath = (cacheKey: string) => {
+    const hash = crypto.createHash('md5').update(cacheKey).digest('hex');
+    return path.join(CACHE_DIR, `${hash}.bin`);
+  };
+  
+  // Check if image exists in cache
+  const getImageFromCache = (cacheKey: string) => {
+    const cachedFilePath = getCachedImagePath(cacheKey);
+    
+    if (fs.existsSync(cachedFilePath)) {
+      try {
+        // Get file stats to check age
+        const stats = fs.statSync(cachedFilePath);
+        const fileAgeDays = (Date.now() - stats.mtimeMs) / (1000 * 60 * 60 * 24);
+        
+        // If file is older than 30 days, consider it expired
+        if (fileAgeDays > 30) {
+          return null;
+        }
+        
+        // Read metadata from the first line and content from the rest
+        const fileContent = fs.readFileSync(cachedFilePath);
+        const metadataEndIndex = fileContent.indexOf('\n');
+        
+        if (metadataEndIndex !== -1) {
+          const metadata = JSON.parse(fileContent.slice(0, metadataEndIndex).toString());
+          const imageData = fileContent.slice(metadataEndIndex + 1);
+          
+          return { metadata, imageData };
+        }
+      } catch (error: any) {
+        console.error(`Error reading from cache: ${error.message}`);
+      }
+    }
+    
+    return null;
+  };
+  
+  // Save image to cache
+  const saveImageToCache = (cacheKey: string, imageData: Buffer, metadata: any) => {
+    try {
+      const cachedFilePath = getCachedImagePath(cacheKey);
+      
+      // Store metadata in the first line, followed by image data
+      const metadataStr = JSON.stringify(metadata) + '\n';
+      const fileContent = Buffer.concat([
+        Buffer.from(metadataStr),
+        imageData
+      ]);
+      
+      fs.writeFileSync(cachedFilePath, fileContent);
+    } catch (error: any) {
+      console.error(`Error saving to cache: ${error.message}`);
+    }
+  };
+
   // Proxy for Airtable images with optimization
   app.get("/proxy-image/*", async (req, res) => {
     try {
-      const path = req.path.replace("/proxy-image", "");
+      const imagePath = req.path.replace("/proxy-image", "");
       
       // Parse query parameters for image optimization
       let width = parseInt(req.query.width as string) || null;
@@ -97,37 +165,30 @@ Crawl-delay: 2`);
       let quality = parseInt(req.query.quality as string) || 80;
       const isPriority = req.query.priority === 'true';
       
-      console.log(`Proxying image: ${path}, width: ${width}, format: ${format}`);
+      console.log(`Proxying image: ${imagePath}, width: ${width}, format: ${format}`);
       
-      // Limite máximo de tamanho para evitar imagens muito grandes
-      // O relatório do Lighthouse indica que estamos servindo imagens grandes demais
+      // Limit maximum size to avoid overly large images
       if (width && width > 1000) {
-        // Se a imagem for muito grande, reduzir para máximo de 1000px de largura
-        // e ajustar a qualidade para baixo em imagens maiores (salvando bandwidth)
         const originalWidth = width;
         width = 1000;
-        // Reduzir ainda mais a qualidade para imagens muito grandes
         if (originalWidth > 1500 && quality > 75) {
           quality = 75;
         }
       }
       
-      // Check if browser supports WebP
+      // Check if browser supports WebP/AVIF
       const acceptHeader = req.headers.accept || '';
       const supportsWebP = acceptHeader.includes('image/webp');
       const supportsAvif = acceptHeader.includes('image/avif');
       
       // Use the most efficient format supported by the browser
-      // AVIF > WebP > JPEG in terms of compression efficiency
       let outputFormat = format;
       if (!outputFormat || outputFormat === 'auto') {
         if (supportsAvif) {
           outputFormat = 'avif';
-          // AVIF permite qualidade menor com a mesma percepção visual
           if (quality > 70) quality = 70;
         } else if (supportsWebP) {
           outputFormat = 'webp';
-          // WebP também pode usar qualidade um pouco menor
           if (quality > 80) quality = 80;
         } else {
           outputFormat = 'jpeg';
@@ -135,7 +196,7 @@ Crawl-delay: 2`);
       }
       
       // Generate cache key for this resource
-      const cacheKey = `${path}-${width || 'orig'}-${height || 'orig'}-${outputFormat}-${quality}`;
+      const cacheKey = `${imagePath}-${width || 'orig'}-${height || 'orig'}-${outputFormat}-${quality}`;
       const etag = `"${Buffer.from(cacheKey).toString('base64')}"`;
       
       // Check if the browser already has this version cached
@@ -144,12 +205,35 @@ Crawl-delay: 2`);
         return;
       }
       
-      // Fetch the image from Airtable
+      // Check if we have this image in our server cache
+      const cachedImage = getImageFromCache(cacheKey);
+      
+      if (cachedImage) {
+        // Use the cached version
+        console.log(`Using cached image for: ${imagePath}`);
+        
+        // Serve the cached image with appropriate headers
+        res.set('Content-Type', cachedImage.metadata.contentType);
+        res.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache for 1 year
+        res.set('ETag', etag);
+        res.set('Vary', 'Accept');
+        res.set('X-Cache', 'HIT');
+        
+        // Priority headers if needed
+        if (isPriority) {
+          res.set('Priority', 'high');
+          res.set('Importance', 'high');
+        }
+        
+        res.send(cachedImage.imageData);
+        return;
+      }
+      
+      // Cache miss - fetch from Airtable
       // Construct the Airtable URL
-      // First, check if the path is a complete URL (starts with https://)
-      let airtableUrl = path.startsWith('https://') 
-        ? path  // Use the full URL as provided
-        : `https://v5.airtableusercontent.com${path}`; // Add the base domain
+      let airtableUrl = imagePath.startsWith('https://') 
+        ? imagePath  // Use the full URL as provided
+        : `https://v5.airtableusercontent.com${imagePath}`; // Add the base domain
       
       console.log(`Fetching Airtable image from: ${airtableUrl}`);
       
@@ -161,21 +245,21 @@ Crawl-delay: 2`);
         }
       });
       
-      // Set default content type
+      // Get the original image data
+      const originalImageData = response.data;
       const originalContentType = response.headers['content-type'] as string;
-      res.set('Content-Type', originalContentType);
       
-      // If this is a priority image, set higher priority headers
-      if (isPriority) {
-        res.set('Priority', 'high');
-        res.set('Importance', 'high');
-      }
+      // Save the original image to cache for future use
+      saveImageToCache(`${imagePath}-original`, originalImageData, { 
+        contentType: originalContentType,
+        fetchDate: new Date().toISOString()
+      });
       
-      // If resizing or format conversion is requested, use Sharp
-      if ((width || height) || outputFormat !== 'original') {
-        let imageProcessor = sharp(response.data);
+      // Process the image if needed (resize/format conversion)
+      if ((width || height) || (outputFormat && outputFormat !== 'original')) {
+        let imageProcessor = sharp(originalImageData);
         
-        // Get image metadata to make intelligent resizing decisions
+        // Get image metadata for resizing
         const metadata = await imageProcessor.metadata();
         const origWidth = metadata.width || 0;
         const origHeight = metadata.height || 0;
@@ -191,81 +275,109 @@ Crawl-delay: 2`);
           resizeOptions.width = width;
           resizeOptions.height = height;
         } else if (width) {
-          // Only width specified, calculate height to maintain aspect ratio
+          // Only width specified, calculate height
           resizeOptions.width = width;
           if (origWidth > 0 && origHeight > 0) {
             resizeOptions.height = Math.round((width * origHeight) / origWidth);
           }
         } else if (height) {
-          // Only height specified, calculate width to maintain aspect ratio
+          // Only height specified, calculate width
           resizeOptions.height = height;
           if (origWidth > 0 && origHeight > 0) {
             resizeOptions.width = Math.round((height * origWidth) / origHeight);
           }
         }
         
-        // Apply resize operation
-        imageProcessor = imageProcessor.resize(resizeOptions);
+        // Apply resize if needed
+        if (width || height) {
+          imageProcessor = imageProcessor.resize(resizeOptions);
+        }
         
-        // Convert to the requested format with appropriate options
-        switch(outputFormat) {
+        // Set the output format and content type
+        let processedContentType = originalContentType;
+        
+        // Apply format conversion if requested
+        switch (outputFormat) {
           case 'webp':
             imageProcessor = imageProcessor.webp({ 
               quality, 
-              effort: 6,  // Higher compression effort
-              smartSubsample: true  // Improve visual quality
+              effort: 4,
+              smartSubsample: true,
+              nearLossless: quality > 90
             });
-            res.set('Content-Type', 'image/webp');
+            processedContentType = 'image/webp';
             break;
           case 'avif':
             imageProcessor = imageProcessor.avif({ 
               quality, 
-              effort: 7,  // Balanced between speed and compression
-              chromaSubsampling: '4:2:0'  // Better compression
+              effort: 7,
+              chromaSubsampling: '4:2:0'
             });
-            res.set('Content-Type', 'image/avif');
+            processedContentType = 'image/avif';
             break;
           case 'jpeg':
           case 'jpg':
             imageProcessor = imageProcessor.jpeg({ 
               quality,
-              progressive: true,  // Progressive rendering
-              optimizeScans: true,  // Optimization for smaller file size
-              mozjpeg: true  // Use mozjpeg optimization
+              progressive: true,
+              optimizeScans: true,
+              mozjpeg: true
             });
-            res.set('Content-Type', 'image/jpeg');
+            processedContentType = 'image/jpeg';
             break;
           case 'png':
             imageProcessor = imageProcessor.png({ 
               quality,
-              compressionLevel: 9,  // Maximum compression
-              palette: true  // Use palette to reduce colors when appropriate
+              compressionLevel: 9,
+              palette: true
             });
-            res.set('Content-Type', 'image/png');
+            processedContentType = 'image/png';
             break;
-          default:
-            // Keep original format
-            res.set('Content-Type', originalContentType);
         }
         
-        // Process and send the optimized image
+        // Process the image
         const optimizedImageBuffer = await imageProcessor.toBuffer();
         
-        // Set comprehensive caching headers
-        res.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache for 1 year
+        // Save the transformed image to cache
+        saveImageToCache(cacheKey, optimizedImageBuffer, { 
+          contentType: processedContentType,
+          processedAt: new Date().toISOString(),
+          width: width || 'original',
+          height: height || 'original',
+          format: outputFormat || 'original',
+          quality: quality
+        });
+        
+        // Send the processed image
+        res.set('Content-Type', processedContentType);
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
         res.set('ETag', etag);
-        res.set('Vary', 'Accept'); // Vary response based on Accept header
+        res.set('Vary', 'Accept');
+        res.set('X-Cache', 'MISS');
+        
+        if (isPriority) {
+          res.set('Priority', 'high');
+          res.set('Importance', 'high');
+        }
         
         res.send(optimizedImageBuffer);
       } else {
-        // No optimization requested, just pass through the original image
-        res.set('Cache-Control', 'public, max-age=31536000, immutable'); // Cache for 1 year
+        // No transformation needed, serve as-is
+        res.set('Content-Type', originalContentType);
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
         res.set('ETag', etag);
         res.set('Vary', 'Accept');
-        res.send(response.data);
+        res.set('X-Cache', 'MISS');
+        
+        if (isPriority) {
+          res.set('Priority', 'high');
+          res.set('Importance', 'high');
+        }
+        
+        res.send(originalImageData);
       }
-    } catch (error) {
-      // Extract more detailed information about the error
+    } catch (error: any) {
+      // Extract error details
       const errorMessage = error.message || 'Unknown error';
       const errorStack = error.stack || '';
       const errorStatus = error.response?.status || 'No status';
@@ -279,7 +391,7 @@ Crawl-delay: 2`);
         stack: errorStack
       });
       
-      // Send a 1x1 pixel transparent fallback image instead of text
+      // Send a 1x1 pixel transparent fallback image
       const fallbackImage = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
       res.set('Content-Type', 'image/gif');
       res.set('Cache-Control', 'no-store');
