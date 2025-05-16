@@ -159,23 +159,27 @@ export function ScreenModal({
   if (!currentScreen) return null;
   
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open && isMobile) {
-        // First start the closing animation
-        setIsClosing(true);
-        // Then close the dialog after animation completes
-        setTimeout(() => {
+    <Dialog 
+      open={isOpen} 
+      className={isMobile ? "mobile-dialog" : ""}
+      onOpenChange={(open) => {
+        if (!open && isMobile) {
+          // First start the closing animation
+          setIsClosing(true);
+          // Then close the dialog after animation completes
+          setTimeout(() => {
+            onClose();
+            setIsClosing(false);
+          }, 300);
+        } else if (!open) {
+          // For desktop, close immediately
           onClose();
-          setIsClosing(false);
-        }, 300);
-      } else if (!open) {
-        // For desktop, close immediately
-        onClose();
-      }
-    }}>
+        }
+      }}
+    >
       <DialogContent 
         className={`${isMobile 
-          ? `w-full p-0 overflow-hidden flex flex-col mobile-sheet ${isClosing ? 'animate-out' : 'animate-in'}`
+          ? `w-full p-0 overflow-hidden flex flex-col mobile-dialog-content ${isClosing ? 'sheet-slide-down' : 'sheet-slide-up'}`
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
         hideCloseButton={true}

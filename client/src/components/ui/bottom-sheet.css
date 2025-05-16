@@ -1,3 +1,4 @@
+/* Styling for the bottom sheet handle */
 .bottom-sheet-handle {
   width: 40px;
   height: 5px;
@@ -6,53 +7,46 @@
   margin: 10px auto 5px;
 }
 
-/* Override Radix Dialog for mobile */
-[data-state="open"] {
-  animation-name: none !important;
+/* Custom dialog for mobile devices */
+.mobile-dialog {
+  background: transparent;
 }
 
-/* Mobile sheet styling */
-.mobile-sheet {
+.mobile-dialog [data-state] {
+  animation: none !important;
+}
+
+.mobile-dialog-content {
   position: fixed !important;
+  bottom: 0 !important;
   left: 0 !important;
   right: 0 !important;
-  bottom: 0 !important;
   top: auto !important;
-  margin: 0 !important;
   width: 100% !important;
-  border-radius: 0 !important; 
+  max-width: 100% !important;
+  margin: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
   border-top-left-radius: 16px !important;
   border-top-right-radius: 16px !important;
   transform: none !important;
   translate: none !important;
-  max-width: 100% !important;
-  max-height: 90vh !important;
-  overflow: auto !important;
 }
 
-/* Create our own animation */
-@keyframes slideIn {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+.sheet-slide-up {
+  animation: sheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-@keyframes slideOut {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100%);
-  }
+.sheet-slide-down {
+  animation: sheetSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
-.animate-in {
-  animation: slideIn 0.3s ease-out forwards;
+@keyframes sheetSlideUp {
+  from { transform: translateY(100%) !important; }
+  to { transform: translateY(0) !important; }
 }
 
-.animate-out {
-  animation: slideOut 0.3s ease-in forwards;
+@keyframes sheetSlideDown {
+  from { transform: translateY(0) !important; }
+  to { transform: translateY(100%) !important; }
 }
