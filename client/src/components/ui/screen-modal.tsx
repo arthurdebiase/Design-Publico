@@ -281,9 +281,9 @@ export function ScreenModal({
               <div 
                 className="animate-pulse bg-gray-200 rounded-md" 
                 style={{ 
-                  width: isMobile ? '240px' : '280px',
-                  height: isMobile ? '420px' : '500px',
-                  maxWidth: '100%'
+                  width: isMobile ? '280px' : '280px',
+                  height: isMobile ? '520px' : '500px',
+                  maxWidth: '95%'
                 }}
               />
             </div>
@@ -292,19 +292,19 @@ export function ScreenModal({
           {/* Container for both image and tags */}
           <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
             {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
-            <div className={`${isMobile ? 'max-h-[60vh]' : 'max-h-[68vh]'} flex items-center justify-center`}>
+            <div className={`${isMobile ? 'max-h-[70vh] w-full' : 'max-h-[68vh]'} flex items-center justify-center`}>
               <a 
                 href={currentScreen.cloudinaryUrl || currentScreen.imageUrl} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="cursor-pointer hover:opacity-90 transition-opacity"
+                className="cursor-pointer hover:opacity-90 transition-opacity w-full flex justify-center"
                 title="Open full image in new tab"
               >
                 <CloudinaryImage 
                   src={currentScreen.imageUrl}
                   cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
                   alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                  className={`${isMobile ? 'max-h-[60vh]' : 'max-h-[68vh]'} w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                  className={`${isMobile ? 'max-h-[70vh] max-w-[95%]' : 'max-h-[68vh]'} w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
                   onLoad={() => setIsImageLoading(false)}
                   priority={true}
                   width={1024}
