@@ -47,8 +47,9 @@ async function fetchRecordsNeedingMigration(limit = 100, offset?: string): Promi
   // We'll filter out records with importing field in our processing code
   const params: any = {
     view: 'Grid view',
-    // Query for records with images, without referencing fields that might not exist
-    filterByFormula: 'NOT(ISERROR({image}))',
+    // Query for records with images that don't have importing field filled yet
+    // This is now safe since we know the importing field exists
+    filterByFormula: 'AND(NOT(ISERROR({image})), {importing} = "")',
     pageSize: limit,
   };
   
