@@ -121,6 +121,7 @@ export class MemStorage implements IStorage {
   async createApp(insertApp: InsertApp): Promise<App> {
     const id = this.appIdCounter++;
     const now = new Date();
+    const slug = this.createSlugFromName(insertApp.name);
 
     // Ensure all required fields have appropriate values
     const app: App = {
@@ -129,12 +130,14 @@ export class MemStorage implements IStorage {
       description: insertApp.description,
       thumbnailUrl: insertApp.thumbnailUrl,
       logo: insertApp.logo ?? null,
+      cloudinaryLogo: insertApp.cloudinaryLogo ?? null, // Include Cloudinary logo URL
       type: insertApp.type,
       category: insertApp.category,
       platform: insertApp.platform,
       language: insertApp.language ?? null,
       screenCount: insertApp.screenCount ?? 0,
       url: insertApp.url ?? null,
+      slug: slug, // Include the slug
       airtableId: insertApp.airtableId,
       createdAt: now,
       updatedAt: now,
@@ -762,11 +765,26 @@ export class MemStorage implements IStorage {
           appType = "Federal";
         }
 
+        // Check if we have a Cloudinary logo URL for this app
+        let cloudinaryLogoUrl = null;
+        if (appRecordId) {
+          cloudinaryLogoUrl = appLogosMap.get(`cloudinary:${appRecordId}`);
+        }
+        if (!cloudinaryLogoUrl && appName) {
+          cloudinaryLogoUrl = appLogosMap.get(`cloudinary:${appName}`);
+        }
+        
+        // Log if we found a Cloudinary logo URL
+        if (cloudinaryLogoUrl) {
+          console.log(`DEBUG: Using Cloudinary logo URL for ${appName}: ${cloudinaryLogoUrl}`);
+        }
+        
         const appData: InsertApp = {
           name: appName,
           description: fields.description || `Collection of design screens from ${appName}`,
           thumbnailUrl: thumbnailUrl,
           logo: logoUrl || null, // Use logo from apps table if available
+          cloudinaryLogo: cloudinaryLogoUrl, // Include Cloudinary logo URL if available
           type: appType,
           category: appCategory || fields[APP_CATEGORY_FIELD] || "Government", // Use mapped category
           platform: fields.platform || "iOS", // Default platform
@@ -991,6 +1009,7 @@ export class MemStorage implements IStorage {
     sampleApps.forEach(app => {
       const id = this.appIdCounter++;
       const now = new Date();
+      const slug = this.createSlugFromName(app.name);
 
       this.apps.set(id, {
         id,
@@ -998,12 +1017,14 @@ export class MemStorage implements IStorage {
         description: app.description,
         thumbnailUrl: app.thumbnailUrl,
         logo: app.logo ?? null,
+        cloudinaryLogo: null, // No Cloudinary logos for sample data
         type: app.type,
         category: app.category,
         platform: app.platform,
         language: app.language ?? null,
         screenCount: app.screenCount ?? 0,
         url: app.url ?? null,
+        slug: slug,
         airtableId: app.airtableId,
         createdAt: now,
         updatedAt: now,
