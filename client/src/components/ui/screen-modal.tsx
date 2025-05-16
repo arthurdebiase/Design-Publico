@@ -227,7 +227,7 @@ export function ScreenModal({
           </div>
         </div>
         
-        <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center relative">
+        <div className="flex-1 p-0 flex flex-col items-center justify-center relative bg-gray-50">
           {screens.length > 1 && (
             <>
               <Button 
@@ -256,29 +256,29 @@ export function ScreenModal({
           
           {/* Skeleton placeholder durante o carregamento */}
           {isImageLoading && (
-            <div className="w-full flex items-center justify-center">
+            <div className="flex items-center justify-center w-full h-full py-8">
               <div 
-                className="animate-pulse bg-gray-200 rounded-lg" 
+                className="animate-pulse bg-gray-200 rounded-md" 
                 style={{ 
                   width: '320px',
-                  height: '568px',
-                  maxHeight: '70vh'
+                  height: '568px'
                 }}
               />
             </div>
           )}
           
-          {/* Imagem principal */}
-          <CloudinaryImage 
-            src={currentScreen.imageUrl}
-            cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
-            alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-            className={`max-h-[70vh] w-auto mx-auto rounded-lg shadow-md object-contain ${isImageLoading ? 'hidden' : 'block'}`}
-            onLoad={() => setIsImageLoading(false)}
-            priority={true}
-            width={1024}
-            height={1820}
-          />
+          {/* Imagem principal - sem padding extra */}
+          {!isImageLoading && (
+            <div className="w-full h-full flex items-center justify-center py-8">
+              <img 
+                src={currentScreen.cloudinaryUrl || currentScreen.imageUrl}
+                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+                className="max-h-[75vh] w-auto object-contain"
+                onLoad={() => setIsImageLoading(false)}
+                loading="eager"
+              />
+            </div>
+          )}
           
           {/* Tags and categories displayed here */}
           {showTags && (
