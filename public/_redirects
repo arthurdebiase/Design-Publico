@@ -1,8 +1,0 @@
-# API routes
-/api/*  /.netlify/functions/api/:splat  200
-
-# Image proxy
-/proxy-image/*  /.netlify/functions/image-proxy/:splat  200
-
-# Fallback for SPA
-/*  /index.html  200
