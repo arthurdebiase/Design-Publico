@@ -561,17 +561,17 @@ export default function ScreensPage() {
                         src={screen.app.logo}
                         cloudinarySrc={screen.app.cloudinaryLogo}
                         alt={`${screen.app.name} Logo`}
-                        className="w-5 h-5 object-contain"
+                        className="w-4 h-4 object-contain"
                         widths={[16, 32, 64]}
                         quality={90}
                         placeholder={
-                          <div className="w-5 h-5 flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
+                          <div className="w-4 h-4 flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                             <span className="sr-only">Loading logo for {screen.app.name}</span>
                           </div>
                         }
                       />
                     ) : (
-                      <div className="w-5 h-5 flex items-center justify-center opacity-50" style={{ aspectRatio: '1/1' }}>
+                      <div className="w-4 h-4 flex items-center justify-center opacity-50" style={{ aspectRatio: '1/1' }}>
                         <span className="sr-only">Logo placeholder for {screen.app.name}</span>
                       </div>
                     )}
@@ -732,17 +732,17 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
                   src={screen.app.logo}
                   cloudinarySrc={screen.app.cloudinaryLogo}
                   alt={`${screen.app.name} Logo`}
-                  className="w-5 h-5 object-contain"
+                  className="w-4 h-4 object-contain"
                   widths={[20, 40, 60]}
                   quality={90}
                   placeholder={
-                    <div className="w-5 h-5 flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
+                    <div className="w-4 h-4 flex items-center justify-center" style={{ aspectRatio: '1/1' }}>
                       <span className="sr-only">Loading logo for {screen.app.name}</span>
                     </div>
                   }
                 />
               ) : (
-                <div className="w-5 h-5 flex items-center justify-center opacity-50" style={{ aspectRatio: '1/1' }}>
+                <div className="w-4 h-4 flex items-center justify-center opacity-50" style={{ aspectRatio: '1/1' }}>
                   <span className="sr-only">Logo placeholder for {screen.app.name}</span>
                 </div>
               )}
