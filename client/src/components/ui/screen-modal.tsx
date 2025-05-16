@@ -10,6 +10,7 @@ import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { CloudinaryImage } from "@/components/ui/cloudinary-image";
 import { createSlug } from "@/lib/slugUtils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import "./bottom-sheet.css";
 
 interface ScreenModalProps {
   isOpen: boolean;
@@ -156,7 +157,7 @@ export function ScreenModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent 
         className={`${isMobile 
-          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto translate-y-0" 
+          ? "w-full max-w-full max-h-[90vh] p-0 overflow-hidden flex flex-col rounded-t-xl rounded-b-none mt-auto bottom-0 top-auto translate-y-0 bottom-sheet-enter" 
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
         hideCloseButton={true}
@@ -166,7 +167,7 @@ export function ScreenModal({
         {/* Handle indicator for mobile bottom sheet */}
         {isMobile && (
           <div className="w-full flex justify-center pt-2 pb-1">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+            <div className="bottom-sheet-handle"></div>
           </div>
         )}
         {/* Add DialogTitle for accessibility */}
@@ -280,8 +281,8 @@ export function ScreenModal({
               <div 
                 className="animate-pulse bg-gray-200 rounded-md" 
                 style={{ 
-                  width: '280px',
-                  height: '500px',
+                  width: isMobile ? '240px' : '280px',
+                  height: isMobile ? '420px' : '500px',
                   maxWidth: '100%'
                 }}
               />
@@ -312,9 +313,24 @@ export function ScreenModal({
               </a>
             </div>
             
+            {/* Mobile-specific toggle button for showing details */}
+            {isMobile && (
+              <div className="mt-2 mb-1">
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowTags(!showTags)}
+                  className="text-xs text-gray-500 flex items-center gap-1 py-1"
+                >
+                  <Info className="h-3 w-3" />
+                  {showTags ? "Ocultar detalhes" : "Mostrar detalhes"}
+                </Button>
+              </div>
+            )}
+              
             {/* Tags and categories displayed here */}
             {showTags && (
-              <div className="flex flex-wrap gap-2 mt-3 justify-center px-4">
+              <div className="flex flex-wrap gap-2 mt-2 justify-center px-4">
                 {/* Categories - Only visible when showTags is true */}
                 {currentScreen.category && (
                   <>
