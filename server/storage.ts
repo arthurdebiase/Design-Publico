@@ -31,6 +31,23 @@ export class MemStorage implements IStorage {
   private screens: Map<number, Screen>;
   private appIdCounter: number;
   private screenIdCounter: number;
+  
+  // Fix for TypeScript errors with new schema fields
+  private migrateLegacyApp(app: any): App {
+    // Add missing fields from schema updates
+    if (!('slug' in app)) {
+      app.slug = app.name ? this.createSlugFromName(app.name) : null;
+    }
+    return app as App;
+  }
+  
+  private migrateLegacyScreen(screen: any): Screen {
+    // Add missing fields from schema updates
+    if (!('cloudinaryUrl' in screen)) {
+      screen.cloudinaryUrl = null;
+    }
+    return screen as Screen;
+  }
 
   constructor() {
     this.apps = new Map();
@@ -154,6 +171,7 @@ export class MemStorage implements IStorage {
       name: insertScreen.name,
       description: insertScreen.description ?? null,
       imageUrl: insertScreen.imageUrl,
+      cloudinaryUrl: insertScreen.cloudinaryUrl ?? null,
       altText: insertScreen.altText ?? `Screen from ${insertScreen.name}`,
       flow: insertScreen.flow ?? null,
       order: insertScreen.order ?? 0,
@@ -847,6 +865,8 @@ export class MemStorage implements IStorage {
             name: screenName,
             description: fields.description || null,
             imageUrl: attachment.url,
+            // Include the Cloudinary URL if present in the "importing" field
+            cloudinaryUrl: fields.importing || null,
             altText: altText,
             flow: fields.flow || null,
             order: screenOrder,
