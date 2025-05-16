@@ -307,9 +307,9 @@ export default function ScreensPage() {
           <Skeleton className="h-6 w-20" />
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
-          {Array(12).fill(0).map((_, index) => (
-            <div key={`skeleton-${index}`} className="bg-white rounded-lg overflow-hidden shadow-sm">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10">
+          {Array(15).fill(0).map((_, index) => (
+            <div key={`skeleton-${index}`} className="rounded-lg overflow-hidden">
               <Skeleton className="h-64 w-full" />
               <div className="p-3">
                 <div className="flex items-center gap-3">
@@ -490,7 +490,7 @@ export default function ScreensPage() {
       
       {filteredScreens.length > 0 ? (
         <div 
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10"
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10"
           role="grid"
           aria-label="Todas as telas"
         >
