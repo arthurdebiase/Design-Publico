@@ -256,29 +256,31 @@ export function ScreenModal({
           
           {/* Skeleton placeholder durante o carregamento */}
           {isImageLoading && (
-            <div className="flex items-center justify-center w-full h-full py-8">
+            <div className="flex items-center justify-center w-full h-full py-6">
               <div 
                 className="animate-pulse bg-gray-200 rounded-md" 
                 style={{ 
-                  width: '320px',
-                  height: '568px'
+                  width: '280px',
+                  height: '500px',
+                  maxWidth: '100%'
                 }}
               />
             </div>
           )}
           
-          {/* Imagem principal - sem padding extra */}
-          {!isImageLoading && (
-            <div className="w-full h-full flex items-center justify-center py-8">
-              <img 
-                src={currentScreen.cloudinaryUrl || currentScreen.imageUrl}
-                alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                className="max-h-[75vh] w-auto object-contain"
-                onLoad={() => setIsImageLoading(false)}
-                loading="eager"
-              />
-            </div>
-          )}
+          {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
+          <div className="w-full h-full flex items-center justify-center py-6">
+            <CloudinaryImage 
+              src={currentScreen.imageUrl}
+              cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
+              alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
+              className={`max-h-[75vh] w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+              onLoad={() => setIsImageLoading(false)}
+              priority={true}
+              width={1024}
+              height={1820}
+            />
+          </div>
           
           {/* Tags and categories displayed here */}
           {showTags && (
