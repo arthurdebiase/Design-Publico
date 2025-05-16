@@ -75,8 +75,8 @@ export default function Header() {
                 <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent>
-              <div className="mt-8 flex flex-col space-y-4">
+            <SheetContent side="top" className="w-full">
+              <div className="flex flex-col space-y-4 pt-2">
                 <Link href="/" className="text-lg font-medium hover:text-[#0066FF] no-underline">
                   {t('header.apps')}
                 </Link>
@@ -88,7 +88,7 @@ export default function Header() {
                 </Link>
                 
                 {/* Language selector for mobile */}
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-2 pt-2 border-t border-gray-200">
                   <div className="flex items-center">
                     <LanguageSelector />
                   </div>

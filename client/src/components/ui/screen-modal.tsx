@@ -151,7 +151,12 @@ export function ScreenModal({
   
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" hideCloseButton={true}>
+      <DialogContent 
+        className="max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col" 
+        hideCloseButton={true}
+        aria-labelledby="screen-modal-title"
+        aria-describedby="screen-modal-description"
+      >
         <div className="flex items-center justify-between p-4 border-b">
           <Link href={`/app/${createSlug(app.name)}`} 
             className="flex items-center group no-underline" 
@@ -179,8 +184,8 @@ export function ScreenModal({
             </div>
             <div className="flex-grow">
               {/* App and screen name - clickable */}
-              <DialogTitle className="sr-only">{app.name}</DialogTitle>
-              <DialogDescription className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogDescription>
+              <DialogTitle id="screen-modal-title" className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogTitle>
+              <DialogDescription id="screen-modal-description" className="text-xs text-gray-500 m-0">{app.name}</DialogDescription>
             </div>
           </Link>
           <div className="flex items-center gap-1">
