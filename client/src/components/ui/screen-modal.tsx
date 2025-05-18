@@ -298,15 +298,17 @@ export function ScreenModal({
             </>
           )}
           
-          {/* Skeleton placeholder durante o carregamento */}
+          {/* Skeleton placeholder that matches image container dimensions */}
           {isImageLoading && (
-            <div className="flex items-center justify-center w-full h-full py-6">
+            <div className={`${isMobile ? 'max-h-[70vh] w-full' : 'max-h-[68vh]'} flex items-center justify-center`}>
               <div 
                 className="animate-pulse bg-gray-200 rounded-md" 
                 style={{ 
-                  width: isMobile ? '280px' : '280px',
-                  height: isMobile ? '520px' : '500px',
-                  maxWidth: '95%'
+                  width: '100%',
+                  height: isMobile ? '70vh' : '68vh',
+                  maxWidth: '100%',
+                  aspectRatio: '9/16',
+                  maxHeight: isMobile ? '70vh' : '68vh'
                 }}
               />
             </div>
