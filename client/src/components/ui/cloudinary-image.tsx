@@ -90,6 +90,8 @@ export function CloudinaryImage({
         decoding={priority ? "sync" : "async"}
         onLoad={handleLoad}
         onError={handleError}
+        onClick={(e) => e.preventDefault()}
+        style={{ pointerEvents: "none" }}
         className={cn(
           "w-full h-full object-contain transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100",

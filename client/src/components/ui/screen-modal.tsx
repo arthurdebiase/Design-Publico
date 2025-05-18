@@ -330,13 +330,6 @@ export function ScreenModal({
           <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
             {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
             <div className={`${isMobile ? 'max-h-[70vh] w-full' : 'max-h-[68vh]'} flex items-center justify-center`}>
-              <a 
-                href={currentScreen.cloudinaryUrl || currentScreen.imageUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="cursor-pointer hover:opacity-90 transition-opacity w-full flex justify-center"
-                title="Open full image in new tab"
-              >
                 <CloudinaryImage 
                   src={currentScreen.imageUrl}
                   cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
@@ -347,7 +340,7 @@ export function ScreenModal({
                   width={1024}
                   height={1820}
                 />
-              </a>
+
             </div>
             
             {/* Mobile-specific toggle for details - removed */}
