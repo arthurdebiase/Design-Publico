@@ -161,38 +161,18 @@ export function ScreenModal({
   return (
     <Dialog 
       open={isOpen} 
+      modal={true}
       onOpenChange={(open) => {
         if (!open) {
-          // Start closing animation for all devices
-          setIsClosing(true);
-          
-          // Handle the close event synchronously
-          // This prevents the overlay from closing before the sheet animation completes
-          setTimeout(() => {
-            onClose();
-            setIsClosing(false);
-          }, isMobile ? 150 : 0);
+          onClose();
         }
       }}
     >
       <DialogContent 
         className={`${isMobile 
-          ? `w-[100vw] p-0 overflow-hidden flex flex-col mobile-dialog-content ${isClosing ? 'sheet-slide-down' : 'sheet-slide-up'}`
+          ? `p-0 overflow-hidden flex flex-col bottom-sheet-content`
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
-        style={isMobile ? { 
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          width: '100vw',
-          margin: 0,
-          borderBottomLeftRadius: 0,
-          borderBottomRightRadius: 0,
-          borderTopLeftRadius: '16px',
-          borderTopRightRadius: '16px',
-          transform: 'none'
-        } : undefined}
         hideCloseButton={true}
         aria-labelledby="screen-modal-title"
         aria-describedby="screen-modal-description"
