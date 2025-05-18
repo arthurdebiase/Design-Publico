@@ -165,11 +165,11 @@ export function ScreenModal({
         if (!open && isMobile) {
           // First start the closing animation
           setIsClosing(true);
-          // Then close the dialog after animation completes
+          // Then close the dialog after animation completes with shorter duration
           setTimeout(() => {
             onClose();
             setIsClosing(false);
-          }, 300);
+          }, 150); // Reduced from 300ms to 150ms for faster closing
         } else if (!open) {
           // For desktop, close immediately
           onClose();

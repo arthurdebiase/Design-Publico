@@ -35,11 +35,11 @@
 }
 
 .sheet-slide-up {
-  animation: sheetSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: sheetSlideUp 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 .sheet-slide-down {
-  animation: sheetSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  animation: sheetSlideDown 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 @keyframes sheetSlideUp {
