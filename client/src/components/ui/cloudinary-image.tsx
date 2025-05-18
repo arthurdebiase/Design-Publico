@@ -34,7 +34,8 @@ export function CloudinaryImage({
   // Determine the image source to use - prefer Cloudinary when available
   const useCloudinary = cloudinarySrc && cloudinarySrc.length > 0;
   const imageSource = useCloudinary ? cloudinarySrc : 
-    (src.startsWith('/proxy-image') ? src : `/proxy-image${src}`);
+    (src.startsWith('/proxy-image') ? src : 
+     (src.startsWith('http') ? `/proxy-image?url=${encodeURIComponent(src)}` : `/proxy-image${src}`));
 
   // For debugging - will be removed in production
   console.debug("CloudinaryImage source selection:", {
