@@ -205,16 +205,13 @@ export function ScreenModal({
           </div>
         )}
         
-        {/* Add proper DialogTitle and DialogDescription for accessibility */}
-        <DialogTitle id="screen-modal-title" className="sr-only">
+        {/* DialogTitle needs to be a direct child of DialogContent for accessibility */}
+        <DialogTitle className="sr-only" id="screen-modal-title">
           {app.name}: {currentScreen.name || 'Screen Detail'}
         </DialogTitle>
-        <DialogDescription id="screen-modal-description" className="sr-only">
+        <DialogDescription className="sr-only" id="screen-modal-description">
           {t('screenModal.description', 'Detailed view of a screen from {{appName}}. Use arrow keys to navigate between screens.', { appName: app.name })}
         </DialogDescription>
-        
-
-        
         <div className={`flex items-center justify-between p-4 ${isMobile ? 'pb-2' : 'border-b'}`}>
           <Link href={`/app/${createSlug(app.name)}`} 
             className="flex items-center group no-underline" 
@@ -366,7 +363,7 @@ export function ScreenModal({
                       </Link>
                     ) : (
                       Array.isArray(currentScreen.category) && 
-                      currentScreen.category.map((cat, idx) => (
+                      (currentScreen.category || []).map((cat: string, idx: number) => (
                         <Link 
                           key={`modal-category-${idx}`}
                           href={`/screens?category=${encodeURIComponent(cat)}`}
