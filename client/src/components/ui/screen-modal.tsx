@@ -162,17 +162,16 @@ export function ScreenModal({
     <Dialog 
       open={isOpen} 
       onOpenChange={(open) => {
-        if (!open && isMobile) {
-          // First start the closing animation
+        if (!open) {
+          // Start closing animation for all devices
           setIsClosing(true);
-          // Then close the dialog after animation completes with shorter duration
+          
+          // Handle the close event synchronously
+          // This prevents the overlay from closing before the sheet animation completes
           setTimeout(() => {
             onClose();
             setIsClosing(false);
-          }, 150); // Reduced from 300ms to 150ms for faster closing
-        } else if (!open) {
-          // For desktop, close immediately
-          onClose();
+          }, isMobile ? 150 : 0);
         }
       }}
     >
@@ -363,7 +362,7 @@ export function ScreenModal({
                       </Link>
                     ) : (
                       Array.isArray(currentScreen.category) && 
-                      (currentScreen.category || []).map((cat: string, idx: number) => (
+                      (currentScreen.category as string[]).map((cat: string, idx: number) => (
                         <Link 
                           key={`modal-category-${idx}`}
                           href={`/screens?category=${encodeURIComponent(cat)}`}
