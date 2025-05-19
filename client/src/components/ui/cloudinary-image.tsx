@@ -72,7 +72,11 @@ export function CloudinaryImage({
         className
       )}
       style={{ 
-        aspectRatio: width && height ? `${width}/${height}` : undefined
+        width: '100%',
+        height: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
       }}
     >
       {/* Skeleton loader shown while image is loading */}
@@ -93,7 +97,7 @@ export function CloudinaryImage({
         onClick={(e) => e.preventDefault()}
         style={{ pointerEvents: "none" }}
         className={cn(
-          "w-full h-full object-contain transition-opacity duration-300",
+          "w-auto max-h-[450px] object-contain transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100",
           hasError ? "hidden" : "block"
         )}
