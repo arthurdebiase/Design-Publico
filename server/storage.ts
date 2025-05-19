@@ -270,7 +270,7 @@ export class MemStorage implements IStorage {
           const params: any = { 
             pageSize: 100,
             // Use the specific view to maintain the exact order as seen in Airtable UI
-            view: "viwyDosqJV0fgIUf2" // This is the view ID you shared
+            view: "screens-list" // Using view name instead of hardcoded ID for better portability
           };
           if (offset) {
             params.offset = offset;
@@ -340,7 +340,10 @@ export class MemStorage implements IStorage {
       try {
         do {
           const url = `https://api.airtable.com/v0/${baseId}/${APPS_TABLE_NAME}`;
-          const params: any = { pageSize: 100 };
+          const params: any = { 
+            pageSize: 100,
+            view: "apps-list" // Using view name instead of default view for better consistency
+          };
           if (appOffset) {
             params.offset = appOffset;
           }
