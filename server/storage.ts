@@ -46,6 +46,24 @@ export class MemStorage implements IStorage {
     if (!('cloudinaryUrl' in screen)) {
       screen.cloudinaryUrl = null;
     }
+    
+    // Ensure other nullable fields have proper values
+    if (!('altText' in screen) || screen.altText === undefined) {
+      screen.altText = null;
+    }
+    
+    if (!('flow' in screen) || screen.flow === undefined) {
+      screen.flow = null;
+    }
+    
+    if (!('category' in screen) || screen.category === undefined) {
+      screen.category = null;
+    }
+    
+    if (!('tags' in screen) || screen.tags === undefined) {
+      screen.tags = null;
+    }
+    
     return screen as Screen;
   }
 
@@ -408,7 +426,9 @@ export class MemStorage implements IStorage {
             "Content-Type": "application/json"
           },
           params: {
-            view: "brand-list" // Using view name instead of default view for consistency
+            // No specific view needed for brand files - use default view
+            // This avoids errors if the view doesn't exist
+            maxRecords: 100
           }
         });
 
