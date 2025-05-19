@@ -30,29 +30,38 @@ export default function Home() {
     }
   }, [apps]);
   
-  // Use custom category mapping to work around data structure issues
+  // Use the category directly from the app data
   const getAppCategory = (app: any): string => {
-    // Map apps to relevant categories based on their name or description
-    if (app.name?.toLowerCase().includes("trabalho") || 
-        app.description?.toLowerCase().includes("trabalho")) {
-      return "Trabalho";
+    // If the app has a valid category field, use that
+    if (app.category && typeof app.category === 'string' && app.category.trim() !== '') {
+      // Normalize the category to match our predefined categories
+      const lowerCategory = app.category.toLowerCase();
+      
+      if (lowerCategory.includes('finan')) return "Finanças";
+      if (lowerCategory.includes('cidada') || lowerCategory.includes('cidadã')) return "Cidadania";
+      if (lowerCategory.includes('saude') || lowerCategory.includes('saúde')) return "Saúde";
+      if (lowerCategory.includes('logist') || lowerCategory.includes('logíst')) return "Logística";
+      if (lowerCategory.includes('trabalho')) return "Trabalho";
+      if (lowerCategory.includes('portal')) return "Portal";
     }
-    if (app.name?.toLowerCase().includes("gov") || 
-        app.name?.toLowerCase().includes("gov.br") ||
-        app.description?.toLowerCase().includes("governo")) {
-      return "Cidadania";
-    }
-    if (app.name?.toLowerCase().includes("caixa") || 
-        app.description?.toLowerCase().includes("financ")) {
+    
+    // Fallback to name/description-based categorization if category is not available
+    const name = app.name?.toLowerCase() || '';
+    const description = app.description?.toLowerCase() || '';
+    
+    if (name.includes("caixa") || description.includes("financ")) {
       return "Finanças";
     }
-    if (app.name?.toLowerCase().includes("saúde") || 
-        app.description?.toLowerCase().includes("saúde") ||
-        app.name?.toLowerCase().includes("sus")) {
+    if (name.includes("trabalho") || description.includes("trabalho")) {
+      return "Trabalho";
+    }
+    if (name.includes("gov") || name.includes("gov.br") || description.includes("governo")) {
+      return "Cidadania";
+    }
+    if (name.includes("saúde") || name.includes("sus") || description.includes("saúde")) {
       return "Saúde";
     }
-    if (app.name?.toLowerCase().includes("correios") || 
-        app.description?.toLowerCase().includes("entreg")) {
+    if (name.includes("correios") || description.includes("entreg")) {
       return "Logística";
     }
     
