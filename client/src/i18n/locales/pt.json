@@ -36,9 +36,12 @@
     "filterByCategory": "Filtrar por Categoria",
     "filterByComponents": "Filtrar por Componentes",
     "showing": "Mostrando",
+    "apps": "apps",
+    "screens": "telas",
     "resultsOf": "resultados de",
     "noResults": "Nenhum resultado encontrado",
-    "tryAdjusting": "Tente ajustar seus filtros para encontrar mais resultados"
+    "tryAdjusting": "Tente ajustar seus filtros para encontrar mais resultados",
+    "removeFilter": "Remover filtro"
   },
   "app": {
     "visit": "Visitar",

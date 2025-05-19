@@ -40,7 +40,8 @@
     "screens": "screens",
     "resultsOf": "results of",
     "noResults": "No results found",
-    "tryAdjusting": "Try adjusting your filters to find more results"
+    "tryAdjusting": "Try adjusting your filters to find more results",
+    "removeFilter": "Remove filter"
   },
   "app": {
     "visit": "Visit",
