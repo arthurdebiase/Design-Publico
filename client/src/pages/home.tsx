@@ -218,8 +218,8 @@ export default function Home() {
               
               {filteredApps && filteredApps.length === 0 && (
                 <div className="bg-white p-8 rounded-lg text-center">
-                  <h3 className="font-medium text-lg mb-2">No applications found</h3>
-                  <p className="text-gray-500">Try adjusting your filters to see more results.</p>
+                  <h3 className="font-medium text-lg mb-2">{t('filters.noResults')}</h3>
+                  <p className="text-gray-500">{t('filters.tryAdjusting')}</p>
                 </div>
               )}
             </>
