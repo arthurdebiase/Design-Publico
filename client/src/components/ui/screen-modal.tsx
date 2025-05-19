@@ -214,11 +214,20 @@ export function ScreenModal({
               title={`View ${app.name} details`}
             >
               {app.logo ? (
-                <img 
-                  src={app.cloudinaryLogo || app.logo}
+                <ResponsiveImage 
+                  src={app.logo}
+                  cloudinarySrc={app.cloudinaryLogo}
                   alt={`${app.name} logo`} 
                   className="w-8 h-8 object-contain"
-                  loading="eager"
+                  widths={[32, 64, 96]}
+                  quality={90}
+                  format="webp"
+                  priority={true}
+                  placeholder={
+                    <div className="w-8 h-8 bg-gray-100 rounded-md flex items-center justify-center">
+                      <span className="sr-only">Loading logo for {app.name}</span>
+                    </div>
+                  }
                 />
               ) : (
                 <div className="w-8 h-8 bg-gray-200 rounded-md flex items-center justify-center">
