@@ -170,9 +170,10 @@ export function ScreenModal({
     >
       <DialogContent 
         className={`${isMobile 
-          ? `p-0 overflow-hidden flex flex-col bottom-sheet-content`
+          ? `p-0 overflow-hidden flex flex-col bottom-sheet-content max-h-[80vh]`
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
+        style={isMobile ? { position: 'fixed', bottom: 0, left: 0, right: 0, margin: 0 } : {}}
         hideCloseButton={true}
         aria-labelledby="screen-modal-title"
         aria-describedby="screen-modal-description"
