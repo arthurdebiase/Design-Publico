@@ -475,7 +475,7 @@ export default function ScreensPage() {
                   src={screen.imageUrl}
                   cloudinarySrc={screen.cloudinaryUrl}
                   alt={screen.name || 'Tela de aplicativo'}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   style={{ aspectRatio: "9/16", backgroundColor: "#ffffff" }}
                   widths={[300, 450, 600]}
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
