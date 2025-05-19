@@ -75,13 +75,13 @@ export default function Header() {
               size="icon" 
               aria-label="Toggle mobile menu"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="relative"
+              className="relative p-2 h-12 w-12"
               aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? (
-                <X className="h-7 w-7" aria-hidden="true" />
+                <X className="h-8 w-8" aria-hidden="true" />
               ) : (
-                <Menu className="h-7 w-7" aria-hidden="true" />
+                <Menu className="h-8 w-8" aria-hidden="true" />
               )}
               <span className="sr-only">{mobileMenuOpen ? "Close menu" : "Open menu"}</span>
             </Button>
