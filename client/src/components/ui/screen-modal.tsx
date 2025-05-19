@@ -186,8 +186,6 @@ export function ScreenModal({
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         } transition-all duration-300`}
         hideCloseButton={true}
-        aria-labelledby="screen-modal-title"
-        aria-describedby="screen-modal-description"
       >
         {/* Handle indicator for mobile bottom sheet */}
         {isMobile && (
@@ -196,11 +194,11 @@ export function ScreenModal({
           </div>
         )}
         
-        {/* DialogTitle needs to be a direct child of DialogContent for accessibility */}
-        <DialogTitle id="screen-modal-title" className="sr-only">
+        {/* Required for accessibility - this is a visually hidden title that screen readers will announce */}
+        <DialogTitle className="sr-only">
           {app.name}: {currentScreen.name || 'Screen Detail'}
         </DialogTitle>
-        <DialogDescription id="screen-modal-description" className="sr-only">
+        <DialogDescription className="sr-only">
           {t('screenModal.description', 'Detailed view of a screen from {{appName}}. Use arrow keys to navigate between screens.', { appName: app.name })}
         </DialogDescription>
         <div className={`flex items-center justify-between p-4 pt-2 ${isMobile ? 'pb-2' : 'border-b'}`}>
@@ -231,10 +229,10 @@ export function ScreenModal({
             <div className="flex-grow">
               {/* App and screen name - clickable */}
               <div className="flex flex-col">
-                <div className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</div>
+                <h3 className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</h3>
                 
                 <div className="flex items-center gap-2">
-                  <div className="text-xs text-gray-500 m-0">{app.name}</div>
+                  <span className="text-xs text-gray-500 m-0">{app.name}</span>
                   
                   {/* Category tag shown next to app name */}
                   {currentScreen.category && (
