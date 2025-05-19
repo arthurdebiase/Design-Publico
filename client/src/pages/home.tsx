@@ -171,9 +171,9 @@ export default function Home() {
                   setSelectedCategories([]);
                 }}
                 className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
-                aria-label="Limpar todos os filtros"
+                aria-label={t('filters.clearFilters')}
               >
-                <span>Limpar filtros</span>
+                <span>{t('filters.clearFilters')}</span>
                 <X className="h-3 w-3 ml-1" />
               </button>
             )}
