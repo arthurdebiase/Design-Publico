@@ -467,7 +467,7 @@ export default function ScreensPage() {
               aria-label={`Ver detalhes de ${screen.name || 'tela'}`}
             >
               <div 
-                className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" 
+                className="bg-white rounded-lg overflow-hidden relative group border border-gray-200" 
                 style={{ aspectRatio: "9/16", width: '100%', height: 'auto' }}
               >
                 {/* Utilizando ResponsiveImage com suporte ao Cloudinary */}

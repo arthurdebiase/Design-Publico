@@ -313,7 +313,7 @@ export function ScreenModal({
           {/* Skeleton placeholder with fixed dimensions to prevent layout shifts */}
           <div className={`${isMobile ? 'h-[70vh] w-full' : 'h-[68vh] w-auto'} flex items-center justify-center ${!isImageLoading ? 'hidden' : ''}`}>
             <div 
-              className="animate-pulse bg-gray-200 rounded-md" 
+              className="animate-pulse bg-white border border-gray-200 rounded-md" 
               style={{ 
                 width: isMobile ? '100%' : '380px',
                 height: isMobile ? '70vh' : '68vh',
