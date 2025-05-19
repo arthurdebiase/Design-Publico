@@ -303,20 +303,19 @@ export function ScreenModal({
           )}
           
           {/* Container for both image and tags */}
-          <div className="w-full flex flex-col items-center justify-center space-y-4 pb-4">
+          <div className="w-full flex flex-col items-center justify-center space-y-4">
             {/* Imagem principal - usando o componente CloudinaryImage para garantir consistência */}
             <div className={`${isMobile ? 'max-h-[70vh] w-full' : 'max-h-[68vh]'} flex items-center justify-center`}>
                 <CloudinaryImage 
                   src={currentScreen.imageUrl}
                   cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
                   alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                  className={`${isMobile ? 'max-h-[70vh] max-w-[95%]' : 'max-h-[68vh]'} w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                  className={`${isMobile ? 'max-h-[70vh] w-full' : 'max-h-[68vh]'} w-auto object-contain ${isImageLoading ? 'hidden' : 'block'}`}
                   onLoad={() => setIsImageLoading(false)}
                   priority={true}
                   width={1024}
                   height={1820}
                 />
-
             </div>
             
             {/* Mobile-specific toggle for details - removed */}
