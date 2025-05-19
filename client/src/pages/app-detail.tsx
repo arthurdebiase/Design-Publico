@@ -266,15 +266,15 @@ export default function AppDetail() {
                           <Button 
                             variant="outline" 
                             className="flex items-center gap-2"
-                            aria-label="Filtrar por componentes"
+                            aria-label={t('filters.filterByComponents')}
                             aria-haspopup="true"
                           >
-                            {'Componentes'}
+                            {t('filters.components')}
                             <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                          <DropdownMenuLabel>Componentes</DropdownMenuLabel>
+                          <DropdownMenuLabel>{t('filters.components')}</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem 
                             className={selectedTags.length === 0 ? "bg-accent/50" : ""}

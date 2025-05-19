@@ -360,7 +360,7 @@ export default function ScreensPage() {
                 <Button 
                   variant="outline" 
                   className="flex items-center gap-2"
-                  aria-label="Filtrar por componentes"
+                  aria-label={t('filters.filterByComponents')}
                   aria-haspopup="true"
                 >
                   {t('filters.components')}
@@ -395,8 +395,8 @@ export default function ScreensPage() {
         
         {/* Screen counter */}
         <div className="text-gray-600 font-medium flex flex-col items-end">
-          <span>{t('screens.showing')}</span>
-          <span className="font-semibold">{Math.min(displayedScreenCount, filteredScreens.length)} {t('screens.screensTotal')}</span>
+          <span>{t('filters.showing')}</span>
+          <span className="font-semibold">{Math.min(displayedScreenCount, filteredScreens.length)} {t('filters.screens')}</span>
         </div>
       </div>
       
@@ -413,7 +413,7 @@ export default function ScreensPage() {
               <button 
                 onClick={() => handleRemoveTag(tag)}
                 className="rounded-full hover:bg-blue-200 p-1 transition-colors"
-                aria-label={`Remover filtro de componente ${tag}`}
+                aria-label={`${t('filters.filter')}: ${tag}`}
               >
                 <X className="h-3 w-3" />
               </button>
