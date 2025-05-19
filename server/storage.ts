@@ -216,9 +216,25 @@ export class MemStorage implements IStorage {
     // This will allow the server to start up quickly while data syncs in the background
     setTimeout(async () => {
       try {
+        console.log("Starting background Airtable data sync...");
         await this.performAirtableSync(apiKey, baseId);
-      } catch (error) {
-        console.error("Error in background Airtable sync:", error);
+        console.log("Background Airtable sync completed successfully");
+      } catch (error: any) {
+        console.error("Error in background Airtable sync:", error.message);
+        // Try once more after a delay with more detailed error logging
+        setTimeout(async () => {
+          try {
+            console.log("Retrying Airtable sync after initial failure...");
+            await this.performAirtableSync(apiKey, baseId);
+            console.log("Retry Airtable sync completed successfully");
+          } catch (retryError: any) {
+            console.error("Error in retry Airtable sync:", retryError.message);
+            if (retryError.response) {
+              console.error("Response status:", retryError.response.status);
+              console.error("Response data:", JSON.stringify(retryError.response.data));
+            }
+          }
+        }, 5000); // Wait 5 seconds before retry
       }
     }, 100);
     
@@ -301,8 +317,15 @@ export class MemStorage implements IStorage {
 
           console.log(`Fetched batch of ${screensResponse.data.records.length} screen records from Airtable`);
         } while (offset);
-      } catch (error) {
-        console.error("Error fetching screens from Airtable:", error);
+      } catch (error: any) {
+        console.error("Error fetching screens from Airtable:", error.message);
+        if (error.response) {
+          console.error("API Response Status:", error.response.status);
+          console.error("API Response Headers:", JSON.stringify(error.response.headers));
+          console.error("API Response Data:", JSON.stringify(error.response.data));
+        } else if (error.request) {
+          console.error("No response received from Airtable API");
+        }
         // Continue with the sync process with what we have
       }
 
@@ -362,8 +385,15 @@ export class MemStorage implements IStorage {
 
           console.log(`Fetched batch of ${appsResponse.data.records.length} app records from Airtable`);
         } while (appOffset);
-      } catch (error) {
-        console.error("Error fetching apps from Airtable:", error);
+      } catch (error: any) {
+        console.error("Error fetching apps from Airtable:", error.message);
+        if (error.response) {
+          console.error("API Response Status:", error.response.status);
+          console.error("API Response Headers:", JSON.stringify(error.response.headers));
+          console.error("API Response Data:", JSON.stringify(error.response.data));
+        } else if (error.request) {
+          console.error("No response received from Airtable API");
+        }
         // Continue with the sync process with what we have
       }
 
@@ -376,6 +406,9 @@ export class MemStorage implements IStorage {
           headers: {
             Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json"
+          },
+          params: {
+            view: "brand-list" // Using view name instead of default view for consistency
           }
         });
 
