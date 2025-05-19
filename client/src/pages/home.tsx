@@ -139,8 +139,9 @@ export default function Home() {
           </div>
           
           {/* App counter */}
-          <div className="text-gray-600 font-medium">
-            {t('filters.showing')} {filteredApps?.length || 0} {t('filters.of')} {apps?.length || 0} {(apps?.length || 0) === 1 ? t('app.visit') : t('header.apps')}
+          <div className="text-gray-600 font-medium flex flex-col">
+            <span>{t('filters.showing')}</span>
+            <span className="font-semibold">{filteredApps?.length || 0} {t('filters.of')} {apps?.length || 0} {(apps?.length || 0) === 1 ? t('app.visit') : t('header.apps')}</span>
           </div>
         </div>
         
@@ -171,9 +172,9 @@ export default function Home() {
                   setSelectedCategories([]);
                 }}
                 className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
-                aria-label="Limpar todos os filtros"
+                aria-label={t('filters.clearFilters')}
               >
-                <span>Limpar filtros</span>
+                <span>{t('filters.clearFilters')}</span>
                 <X className="h-3 w-3 ml-1" />
               </button>
             )}
