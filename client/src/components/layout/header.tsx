@@ -79,9 +79,9 @@ export default function Header() {
               aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? (
-                <X className="h-6 w-6" aria-hidden="true" />
+                <X className="h-7 w-7" aria-hidden="true" />
               ) : (
-                <Menu className="h-6 w-6" aria-hidden="true" />
+                <Menu className="h-7 w-7" aria-hidden="true" />
               )}
               <span className="sr-only">{mobileMenuOpen ? "Close menu" : "Open menu"}</span>
             </Button>
