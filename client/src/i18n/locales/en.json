@@ -36,6 +36,8 @@
     "filterByCategory": "Filter by Category",
     "filterByComponents": "Filter by Components",
     "showing": "Showing",
+    "apps": "apps",
+    "screens": "screens",
     "resultsOf": "results of",
     "noResults": "No results found",
     "tryAdjusting": "Try adjusting your filters to find more results"

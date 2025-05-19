@@ -430,9 +430,9 @@ export default function ScreensPage() {
                 setSelectedCategories([]);
               }}
               className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
-              aria-label="Limpar todos os filtros"
+              aria-label={t('filters.clearFilters')}
             >
-              <span>Limpar filtros</span>
+              <span>{t('filters.clearFilters')}</span>
               <X className="h-3 w-3 ml-1" />
             </button>
           )}
@@ -443,7 +443,7 @@ export default function ScreensPage() {
         <div 
           className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 pb-10"
           role="grid"
-          aria-label="Todas as telas"
+          aria-label={t('screens.allScreens')}
         >
           {/* 
             Carregamos apenas um subconjunto das telas para reduzir o tamanho do DOM
