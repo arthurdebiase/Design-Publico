@@ -94,7 +94,7 @@ export default function Home() {
     <div>
       <div className="container mx-auto px-4 md:px-6 pt-6 pb-0">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Aplicativos</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('header.apps')}</h1>
         </div>
         
         {/* Filter section */}
@@ -110,18 +110,18 @@ export default function Home() {
                     aria-label="Filtrar por categoria"
                     aria-haspopup="true"
                   >
-                    {'Categoria'}
+                    {t('filters.category')}
                     <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                  <DropdownMenuLabel>Categoria</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('filters.category')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
                     onClick={() => handleCategoryFilterChange(null)}
                   >
-                    Todas as Categorias
+                    {t('filters.all')} {t('filters.category')}
                   </DropdownMenuItem>
                   {availableCategories && availableCategories.map((category: string, index: number) => (
                     <DropdownMenuItem
@@ -140,7 +140,7 @@ export default function Home() {
           
           {/* App counter */}
           <div className="text-gray-600 font-medium">
-            Mostrando {filteredApps?.length || 0} de {apps?.length || 0} {(apps?.length || 0) === 1 ? 'aplicativo' : 'aplicativos'}
+            {t('filters.showing')} {filteredApps?.length || 0} {t('filters.of')} {apps?.length || 0} {(apps?.length || 0) === 1 ? t('app.visit') : t('header.apps')}
           </div>
         </div>
         
@@ -157,7 +157,7 @@ export default function Home() {
                 <button 
                   onClick={() => handleRemoveCategory(category)}
                   className="rounded-full hover:bg-purple-200 p-1 transition-colors"
-                  aria-label={`Remover filtro de categoria ${category}`}
+                  aria-label={`${t('filters.clearFilters')}: ${category}`}
                 >
                   <X className="h-3 w-3" />
                 </button>
