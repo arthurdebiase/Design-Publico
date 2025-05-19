@@ -139,7 +139,7 @@ export default function Home() {
           </div>
           
           {/* App counter */}
-          <div className="text-gray-600 font-medium flex flex-col">
+          <div className="text-gray-600 font-medium flex flex-col items-end">
             <span>{t('filters.showing')}</span>
             <span className="font-semibold">{filteredApps?.length || 0} {t('header.apps').toLowerCase()}</span>
           </div>
