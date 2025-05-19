@@ -28,7 +28,17 @@
     "oldest": "Oldest",
     "alphabetical": "A-Z",
     "screenCount": "Screen Count",
-    "layout": "Layout"
+    "layout": "Layout",
+    "filter": "Filter",
+    "clearFilters": "Clear Filters",
+    "apply": "Apply",
+    "components": "Components",
+    "filterByCategory": "Filter by Category",
+    "filterByComponents": "Filter by Components",
+    "showing": "Showing",
+    "resultsOf": "results of",
+    "noResults": "No results found",
+    "tryAdjusting": "Try adjusting your filters to find more results"
   },
   "app": {
     "visit": "Visit",
@@ -50,7 +60,15 @@
     "copyFailedDesc": "Could not copy link to clipboard",
     "closeModal": "Close",
     "previousScreen": "Previous screen",
-    "nextScreen": "Next screen"
+    "nextScreen": "Next screen",
+    "screensFrom": "Screens from",
+    "moreScreens": "More screens",
+    "noScreensFound": "No screens found",
+    "tryOtherFilters": "Try other filters or categories",
+    "loadMore": "Load more",
+    "showing": "Showing",
+    "of": "of",
+    "screensTotal": "screens total"
   },
   "about": {
     "title": "Design references for the public good",

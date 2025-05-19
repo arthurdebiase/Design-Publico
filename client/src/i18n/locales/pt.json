@@ -28,7 +28,17 @@
     "oldest": "Mais antigos",
     "alphabetical": "A-Z",
     "screenCount": "Quantidade de Telas",
-    "layout": "Layout"
+    "layout": "Layout",
+    "filter": "Filtrar",
+    "clearFilters": "Limpar Filtros",
+    "apply": "Aplicar",
+    "components": "Componentes",
+    "filterByCategory": "Filtrar por Categoria",
+    "filterByComponents": "Filtrar por Componentes",
+    "showing": "Mostrando",
+    "resultsOf": "resultados de",
+    "noResults": "Nenhum resultado encontrado",
+    "tryAdjusting": "Tente ajustar seus filtros para encontrar mais resultados"
   },
   "app": {
     "visit": "Visitar",
@@ -50,7 +60,15 @@
     "copyFailedDesc": "Não foi possível copiar o link para a área de transferência",
     "closeModal": "Fechar",
     "previousScreen": "Tela anterior",
-    "nextScreen": "Próxima tela"
+    "nextScreen": "Próxima tela",
+    "screensFrom": "Telas de",
+    "moreScreens": "Mais telas",
+    "noScreensFound": "Nenhuma tela encontrada",
+    "tryOtherFilters": "Tente outros filtros ou categorias",
+    "loadMore": "Carregar mais",
+    "showing": "Mostrando",
+    "of": "de",
+    "screensTotal": "telas no total"
   },
   "about": {
     "title": "Referências de design para o bem público",
