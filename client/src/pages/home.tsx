@@ -18,7 +18,7 @@ export default function Home() {
     queryFn: () => fetchApps({})
   });
   
-  // Extract available categories from apps
+  // Extract available categories from apps and set predefined categories
   useEffect(() => {
     if (apps && apps.length > 0) {
       // Predefined categories that we want to display
@@ -30,42 +30,30 @@ export default function Home() {
     }
   }, [apps]);
   
-  // Use the category directly from the app data
+  // Map app to appropriate category based on its data
   const getAppCategory = (app: any): string => {
-    // If the app has a valid category field, use that
-    if (app.category && typeof app.category === 'string' && app.category.trim() !== '') {
-      // Normalize the category to match our predefined categories
-      const lowerCategory = app.category.toLowerCase();
-      
-      if (lowerCategory.includes('finan')) return "Finanças";
-      if (lowerCategory.includes('cidada') || lowerCategory.includes('cidadã')) return "Cidadania";
-      if (lowerCategory.includes('saude') || lowerCategory.includes('saúde')) return "Saúde";
-      if (lowerCategory.includes('logist') || lowerCategory.includes('logíst')) return "Logística";
-      if (lowerCategory.includes('trabalho')) return "Trabalho";
-      if (lowerCategory.includes('portal')) return "Portal";
-    }
+    if (!app || !app.category) return "Portal";
     
-    // Fallback to name/description-based categorization if category is not available
-    const name = app.name?.toLowerCase() || '';
-    const description = app.description?.toLowerCase() || '';
+    // Normalize category for consistent matching
+    const normalizedCategory = app.category.trim().toLowerCase();
     
-    if (name.includes("caixa") || description.includes("financ")) {
-      return "Finanças";
-    }
-    if (name.includes("trabalho") || description.includes("trabalho")) {
-      return "Trabalho";
-    }
-    if (name.includes("gov") || name.includes("gov.br") || description.includes("governo")) {
-      return "Cidadania";
-    }
-    if (name.includes("saúde") || name.includes("sus") || description.includes("saúde")) {
-      return "Saúde";
-    }
-    if (name.includes("correios") || description.includes("entreg")) {
-      return "Logística";
-    }
+    // Map to our predefined categories
+    if (normalizedCategory === "finanças" || normalizedCategory === "financas") return "Finanças";
+    if (normalizedCategory === "cidadania") return "Cidadania";
+    if (normalizedCategory === "saúde" || normalizedCategory === "saude") return "Saúde";
+    if (normalizedCategory === "logística" || normalizedCategory === "logistica") return "Logística";
+    if (normalizedCategory === "trabalho") return "Trabalho";
+    if (normalizedCategory === "portal") return "Portal";
     
-    // Default to 'Portal' if no other matching category
+    // For other values, try to match based on partial text
+    if (normalizedCategory.includes("finan")) return "Finanças";
+    if (normalizedCategory.includes("cidada")) return "Cidadania";
+    if (normalizedCategory.includes("saud")) return "Saúde";
+    if (normalizedCategory.includes("logist")) return "Logística";
+    if (normalizedCategory.includes("trabalh")) return "Trabalho";
+    if (normalizedCategory.includes("portal")) return "Portal";
+    
+    // Default to Portal if no match is found
     return "Portal";
   };
   
