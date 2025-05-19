@@ -73,6 +73,18 @@ export function ScreenModal({
   // Add a flag for the DOM mounting to help with animation timing
   const [isMounted, setIsMounted] = useState(false);
   
+  // Add state to track previous mobile state for smoother transitions
+  const [wasMobile, setWasMobile] = useState(isMobile);
+  
+  // Update wasMobile when isMobile changes, but with a slight delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setWasMobile(isMobile);
+    }, 300); // 300ms delay matches the transition time
+    
+    return () => clearTimeout(timer);
+  }, [isMobile]);
+  
   useEffect(() => {
     setLocalIndex(currentScreenIndex);
     // Sempre que mudar de tela, reiniciar o estado de carregamento
@@ -172,7 +184,7 @@ export function ScreenModal({
         className={`${isMobile 
           ? `p-0 overflow-hidden flex flex-col bottom-sheet-content w-screen m-0`
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
-        }`}
+        } transition-all duration-300`}
         hideCloseButton={true}
         aria-labelledby="screen-modal-title"
         aria-describedby="screen-modal-description"
@@ -218,20 +230,57 @@ export function ScreenModal({
             </div>
             <div className="flex-grow">
               {/* App and screen name - clickable */}
-              <DialogTitle id="screen-modal-title" className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogTitle>
-              <DialogDescription id="screen-modal-description" className="text-xs text-gray-500 m-0">{app.name}</DialogDescription>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <DialogTitle id="screen-modal-title" className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogTitle>
+                  
+                  {/* Category tag shown directly in title */}
+                  {currentScreen.category && (
+                    typeof currentScreen.category === 'string' ? (
+                      <Link
+                        href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent parent link click
+                          onClose();
+                          window.scrollTo(0, 0);
+                        }}
+                        className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline"
+                        title={`View all screens in ${currentScreen.category} category`}
+                      >
+                        {currentScreen.category}
+                      </Link>
+                    ) : (
+                      Array.isArray(currentScreen.category) && (currentScreen.category as string[]).length > 0 && (
+                        <Link
+                          href={`/screens?category=${encodeURIComponent((currentScreen.category as string[])[0])}`}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent parent link click
+                            onClose();
+                            window.scrollTo(0, 0);
+                          }}
+                          className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline"
+                          title={`View all screens in ${(currentScreen.category as string[])[0]} category`}
+                        >
+                          {(currentScreen.category as string[])[0]}
+                        </Link>
+                      )
+                    )
+                  )}
+                </div>
+                <DialogDescription id="screen-modal-description" className="text-xs text-gray-500 m-0">{app.name}</DialogDescription>
+              </div>
             </div>
           </Link>
           <div className="flex items-center gap-1">
-            {/* Show info button if there are tags or categories to display */}
-            {((currentScreen.tags && currentScreen.tags.length > 0) || currentScreen.category) && (
+            {/* Show info button if there are tags to display */}
+            {(currentScreen.tags && currentScreen.tags.length > 0) && (
               <Button 
                 variant="ghost" 
                 size="icon" 
                 className={`h-9 w-9 ${showTags ? 'bg-gray-100' : ''}`} 
-                aria-label={showTags ? "Hide metadata" : "Show metadata"}
+                aria-label={showTags ? "Hide components" : "Show components"}
                 onClick={() => setShowTags(!showTags)}
-                title={showTags ? "Hide componentes and categories" : "Show componentes and categories"}
+                title={showTags ? "Hide components" : "Show components"}
               >
                 <Info className="h-4 w-4" aria-hidden="true" />
               </Button>
@@ -320,47 +369,10 @@ export function ScreenModal({
             
             {/* Mobile-specific toggle for details - removed */}
               
-            {/* Tags and categories displayed here */}
+            {/* Component tags displayed here */}
             {showTags && (
               <div className="flex flex-wrap gap-2 mt-2 justify-center px-4">
-                {/* Categories - Only visible when showTags is true */}
-                {currentScreen.category && (
-                  <>
-                    {typeof currentScreen.category === 'string' ? (
-                      <Link 
-                        href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
-                        onClick={() => {
-                          onClose();
-                          // Ensure we scroll to top when navigating to filtered screens
-                          window.scrollTo(0, 0);
-                        }}
-                        className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
-                        title={`View all screens in ${currentScreen.category} category`}
-                      >
-                        {currentScreen.category}
-                      </Link>
-                    ) : (
-                      Array.isArray(currentScreen.category) && 
-                      (currentScreen.category as string[]).map((cat: string, idx: number) => (
-                        <Link 
-                          key={`modal-category-${idx}`}
-                          href={`/screens?category=${encodeURIComponent(cat)}`}
-                          onClick={() => {
-                            onClose();
-                            // Ensure we scroll to top when navigating to filtered screens
-                            window.scrollTo(0, 0);
-                          }}
-                          className="text-sm px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors cursor-pointer no-underline"
-                          title={`View all screens in ${cat} category`}
-                        >
-                          {cat}
-                        </Link>
-                      ))
-                    )}
-                  </>
-                )}
-                
-                {/* Tags - Only visible when showTags is true */}
+                {/* Tags - Showing only component tags */}
                 {currentScreen.tags && currentScreen.tags.length > 0 && (
                   currentScreen.tags.map((tag, index) => (
                     <Link 
