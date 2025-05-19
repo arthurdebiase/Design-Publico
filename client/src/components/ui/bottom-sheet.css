@@ -4,7 +4,7 @@
   height: 4px;
   border-radius: 2px;
   background-color: #ddd;
-  margin: 4px auto 0;
+  margin: 6px auto 2px;
 }
 
 /* Bottom sheet styles using Radix UI's data-state attributes */
