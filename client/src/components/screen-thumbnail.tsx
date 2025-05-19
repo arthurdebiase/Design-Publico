@@ -38,16 +38,16 @@ export default function ScreenThumbnail({ screen, onClick, isPriority = false, i
       aria-label={`Ver detalhes de ${screen.name || 'tela'}`}
     >
       <div 
-        className="bg-white rounded-lg overflow-hidden relative group border border-gray-200" 
-        style={{ width: '100%', minHeight: '550px', paddingBottom: '8px' }}
+        className="bg-white rounded-lg overflow-hidden relative group border border-gray-200 flex items-center justify-center" 
+        style={{ width: '100%', height: 'auto' }}
       >
         <ResponsiveImage 
           src={screen.imageUrl}
           cloudinarySrc={screen.cloudinaryUrl} // Use Cloudinary URL when available for reliable hosting
           alt={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
           aria-label={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
-          className="w-full h-full object-contain"
-          style={{ maxHeight: "550px", width: "auto", margin: "0 auto" }}
+          className="w-full object-contain"
+          style={{ width: "auto", margin: "0 auto", maxHeight: "450px" }}
           placeholderClassName="absolute inset-0 flex items-center justify-center"
           sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw"
           widths={[240, 320, 480]} // Reduzido o tamanho das imagens carregadas

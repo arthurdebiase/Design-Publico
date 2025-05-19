@@ -467,16 +467,16 @@ export default function ScreensPage() {
               aria-label={`Ver detalhes de ${screen.name || 'tela'}`}
             >
               <div 
-                className="bg-white rounded-lg overflow-hidden relative group border border-gray-200" 
-                style={{ width: '100%', minHeight: '550px', paddingBottom: '8px' }}
+                className="bg-white rounded-lg overflow-hidden relative group border border-gray-200 flex items-center justify-center" 
+                style={{ width: '100%', height: 'auto' }}
               >
                 {/* Utilizando ResponsiveImage com suporte ao Cloudinary */}
                 <ResponsiveImage 
                   src={screen.imageUrl}
                   cloudinarySrc={screen.cloudinaryUrl}
                   alt={screen.name || 'Tela de aplicativo'}
-                  className="w-full h-full object-contain"
-                  style={{ maxHeight: "550px", width: "auto", margin: "0 auto" }}
+                  className="w-full object-contain"
+                  style={{ width: "auto", margin: "0 auto", maxHeight: "450px" }}
                   widths={[300, 450, 600]}
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   height={534}
