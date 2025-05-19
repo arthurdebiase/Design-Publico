@@ -68,7 +68,7 @@ export function CloudinaryImage({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden",
+        "relative overflow-hidden rounded-lg border border-gray-200",
         className
       )}
       style={{ 
