@@ -80,6 +80,11 @@ export default function Home() {
     // Get the appropriate category for this app
     const appCategory = getAppCategory(app);
     
+    // Log for debugging
+    if (selectedCategories.includes("Finanças")) {
+      console.log(`App: ${app.name}, Category: ${app.category}, Type: ${app.type}, Assigned Category: ${appCategory}`);
+    }
+    
     // Check if the app's category is included in the selected categories
     return selectedCategories.includes(appCategory);
   });
