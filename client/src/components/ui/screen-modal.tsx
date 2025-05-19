@@ -326,12 +326,12 @@ export function ScreenModal({
           {/* Container for both image and tags */}
           <div className="w-full flex flex-col items-center justify-center space-y-4">
             {/* Main image - fixed height container to prevent layout shifts */}
-            <div className={`flex-1 w-full flex items-center justify-center overflow-hidden p-0 ${isMobile ? 'pb-safe h-[70vh]' : 'h-[68vh]'}`}>
+            <div className={`flex-1 w-full flex items-center justify-center overflow-hidden ${isMobile ? 'pb-safe h-[70vh]' : 'h-[68vh]'}`}>
                 <CloudinaryImage 
                   src={currentScreen.imageUrl}
                   cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
                   alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                  className={`${isMobile ? 'max-h-[65vh] w-auto' : 'max-h-[68vh] w-auto'} object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                  className={`${isMobile ? 'h-[65vh] w-auto mb-8' : 'h-[68vh] w-auto'} object-contain bg-white ${isImageLoading ? 'hidden' : 'block'}`}
                   onLoad={() => setIsImageLoading(false)}
                   priority={true}
                   width={1024}

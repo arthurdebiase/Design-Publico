@@ -68,15 +68,11 @@ export function CloudinaryImage({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden",
+        "relative overflow-hidden rounded-lg border border-gray-200",
         className
       )}
       style={{ 
-        width: '100%',
-        height: 'auto',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        aspectRatio: width && height ? `${width}/${height}` : undefined
       }}
     >
       {/* Skeleton loader shown while image is loading */}
@@ -97,7 +93,7 @@ export function CloudinaryImage({
         onClick={(e) => e.preventDefault()}
         style={{ pointerEvents: "none" }}
         className={cn(
-          "w-auto max-h-[450px] object-contain transition-opacity duration-300 rounded-lg border border-gray-200 p-2",
+          "w-full h-full object-contain transition-opacity duration-300",
           isLoading ? "opacity-0" : "opacity-100",
           hasError ? "hidden" : "block"
         )}
