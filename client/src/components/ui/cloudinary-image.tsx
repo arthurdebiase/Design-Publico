@@ -97,7 +97,7 @@ export function CloudinaryImage({
         onClick={(e) => e.preventDefault()}
         style={{ pointerEvents: "none" }}
         className={cn(
-          "w-auto max-h-[450px] object-contain transition-opacity duration-300 rounded-lg border border-gray-200",
+          "w-auto max-h-[450px] object-contain transition-opacity duration-300 rounded-lg border border-gray-200 p-2",
           isLoading ? "opacity-0" : "opacity-100",
           hasError ? "hidden" : "block"
         )}
