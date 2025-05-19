@@ -396,7 +396,7 @@ export default function ScreensPage() {
         {/* Screen counter */}
         <div className="text-gray-600 font-medium flex flex-col items-end">
           <span>{t('screens.showing')}</span>
-          <span className="font-semibold">{Math.min(displayedScreenCount, filteredScreens.length)} {t('screens.of')} {totalAirtableScreens} {t('screens.screensTotal')}</span>
+          <span className="font-semibold">{Math.min(displayedScreenCount, filteredScreens.length)} {t('screens.screensTotal')}</span>
         </div>
       </div>
       
