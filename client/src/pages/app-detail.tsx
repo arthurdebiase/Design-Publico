@@ -296,9 +296,9 @@ export default function AppDetail() {
                       </DropdownMenu>
                     </div>
                     
-                    {/* Seções toggle */}
+                    {/* Sections toggle */}
                     <div className="flex items-center">
-                      <label htmlFor="sections-toggle" className="text-sm mr-2 text-gray-600">Seções</label>
+                      <label htmlFor="sections-toggle" className="text-sm mr-2 text-gray-600">{t('filters.sections')}</label>
                       <Switch
                         id="sections-toggle"
                         checked={showSections}
@@ -338,9 +338,9 @@ export default function AppDetail() {
                         <button
                           onClick={() => setSelectedTags([])}
                           className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
-                          aria-label="Limpar todos os filtros"
+                          aria-label={t('filters.clearFilters')}
                         >
-                          <span>Limpar filtros</span>
+                          <span>{t('filters.clearFilters')}</span>
                           <X className="h-3 w-3 ml-1" />
                         </button>
                       )}
@@ -406,9 +406,9 @@ export default function AppDetail() {
               ) : (
                 <div className="text-center py-8 bg-gray-50 rounded-lg mb-10">
                   <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900">No screens available</h3>
+                  <h3 className="text-lg font-medium text-gray-900">{t('app.noScreens')}</h3>
                   <p className="text-gray-500 mt-2">
-                    This app doesn't have any screens available yet.
+                    {t('app.noScreensDesc')}
                   </p>
                 </div>
               )}
@@ -441,10 +441,10 @@ export default function AppDetail() {
         </>
       ) : (
         <div className="bg-white p-8 rounded-lg text-center">
-          <h3 className="font-medium text-lg mb-2">Application not found</h3>
-          <p className="text-gray-500 mb-4">The application you're looking for might have been removed or doesn't exist.</p>
+          <h3 className="font-medium text-lg mb-2">{t('app.notFound')}</h3>
+          <p className="text-gray-500 mb-4">{t('app.notFoundDesc')}</p>
           <Button asChild>
-            <Link href="/">Go back to gallery</Link>
+            <Link href="/">{t('app.goBack')}</Link>
           </Button>
         </div>
       )}

@@ -41,7 +41,8 @@
     "resultsOf": "resultados de",
     "noResults": "Nenhum resultado encontrado",
     "tryAdjusting": "Tente ajustar seus filtros para encontrar mais resultados",
-    "removeFilter": "Remover filtro"
+    "removeFilter": "Remover filtro",
+    "sections": "Seções"
   },
   "app": {
     "visit": "Visitar",

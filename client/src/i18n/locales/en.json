@@ -41,7 +41,8 @@
     "resultsOf": "results of",
     "noResults": "No results found",
     "tryAdjusting": "Try adjusting your filters to find more results",
-    "removeFilter": "Remove filter"
+    "removeFilter": "Remove filter",
+    "sections": "Sections"
   },
   "app": {
     "visit": "Visit",
