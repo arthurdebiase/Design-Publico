@@ -425,8 +425,15 @@ export class MemStorage implements IStorage {
             break;
           }
         }
-      } catch (error) {
-        console.error("Error fetching brand files:", error);
+      } catch (error: any) {
+        console.error("Error fetching brand files:", error.message);
+        if (error.response) {
+          console.error("API Response Status:", error.response.status);
+          console.error("API Response Headers:", JSON.stringify(error.response.headers));
+          console.error("API Response Data:", JSON.stringify(error.response.data));
+        } else if (error.request) {
+          console.error("No response received from Airtable API for brand files");
+        }
         // Continue with the sync process even if we couldn't fetch the brand logo
       }
 
@@ -1124,6 +1131,7 @@ export class MemStorage implements IStorage {
         name: screenType.name,
         description: screenType.description,
         imageUrl: `https://random.imagecdn.app/400/800?image=${30 + index}`,
+        cloudinaryUrl: null, // Add missing cloudinaryUrl field
         altText: `${screenType.name} screen from Carteira de Trabalho Digital application`,
         flow: "Main",
         order: index,
