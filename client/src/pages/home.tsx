@@ -94,7 +94,7 @@ export default function Home() {
     <div>
       <div className="container mx-auto px-4 md:px-6 pt-6 pb-0">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2">Aplicativos</h1>
+          <h1 className="text-3xl font-bold mb-2">{t('home.apps')}</h1>
         </div>
         
         {/* Filter section */}
@@ -110,18 +110,18 @@ export default function Home() {
                     aria-label="Filtrar por categoria"
                     aria-haspopup="true"
                   >
-                    {'Categoria'}
+                    {t('filters.category')}
                     <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                  <DropdownMenuLabel>Categoria</DropdownMenuLabel>
+                  <DropdownMenuLabel>{t('filters.category')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
                     onClick={() => handleCategoryFilterChange(null)}
                   >
-                    Todas as Categorias
+                    {t('filters.all')} {t('filters.categories')}
                   </DropdownMenuItem>
                   {availableCategories && availableCategories.map((category: string, index: number) => (
                     <DropdownMenuItem
@@ -140,7 +140,7 @@ export default function Home() {
           
           {/* App counter */}
           <div className="text-gray-600 font-medium">
-            Mostrando {filteredApps?.length || 0} de {apps?.length || 0} {(apps?.length || 0) === 1 ? 'aplicativo' : 'aplicativos'}
+            {t('filters.showing')} {filteredApps?.length || 0} {t('filters.of')} {apps?.length || 0} {(apps?.length || 0) === 1 ? t('home.app') : t('home.apps')}
           </div>
         </div>
         
@@ -157,7 +157,7 @@ export default function Home() {
                 <button 
                   onClick={() => handleRemoveCategory(category)}
                   className="rounded-full hover:bg-purple-200 p-1 transition-colors"
-                  aria-label={`Remover filtro de categoria ${category}`}
+                  aria-label={t('filters.removeFilter', { category })}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -173,7 +173,7 @@ export default function Home() {
                 className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
                 aria-label="Limpar todos os filtros"
               >
-                <span>Limpar filtros</span>
+                <span>{t('filters.clearAll')}</span>
                 <X className="h-3 w-3 ml-1" />
               </button>
             )}
@@ -218,8 +218,8 @@ export default function Home() {
               
               {filteredApps && filteredApps.length === 0 && (
                 <div className="bg-white p-8 rounded-lg text-center">
-                  <h3 className="font-medium text-lg mb-2">No applications found</h3>
-                  <p className="text-gray-500">Try adjusting your filters to see more results.</p>
+                  <h3 className="font-medium text-lg mb-2">{t('home.noAppsFound')}</h3>
+                  <p className="text-gray-500">{t('home.adjustFilters')}</p>
                 </div>
               )}
             </>
