@@ -1,0 +1,58 @@
+Warning: validateDOMNesting(...): <a> cannot appear as a descendant of &lt;a&gt;.
+    at a
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fd8d03a5:337:18
+    at div
+    at div
+    at div
+    at a
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fd8d03a5:337:18
+    at div
+    at div
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=fd8d03a5:41:13
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LPGE2D4Z.js?v=fd8d03a5:59:7
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=fd8d03a5:52:11
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=fd8d03a5:33:11
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=fd8d03a5:41:13
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-O2CMLVAY.js?v=fd8d03a5:29:5
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=fd8d03a5:232:13
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=fd8d03a5:155:58
+    at Presence (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FQBNBWJQ.js?v=fd8d03a5:24:11)
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=fd8d03a5:146:64
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=fd8d03a5:52:11
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-DKHUMOWT.js?v=fd8d03a5:33:11
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-CPFL7ZFD.js?v=fd8d03a5:41:13
+    at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-LPGE2D4Z.js?v=fd8d03a5:258:22
+    at Presence (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-FQBNBWJQ.js?v=fd8d03a5:24:11)
+    at Provider (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6J5IXUBZ.js?v=fd8d03a5:48:15)
+    at DialogPortal (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=fd8d03a5:109:11)
+    at _c3 (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/src/components/ui/dialog.tsx:51:12)
+    at Provider (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-6J5IXUBZ.js?v=fd8d03a5:48:15)
+    at Dialog (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-dialog.js?v=fd8d03a5:50:5)
+    at ScreenModal (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/src/components/ui/screen-modal.tsx:52:3)
+    at div
+    at AppDetail (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/src/pages/app-detail.tsx?t=1747618352558:65:27)
+    at Route (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fd8d03a5:323:16)
+    at Switch (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=fd8d03a5:379:17)
+    at Router
+    at main
+    at div
+    at ScrollToTop (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/src/components/scroll-to-top.tsx:20:39)
+    at _a…
+`DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+
+If you want to hide the &#x60;DialogTitle&#x60;, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
+at t.value (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://9d01b45b-66b1-44a7-b8b2-d4564be9f05a-00-2ubikr8bqwoyf.janeway.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
+`DialogContent` requires a `DialogTitle` for the component to be accessible for screen reader users.
+
+If you want to hide the `DialogTitle`, you can wrap it with our VisuallyHidden component.
+
+For more information, see https://radix-ui.com/primitives/docs/components/dialog
