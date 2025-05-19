@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Loader2, FileText, Maximize2, ChevronDown, Filter, X, Check } from 'lucide-react';
-import { Screen, App } from '@/types';
+import { Screen, App } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ScreenModal } from '@/components/ui/screen-modal';
@@ -535,7 +535,7 @@ export default function ScreensPage() {
           {filteredScreens.length > displayedScreenCount && (
             <div className="col-span-full text-center py-6 flex flex-col items-center">
               <p className="text-gray-500 mb-3 text-sm">
-                Mostrando {displayedScreenCount} de {filteredScreens.length} telas
+                {t('screens.showing')} {displayedScreenCount} {t('screens.of')} {filteredScreens.length} {t('app.screens')}
               </p>
               <button
                 onClick={() => {
@@ -550,9 +550,9 @@ export default function ScreensPage() {
                   });
                 }}
                 className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-md shadow-sm transition-colors"
-                aria-label="Carregar mais 50 telas"
+                aria-label={t('screens.loadMore')}
               >
-                Mostrar mais
+                {t('screens.loadMore')}
               </button>
             </div>
           )}

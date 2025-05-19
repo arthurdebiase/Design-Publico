@@ -15,10 +15,10 @@ import "./bottom-sheet.css";
 interface ScreenModalProps {
   isOpen: boolean;
   onClose: () => void;
-  screens: Screen[];
+  screens: Array<Screen & { category?: string | string[] | null }>;
   currentScreenIndex: number;
   onScreenChange: (index: number) => void;
-  app: App;
+  app: App & { airtableId?: string, slug?: string | null };
 }
 
 // Function to get component background color
