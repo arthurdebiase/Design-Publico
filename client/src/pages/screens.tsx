@@ -31,8 +31,8 @@ export default function ScreensPage() {
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
-  const [currentAppScreens, setCurrentAppScreens] = useState<Screen[]>([]);
-  const [currentApp, setCurrentApp] = useState<App | null>(null);
+  const [currentAppScreens, setCurrentAppScreens] = useState<Array<Screen & { category?: string | string[] | null }>>([]);
+  const [currentApp, setCurrentApp] = useState<(App & { airtableId?: string, slug?: string | null }) | null>(null);
   const [displayedScreenCount, setDisplayedScreenCount] = useState(50); // Exibir inicialmente apenas 50 telas para melhorar performance
   const [totalAirtableScreens, setTotalAirtableScreens] = useState(0); // Número total de telas no Airtable
   const [location] = useLocation();
@@ -246,8 +246,9 @@ export default function ScreensPage() {
     // Find the index of the current screen
     const index = appScreens.findIndex((s: Screen & { app?: App }) => s.id === screen.id);
     
-    setCurrentAppScreens(appScreens);
-    setCurrentApp(screen.app);
+    // Cast types for compatibility with ScreenModal component
+    setCurrentAppScreens(appScreens as Array<Screen & { category?: string | string[] | null }>);
+    setCurrentApp(screen.app as (App & { airtableId?: string, slug?: string | null }));
     setCurrentScreenIndex(index >= 0 ? index : 0);
     setIsModalOpen(true);
   };
