@@ -393,10 +393,12 @@ export default function ScreensPage() {
           {/* Category filter removed as requested */}
         </div>
         
-        {/* Screen counter */}
+        {/* Screen counter - updated format "X de XX telas" */}
         <div className="text-gray-600 font-medium flex flex-col items-end">
           <span>{t('filters.showing')}</span>
-          <span className="font-semibold">{Math.min(displayedScreenCount, filteredScreens.length)} {t('filters.screens')}</span>
+          <span className="font-semibold">
+            {Math.min(displayedScreenCount, filteredScreens.length)} {t('screens.of')} {filteredScreens.length} {t('filters.screens')}
+          </span>
         </div>
       </div>
       
