@@ -231,10 +231,12 @@ export function ScreenModal({
             <div className="flex-grow">
               {/* App and screen name - clickable */}
               <div className="flex flex-col">
+                <DialogTitle id="screen-modal-title" className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogTitle>
+                
                 <div className="flex items-center gap-2">
-                  <DialogTitle id="screen-modal-title" className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors">{currentScreen.name}</DialogTitle>
+                  <DialogDescription id="screen-modal-description" className="text-xs text-gray-500 m-0">{app.name}</DialogDescription>
                   
-                  {/* Category tag shown directly in title */}
+                  {/* Category tag shown next to app name */}
                   {currentScreen.category && (
                     typeof currentScreen.category === 'string' ? (
                       <Link
@@ -267,7 +269,6 @@ export function ScreenModal({
                     )
                   )}
                 </div>
-                <DialogDescription id="screen-modal-description" className="text-xs text-gray-500 m-0">{app.name}</DialogDescription>
               </div>
             </div>
           </Link>
