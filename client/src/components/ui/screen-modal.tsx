@@ -182,7 +182,7 @@ export function ScreenModal({
     >
       <DialogContent 
         className={`${isMobile 
-          ? `p-0 overflow-hidden flex flex-col bottom-sheet-content w-screen m-0`
+          ? `p-0 overflow-hidden flex flex-col bottom-sheet-content w-screen m-0 pb-safe`
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         } transition-all duration-300`}
         hideCloseButton={true}
@@ -362,12 +362,12 @@ export function ScreenModal({
           {/* Container for both image and tags */}
           <div className="w-full flex flex-col items-center justify-center space-y-4">
             {/* Main image - using CloudinaryImage component for consistency */}
-            <div className={`flex-1 w-full flex items-center justify-center ${isMobile ? 'pb-safe' : ''}`}>
+            <div className={`flex-1 w-full flex items-center justify-center overflow-hidden ${isMobile ? 'pb-safe' : ''}`}>
                 <CloudinaryImage 
                   src={currentScreen.imageUrl}
                   cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
                   alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                  className={`${isMobile ? 'max-h-[80vh] w-auto' : 'max-h-[68vh] w-auto'} object-contain ${isImageLoading ? 'hidden' : 'block'}`}
+                  className={`${isMobile ? 'max-h-[75vh] w-auto' : 'max-h-[68vh] w-auto'} object-contain ${isImageLoading ? 'hidden' : 'block'}`}
                   onLoad={() => setIsImageLoading(false)}
                   priority={true}
                   width={1024}
