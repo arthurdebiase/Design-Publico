@@ -68,7 +68,7 @@ export function CloudinaryImage({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden rounded-lg border border-gray-200",
+        "relative overflow-hidden",
         className
       )}
       style={{ 
@@ -97,7 +97,7 @@ export function CloudinaryImage({
         onClick={(e) => e.preventDefault()}
         style={{ pointerEvents: "none" }}
         className={cn(
-          "w-auto max-h-[450px] object-contain transition-opacity duration-300",
+          "w-auto max-h-[450px] object-contain transition-opacity duration-300 rounded-lg border border-gray-200",
           isLoading ? "opacity-0" : "opacity-100",
           hasError ? "hidden" : "block"
         )}
