@@ -32,10 +32,23 @@ export default function Home() {
   
   // Map app to appropriate category based on its data
   const getAppCategory = (app: any): string => {
-    if (!app || !app.category) return "Portal";
+    if (!app) return "Portal";
     
-    // Normalize category for consistent matching
-    const normalizedCategory = app.category.trim().toLowerCase();
+    // First check if the app has a category property that's a string
+    const category = app.category;
+    
+    // If category is not a string or is empty, use fallback categorization
+    if (typeof category !== 'string' || !category.trim()) {
+      // Fallback to type-based categorization
+      if (app.type === "Federal" && app.name?.includes("Saúde")) return "Saúde";
+      if (app.type === "Federal" && app.name?.includes("Trabalho")) return "Trabalho";
+      if (app.type === "Federal" && app.name?.includes("Caixa")) return "Finanças";
+      if (app.type === "Municipal") return "Cidadania";
+      return "Portal";
+    }
+    
+    // Now we know category is a valid string, normalize it
+    const normalizedCategory = category.trim().toLowerCase();
     
     // Map to our predefined categories
     if (normalizedCategory === "finanças" || normalizedCategory === "financas") return "Finanças";
