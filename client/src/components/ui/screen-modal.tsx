@@ -240,43 +240,8 @@ export function ScreenModal({
               <div className="flex flex-col">
                 <h3 className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors truncate max-w-[180px]" title={currentScreen.name}>{currentScreen.name || "..."}</h3>
                 
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500 m-0 truncate max-w-[120px]" title={app.name}>{app.name || "..."}</span>
-                  
-                  {/* Category tag shown next to app name */}
-                  {currentScreen.category && (
-                    typeof currentScreen.category === 'string' ? (
-                      <span
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent parent link click
-                          onClose();
-                          // Use string assertion since we already checked it's a string
-                          const category = currentScreen.category as string;
-                          window.location.href = `/screens?category=${encodeURIComponent(category)}`;
-                          window.scrollTo(0, 0);
-                        }}
-                        className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline cursor-pointer"
-                        title={`View all screens in ${currentScreen.category} category`}
-                      >
-                        {currentScreen.category}
-                      </span>
-                    ) : (
-                      Array.isArray(currentScreen.category) && (currentScreen.category as string[]).length > 0 && (
-                        <span
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent parent link click
-                            onClose();
-                            window.location.href = `/screens?category=${encodeURIComponent((currentScreen.category as string[])[0])}`;
-                            window.scrollTo(0, 0);
-                          }}
-                          className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline cursor-pointer"
-                          title={`View all screens in ${(currentScreen.category as string[])[0]} category`}
-                        >
-                          {(currentScreen.category as string[])[0]}
-                        </span>
-                      )
-                    )
-                  )}
+                <div className="flex items-center">
+                  <span className="text-xs text-gray-500 m-0 truncate max-w-[180px]" title={app.name}>{app.name || "..."}</span>
                 </div>
               </div>
             </div>
