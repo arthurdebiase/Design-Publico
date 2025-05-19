@@ -30,43 +30,36 @@ export default function Home() {
     }
   }, [apps]);
   
-  // Map app to appropriate category based on its data
+  // Direct category mapping from app data
   const getAppCategory = (app: any): string => {
     if (!app) return "Portal";
     
-    // First check if the app has a category property that's a string
-    const category = app.category;
+    // Use exact category matches based on app data
+    if (app.category === "Finanças") return "Finanças";
+    if (app.category === "Cidadania") return "Cidadania"; 
+    if (app.category === "Saúde") return "Saúde";
+    if (app.category === "Logística") return "Logística";
+    if (app.category === "Trabalho") return "Trabalho";
+    if (app.category === "Portal") return "Portal";
     
-    // If category is not a string or is empty, use fallback categorization
-    if (typeof category !== 'string' || !category.trim()) {
-      // Fallback to type-based categorization
-      if (app.type === "Federal" && app.name?.includes("Saúde")) return "Saúde";
-      if (app.type === "Federal" && app.name?.includes("Trabalho")) return "Trabalho";
-      if (app.type === "Federal" && app.name?.includes("Caixa")) return "Finanças";
-      if (app.type === "Municipal") return "Cidadania";
-      return "Portal";
+    // Name-based overrides for specific apps we know about
+    if (app.name === "CAIXA" || app.name === "Meu INSS" || app.name === "Tesouro Direto") {
+      return "Finanças";
+    }
+    if (app.name === "Carteira de Trabalho Digital") {
+      return "Trabalho";
+    }
+    if (app.name === "Meu SUS Digital") {
+      return "Saúde";
+    }
+    if (app.name === "Correios") {
+      return "Logística";
+    }
+    if (app.name === "e-Título") {
+      return "Cidadania";
     }
     
-    // Now we know category is a valid string, normalize it
-    const normalizedCategory = category.trim().toLowerCase();
-    
-    // Map to our predefined categories
-    if (normalizedCategory === "finanças" || normalizedCategory === "financas") return "Finanças";
-    if (normalizedCategory === "cidadania") return "Cidadania";
-    if (normalizedCategory === "saúde" || normalizedCategory === "saude") return "Saúde";
-    if (normalizedCategory === "logística" || normalizedCategory === "logistica") return "Logística";
-    if (normalizedCategory === "trabalho") return "Trabalho";
-    if (normalizedCategory === "portal") return "Portal";
-    
-    // For other values, try to match based on partial text
-    if (normalizedCategory.includes("finan")) return "Finanças";
-    if (normalizedCategory.includes("cidada")) return "Cidadania";
-    if (normalizedCategory.includes("saud")) return "Saúde";
-    if (normalizedCategory.includes("logist")) return "Logística";
-    if (normalizedCategory.includes("trabalh")) return "Trabalho";
-    if (normalizedCategory.includes("portal")) return "Portal";
-    
-    // Default to Portal if no match is found
+    // Fallback to type-based categorization
     return "Portal";
   };
   
