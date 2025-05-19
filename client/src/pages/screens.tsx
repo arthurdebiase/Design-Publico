@@ -468,15 +468,15 @@ export default function ScreensPage() {
             >
               <div 
                 className="bg-white rounded-lg overflow-hidden relative group border border-gray-200" 
-                style={{ aspectRatio: "9/16", width: '100%', height: 'auto' }}
+                style={{ width: '100%', minHeight: '550px', paddingBottom: '8px' }}
               >
                 {/* Utilizando ResponsiveImage com suporte ao Cloudinary */}
                 <ResponsiveImage 
                   src={screen.imageUrl}
                   cloudinarySrc={screen.cloudinaryUrl}
                   alt={screen.name || 'Tela de aplicativo'}
-                  className="w-full h-full object-contain bg-white"
-                  style={{ aspectRatio: "9/16", backgroundColor: "#ffffff" }}
+                  className="w-full h-full object-contain"
+                  style={{ maxHeight: "550px", width: "auto", margin: "0 auto" }}
                   widths={[300, 450, 600]}
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   height={534}
