@@ -468,17 +468,25 @@ export default function ScreensPage() {
                 className="bg-gray-100 rounded-lg overflow-hidden shadow-sm relative group" 
                 style={{ aspectRatio: "9/16", width: '100%', height: 'auto' }}
               >
-                {/* Utilizando propriedades otimizadas diretamente */}
-                <img 
+                {/* Utilizando ResponsiveImage com suporte ao Cloudinary */}
+                <ResponsiveImage 
                   src={screen.imageUrl}
+                  cloudinarySrc={screen.cloudinaryUrl}
                   alt={screen.name || 'Tela de aplicativo'}
                   className="w-full h-full object-contain"
-                  width={300}
-                  height={534}
-                  loading={index < 5 ? "eager" : "lazy"}
                   style={{ aspectRatio: "9/16", backgroundColor: "#f8f8f8" }}
-                  // Use data-fetchpriority instead to avoid TypeScript errors
-                  data-fetchpriority={index < 5 ? "high" : "auto"}
+                  widths={[300, 450, 600]}
+                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
+                  height={534}
+                  format="webp"
+                  quality={85}
+                  priority={index < 5}
+                  loading={index < 5 ? "eager" : "lazy"}
+                  placeholder={
+                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                      <span className="sr-only">Loading image for {screen.name || 'screen'}</span>
+                    </div>
+                  }
                 />
                 
                 {/* Overlay com ícone de maximizar */}
