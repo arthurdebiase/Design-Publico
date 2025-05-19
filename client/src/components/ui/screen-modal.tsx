@@ -179,7 +179,7 @@ export function ScreenModal({
       >
         {/* Handle indicator for mobile bottom sheet */}
         {isMobile && (
-          <div className="w-full flex justify-center pt-2 pb-1">
+          <div className="w-full flex justify-center pt-1 pb-0">
             <div className="bottom-sheet-handle"></div>
           </div>
         )}
@@ -191,7 +191,7 @@ export function ScreenModal({
         <DialogDescription className="sr-only" id="screen-modal-description">
           {t('screenModal.description', 'Detailed view of a screen from {{appName}}. Use arrow keys to navigate between screens.', { appName: app.name })}
         </DialogDescription>
-        <div className={`flex items-center justify-between p-4 ${isMobile ? 'pb-2' : 'border-b'}`}>
+        <div className={`flex items-center justify-between p-4 pt-2 ${isMobile ? 'pb-2' : 'border-b'}`}>
           <Link href={`/app/${createSlug(app.name)}`} 
             className="flex items-center group no-underline" 
             onClick={() => {
