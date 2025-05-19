@@ -475,8 +475,8 @@ export default function ScreensPage() {
                   src={screen.imageUrl}
                   cloudinarySrc={screen.cloudinaryUrl}
                   alt={screen.name || 'Tela de aplicativo'}
-                  className="w-full h-full object-contain"
-                  style={{ aspectRatio: "9/16", backgroundColor: "#f8f8f8" }}
+                  className="w-full h-full object-cover"
+                  style={{ aspectRatio: "9/16", backgroundColor: "#ffffff" }}
                   widths={[300, 450, 600]}
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   height={534}
@@ -485,7 +485,7 @@ export default function ScreensPage() {
                   priority={index < 5}
                   loading={index < 5 ? "eager" : "lazy"}
                   placeholder={
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <div className="w-full h-full flex items-center justify-center bg-white">
                       <span className="sr-only">Loading image for {screen.name || 'screen'}</span>
                     </div>
                   }
