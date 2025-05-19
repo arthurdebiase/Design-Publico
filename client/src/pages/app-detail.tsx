@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAppById, fetchScreensByAppId } from "@/lib/airtable";
 import { ScreenModal } from "@/components/ui/screen-modal";
 import ScreenThumbnail from "@/components/screen-thumbnail";
-import { Screen } from "@/types";
+import { App, Screen } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Bookmark, 
@@ -280,7 +280,7 @@ export default function AppDetail() {
                             className={selectedTags.length === 0 ? "bg-accent/50" : ""}
                             onClick={() => handleTagFilterChange(null)}
                           >
-                            Todos os Componentes
+                            {t('filters.all')} {t('filters.components')}
                           </DropdownMenuItem>
                           {availableTags.map((tag: string, index: number) => (
                             <DropdownMenuItem
@@ -309,7 +309,7 @@ export default function AppDetail() {
                     
                     {/* Screen counter */}
                     <div className="text-gray-600 font-medium ml-auto">
-                      {filteredScreens.length} {filteredScreens.length === 1 ? 'tela' : 'telas'}
+                      {filteredScreens.length} {t('filters.screens')}
                     </div>
                   </div>
                   
@@ -326,7 +326,7 @@ export default function AppDetail() {
                           <button 
                             onClick={() => handleRemoveTag(tag)}
                             className="rounded-full hover:bg-blue-200 p-1 transition-colors"
-                            aria-label={`Remover filtro de componente ${tag}`}
+                            aria-label={`${t('filters.removeFilter')}: ${tag}`}
                           >
                             <X className="h-3 w-3" />
                           </button>
