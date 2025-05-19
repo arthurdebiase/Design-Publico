@@ -347,7 +347,7 @@ export default function ScreensPage() {
   return (
     <div className="container mx-auto px-4 md:px-6 py-10">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Todas as telas</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('screens.allScreens')}</h1>
       </div>
       
       <div className="mb-4 flex flex-wrap items-center justify-between">
@@ -362,18 +362,18 @@ export default function ScreensPage() {
                   aria-label="Filtrar por componentes"
                   aria-haspopup="true"
                 >
-                  {'Componentes'}
+                  {t('filters.components')}
                   <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                <DropdownMenuLabel>Componentes</DropdownMenuLabel>
+                <DropdownMenuLabel>{t('filters.components')}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
                   className={selectedTags.length === 0 ? "bg-accent/50" : ""}
                   onClick={() => handleTagFilterChange(null)}
                 >
-                  Todos os Componentes
+                  {t('filters.all')} {t('filters.components')}
                 </DropdownMenuItem>
                 {availableTags.map((tag: string, index: number) => (
                   <DropdownMenuItem
@@ -394,7 +394,7 @@ export default function ScreensPage() {
         
         {/* Screen counter */}
         <div className="text-gray-600 font-medium">
-          Mostrando {Math.min(displayedScreenCount, filteredScreens.length)} de {totalAirtableScreens} {totalAirtableScreens === 1 ? 'tela' : 'telas'}
+          {t('screens.showing')} {Math.min(displayedScreenCount, filteredScreens.length)} {t('screens.of')} {totalAirtableScreens} {t('screens.screensTotal')}
         </div>
       </div>
       
