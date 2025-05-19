@@ -1,10 +1,10 @@
 /* Styling for the bottom sheet handle */
 .bottom-sheet-handle {
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
+  width: 32px;
+  height: 3px;
+  border-radius: 3px;
   background-color: #ddd;
-  margin: 6px auto 2px;
+  margin: 4px auto 1px;
 }
 
 /* Bottom sheet styles using Radix UI's data-state attributes */
@@ -14,9 +14,10 @@
   left: 0 !important;
   right: 0 !important;
   top: auto !important;
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100vw !important;
+  max-width: 100vw !important;
   margin: 0 !important;
+  padding: 0 !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
   border-top-left-radius: 16px !important;

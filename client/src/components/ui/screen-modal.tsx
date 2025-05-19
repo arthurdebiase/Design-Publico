@@ -170,7 +170,7 @@ export function ScreenModal({
     >
       <DialogContent 
         className={`${isMobile 
-          ? `p-0 overflow-hidden flex flex-col bottom-sheet-content`
+          ? `p-0 overflow-hidden flex flex-col bottom-sheet-content w-screen m-0`
           : "max-w-4xl w-full max-h-[90vh] p-0 overflow-hidden flex flex-col"
         }`}
         hideCloseButton={true}
@@ -179,7 +179,7 @@ export function ScreenModal({
       >
         {/* Handle indicator for mobile bottom sheet */}
         {isMobile && (
-          <div className="w-full flex justify-center pt-1 pb-0">
+          <div className="w-full flex justify-center pt-1 pb-0 mb-0">
             <div className="bottom-sheet-handle"></div>
           </div>
         )}
