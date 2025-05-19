@@ -246,32 +246,34 @@ export function ScreenModal({
                   {/* Category tag shown next to app name */}
                   {currentScreen.category && (
                     typeof currentScreen.category === 'string' ? (
-                      <Link
-                        href={`/screens?category=${encodeURIComponent(currentScreen.category)}`}
+                      <span
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent parent link click
                           onClose();
+                          // Use string assertion since we already checked it's a string
+                          const category = currentScreen.category as string;
+                          window.location.href = `/screens?category=${encodeURIComponent(category)}`;
                           window.scrollTo(0, 0);
                         }}
-                        className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline"
+                        className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline cursor-pointer"
                         title={`View all screens in ${currentScreen.category} category`}
                       >
                         {currentScreen.category}
-                      </Link>
+                      </span>
                     ) : (
                       Array.isArray(currentScreen.category) && (currentScreen.category as string[]).length > 0 && (
-                        <Link
-                          href={`/screens?category=${encodeURIComponent((currentScreen.category as string[])[0])}`}
+                        <span
                           onClick={(e) => {
                             e.stopPropagation(); // Prevent parent link click
                             onClose();
+                            window.location.href = `/screens?category=${encodeURIComponent((currentScreen.category as string[])[0])}`;
                             window.scrollTo(0, 0);
                           }}
-                          className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline"
+                          className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-medium hover:bg-purple-200 transition-colors no-underline cursor-pointer"
                           title={`View all screens in ${(currentScreen.category as string[])[0]} category`}
                         >
                           {(currentScreen.category as string[])[0]}
-                        </Link>
+                        </span>
                       )
                     )
                   )}
@@ -383,19 +385,19 @@ export function ScreenModal({
                 {/* Tags - Showing only component tags */}
                 {currentScreen.tags && currentScreen.tags.length > 0 && (
                   currentScreen.tags.map((tag, index) => (
-                    <Link 
+                    <span 
                       key={`modal-tag-${index}`}
-                      href={`/screens?tag=${encodeURIComponent(tag)}`}
                       onClick={() => {
                         onClose();
                         // Ensure we scroll to top when navigating to filtered screens
+                        window.location.href = `/screens?tag=${encodeURIComponent(tag)}`;
                         window.scrollTo(0, 0);
                       }}
                       className={`text-sm px-3 py-1 rounded-full ${getTagColor(tag)} text-gray-800 hover:opacity-80 transition-opacity cursor-pointer no-underline`}
                       title={`View all screens with ${tag} componente`}
                     >
                       {tag}
-                    </Link>
+                    </span>
                   ))
                 )}
               </div>
