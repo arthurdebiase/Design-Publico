@@ -68,11 +68,12 @@ export function CloudinaryImage({
   return (
     <div 
       className={cn(
-        "relative overflow-hidden",
+        "relative overflow-hidden inline-block",
         className
       )}
       style={{ 
-        aspectRatio: width && height ? `${width}/${height}` : undefined
+        width: 'fit-content',
+        margin: '0 auto'
       }}
     >
       {/* Skeleton loader shown while image is loading */}
