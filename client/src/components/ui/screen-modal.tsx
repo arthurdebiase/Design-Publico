@@ -331,7 +331,7 @@ export function ScreenModal({
                   src={currentScreen.imageUrl}
                   cloudinarySrc={currentScreen.cloudinaryUrl || undefined}
                   alt={currentScreen.altText || `${app.name}: ${currentScreen.name} - ${currentScreen.description || 'Screen view'}`}
-                  className={`${isMobile ? 'h-[65vh] max-w-full mb-8' : 'h-[68vh] max-w-full'} object-cover rounded-lg ${isImageLoading ? 'hidden' : 'block'}`}
+                  className={`${isMobile ? 'h-[65vh] max-w-full mb-8' : 'h-[68vh] max-w-full'} object-cover border border-gray-200 rounded-lg ${isImageLoading ? 'hidden' : 'block'}`}
                   onLoad={() => setIsImageLoading(false)}
                   priority={true}
                   width={1024}

@@ -475,7 +475,7 @@ export default function ScreensPage() {
                   src={screen.imageUrl}
                   cloudinarySrc={screen.cloudinaryUrl}
                   alt={screen.name || 'Tela de aplicativo'}
-                  className="w-full h-full object-cover rounded-lg"
+                  className="w-full h-full object-cover border border-gray-200 rounded-lg"
                   widths={[300, 450, 600]}
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   format="webp"
@@ -648,7 +648,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           src={screen.imageUrl} 
           cloudinarySrc={screen.cloudinaryUrl}
           alt={`${screen.app?.name ? screen.app.name + ': ' : ''}${screen.name} - ${screen.description || 'Screen view'}`}
-          className="w-full h-full object-cover rounded-lg"
+          className="w-full h-full object-cover border border-gray-200 rounded-lg"
           placeholderClassName="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse"
           placeholder={
             <span className="sr-only">Loading screen image for {screen.name}</span>
