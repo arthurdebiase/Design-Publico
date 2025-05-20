@@ -491,29 +491,8 @@ export default function ScreensPage() {
                   }
                 />
                 
-                {/* Overlay com ícones de ação */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center rounded-lg">
-                  <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all">
-                    <div 
-                      className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
-                      title={`Copiar link para ${screen.name || 'tela'}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        const baseUrl = window.location.origin;
-                        const appSlug = screen.app ? createSlug(screen.app.name) : '';
-                        const shareableUrl = `${baseUrl}/app/${appSlug}?screen=${screen.airtableId || screen.id}`;
-                        navigator.clipboard.writeText(shareableUrl);
-                        toast({
-                          title: t("screens.linkCopied"),
-                          description: t("screens.linkCopiedDesc"),
-                          duration: 3000,
-                        });
-                      }}
-                    >
-                      <Link2 className="h-5 w-5" aria-hidden="true" />
-                    </div>
-                  </div>
-                </div>
+                {/* Overlay com efeito hover */}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg"></div>
               </div>
               
               {/* Informações do app relacionado */}
@@ -675,29 +654,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           quality={80}
         />
         
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center rounded-lg">
-          <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all">
-            <button 
-              className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
-              aria-label="Copy link"
-              tabIndex={-1}
-              onClick={(e) => {
-                e.stopPropagation();
-                const baseUrl = window.location.origin;
-                const appSlug = screen.app ? createSlug(screen.app.name) : '';
-                const shareableUrl = `${baseUrl}/app/${appSlug}?screen=${screen.airtableId || screen.id}`;
-                navigator.clipboard.writeText(shareableUrl);
-                toast({
-                  title: t("screens.linkCopied"),
-                  description: t("screens.linkCopiedDesc"),
-                  duration: 3000,
-                });
-              }}
-            >
-              <Link2 className="h-5 w-5" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all rounded-lg"></div>
       </div>
       <div className="mt-2">
         {/* Screen name hidden as requested */}
