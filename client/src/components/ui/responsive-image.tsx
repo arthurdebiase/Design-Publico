@@ -152,7 +152,7 @@ export function ResponsiveImage({
   if (hasError) return <div className="relative" style={{ width: '100%', height: '100%' }}>{renderError()}</div>;
   
   return (
-    <div className="relative" style={{ width: '100%', height: '100%' }}>
+    <div className="relative flex items-center justify-center" style={{ width: '100%', height: '100%' }}>
       {!isLoaded && <div className="absolute inset-0">{renderPlaceholder()}</div>}
       <img
         src={defaultSrc}
@@ -161,7 +161,7 @@ export function ResponsiveImage({
         alt={alt}
         loading={priority ? 'eager' : 'lazy'}
         {...(priority ? { fetchpriority: 'high' } : {})}
-        className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} relative`}
+        className={`${className} ${isLoaded ? 'opacity-100' : 'opacity-0'} w-full h-full`}
         onLoad={handleLoad}
         onError={handleError}
         style={{
