@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader2, FileText, Maximize2, ChevronDown, Filter, X, Check, Link2 } from 'lucide-react';
+import { Loader2, FileText, Maximize2, ChevronDown, Filter, X, Check, Link2, Copy } from 'lucide-react';
 import { Screen, App } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -496,9 +496,21 @@ export default function ScreensPage() {
                   <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all flex gap-3">
                     <div 
                       className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
-                      title={`Ampliar ${screen.name || 'tela'}`}
+                      title={`Copiar imagem de ${screen.name || 'tela'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Aqui adicionamos a lógica para copiar a imagem (URL) para a área de transferência
+                        const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
+                        navigator.clipboard.writeText(imageUrl);
+                        const { t } = require('i18next');
+                        toast({
+                          title: t("screens.imageCopied", "URL da imagem copiada"),
+                          description: t("screens.imageCopiedDesc", "URL da imagem copiada para a área de transferência"),
+                          duration: 3000,
+                        });
+                      }}
                     >
-                      <Maximize2 className="h-5 w-5" aria-hidden="true" />
+                      <Copy className="h-5 w-5" aria-hidden="true" />
                     </div>
                     <div 
                       className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
@@ -619,6 +631,7 @@ interface ScreenThumbnailProps {
 function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   // Function to get component background color
   const getTagColor = (tag: string): string => {
@@ -684,10 +697,20 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all flex gap-3">
             <button 
               className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
-              aria-label="View fullscreen"
-              tabIndex={-1} 
+              aria-label="Copy image URL"
+              tabIndex={-1}
+              onClick={(e) => {
+                e.stopPropagation();
+                const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
+                navigator.clipboard.writeText(imageUrl);
+                toast({
+                  title: t("screens.imageCopied", "URL da imagem copiada"),
+                  description: t("screens.imageCopiedDesc", "URL da imagem copiada para a área de transferência"),
+                  duration: 3000,
+                });
+              }}
             >
-              <Maximize2 className="h-5 w-5" aria-hidden="true" />
+              <Copy className="h-5 w-5" aria-hidden="true" />
             </button>
             <button 
               className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
