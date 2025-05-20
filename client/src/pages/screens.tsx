@@ -650,7 +650,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           src={screen.imageUrl} 
           cloudinarySrc={screen.cloudinaryUrl}
           alt={`${screen.app?.name ? screen.app.name + ': ' : ''}${screen.name} - ${screen.description || 'Screen view'}`}
-          className="w-full h-full object-contain"
+          className="w-full h-full object-cover"
           placeholderClassName="absolute inset-0 flex items-center justify-center bg-gray-200 animate-pulse"
           placeholder={
             <span className="sr-only">Loading screen image for {screen.name}</span>
