@@ -203,7 +203,7 @@ export function ScreenModal({
         </DialogDescription>
         <div className={`flex items-center justify-between p-4 pt-2 ${isMobile ? 'pb-2' : 'border-b'}`}>
           <Link href={`/app/${createSlug(app.name)}`} 
-            className="flex items-center group no-underline" 
+            className="flex items-center group no-underline flex-1 min-w-0 mr-2" 
             onClick={() => {
               onClose();
               // Ensure we scroll to top when navigating to app details
@@ -235,13 +235,13 @@ export function ScreenModal({
                 </div>
               )}
             </div>
-            <div className="flex-grow">
+            <div className="flex-grow min-w-0">
               {/* App and screen name - clickable */}
-              <div className="flex flex-col">
-                <h3 className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors whitespace-nowrap overflow-hidden text-ellipsis max-w-full" title={currentScreen.name}>{currentScreen.name || ""}</h3>
+              <div className="flex flex-col min-w-0">
+                <h3 className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors whitespace-nowrap overflow-hidden text-ellipsis" title={currentScreen.name}>{currentScreen.name || ""}</h3>
                 
-                <div className="flex items-center">
-                  <span className="text-xs text-gray-500 m-0 whitespace-nowrap overflow-hidden text-ellipsis max-w-full" title={app.name}>{app.name || ""}</span>
+                <div className="flex items-center min-w-0">
+                  <span className="text-xs text-gray-500 m-0 whitespace-nowrap overflow-hidden text-ellipsis" title={app.name}>{app.name || ""}</span>
                 </div>
               </div>
             </div>
