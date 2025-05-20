@@ -497,17 +497,46 @@ export default function ScreensPage() {
                     <div 
                       className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
                       title={`Copiar imagem de ${screen.name || 'tela'}`}
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         e.stopPropagation();
-                        // Aqui adicionamos a lógica para copiar a imagem (URL) para a área de transferência
-                        const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
-                        navigator.clipboard.writeText(imageUrl);
-                        const { t } = require('i18next');
-                        toast({
-                          title: t("screens.imageCopied", "URL da imagem copiada"),
-                          description: t("screens.imageCopiedDesc", "URL da imagem copiada para a área de transferência"),
-                          duration: 3000,
-                        });
+                        try {
+                          const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
+                          
+                          // Exibir toast para feedback visual imediato
+                          toast({
+                            title: "Copiando imagem...",
+                            description: "Aguarde enquanto preparamos a imagem",
+                            duration: 1500,
+                          });
+                          
+                          // Obter a imagem como Blob
+                          const response = await fetch(imageUrl);
+                          const blob = await response.blob();
+                          
+                          // Copiar para a área de transferência como imagem
+                          await navigator.clipboard.write([
+                            new ClipboardItem({
+                              [blob.type]: blob
+                            })
+                          ]);
+                          
+                          // Feedback de sucesso
+                          toast({
+                            title: "Imagem copiada!",
+                            description: "A imagem foi copiada para a área de transferência",
+                            duration: 3000,
+                          });
+                        } catch (err) {
+                          // Fallback: copiar a URL se não for possível copiar a imagem
+                          const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
+                          navigator.clipboard.writeText(imageUrl);
+                          
+                          toast({
+                            title: "URL da imagem copiada",
+                            description: "A URL da imagem foi copiada para a área de transferência",
+                            duration: 3000,
+                          });
+                        }
                       }}
                     >
                       <Copy className="h-5 w-5" aria-hidden="true" />
@@ -697,17 +726,48 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all flex gap-3">
             <button 
               className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
-              aria-label="Copy image URL"
+              aria-label="Copy image"
               tabIndex={-1}
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
-                const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
-                navigator.clipboard.writeText(imageUrl);
-                toast({
-                  title: t("screens.imageCopied", "URL da imagem copiada"),
-                  description: t("screens.imageCopiedDesc", "URL da imagem copiada para a área de transferência"),
-                  duration: 3000,
-                });
+                try {
+                  const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
+                  
+                  // Exibir toast para feedback visual imediato
+                  toast({
+                    title: "Copiando imagem...",
+                    description: "Aguarde enquanto preparamos a imagem",
+                    duration: 1500,
+                  });
+                  
+                  // Obter a imagem como Blob
+                  const response = await fetch(imageUrl);
+                  const blob = await response.blob();
+                  
+                  // Copiar para a área de transferência como imagem
+                  await navigator.clipboard.write([
+                    new ClipboardItem({
+                      [blob.type]: blob
+                    })
+                  ]);
+                  
+                  // Feedback de sucesso
+                  toast({
+                    title: "Imagem copiada!",
+                    description: "A imagem foi copiada para a área de transferência",
+                    duration: 3000,
+                  });
+                } catch (err) {
+                  // Fallback: copiar a URL se não for possível copiar a imagem
+                  const imageUrl = screen.cloudinaryUrl || screen.imageUrl;
+                  navigator.clipboard.writeText(imageUrl);
+                  
+                  toast({
+                    title: "URL da imagem copiada",
+                    description: "A URL da imagem foi copiada para a área de transferência",
+                    duration: 3000,
+                  });
+                }
               }}
             >
               <Copy className="h-5 w-5" aria-hidden="true" />
