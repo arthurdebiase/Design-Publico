@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Loader2, FileText, Maximize2, ChevronDown, Filter, X, Check } from 'lucide-react';
+import { Loader2, FileText, Maximize2, ChevronDown, Filter, X, Check, Link2 } from 'lucide-react';
 import { Screen, App } from '@shared/schema';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ScreenModal } from '@/components/ui/screen-modal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '@/hooks/use-toast';
 import { Link, useLocation, useSearch } from 'wouter';
 import { ResponsiveImage } from '@/components/ui/responsive-image';
 import { createSlug } from '@/lib/slugUtils';
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function ScreensPage() {
+  const { toast } = useToast();
   const [allScreens, setAllScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [filteredScreens, setFilteredScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [apps, setApps] = useState<App[]>([]);
@@ -489,14 +491,32 @@ export default function ScreensPage() {
                   }
                 />
                 
-                {/* Overlay com ícone de maximizar */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all">
+                {/* Overlay com ícones de ação */}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center rounded-lg">
+                  <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all flex gap-3">
                     <div 
-                      className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center"
+                      className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
                       title={`Ampliar ${screen.name || 'tela'}`}
                     >
                       <Maximize2 className="h-5 w-5" aria-hidden="true" />
+                    </div>
+                    <div 
+                      className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
+                      title={`Copiar link para ${screen.name || 'tela'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const baseUrl = window.location.origin;
+                        const appSlug = screen.app ? createSlug(screen.app.name) : '';
+                        const shareableUrl = `${baseUrl}/app/${appSlug}?screen=${screen.airtableId || screen.id}`;
+                        navigator.clipboard.writeText(shareableUrl);
+                        toast({
+                          title: t("screens.linkCopied"),
+                          description: t("screens.linkCopiedDesc"),
+                          duration: 3000,
+                        });
+                      }}
+                    >
+                      <Link2 className="h-5 w-5" aria-hidden="true" />
                     </div>
                   </div>
                 </div>
@@ -598,6 +618,7 @@ interface ScreenThumbnailProps {
 
 function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
   const isMobile = useIsMobile();
+  const { toast } = useToast();
 
   // Function to get component background color
   const getTagColor = (tag: string): string => {
@@ -659,14 +680,33 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
           quality={80}
         />
         
-        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center">
-          <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all">
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all flex items-center justify-center rounded-lg">
+          <div className="opacity-0 group-hover:opacity-100 transform scale-90 group-hover:scale-100 transition-all flex gap-3">
             <button 
-              className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center"
+              className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
               aria-label="View fullscreen"
               tabIndex={-1} 
             >
               <Maximize2 className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <button 
+              className="bg-white text-gray-800 w-10 h-10 rounded-full flex items-center justify-center shadow-sm"
+              aria-label="Copy link"
+              tabIndex={-1}
+              onClick={(e) => {
+                e.stopPropagation();
+                const baseUrl = window.location.origin;
+                const appSlug = screen.app ? createSlug(screen.app.name) : '';
+                const shareableUrl = `${baseUrl}/app/${appSlug}?screen=${screen.airtableId || screen.id}`;
+                navigator.clipboard.writeText(shareableUrl);
+                toast({
+                  title: t("screens.linkCopied"),
+                  description: t("screens.linkCopiedDesc"),
+                  duration: 3000,
+                });
+              }}
+            >
+              <Link2 className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         </div>
