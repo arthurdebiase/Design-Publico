@@ -468,7 +468,7 @@ export default function ScreensPage() {
             >
               <div 
                 className="overflow-hidden relative group flex items-center justify-center" 
-                style={{ width: '100%', aspectRatio: '3/5' }}
+                style={{ width: '100%', aspectRatio: '9/16' }}
               >
                 {/* Utilizando ResponsiveImage com suporte ao Cloudinary */}
                 <ResponsiveImage 
@@ -643,7 +643,7 @@ function ScreenThumbnail({ screen, onClick }: ScreenThumbnailProps) {
         }
       }}
     >
-      <div className="rounded-lg overflow-hidden shadow-sm relative group flex items-center justify-center" style={{ aspectRatio: "3/5" }}>
+      <div className="rounded-lg overflow-hidden shadow-sm relative group flex items-center justify-center" style={{ aspectRatio: "9/16" }}>
         <ResponsiveImage 
           src={screen.imageUrl} 
           cloudinarySrc={screen.cloudinaryUrl}
