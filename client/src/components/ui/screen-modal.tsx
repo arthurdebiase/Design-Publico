@@ -238,10 +238,10 @@ export function ScreenModal({
             <div className="flex-grow">
               {/* App and screen name - clickable */}
               <div className="flex flex-col">
-                <h3 className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors max-w-[240px] whitespace-nowrap overflow-hidden text-ellipsis" title={currentScreen.name}>{currentScreen.name || ""}</h3>
+                <h3 className="text-sm text-gray-700 font-medium m-0 group-hover:text-blue-600 transition-colors max-w-[350px] whitespace-nowrap overflow-hidden text-ellipsis" title={currentScreen.name}>{currentScreen.name || ""}</h3>
                 
                 <div className="flex items-center">
-                  <span className="text-xs text-gray-500 m-0 max-w-[240px] whitespace-nowrap overflow-hidden text-ellipsis" title={app.name}>{app.name || ""}</span>
+                  <span className="text-xs text-gray-500 m-0 max-w-[350px] whitespace-nowrap overflow-hidden text-ellipsis" title={app.name}>{app.name || ""}</span>
                 </div>
               </div>
             </div>
