@@ -124,15 +124,19 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
           <div className="flex items-center gap-3">
             <div className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} flex-shrink-0 flex items-center justify-center`}>
               {app.logo ? (
-                <ResponsiveImage 
-                  src={app.logo} 
-                  cloudinarySrc={app.cloudinaryLogo} // Add Cloudinary URL for reliable logo hosting
-                  alt={`${app.name} Logo`} 
-                  className={`${isMobile ? 'w-8 h-8' : 'w-9 h-9'} object-contain`}
-                  widths={[32, 64, 96]}
-                  quality={90}
-                  placeholder={<LogoPlaceholder app={app} />}
-                />
+                <div className="w-full h-full flex items-center justify-center">
+                  <ResponsiveImage 
+                    src={app.logo} 
+                    cloudinarySrc={app.cloudinaryLogo}
+                    alt={`${app.name} Logo`} 
+                    className={`w-full h-full object-contain`}
+                    widths={[32, 64, 96]}
+                    quality={90}
+                    format="webp"
+                    style={{ objectFit: "contain" }}
+                    placeholder={<LogoPlaceholder app={app} />}
+                  />
+                </div>
               ) : (
                 <LogoPlaceholder app={app} />
               )}

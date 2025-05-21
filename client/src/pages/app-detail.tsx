@@ -206,15 +206,19 @@ export default function AppDetail() {
                 <div className="flex-shrink-0 mr-6">
                   <div className="w-20 h-20 flex items-center justify-center bg-white">
                     {app.logo ? (
-                      <ResponsiveImage 
-                        src={app.logo} 
-                        cloudinarySrc={app.cloudinaryLogo} 
-                        alt={`${app.name} logo`} 
-                        className="w-20 h-20 object-contain" 
-                        widths={[80, 160]}
-                        quality={90}
-                        placeholder={<AppIconPlaceholder app={app} />}
-                      />
+                      <div className="w-full h-full flex items-center justify-center">
+                        <ResponsiveImage 
+                          src={app.logo} 
+                          cloudinarySrc={app.cloudinaryLogo} 
+                          alt={`${app.name} logo`} 
+                          className="w-full h-full object-contain" 
+                          widths={[80, 160]}
+                          quality={90}
+                          format="webp"
+                          style={{ objectFit: "contain" }}
+                          placeholder={<AppIconPlaceholder app={app} />}
+                        />
+                      </div>
                     ) : (
                       <AppIconPlaceholder app={app} />
                     )}

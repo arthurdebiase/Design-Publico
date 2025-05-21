@@ -23,6 +23,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/aplicativos" component={Home} />
       <Route path="/app/:idOrSlug" component={AppDetail} />
       <Route path="/screens" component={ScreensPage} />
       <Route path="/about" component={About} />
