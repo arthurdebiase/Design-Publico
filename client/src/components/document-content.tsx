@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { marked } from "marked";
 
 // Props for the DocumentContent component
 type DocumentContentProps = {
@@ -58,20 +59,25 @@ const DocumentContent = ({ documentTitle }: DocumentContentProps) => {
     );
   }
 
-  // Format and display document content with proper styling
-  // Convert the raw content which might be Markdown to rendered HTML
+  // Configure Marked options for secure and proper rendering
+  const configureMarked = () => {
+    // Set marked options for security and proper rendering
+    marked.setOptions({
+      gfm: true, // GitHub Flavored Markdown
+      breaks: true, // Convert line breaks to <br>
+      headerIds: true, // Generate header IDs for linking
+      mangle: false, // Don't mangle header IDs
+      sanitize: false, // Sanitization is handled by DOMPurify (built into React)
+    });
+  };
+
+  // Format and display document content using the marked library
   const formatContent = (content: string) => {
-    // Basic Markdown-style links: [text](url)
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-    const contentWithLinks = content.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    // Configure marked options
+    configureMarked();
     
-    // Convert line breaks to <br> and paragraph breaks to paragraphs
-    const withLineBreaks = contentWithLinks
-      .split('\n\n')
-      .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
-      .join('');
-      
-    return withLineBreaks;
+    // Convert Markdown to HTML
+    return marked.parse(content);
   };
 
   return (
