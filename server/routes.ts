@@ -549,6 +549,59 @@ Crawl-delay: 2`);
 
   // Cloudinary Migration Routes
   app.get("/api/cloudinary/status", getCloudinaryStatus);
+  
+  // Get document content from Airtable docs table
+  app.get("/api/docs/:pageTitle", async (req, res) => {
+    try {
+      const { pageTitle } = req.params;
+      
+      // Configure Airtable API
+      const airtableApiKey = process.env.AIRTABLE_API_KEY;
+      const airtableBaseId = process.env.AIRTABLE_BASE_ID;
+      
+      if (!airtableApiKey || !airtableBaseId) {
+        return res.status(500).json({
+          error: 'Configuration error',
+          message: 'Airtable credentials are missing'
+        });
+      }
+      
+      // Fetch document from Airtable
+      const url = `https://api.airtable.com/v0/${airtableBaseId}/docs`;
+      const response = await axios.get(url, {
+        params: {
+          filterByFormula: `{page-title} = "${pageTitle}"`,
+          maxRecords: 1
+        },
+        headers: {
+          Authorization: `Bearer ${airtableApiKey}`
+        }
+      });
+      
+      if (!response.data.records || response.data.records.length === 0) {
+        return res.status(404).json({
+          error: 'Not found',
+          message: `Document "${pageTitle}" not found`
+        });
+      }
+      
+      const document = response.data.records[0];
+      
+      // Return document content
+      return res.json({
+        id: document.id,
+        title: document.fields['page-title'],
+        content: document.fields['doc-text'],
+        status: document.fields['status']
+      });
+    } catch (error: any) {
+      console.error('Error fetching document:', error.message);
+      return res.status(500).json({
+        error: 'Server error',
+        message: 'Failed to fetch document'
+      });
+    }
+  });
   app.post("/api/cloudinary/test-upload", testCloudinaryUpload);
   app.post("/api/cloudinary/migrate", startMigration);
 
