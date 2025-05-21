@@ -239,8 +239,17 @@ export default function Footer() {
           </div>
         </div>
         
-        {/* Bottom section with copyright */}
-        <div className="border-t border-gray-200 mt-10 pt-10 pb-8 flex justify-center items-center">
+        {/* Bottom section with copyright and legal links */}
+        <div className="border-t border-gray-200 mt-10 pt-10 pb-8">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4 mb-4">
+            <Link href="/termos-de-uso" className="text-blue-600 hover:text-blue-800 text-sm">
+              {t('Termos de Uso')}
+            </Link>
+            <span className="hidden md:inline text-gray-300">|</span>
+            <Link href="/politica-de-privacidade" className="text-blue-600 hover:text-blue-800 text-sm">
+              {t('Política de Privacidade')}
+            </Link>
+          </div>
           <p className="text-gray-600 text-sm text-center">
             {t('footer.copyright')}
           </p>

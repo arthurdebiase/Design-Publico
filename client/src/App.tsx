@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -27,6 +28,16 @@ function Router() {
       <Route path="/app/:idOrSlug" component={AppDetail} />
       <Route path="/screens" component={ScreensPage} />
       <Route path="/about" component={About} />
+      <Route path="/termos-de-uso">
+        <Suspense fallback={<div className="p-8 text-center">Carregando...</div>}>
+          {React.createElement(React.lazy(() => import('./pages/terms')))}
+        </Suspense>
+      </Route>
+      <Route path="/politica-de-privacidade">
+        <Suspense fallback={<div className="p-8 text-center">Carregando...</div>}>
+          {React.createElement(React.lazy(() => import('./pages/privacy')))}
+        </Suspense>
+      </Route>
       <Route path="/admin/cloudinary" component={CloudinaryAdmin} />
       <Route component={NotFound} />
     </Switch>
