@@ -553,6 +553,9 @@ Crawl-delay: 2`);
   // Get document content from Airtable docs table
   app.get("/api/docs/:pageTitle", async (req, res) => {
     try {
+      // Force the response to be JSON to avoid catching HTML from client-side routing
+      res.setHeader('Content-Type', 'application/json');
+      
       const { pageTitle } = req.params;
       
       // Configure Airtable API
@@ -566,6 +569,8 @@ Crawl-delay: 2`);
         });
       }
       
+      console.log(`Fetching document "${pageTitle}" from Airtable`);
+      
       // Fetch document from Airtable
       const url = `https://api.airtable.com/v0/${airtableBaseId}/docs`;
       const response = await axios.get(url, {
@@ -574,11 +579,13 @@ Crawl-delay: 2`);
           maxRecords: 1
         },
         headers: {
-          Authorization: `Bearer ${airtableApiKey}`
+          Authorization: `Bearer ${airtableApiKey}`,
+          'Content-Type': 'application/json'
         }
       });
       
       if (!response.data.records || response.data.records.length === 0) {
+        console.log(`Document "${pageTitle}" not found in Airtable`);
         return res.status(404).json({
           error: 'Not found',
           message: `Document "${pageTitle}" not found`
@@ -586,19 +593,23 @@ Crawl-delay: 2`);
       }
       
       const document = response.data.records[0];
+      console.log(`Successfully retrieved document: ${document.id}`);
       
-      // Return document content
-      return res.json({
+      // Build response object
+      const result = {
         id: document.id,
         title: document.fields['page-title'],
-        content: document.fields['doc-text'],
-        status: document.fields['status']
-      });
+        content: document.fields['doc-text'] || '',
+        status: document.fields['status'] || 'unknown'
+      };
+      
+      // Return document content
+      return res.status(200).json(result);
     } catch (error: any) {
       console.error('Error fetching document:', error.message);
       return res.status(500).json({
         error: 'Server error',
-        message: 'Failed to fetch document'
+        message: 'Failed to fetch document from Airtable'
       });
     }
   });

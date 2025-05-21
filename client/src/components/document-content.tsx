@@ -58,10 +58,29 @@ const DocumentContent = ({ documentTitle }: DocumentContentProps) => {
     );
   }
 
-  // Display document content with proper styling
+  // Format and display document content with proper styling
+  // Convert the raw content which might be Markdown to rendered HTML
+  const formatContent = (content: string) => {
+    // Basic Markdown-style links: [text](url)
+    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    const contentWithLinks = content.replace(linkRegex, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    
+    // Convert line breaks to <br> and paragraph breaks to paragraphs
+    const withLineBreaks = contentWithLinks
+      .split('\n\n')
+      .map(paragraph => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
+      .join('');
+      
+    return withLineBreaks;
+  };
+
   return (
     <article className="prose prose-zinc dark:prose-invert max-w-none">
-      <div dangerouslySetInnerHTML={{ __html: data.content }} />
+      <div 
+        dangerouslySetInnerHTML={{ 
+          __html: formatContent(data.content) 
+        }} 
+      />
     </article>
   );
 };
