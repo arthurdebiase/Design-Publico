@@ -392,11 +392,15 @@ Crawl-delay: 2`);
         stack: errorStack
       });
       
-      // Send a 1x1 pixel transparent fallback image
+      // Send a transparent fallback image, but with a 200 status so the UI can still function
+      // This allows the app to continue displaying even if some images fail
       const fallbackImage = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
       res.set('Content-Type', 'image/gif');
-      res.set('Cache-Control', 'no-store');
-      res.status(500).send(fallbackImage);
+      res.set('Cache-Control', 'no-store, max-age=0');
+      // Using 200 status instead of 500 to allow client to continue normally
+      res.set('X-Image-Error', 'true');
+      res.set('X-Error-Message', errorMessage.substring(0, 100));
+      res.status(200).send(fallbackImage);
     }
   });
   // Setup Airtable API key
