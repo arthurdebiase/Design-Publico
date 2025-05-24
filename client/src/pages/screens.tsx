@@ -435,38 +435,77 @@ export default function ScreensPage() {
       
         {/* Component tags with horizontal scroll */}
         <div className="mb-4 relative">
-          {/* Horizontal scrollable container */}
-          <div className="flex items-center overflow-x-auto pb-2 no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            <button
-              onClick={() => setSelectedTags([])}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
-                selectedTags.length === 0 
-                  ? 'bg-green-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+          {/* Horizontal scrollable container with navigation arrows */}
+          <div className="flex items-center relative">
+            {/* Left arrow navigation button */}
+            <button 
+              className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20 bg-white rounded-full p-1 shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                const container = document.getElementById('tags-scroll-container');
+                if (container) {
+                  container.scrollBy({ left: -200, behavior: 'smooth' });
+                }
+              }}
+              aria-label="Scroll left"
             >
-              {t('filters.all')}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
             </button>
             
-            {/* All tags in a horizontal scroll */}
-            {availableTags.map((tag: string) => (
+            {/* Scrollable container */}
+            <div 
+              id="tags-scroll-container"
+              className="flex items-center overflow-x-auto pb-2 no-scrollbar px-8" 
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
               <button
-                key={`tag-tab-${tag}`}
-                onClick={() => handleTagFilterChange(tag)}
+                onClick={() => setSelectedTags([])}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
-                  selectedTags.includes(tag)
-                    ? 'bg-green-600 text-white'
+                  selectedTags.length === 0 
+                    ? 'bg-green-600 text-white' 
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                {tag}
+                {t('filters.all')}
               </button>
-            ))}
+              
+              {/* All tags in a horizontal scroll */}
+              {availableTags.map((tag: string) => (
+                <button
+                  key={`tag-tab-${tag}`}
+                  onClick={() => handleTagFilterChange(tag)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
+                    selectedTags.includes(tag)
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+            
+            {/* Right arrow navigation button */}
+            <button 
+              className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20 bg-white rounded-full p-1 shadow-md border border-gray-200 hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                const container = document.getElementById('tags-scroll-container');
+                if (container) {
+                  container.scrollBy({ left: 200, behavior: 'smooth' });
+                }
+              }}
+              aria-label="Scroll right"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
           </div>
           
           {/* Add shadow indicators for scroll */}
-          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10"></div>
-          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10"></div>
+          <div className="pointer-events-none absolute left-8 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10"></div>
+          <div className="pointer-events-none absolute right-8 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10"></div>
         </div>
       </div>
       
