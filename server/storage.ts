@@ -18,6 +18,9 @@ export interface IStorage {
   getScreensByAppId(appId: number): Promise<Screen[]>;
   createScreen(screen: InsertScreen): Promise<Screen>;
 
+  // Categories
+  getCategories(): Promise<any[]>; // Will return categories with their icon attachments
+
   // Brand
   getBrandLogo(): Promise<string | null>;
 
@@ -220,6 +223,70 @@ export class MemStorage implements IStorage {
 
   async getBrandLogo(): Promise<string | null> {
     return this.brandLogo;
+  }
+  
+  // Fetch categories with their icons from Airtable
+  async getCategories(): Promise<any[]> {
+    try {
+      // Check if API key and base ID are available
+      const apiKey = process.env.AIRTABLE_API_KEY;
+      const baseId = process.env.AIRTABLE_BASE_ID;
+      
+      if (!apiKey || !baseId) {
+        console.error("Missing Airtable API key or base ID for fetching categories");
+        return [];
+      }
+      
+      // Fetch category data from the dedicated category table in Airtable
+      const response = await axios.get(
+        `https://api.airtable.com/v0/${baseId}/category`,
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+          params: {
+            view: "Grid view",
+          },
+          timeout: 10000, // 10 second timeout
+        }
+      );
+      
+      if (!response.data || !response.data.records) {
+        console.error("Invalid response format from Airtable categories API");
+        return [];
+      }
+      
+      const records = response.data.records;
+      
+      // Map the category records to a more usable format with name and icon URL
+      const categories = records.map((record: any) => {
+        const name = record.fields.Name || "";
+        
+        // Get the icon URL from attachments
+        let iconUrl = null;
+        if (record.fields.Attachments && 
+            Array.isArray(record.fields.Attachments) && 
+            record.fields.Attachments.length > 0) {
+          iconUrl = record.fields.Attachments[0].url;
+        }
+        
+        return {
+          id: record.id,
+          name,
+          iconUrl
+        };
+      });
+      
+      console.log(`Fetched ${categories.length} categories with icons from Airtable`);
+      return categories;
+    } catch (error: any) {
+      console.error("Error fetching categories from Airtable:", error.message);
+      if (error.response) {
+        console.error("API Response Status:", error.response.status);
+        console.error("API Response Data:", JSON.stringify(error.response.data));
+      }
+      return [];
+    }
   }
 
   // Get exact category from Airtable data
