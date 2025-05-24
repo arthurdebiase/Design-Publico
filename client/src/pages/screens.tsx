@@ -453,24 +453,12 @@ export default function ScreensPage() {
               </svg>
             </button>
             
-            {/* Scrollable container */}
+            {/* Scrollable container with visible scrollbar */}
             <div 
               id="tags-scroll-container"
-              className="flex items-center overflow-x-auto pb-2 no-scrollbar px-8" 
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              className="flex items-center overflow-x-auto pb-2 px-8 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent" 
             >
-              <button
-                onClick={() => setSelectedTags([])}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
-                  selectedTags.length === 0 
-                    ? 'bg-green-600 text-white' 
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {t('filters.all')}
-              </button>
-              
-              {/* All tags in a horizontal scroll */}
+              {/* All tags in a horizontal scroll (removed "Todos" option) */}
               {availableTags.map((tag: string) => (
                 <button
                   key={`tag-tab-${tag}`}
@@ -503,9 +491,7 @@ export default function ScreensPage() {
             </button>
           </div>
           
-          {/* Add shadow indicators for scroll */}
-          <div className="pointer-events-none absolute left-8 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10"></div>
-          <div className="pointer-events-none absolute right-8 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10"></div>
+          {/* Removed shadow indicators */}
         </div>
       </div>
       
