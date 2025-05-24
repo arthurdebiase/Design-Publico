@@ -987,6 +987,12 @@ export class MemStorage implements IStorage {
 
   // Initialize with sample data for development
   private initializeSampleData() {
+    // Clear any existing data
+    this.apps = new Map();
+    this.screens = new Map();
+    this.appIdCounter = 1;
+    this.screenIdCounter = 1;
+    
     // Sample apps
     const sampleApps: InsertApp[] = [
       {
