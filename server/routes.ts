@@ -643,6 +643,17 @@ Crawl-delay: 2`);
       });
     }
   });
+  // Categories API endpoint - fetch categories with icons from Airtable
+  app.get("/api/categories", async (req, res) => {
+    try {
+      const categories = await storage.getCategories();
+      res.json(categories);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+      res.status(500).json({ error: "Failed to fetch categories" });
+    }
+  });
+  
   app.post("/api/cloudinary/test-upload", testCloudinaryUpload);
   app.post("/api/cloudinary/migrate", startMigration);
 

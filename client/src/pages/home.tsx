@@ -12,6 +12,7 @@ export default function Home() {
   const { t } = useTranslation();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [categoryIcons, setCategoryIcons] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState<string>("none"); // Track the current sort method
   
   // Enhanced query with retry logic and better error handling
@@ -25,20 +26,64 @@ export default function Home() {
     refetchOnReconnect: true // Refresh when network reconnects
   });
   
-  // Extract available categories from apps and set predefined categories
+  // Fetch categories with their icons from the API
+  const { data: categoriesData } = useQuery({
+    queryKey: ['/api/categories'],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/categories');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch categories: ${response.statusText}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        return [];
+      }
+    },
+    staleTime: 60000 // Consider data fresh for 1 minute
+  });
+  
+  // Extract available categories and their icons
   useEffect(() => {
-    if (apps && apps.length > 0) {
-      // Predefined categories that we want to display
+    if (categoriesData && categoriesData.length > 0) {
+      // Extract category names from the API response
+      const categoryNames = categoriesData.map((cat: any) => cat.name);
+      setAvailableCategories(categoryNames);
+      
+      // Create a map of category names to their icon URLs
+      const iconMap: Record<string, string> = {};
+      categoriesData.forEach((cat: any) => {
+        if (cat.name && cat.iconUrl) {
+          iconMap[cat.name] = cat.iconUrl;
+        }
+      });
+      setCategoryIcons(iconMap);
+      
+      console.log("Available categories with icons:", categoryNames);
+    } else if (apps && apps.length > 0) {
+      // Fallback to predefined categories if API fails
       const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"];
       setAvailableCategories(predefinedCategories);
-      
-      // Log categories
-      console.log("Available categories:", predefinedCategories);
+      console.log("Using fallback categories:", predefinedCategories);
     }
-  }, [apps]);
+  }, [categoriesData, apps]);
   
   // Get category icon based on category name
   const getCategoryIcon = (category: string): React.ReactNode => {
+    // Check if we have an icon URL for this category from the Airtable data
+    if (categoryIcons[category]) {
+      return (
+        <img 
+          src={categoryIcons[category]} 
+          alt={`${category} icon`} 
+          className="inline-block w-5 h-5 mr-2 object-contain"
+          loading="lazy"
+        />
+      );
+    }
+    
+    // Fallback to emoji icons if no Airtable icon is available
     switch (category) {
       case "Cidadania":
         return <span className="inline-block w-5 h-5 mr-2">👤</span>;
@@ -57,7 +102,7 @@ export default function Home() {
       case "Segurança":
         return <span className="inline-block w-5 h-5 mr-2">🔒</span>;
       default:
-        return null;
+        return <span className="inline-block w-5 h-5 mr-2">📱</span>;
     }
   };
   
