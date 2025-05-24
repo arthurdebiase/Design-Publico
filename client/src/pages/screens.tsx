@@ -423,8 +423,8 @@ export default function ScreensPage() {
               {t('filters.all')}
             </button>
             
-            {/* Show just the first 8 components */}
-            {availableTags.slice(0, 8).map((tag: string) => (
+            {/* Show just the first 6 components */}
+            {availableTags.slice(0, 6).map((tag: string) => (
               <button
                 key={`tag-tab-${tag}`}
                 onClick={() => handleTagFilterChange(tag)}
@@ -437,12 +437,10 @@ export default function ScreensPage() {
                 {tag}
               </button>
             ))}
-          </div>
-          
-          {/* Show all button */}
-          <div className="flex justify-center mt-1">
+            
+            {/* Show all button as last tag in the first row */}
             <button 
-              className="text-green-600 hover:text-green-800 text-sm font-medium flex items-center"
+              className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 hover:bg-gray-100 border border-green-500"
               onClick={() => {
                 // Toggle between showing all tags and just the first row
                 const tagsContainer = document.getElementById('all-tags-container');
@@ -467,7 +465,7 @@ export default function ScreensPage() {
           {/* All components container (initially hidden) */}
           <div id="all-tags-container" className="hidden mt-3">
             <div className="flex flex-wrap gap-2">
-              {availableTags.slice(8).map((tag: string) => (
+              {availableTags.slice(6).map((tag: string) => (
                 <button
                   key={`all-tag-${tag}`}
                   onClick={() => handleTagFilterChange(tag)}
