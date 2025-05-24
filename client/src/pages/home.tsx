@@ -37,11 +37,40 @@ export default function Home() {
     }
   }, [apps]);
   
-  // Direct category mapping from app data
+  // Get category icon based on category name
+  const getCategoryIcon = (category: string): React.ReactNode => {
+    switch (category) {
+      case "Cidadania":
+        return <span className="inline-block w-5 h-5 mr-2">👤</span>;
+      case "Finanças":
+        return <span className="inline-block w-5 h-5 mr-2">💰</span>;
+      case "Logística":
+        return <span className="inline-block w-5 h-5 mr-2">🚚</span>;
+      case "Portal":
+        return <span className="inline-block w-5 h-5 mr-2">🌐</span>;
+      case "Saúde":
+        return <span className="inline-block w-5 h-5 mr-2">❤️</span>;
+      case "Trabalho":
+        return <span className="inline-block w-5 h-5 mr-2">💼</span>;
+      case "Mobilidade":
+        return <span className="inline-block w-5 h-5 mr-2">🚗</span>;
+      case "Segurança":
+        return <span className="inline-block w-5 h-5 mr-2">🔒</span>;
+      default:
+        return null;
+    }
+  };
+  
+  // Direct category mapping from app data - uses both categories array and category field
   const getAppCategory = (app: any): string => {
     if (!app) return "Portal";
     
-    // Use exact category matches based on app data
+    // Use categories array if available
+    if (app.categories && Array.isArray(app.categories) && app.categories.length > 0) {
+      return app.categories[0]; // Return the first category in the array
+    }
+    
+    // Fallback to category field
     if (app.category === "Finanças") return "Finanças";
     if (app.category === "Cidadania") return "Cidadania"; 
     if (app.category === "Saúde") return "Saúde";
@@ -139,13 +168,14 @@ export default function Home() {
             <div className="flex space-x-1 min-w-max">
               <button
                 onClick={() => setSelectedCategories([])}
-                className={`px-4 py-2 rounded-full transition-all ${
+                className={`px-4 py-2 rounded-full transition-all flex items-center ${
                   selectedCategories.length === 0 
                     ? 'bg-primary text-white shadow-md' 
                     : 'bg-gray-100 hover:bg-gray-200'
                 }`}
                 aria-label={t('filters.all')}
               >
+                <span className="inline-block w-5 h-5 mr-1">📱</span>
                 {t('filters.all')}
               </button>
               
@@ -153,13 +183,14 @@ export default function Home() {
                 <button
                   key={`tab-${index}-${category}`}
                   onClick={() => handleCategoryFilterChange(category)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                  className={`px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center ${
                     selectedCategories.includes(category) 
                       ? 'bg-primary text-white shadow-md' 
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
                   aria-label={category}
                 >
+                  {getCategoryIcon(category)}
                   {category}
                 </button>
               ))}
