@@ -156,6 +156,7 @@ export class MemStorage implements IStorage {
       screenCount: insertApp.screenCount ?? 0,
       url: insertApp.url ?? null,
       slug: slug, // Include the slug
+      status: (insertApp as any).status ?? "Ativo", // Add status field with default value
       airtableId: insertApp.airtableId,
       createdAt: now,
       updatedAt: now,
@@ -1188,7 +1189,7 @@ export class MemStorage implements IStorage {
         screenCount: app.screenCount ?? 0,
         url: app.url ?? null,
         slug: slug,
-        status: app.status ?? "Ativo", // Set status, default to "Ativo" if not specified
+        status: (app as any).status ?? "Ativo", // Set status, default to "Ativo" if not specified
         airtableId: app.airtableId,
         createdAt: now,
         updatedAt: now,
