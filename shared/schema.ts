@@ -12,6 +12,7 @@ export const apps = pgTable("apps", {
   cloudinaryLogo: text("cloudinary_logo"), // Cloudinary URL for the app logo (from "importing" field in Airtable)
   type: text("type").notNull(), // Federal, Municipal, State
   category: text("category").notNull(),
+  categories: text("categories").array(), // Multiple categories from the Airtable 'categories' column
   platform: text("platform").notNull(), // iOS, Android, Web, Cross-platform
   language: text("language"),
   screenCount: integer("screen_count").notNull().default(0),
