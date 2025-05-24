@@ -120,7 +120,7 @@ export default function Home() {
     if (app.category === "Cidadania") return "Cidadania"; 
     if (app.category === "Saúde") return "Saúde";
     if (app.category === "Logística") return "Logística";
-    if (app.category === "Trabalho") return "Trabalho";
+    if (app.category === "Trabalho" || app.category === "Trabalhos") return "Trabalhos"; // Handle both "Trabalho" and "Trabalhos"
     if (app.category === "Portal") return "Portal";
     
     // Name-based overrides for specific apps we know about
@@ -128,7 +128,7 @@ export default function Home() {
       return "Finanças";
     }
     if (app.name === "Carteira de Trabalho Digital") {
-      return "Trabalho";
+      return "Trabalhos"; // Updated to match "Trabalhos"
     }
     if (app.name === "Meu SUS Digital") {
       return "Saúde";
