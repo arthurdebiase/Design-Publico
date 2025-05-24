@@ -260,7 +260,26 @@ export default function AppDetail() {
             </div>
             
             <div className="py-6 pt-0 px-0">
-              {screens && (
+              {/* Planned App Message */}
+              {app.status === "Planejado" && (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-8">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <Calendar className="w-16 h-16 text-amber-500" />
+                    <h2 className="text-2xl font-medium text-amber-800">{t('appDetail.plannedApp', 'Aplicativo Planejado')}</h2>
+                    <p className="text-amber-700 max-w-lg">
+                      {t('appDetail.plannedAppDescription', 'Este aplicativo está em fase de planejamento e será disponibilizado em breve. Ainda não existem telas disponíveis para visualização.')}
+                    </p>
+                    <div className="bg-white rounded-lg p-4 mt-4 w-full max-w-md">
+                      <div className="flex items-center space-x-3">
+                        <Clock className="w-5 h-5 text-amber-500" />
+                        <p className="text-sm text-gray-600">{t('appDetail.stayTuned', 'Fique atento para atualizações!')}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
+              {screens && !app.status?.includes("Planejado") && (
                 <div className="mb-4">
                   <div className="flex flex-wrap items-center gap-4 mb-4">
                     {/* Component/Tag filter dropdown */}

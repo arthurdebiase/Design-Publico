@@ -111,6 +111,11 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
   // Use aspect ratio to maintain proper proportions with better size
   const imageContainerStyle = { aspectRatio: "9/14" };
   
+  // Add badge class for planned apps
+  const cardClass = appIsPlanned 
+    ? "bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-4 flex flex-col border border-amber-200"
+    : "bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-4 flex flex-col";
+  
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
     const appSlug = createSlug(app.name);
@@ -132,12 +137,22 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
       }}
     >
       <div 
-        className={`bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-4 flex flex-col ${cardHeight}`}
+        className={`${cardClass} ${cardHeight}`}
         role="article"
         aria-labelledby={`app-name-${app.id}`}
       >
         <div className="relative flex-grow overflow-hidden" style={imageContainerStyle}>
-          <AppScreenImage appId={app.id.toString()} appName={app.name} isPriority={isPriority} />
+          <AppScreenImage 
+            appId={app.id.toString()} 
+            appName={app.name} 
+            isPriority={isPriority} 
+            isPlanned={appIsPlanned} 
+          />
+          {appIsPlanned && (
+            <div className="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs px-2 py-1 m-2 rounded-full">
+              Em breve
+            </div>
+          )}
         </div>
         <div className={`${isMobile ? 'p-2' : 'p-3'} flex-shrink-0`}>
           <div className="flex items-center gap-3">
