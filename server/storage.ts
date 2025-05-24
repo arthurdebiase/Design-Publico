@@ -994,11 +994,12 @@ export class MemStorage implements IStorage {
         thumbnailUrl: "https://random.imagecdn.app/500/300?image=1",
         logo: "https://random.imagecdn.app/100/100?image=11",
         type: "Federal",
-        category: "Healthcare",
+        category: "Saúde",
         platform: "iOS",
         language: "Portuguese",
         screenCount: 15,
         url: "https://example.com/meusus",
+        status: "Ativo",
         airtableId: "rec1",
       },
       {
