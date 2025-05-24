@@ -37,37 +37,47 @@ export default function Home() {
     }
   }, [apps]);
   
-  // Direct category mapping from app data
-  const getAppCategory = (app: any): string => {
-    if (!app) return "Portal";
+  // Function to get app categories is implemented below
+  
+  // Get the categories for an app, using the 'categories' array field if available
+  const getAppCategories = (app: any): string[] => {
+    if (!app) return ["Portal"];
     
-    // Use exact category matches based on app data
-    if (app.category === "Finanças") return "Finanças";
-    if (app.category === "Cidadania") return "Cidadania"; 
-    if (app.category === "Saúde") return "Saúde";
-    if (app.category === "Logística") return "Logística";
-    if (app.category === "Trabalho") return "Trabalho";
-    if (app.category === "Portal") return "Portal";
-    
-    // Name-based overrides for specific apps we know about
-    if (app.name === "CAIXA" || app.name === "Meu INSS" || app.name === "Tesouro Direto") {
-      return "Finanças";
-    }
-    if (app.name === "Carteira de Trabalho Digital") {
-      return "Trabalho";
-    }
-    if (app.name === "Meu SUS Digital") {
-      return "Saúde";
-    }
-    if (app.name === "Correios") {
-      return "Logística";
-    }
-    if (app.name === "e-Título") {
-      return "Cidadania";
+    // Use the 'categories' array field if available
+    if (app.categories && Array.isArray(app.categories) && app.categories.length > 0) {
+      return app.categories;
     }
     
-    // Fallback to type-based categorization
-    return "Portal";
+    // Fallback to 'category' field if categories is not available
+    if (app.category) {
+      return [app.category];
+    }
+    
+    // Fallback based on app name
+    if (app.name.includes("CAIXA") || app.name.includes("INSS") || app.name.includes("Tesouro")) {
+      return ["Finanças"];
+    }
+    if (app.name.includes("Trabalho")) {
+      return ["Trabalho"];
+    }
+    if (app.name.includes("SUS") || app.name.includes("Saúde")) {
+      return ["Saúde"];
+    }
+    if (app.name.includes("Correios")) {
+      return ["Logística"];
+    }
+    if (app.name.includes("Título") || app.name.includes("Cidadania")) {
+      return ["Cidadania"];
+    }
+    
+    // Fallback to default
+    return ["Portal"];
+  };
+  
+  // Helper function to get the primary category for an app
+  const getPrimaryCategory = (app: any): string => {
+    const categories = getAppCategories(app);
+    return categories[0] || "Portal";
   };
   
   // Filter and sort apps based on selected categories and sort method
@@ -81,16 +91,11 @@ export default function Home() {
         return true;
       }
       
-      // Get the appropriate category for this app
-      const appCategory = getAppCategory(app);
+      // Get the app categories 
+      const appCategories = getAppCategories(app);
       
-      // Log for debugging
-      if (selectedCategories.includes("Finanças")) {
-        console.log(`App: ${app.name}, Category: ${app.category}, Type: ${app.type}, Assigned Category: ${appCategory}`);
-      }
-      
-      // Check if the app's category is included in the selected categories
-      return selectedCategories.includes(appCategory);
+      // Check if any of the app's categories match the selected categories
+      return selectedCategories.some(category => appCategories.includes(category));
     });
     
     // Then, apply sorting
@@ -139,28 +144,45 @@ export default function Home() {
             <div className="flex space-x-1 min-w-max">
               <button
                 onClick={() => setSelectedCategories([])}
-                className={`px-4 py-2 rounded-full transition-all ${
+                className={`relative px-4 py-2 text-sm font-medium transition-colors ${
                   selectedCategories.length === 0 
-                    ? 'bg-primary text-white shadow-md' 
-                    : 'bg-gray-100 hover:bg-gray-200'
+                    ? 'text-green-600 font-semibold' 
+                    : 'text-gray-700 hover:text-gray-900'
                 }`}
                 aria-label={t('filters.all')}
               >
+                <span className="inline-block w-5 h-5 mr-1">🏠</span>
                 {t('filters.all')}
+                {selectedCategories.length === 0 && (
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-600 rounded-t-sm"></div>
+                )}
               </button>
               
               {availableCategories && availableCategories.map((category, index) => (
                 <button
                   key={`tab-${index}-${category}`}
                   onClick={() => handleCategoryFilterChange(category)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                  className={`relative px-4 py-2 text-sm font-medium transition-colors ${
                     selectedCategories.includes(category) 
-                      ? 'bg-primary text-white shadow-md' 
-                      : 'bg-gray-100 hover:bg-gray-200'
+                      ? 'text-green-600 font-semibold' 
+                      : 'text-gray-700 hover:text-gray-900'
                   }`}
                   aria-label={category}
                 >
+                  {/* Category icons */}
+                  {category === "Cidadania" && <span className="inline-block w-5 h-5 mr-1">👤</span>}
+                  {category === "Finanças" && <span className="inline-block w-5 h-5 mr-1">💰</span>}
+                  {category === "Logística" && <span className="inline-block w-5 h-5 mr-1">🚚</span>}
+                  {category === "Portal" && <span className="inline-block w-5 h-5 mr-1">🌐</span>}
+                  {category === "Saúde" && <span className="inline-block w-5 h-5 mr-1">❤️</span>}
+                  {category === "Trabalho" && <span className="inline-block w-5 h-5 mr-1">💼</span>}
+                  {category === "Mobilidade" && <span className="inline-block w-5 h-5 mr-1">🚗</span>}
+                  {category === "Segurança" && <span className="inline-block w-5 h-5 mr-1">🔒</span>}
+                  
                   {category}
+                  {selectedCategories.includes(category) && (
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-600 rounded-t-sm"></div>
+                  )}
                 </button>
               ))}
             </div>
