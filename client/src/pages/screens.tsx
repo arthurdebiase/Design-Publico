@@ -284,17 +284,15 @@ export default function ScreensPage() {
   
   const handleTagFilterChange = (tag: string | null) => {
     if (tag === null) {
-      // Clear all tags
-      setSelectedTags([]);
+      // Clear selected tag
+      setSelectedTag(null);
     } else {
-      // Toggle tag - add if not present, remove if already present
-      setSelectedTags(prev => {
-        if (prev.includes(tag)) {
-          return prev.filter(t => t !== tag);
-        } else {
-          return [...prev, tag];
-        }
-      });
+      // Toggle tag - select if not current, clear if already selected
+      if (selectedTag === tag) {
+        setSelectedTag(null); // Deselect if clicked on the currently selected tag
+      } else {
+        setSelectedTag(tag); // Select the new tag
+      }
     }
   };
   
@@ -314,8 +312,9 @@ export default function ScreensPage() {
     }
   };
   
-  const handleRemoveTag = (tag: string) => {
-    setSelectedTags(prev => prev.filter(t => t !== tag));
+  // No longer needed with single selection
+  const clearSelectedTag = () => {
+    setSelectedTag(null);
   };
   
   const handleRemoveCategory = (category: string) => {
@@ -390,13 +389,13 @@ export default function ScreensPage() {
             onChange={(e) => {
               const searchTerm = e.target.value.toLowerCase();
               if (searchTerm === '') {
-                setSelectedTags([]);
+                setSelectedTag(null);
               } else {
                 const matchedTags = availableTags.filter(tag => 
                   tag.toLowerCase().includes(searchTerm)
                 );
                 if (matchedTags.length === 1) {
-                  setSelectedTags([matchedTags[0]]);
+                  setSelectedTag(matchedTags[0]);
                 }
               }
             }}
@@ -418,7 +417,7 @@ export default function ScreensPage() {
                   key={`popular-${tag}`}
                   onClick={() => handleTagFilterChange(tag)}
                   className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedTags.includes(tag)
+                    selectedTag === tag
                       ? 'bg-green-600 text-white'
                       : 'border-2 border-green-500 text-green-700 hover:bg-green-50'
                   }`}
