@@ -28,6 +28,8 @@ export default function ScreensPage() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [tagCounts, setTagCounts] = useState<{[key: string]: number}>({});
+  const [popularTags, setPopularTags] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -380,6 +382,31 @@ export default function ScreensPage() {
             </svg>
           </div>
         </div>
+        
+        {/* Highlighted components section - showing top 4 components with most screens */}
+        {popularTags.length > 0 && (
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold mb-2">{t('screens.popularComponents')}</h3>
+            <div className="flex flex-wrap gap-2">
+              {popularTags.map(tag => (
+                <button
+                  key={`popular-${tag}`}
+                  onClick={() => handleTagFilterChange(tag)}
+                  className={`relative px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedTags.includes(tag)
+                      ? 'bg-green-600 text-white'
+                      : 'border-2 border-green-500 text-green-700 hover:bg-green-50'
+                  }`}
+                >
+                  {tag}
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {tagCounts[tag]}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       
         {/* Component tabs - similar to category tabs on apps page */}
         <div className="flex flex-wrap gap-2 mb-4">
