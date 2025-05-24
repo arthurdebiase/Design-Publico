@@ -1,17 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchApps } from "@/lib/airtable";
 import AppCard from "@/components/app-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown, X, Clock, Grid, Eye } from "lucide-react";
 import { useTranslation } from 'react-i18next';
 
 export default function Home() {
   const { t } = useTranslation();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<string>("none"); // Track the current sort method
   
   // Enhanced query with retry logic and better error handling
   const { isLoading, error, data: apps } = useQuery({
@@ -69,24 +70,50 @@ export default function Home() {
     return "Portal";
   };
   
-  // Filter apps based on selected categories
-  const filteredApps = apps?.filter(app => {
-    // If no categories are selected, show all apps
-    if (selectedCategories.length === 0) {
-      return true;
+  // Filter and sort apps based on selected categories and sort method
+  const filteredApps = useMemo(() => {
+    if (!apps) return [];
+    
+    // First, filter by category
+    let filtered = apps.filter(app => {
+      // If no categories are selected, show all apps
+      if (selectedCategories.length === 0) {
+        return true;
+      }
+      
+      // Get the appropriate category for this app
+      const appCategory = getAppCategory(app);
+      
+      // Log for debugging
+      if (selectedCategories.includes("Finanças")) {
+        console.log(`App: ${app.name}, Category: ${app.category}, Type: ${app.type}, Assigned Category: ${appCategory}`);
+      }
+      
+      // Check if the app's category is included in the selected categories
+      return selectedCategories.includes(appCategory);
+    });
+    
+    // Then, apply sorting
+    if (sortBy === "latest") {
+      // Sort by latest updated
+      filtered = [...filtered].sort((a, b) => 
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+      console.log("Sorting by latest updated");
+    } 
+    else if (sortBy === "screens") {
+      // Sort by most screens (using ID as placeholder)
+      filtered = [...filtered].sort((a, b) => Number(b.id) - Number(a.id));
+      console.log("Sorting by screens count");
+    }
+    else if (sortBy === "views") {
+      // Sort by most viewed (using name as placeholder)
+      filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+      console.log("Sorting by views");
     }
     
-    // Get the appropriate category for this app
-    const appCategory = getAppCategory(app);
-    
-    // Log for debugging
-    if (selectedCategories.includes("Finanças")) {
-      console.log(`App: ${app.name}, Category: ${app.category}, Type: ${app.type}, Assigned Category: ${appCategory}`);
-    }
-    
-    // Check if the app's category is included in the selected categories
-    return selectedCategories.includes(appCategory);
-  });
+    return filtered;
+  }, [apps, selectedCategories, sortBy]);
   
   // Handle category filter change
   const handleCategoryFilterChange = (category: string | null) => {
@@ -158,7 +185,10 @@ export default function Home() {
                     aria-label="Ordenar por"
                     aria-haspopup="true"
                   >
-                    {t('filters.orderBy')}
+                    {sortBy === "none" && t('filters.orderBy')}
+                    {sortBy === "latest" && t('filters.latestUpdated')}
+                    {sortBy === "screens" && t('filters.moreScreens')}
+                    {sortBy === "views" && t('filters.mostViewed')}
                     <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -166,35 +196,35 @@ export default function Home() {
                   <DropdownMenuLabel>{t('filters.orderBy')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
-                    onClick={() => {
-                      // Order by latest updated
-                      const sortedApps = [...(filteredApps || [])].sort((a, b) => 
-                        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-                      );
-                      setFilteredApps(sortedApps);
-                    }}
+                    className={sortBy === "none" ? "bg-accent/50" : ""}
+                    onClick={() => setSortBy("none")}
                   >
+                    <span>{t('filters.noOrder')}</span>
+                    {sortBy === "none" && <Check className="ml-auto h-4 w-4" />}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    className={sortBy === "latest" ? "bg-accent/50" : ""}
+                    onClick={() => setSortBy("latest")}
+                  >
+                    <Clock className="mr-2 h-4 w-4" />
                     <span>{t('filters.latestUpdated')}</span>
+                    {sortBy === "latest" && <Check className="ml-auto h-4 w-4" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => {
-                      // Order by most screens (would need a count from backend)
-                      // For now just simulate with random order for demonstration
-                      const sortedApps = [...(filteredApps || [])].sort(() => Math.random() - 0.5);
-                      setFilteredApps(sortedApps);
-                    }}
+                    className={sortBy === "screens" ? "bg-accent/50" : ""}
+                    onClick={() => setSortBy("screens")}
                   >
+                    <Grid className="mr-2 h-4 w-4" />
                     <span>{t('filters.moreScreens')}</span>
+                    {sortBy === "screens" && <Check className="ml-auto h-4 w-4" />}
                   </DropdownMenuItem>
                   <DropdownMenuItem
-                    onClick={() => {
-                      // Order by most viewed (would need a count from backend)
-                      // For now just simulate with random order for demonstration
-                      const sortedApps = [...(filteredApps || [])].sort(() => Math.random() - 0.5);
-                      setFilteredApps(sortedApps);
-                    }}
+                    className={sortBy === "views" ? "bg-accent/50" : ""}
+                    onClick={() => setSortBy("views")}
                   >
+                    <Eye className="mr-2 h-4 w-4" />
                     <span>{t('filters.mostViewed')}</span>
+                    {sortBy === "views" && <Check className="ml-auto h-4 w-4" />}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
