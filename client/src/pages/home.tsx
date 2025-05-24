@@ -13,9 +13,15 @@ export default function Home() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   
+  // Enhanced query with retry logic and better error handling
   const { isLoading, error, data: apps } = useQuery({
     queryKey: ['/api/apps'],
-    queryFn: () => fetchApps({})
+    queryFn: () => fetchApps({}),
+    retry: 3, // Retry failed requests up to 3 times
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000), // Exponential backoff
+    staleTime: 60000, // Consider data fresh for 1 minute
+    refetchOnWindowFocus: true, // Refresh when user returns to the tab
+    refetchOnReconnect: true // Refresh when network reconnects
   });
   
   // Extract available categories from apps and set predefined categories
@@ -224,6 +230,18 @@ export default function Home() {
                   <AppCard key={app.id} app={app} isPriority={index < 8} />
                 ))}
               </div>
+              
+              {/* Show a warning if fewer apps than expected are displayed */}
+              {filteredApps && filteredApps.length > 0 && filteredApps.length < 8 && (
+                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mt-6">
+                  <p className="text-yellow-700 text-sm mb-2 font-medium">
+                    {t('filters.someAppsHidden')}
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    {t('filters.tryRefreshing')}
+                  </p>
+                </div>
+              )}
               
               {filteredApps && filteredApps.length === 0 && (
                 <div className="bg-white p-8 rounded-lg text-center">

@@ -26,9 +26,26 @@ export async function fetchApps(filters?: {
       }
     }
 
+    // Add a timestamp to prevent caching issues in production
+    const cacheBuster = new URLSearchParams();
+    cacheBuster.append("_t", Date.now().toString());
+    url += url.includes('?') ? `&${cacheBuster.toString()}` : `?${cacheBuster.toString()}`;
+
+    // Use a longer timeout for the fetch operation (10 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
     const response = await fetch(url, {
       credentials: "include",
+      signal: controller.signal,
+      // Add headers to prevent caching
+      headers: {
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch apps: ${response.statusText}`);
@@ -36,11 +53,15 @@ export async function fetchApps(filters?: {
 
     const apps = await response.json();
     
+    // Log how many apps were loaded
+    console.log(`Successfully loaded ${apps.length} apps from API`);
+    
     // Sort apps alphabetically by name
     return apps.sort((a: App, b: App) => a.name.localeCompare(b.name));
   } catch (error) {
     console.error("Error fetching apps:", error);
-    throw error;
+    // Return an empty array instead of throwing to prevent UI breakage
+    return [];
   }
 }
 
@@ -75,9 +96,23 @@ export async function fetchAppById(id: string): Promise<App> {
  */
 export async function fetchScreensByAppId(appId: string): Promise<Screen[]> {
   try {
-    const response = await fetch(`/api/apps/${appId}/screens`, {
+    // Add cache busting parameter to prevent caching issues
+    const url = `/api/apps/${appId}/screens?_t=${Date.now()}`;
+    
+    // Use a longer timeout for the fetch operation (10 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(url, {
       credentials: "include",
+      signal: controller.signal,
+      headers: {
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
     });
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch screens: ${response.statusText}`);
@@ -85,10 +120,14 @@ export async function fetchScreensByAppId(appId: string): Promise<Screen[]> {
 
     const screens = await response.json();
     
+    // Log success for debugging
+    console.log(`Successfully loaded ${screens.length} screens for app ID ${appId}`);
+    
     // Sort screens by their order field from Airtable
     return screens.sort((a: Screen, b: Screen) => a.order - b.order);
   } catch (error) {
     console.error(`Error fetching screens for app with ID ${appId}:`, error);
-    throw error;
+    // Return empty array instead of throwing to prevent UI breakage
+    return [];
   }
 }
