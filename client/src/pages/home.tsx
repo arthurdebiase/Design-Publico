@@ -276,17 +276,7 @@ export default function Home() {
                 ))}
               </div>
               
-              {/* Show a warning if fewer apps than expected are displayed */}
-              {filteredApps && filteredApps.length > 0 && filteredApps.length < 8 && (
-                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mt-6">
-                  <p className="text-yellow-700 text-sm mb-2 font-medium">
-                    {t('filters.someAppsHidden')}
-                  </p>
-                  <p className="text-gray-600 text-sm">
-                    {t('filters.tryRefreshing')}
-                  </p>
-                </div>
-              )}
+              {/* Removed warning about fewer apps - no longer needed */}
               
               {filteredApps && filteredApps.length === 0 && (
                 <div className="bg-white p-8 rounded-lg text-center">
