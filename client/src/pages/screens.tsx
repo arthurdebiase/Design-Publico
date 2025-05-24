@@ -433,13 +433,13 @@ export default function ScreensPage() {
           </div>
         )}
       
-        {/* Component tags menu - displayed as a full menu over the content */}
-        <div className="mb-4">
-          {/* First row of components with show/hide toggle */}
-          <div className="flex flex-wrap gap-2 mb-2">
+        {/* Component tags with horizontal scroll */}
+        <div className="mb-4 relative">
+          {/* Horizontal scrollable container */}
+          <div className="flex items-center overflow-x-auto pb-2 no-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
               onClick={() => setSelectedTags([])}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
                 selectedTags.length === 0 
                   ? 'bg-green-600 text-white' 
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -448,12 +448,12 @@ export default function ScreensPage() {
               {t('filters.all')}
             </button>
             
-            {/* Show first few components based on screen size */}
-            {availableTags.slice(0, visibleTagCount).map((tag: string) => (
+            {/* All tags in a horizontal scroll */}
+            {availableTags.map((tag: string) => (
               <button
                 key={`tag-tab-${tag}`}
                 onClick={() => handleTagFilterChange(tag)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
                   selectedTags.includes(tag)
                     ? 'bg-green-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -462,93 +462,11 @@ export default function ScreensPage() {
                 {tag}
               </button>
             ))}
-            
-            {/* "Mostra mais/menos" toggle button */}
-            {availableTags.length > visibleTagCount && (
-              <button 
-                className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 border border-green-500"
-                onClick={() => {
-                  // Toggle between showing all tags and just the first row
-                  const tagsContainer = document.getElementById('all-tags-container');
-                  if (tagsContainer) {
-                    tagsContainer.classList.toggle('hidden');
-                    
-                    // Change button text
-                    const showAllButton = document.getElementById('show-all-button');
-                    if (showAllButton) {
-                      showAllButton.textContent = 
-                        tagsContainer.classList.contains('hidden') 
-                          ? '+ Mostra mais'
-                          : '- Mostra menos';
-                    }
-                  }
-                }}
-              >
-                <span id="show-all-button">+ Mostra mais</span>
-              </button>
-            )}
           </div>
           
-          {/* All components container - when expanded shows as a menu over the content */}
-          <div id="all-tags-container" className="hidden">
-            <div className="fixed inset-0 bg-black bg-opacity-5 z-10" onClick={() => {
-              const tagsContainer = document.getElementById('all-tags-container');
-              if (tagsContainer) {
-                tagsContainer.classList.add('hidden');
-                const showAllButton = document.getElementById('show-all-button');
-                if (showAllButton) {
-                  showAllButton.textContent = '+ Mostra mais';
-                }
-              }
-            }}></div>
-            <div className="relative bg-white p-4 rounded-lg shadow-lg z-20 border border-gray-200">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-medium">Componentes</h3>
-                <button 
-                  className="text-gray-500 hover:text-gray-700"
-                  onClick={() => {
-                    const tagsContainer = document.getElementById('all-tags-container');
-                    if (tagsContainer) {
-                      tagsContainer.classList.add('hidden');
-                      const showAllButton = document.getElementById('show-all-button');
-                      if (showAllButton) {
-                        showAllButton.textContent = '+ Mostra mais';
-                      }
-                    }
-                  }}
-                >
-                  <span className="sr-only">Fechar</span>
-                  <X size={18} />
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-2 max-h-[70vh] overflow-y-auto">
-                {availableTags.map((tag: string) => (
-                  <button
-                    key={`menu-tag-${tag}`}
-                    onClick={() => {
-                      handleTagFilterChange(tag);
-                      // Auto-close the menu after selection
-                      const tagsContainer = document.getElementById('all-tags-container');
-                      if (tagsContainer) {
-                        tagsContainer.classList.add('hidden');
-                        const showAllButton = document.getElementById('show-all-button');
-                        if (showAllButton) {
-                          showAllButton.textContent = '+ Mostra mais';
-                        }
-                      }
-                    }}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                      selectedTags.includes(tag)
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+          {/* Add shadow indicators for scroll */}
+          <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10"></div>
+          <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10"></div>
         </div>
       </div>
       
