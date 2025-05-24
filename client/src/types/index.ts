@@ -2,6 +2,8 @@
 export type AppType = 'Federal' | 'Municipal' | 'State' | '';
 export type Platform = 'iOS' | 'Android' | 'Web' | 'Cross-platform' | '';
 
+export type AppStatus = 'Ativo' | 'Planejado' | '';
+
 export interface App {
   id: string;
   name: string;
@@ -15,6 +17,7 @@ export interface App {
   language?: string;
   screenCount: number;
   url?: string;
+  status?: AppStatus; // New field for app status
   createdAt: string;
   updatedAt: string;
 }

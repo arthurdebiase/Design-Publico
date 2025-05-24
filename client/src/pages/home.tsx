@@ -112,7 +112,15 @@ export default function Home() {
       console.log("Sorting by views");
     }
     
-    return filtered;
+    // Final step: Always put "Planejado" status apps at the end
+    return [...filtered].sort((a, b) => {
+      // If a is planned and b is not, a comes after b
+      if (a.status === 'Planejado' && b.status !== 'Planejado') return 1;
+      // If b is planned and a is not, b comes after a
+      if (b.status === 'Planejado' && a.status !== 'Planejado') return -1;
+      // Otherwise maintain the existing order
+      return 0;
+    });
   }, [apps, selectedCategories, sortBy]);
   
   // Handle category filter change - now as single selection only
