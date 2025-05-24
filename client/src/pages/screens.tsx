@@ -409,31 +409,79 @@ export default function ScreensPage() {
         )}
       
         {/* Component tabs - similar to category tabs on apps page */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          <button
-            onClick={() => setSelectedTags([])}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              selectedTags.length === 0 
-                ? 'bg-green-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {t('filters.all')}
-          </button>
-          
-          {availableTags.map((tag: string) => (
+        <div className="mb-4">
+          {/* First row of components */}
+          <div className="flex flex-wrap gap-2 mb-2">
             <button
-              key={`tag-tab-${tag}`}
-              onClick={() => handleTagFilterChange(tag)}
+              onClick={() => setSelectedTags([])}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedTags.includes(tag)
-                  ? 'bg-green-600 text-white'
+                selectedTags.length === 0 
+                  ? 'bg-green-600 text-white' 
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
-              {tag}
+              {t('filters.all')}
             </button>
-          ))}
+            
+            {/* Show just the first 8 components */}
+            {availableTags.slice(0, 8).map((tag: string) => (
+              <button
+                key={`tag-tab-${tag}`}
+                onClick={() => handleTagFilterChange(tag)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedTags.includes(tag)
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          
+          {/* Show all button */}
+          <div className="flex justify-center mt-1">
+            <button 
+              className="text-green-600 hover:text-green-800 text-sm font-medium flex items-center"
+              onClick={() => {
+                // Toggle between showing all tags and just the first row
+                const tagsContainer = document.getElementById('all-tags-container');
+                if (tagsContainer) {
+                  tagsContainer.classList.toggle('hidden');
+                  
+                  // Change button text
+                  const showAllButton = document.getElementById('show-all-button');
+                  if (showAllButton) {
+                    showAllButton.textContent = 
+                      tagsContainer.classList.contains('hidden') 
+                        ? '+ ' + t('filters.showAll')
+                        : '- ' + t('filters.showLess');
+                  }
+                }
+              }}
+            >
+              <span id="show-all-button">+ {t('filters.showAll')}</span>
+            </button>
+          </div>
+          
+          {/* All components container (initially hidden) */}
+          <div id="all-tags-container" className="hidden mt-3">
+            <div className="flex flex-wrap gap-2">
+              {availableTags.slice(8).map((tag: string) => (
+                <button
+                  key={`all-tag-${tag}`}
+                  onClick={() => handleTagFilterChange(tag)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    selectedTags.includes(tag)
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       
