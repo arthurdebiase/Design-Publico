@@ -169,11 +169,11 @@ export default function Home() {
                   }`}
                   aria-label={category}
                 >
-                  {/* Category icons */}
-                  {category === "Cidadania" && <span className="inline-block w-5 h-5 mr-1">👤</span>}
+                  {/* Category icons from Airtable */}
+                  {category === "Cidadania" && <span className="inline-block w-5 h-5 mr-1">🌎</span>}
                   {category === "Finanças" && <span className="inline-block w-5 h-5 mr-1">💰</span>}
                   {category === "Logística" && <span className="inline-block w-5 h-5 mr-1">🚚</span>}
-                  {category === "Portal" && <span className="inline-block w-5 h-5 mr-1">🌐</span>}
+                  {category === "Portal" && <span className="inline-block w-5 h-5 mr-1">🖥️</span>}
                   {category === "Saúde" && <span className="inline-block w-5 h-5 mr-1">❤️</span>}
                   {category === "Trabalho" && <span className="inline-block w-5 h-5 mr-1">💼</span>}
                   {category === "Mobilidade" && <span className="inline-block w-5 h-5 mr-1">🚗</span>}
