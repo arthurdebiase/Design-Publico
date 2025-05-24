@@ -111,20 +111,54 @@ export default function Home() {
           <h1 className="text-3xl font-bold mb-2">{t('header.apps')}</h1>
         </div>
         
+        {/* Category Tabs */}
+        <div className="mb-8">
+          <div className="overflow-x-auto pb-2">
+            <div className="flex space-x-1 min-w-max">
+              <button
+                onClick={() => setSelectedCategories([])}
+                className={`px-4 py-2 rounded-full transition-all ${
+                  selectedCategories.length === 0 
+                    ? 'bg-primary text-white shadow-md' 
+                    : 'bg-gray-100 hover:bg-gray-200'
+                }`}
+                aria-label={t('filters.all')}
+              >
+                {t('filters.all')}
+              </button>
+              
+              {availableCategories && availableCategories.map((category, index) => (
+                <button
+                  key={`tab-${index}-${category}`}
+                  onClick={() => handleCategoryFilterChange(category)}
+                  className={`px-4 py-2 rounded-full whitespace-nowrap transition-all ${
+                    selectedCategories.includes(category) 
+                      ? 'bg-primary text-white shadow-md' 
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                  aria-label={category}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+        
         {/* Filter section */}
         <div className="mb-4 flex flex-wrap items-center justify-between">
           <div className="flex flex-wrap gap-4 items-center">
-            {/* Category filter dropdown */}
+            {/* Additional filters can go here */}
             <div className="flex items-center">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="outline" 
                     className="flex items-center gap-2"
-                    aria-label="Filtrar por categoria"
+                    aria-label="Mais filtros"
                     aria-haspopup="true"
                   >
-                    {t('filters.category')}
+                    {t('filters.moreFilters')}
                     <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -133,7 +167,7 @@ export default function Home() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
-                    onClick={() => handleCategoryFilterChange(null)}
+                    onClick={() => setSelectedCategories([])}
                   >
                     {t('filters.all')} {t('filters.category')}
                   </DropdownMenuItem>
