@@ -392,12 +392,15 @@ export default function ScreensPage() {
             </DropdownMenu>
           </div>
 
-          {/* Category tabs for easier navigation - matching the apps page */}
+          {/* Filter tabs - first row for components dropdown */}
           <div className="flex flex-wrap gap-2 mt-4 w-full">
             <button
-              onClick={() => setSelectedCategories([])}
+              onClick={() => {
+                setSelectedTags([]);
+                setSelectedCategories([]);
+              }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedCategories.length === 0 
+                selectedTags.length === 0 && selectedCategories.length === 0
                   ? 'bg-green-600 text-white' 
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -405,6 +408,7 @@ export default function ScreensPage() {
               {t('filters.all')}
             </button>
             
+            {/* Category tabs similar to the apps page */}
             {availableCategories.map((category) => (
               <button
                 key={`cat-tab-${category}`}
