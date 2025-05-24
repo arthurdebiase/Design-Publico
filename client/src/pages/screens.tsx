@@ -487,7 +487,7 @@ export default function ScreensPage() {
                 className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
                 onClick={() => handleCategoryFilterChange(null)}
               >
-                {t('filters.all')} {t('filters.categories')}
+                {t('filters.categories')}
               </DropdownMenuItem>
               {availableCategories.map((category: string, index: number) => (
                 <DropdownMenuItem
