@@ -112,12 +112,7 @@ export default function Home() {
       console.log("Sorting by views");
     }
     
-    // Split apps into normal and planned
-    const normalApps = filtered.filter(app => app.status !== 'Planejado');
-    const plannedApps = filtered.filter(app => app.status === 'Planejado');
-    
-    // Return normal apps first, then planned apps
-    return [...normalApps, ...plannedApps];
+    return filtered;
   }, [apps, selectedCategories, sortBy]);
   
   // Handle category filter change - now as single selection only
@@ -276,7 +271,17 @@ export default function Home() {
                 ))}
               </div>
               
-              {/* Removed warning about fewer apps - no longer needed */}
+              {/* Show a warning if fewer apps than expected are displayed */}
+              {filteredApps && filteredApps.length > 0 && filteredApps.length < 8 && (
+                <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg mt-6">
+                  <p className="text-yellow-700 text-sm mb-2 font-medium">
+                    {t('filters.someAppsHidden')}
+                  </p>
+                  <p className="text-gray-600 text-sm">
+                    {t('filters.tryRefreshing')}
+                  </p>
+                </div>
+              )}
               
               {filteredApps && filteredApps.length === 0 && (
                 <div className="bg-white p-8 rounded-lg text-center">

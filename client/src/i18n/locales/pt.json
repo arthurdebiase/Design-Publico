@@ -54,8 +54,8 @@
   "app": {
     "visit": "Visitar",
     "appScreens": "Telas do Aplicativo",
-    "noScreens": "Em Desenvolvimento",
-    "noScreensDesc": "Novas telas serão adicionadas em breve",
+    "noScreens": "Nenhuma tela disponível",
+    "noScreensDesc": "Este aplicativo ainda não possui telas disponíveis.",
     "notFound": "Aplicativo não encontrado",
     "notFoundDesc": "O aplicativo que você está procurando pode ter sido removido ou não existe.",
     "goBack": "Voltar para a galeria",

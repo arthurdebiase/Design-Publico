@@ -54,8 +54,8 @@
   "app": {
     "visit": "Visit",
     "appScreens": "App Screens",
-    "noScreens": "In Development",
-    "noScreensDesc": "New screens will be added soon",
+    "noScreens": "No screens available",
+    "noScreensDesc": "This app doesn't have any screens available yet.",
     "notFound": "Application not found",
     "notFoundDesc": "The application you're looking for might have been removed or doesn't exist.",
     "goBack": "Go back to gallery",

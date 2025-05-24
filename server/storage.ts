@@ -79,10 +79,6 @@ export class MemStorage implements IStorage {
 
   // Apps
   async getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]> {
-    // Add the planned apps if they don't exist yet
-    this.addPlannedApps();
-
-    // Get all apps including those with "Planejado" status
     let result = Array.from(this.apps.values());
 
     if (filters) {
@@ -160,7 +156,6 @@ export class MemStorage implements IStorage {
       screenCount: insertApp.screenCount ?? 0,
       url: insertApp.url ?? null,
       slug: slug, // Include the slug
-      status: (insertApp as any).status ?? "Ativo", // Add status field with default value
       airtableId: insertApp.airtableId,
       createdAt: now,
       updatedAt: now,
@@ -991,12 +986,6 @@ export class MemStorage implements IStorage {
 
   // Initialize with sample data for development
   private initializeSampleData() {
-    // Clear any existing data
-    this.apps = new Map();
-    this.screens = new Map();
-    this.appIdCounter = 1;
-    this.screenIdCounter = 1;
-    
     // Sample apps
     const sampleApps: InsertApp[] = [
       {
@@ -1005,12 +994,11 @@ export class MemStorage implements IStorage {
         thumbnailUrl: "https://random.imagecdn.app/500/300?image=1",
         logo: "https://random.imagecdn.app/100/100?image=11",
         type: "Federal",
-        category: "Saúde",
+        category: "Healthcare",
         platform: "iOS",
         language: "Portuguese",
         screenCount: 15,
         url: "https://example.com/meusus",
-        status: "Ativo",
         airtableId: "rec1",
       },
       {
@@ -1077,105 +1065,6 @@ export class MemStorage implements IStorage {
         screenCount: 7,
         url: "https://example.com/exames",
         airtableId: "rec6",
-      },
-      // Add apps with "Planejado" status from the Airtable screenshot
-      {
-        name: "Celular Seguro BR",
-        description: "App para bloquear celulares roubados e registrar ocorrências de furto ou roubo.",
-        thumbnailUrl: "https://random.imagecdn.app/500/300?image=11",
-        logo: "https://random.imagecdn.app/100/100?image=21",
-        type: "Federal",
-        category: "Segurança",
-        platform: "iOS",
-        language: "Portuguese",
-        screenCount: 0,
-        url: "https://example.com/celularseguro",
-        status: "Planejado",
-        airtableId: "rec11",
-      },
-      {
-        name: "Receita Federal",
-        description: "App oficial da Receita Federal para consultar CPF, declaração de imposto de renda e outros serviços.",
-        thumbnailUrl: "https://random.imagecdn.app/500/300?image=12",
-        logo: "https://random.imagecdn.app/100/100?image=22",
-        type: "Federal",
-        category: "Finanças",
-        platform: "Cross-platform",
-        language: "Portuguese",
-        screenCount: 0,
-        url: "https://example.com/receitafederal",
-        status: "Planejado",
-        airtableId: "rec12",
-      },
-      {
-        name: "CAIXA Tem",
-        description: "App da CAIXA para acesso a benefícios sociais, poupança e outros serviços bancários.",
-        thumbnailUrl: "https://random.imagecdn.app/500/300?image=13",
-        logo: "https://random.imagecdn.app/100/100?image=23",
-        type: "Federal",
-        category: "Finanças",
-        platform: "Cross-platform",
-        language: "Portuguese",
-        screenCount: 0,
-        url: "https://example.com/caixatem",
-        status: "Planejado",
-        airtableId: "rec13",
-      },
-      {
-        name: "Consultar Processos: Jusbrasil",
-        description: "Aplicativo para acompanhamento de processos judiciais e consulta de informações legais.",
-        thumbnailUrl: "https://random.imagecdn.app/500/300?image=14",
-        logo: "https://random.imagecdn.app/100/100?image=24",
-        type: "Federal",
-        category: "Cidadania",
-        platform: "iOS",
-        language: "Portuguese",
-        screenCount: 0,
-        url: "https://example.com/jusbrasil",
-        status: "Planejado",
-        airtableId: "rec14",
-      },
-      {
-        name: "Resultados",
-        description: "Aplicativo para consulta de resultados de exames e laudos médicos.",
-        thumbnailUrl: "https://random.imagecdn.app/500/300?image=15",
-        logo: "https://random.imagecdn.app/100/100?image=25",
-        type: "Federal",
-        category: "Cidadania",
-        platform: "iOS",
-        language: "Portuguese",
-        screenCount: 0,
-        url: "https://example.com/resultados",
-        status: "Planejado",
-        airtableId: "rec15",
-      },
-      {
-        name: "Correios",
-        description: "Aplicativo oficial dos Correios para rastreamento de encomendas e serviços postais.",
-        thumbnailUrl: "https://random.imagecdn.app/500/300?image=16",
-        logo: "https://random.imagecdn.app/100/100?image=26",
-        type: "Federal",
-        category: "Logística",
-        platform: "Cross-platform",
-        language: "Portuguese",
-        screenCount: 0,
-        url: "https://example.com/correios",
-        status: "Planejado",
-        airtableId: "rec16",
-      },
-      {
-        name: "MEI",
-        description: "Aplicativo para microempreendedores individuais gerenciarem suas obrigações fiscais.",
-        thumbnailUrl: "https://random.imagecdn.app/500/300?image=17",
-        logo: "https://random.imagecdn.app/100/100?image=27",
-        type: "Federal",
-        category: "Finanças",
-        platform: "Cross-platform",
-        language: "Portuguese",
-        screenCount: 0,
-        url: "https://example.com/mei",
-        status: "Planejado",
-        airtableId: "rec17",
       }
     ];
 
@@ -1199,7 +1088,6 @@ export class MemStorage implements IStorage {
         screenCount: app.screenCount ?? 0,
         url: app.url ?? null,
         slug: slug,
-        status: app.status ?? "Publicado", // Set status, default to "Publicado" if not specified
         airtableId: app.airtableId,
         createdAt: now,
         updatedAt: now,

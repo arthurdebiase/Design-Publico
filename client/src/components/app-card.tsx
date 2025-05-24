@@ -13,27 +13,13 @@ interface AppCardProps {
   isPriority?: boolean;
 }
 
-function AppScreenImage({ appId, appName, isPriority = false, isPlanned = false }: { appId: string, appName?: string, isPriority?: boolean, isPlanned?: boolean }) {
+function AppScreenImage({ appId, appName, isPriority = false }: { appId: string, appName?: string, isPriority?: boolean }) {
   const { data: screens, isLoading, error } = useQuery({
     queryKey: [`/api/apps/${appId}/screens`],
     queryFn: () => fetchScreensByAppId(appId),
-    // Skip fetching for planned apps
-    enabled: !isPlanned
   });
   const [, navigate] = useLocation();
   const isMobile = useIsMobile();
-
-  // For planned apps, show empty state with "Planejado" label
-  if (isPlanned) {
-    return (
-      <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center p-4">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-          <p className="text-yellow-700 font-medium mb-1">Em Planejamento</p>
-          <p className="text-gray-600 text-sm">Aplicativo em desenvolvimento</p>
-        </div>
-      </div>
-    );
-  }
 
   if (isLoading) {
     return <Skeleton className="w-full h-full" />;
@@ -101,9 +87,6 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
   const isMobile = useIsMobile();
   const [, navigate] = useLocation();
   
-  // Check if app is planned
-  const isPlanned = app.status === 'Planejado';
-  
   // Responsive heights that maintain a compact aspect ratio with larger image size
   const cardHeight = isMobile ? "h-auto" : "h-auto";
   // Use aspect ratio to maintain proper proportions with better size
@@ -118,10 +101,10 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
   return (
     <div 
       onClick={handleCardClick}
-      className={`focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-lg cursor-pointer ${isPlanned ? 'opacity-90' : ''}`}
+      className="focus:outline-none focus-visible:ring-2 focus-visible:ring-black rounded-lg cursor-pointer"
       role="link"
       tabIndex={0}
-      aria-label={`View details for ${app.name}${isPlanned ? ' (Planned)' : ''}`}
+      aria-label={`View details for ${app.name}`}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
@@ -135,12 +118,7 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
         aria-labelledby={`app-name-${app.id}`}
       >
         <div className="relative flex-grow overflow-hidden" style={imageContainerStyle}>
-          <AppScreenImage 
-            appId={app.id.toString()} 
-            appName={app.name} 
-            isPriority={isPriority} 
-            isPlanned={isPlanned} 
-          />
+          <AppScreenImage appId={app.id.toString()} appName={app.name} isPriority={isPriority} />
         </div>
         <div className={`${isMobile ? 'p-2' : 'p-3'} flex-shrink-0`}>
           <div className="flex items-center gap-3">
@@ -167,14 +145,7 @@ export default function AppCard({ app, isPriority = false }: AppCardProps) {
               <h3 id={`app-name-${app.id}`} className="font-medium truncate" title={app.name}>
                 {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
               </h3>
-              <div className="flex items-center gap-1">
-                <p className="text-xs text-gray-500 truncate">{app.type}</p>
-                {isPlanned && (
-                  <span className="inline-flex items-center rounded-full bg-yellow-50 px-2 py-0.5 text-xs font-medium text-yellow-700 ml-1">
-                    Planejado
-                  </span>
-                )}
-              </div>
+              <p className="text-xs text-gray-500 truncate">{app.type}</p>
             </div>
           </div>
         </div>

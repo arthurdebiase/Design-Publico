@@ -17,7 +17,6 @@ export const apps = pgTable("apps", {
   screenCount: integer("screen_count").notNull().default(0),
   url: text("url"),
   slug: text("slug"),  // URL-friendly version of the name
-  status: text("status").default("Publicado"), // Status field: Publicado, Planejado, etc.
   airtableId: text("airtable_id").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

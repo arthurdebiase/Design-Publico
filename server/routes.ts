@@ -431,24 +431,29 @@ Crawl-delay: 2`);
       const platform = req.query.platform as string | undefined;
       const search = req.query.search as string | undefined;
 
-      // Get all apps from the regular storage
+      // First try to get apps from the regular storage
       let apps = await storage.getApps({ type, platform, search });
       
-      // Log the complete list of apps for debugging
-      console.log(`Returning ${apps.length} apps from primary storage`);
+      // If we have data from Airtable, return it
+      if (apps && apps.length > 0) {
+        console.log(`Returning ${apps.length} apps from primary storage`);
+        return res.json(apps);
+      }
       
-      // Return all apps including those with "Planejado" status
-      return res.json(apps);
+      // If no apps found in storage, try Notion as backup if available
+      if (process.env.NOTION_INTEGRATION_SECRET && process.env.NOTION_PAGE_URL) {
+        try {
+          console.log("No apps found in primary storage, trying Notion...");
+          // This would use the imported fetchAppsFromNotion if it's available
+          // Since we're having import issues, let's return the apps we have for now
+          return res.json(apps || []);
+        } catch (err) {
+          console.error("Error fetching from Notion:", err);
+        }
+      }
       
-      // This code is now unreachable since we return above, but keeping for reference
-      // If process.env.NOTION_INTEGRATION_SECRET && process.env.NOTION_PAGE_URL {
-      //   try {
-      //     console.log("No apps found in primary storage, trying Notion...");
-      //     // This would use the imported fetchAppsFromNotion if it's available
-      //   } catch (err) {
-      //     console.error("Error fetching from Notion:", err);
-      //   }
-      // }
+      // Return whatever we have from primary storage (may be empty array)
+      res.json(apps || []);
     } catch (error) {
       console.error("Error fetching apps:", error);
       res.status(500).json({ message: "Failed to fetch apps" });
