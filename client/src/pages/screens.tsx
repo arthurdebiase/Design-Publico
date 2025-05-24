@@ -433,79 +433,43 @@ export default function ScreensPage() {
           </div>
         )}
       
-        {/* Component tabs - with in-line "show more" button */}
+        {/* Component tabs in a scrollable container */}
         <div className="mb-4">
-          {/* Components on a single line - responsive: show more components on larger screens */}
-          <div className="flex flex-wrap gap-2 mb-2">
-            <button
-              onClick={() => setSelectedTags([])}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedTags.length === 0 
-                  ? 'bg-green-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('filters.all')}
-            </button>
-            
-            {/* Show a variable number of components based on screen size */}
-            {availableTags.slice(0, visibleTagCount).map((tag: string) => (
-              <button
-                key={`tag-tab-${tag}`}
-                onClick={() => handleTagFilterChange(tag)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedTags.includes(tag)
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {tag}
-              </button>
-            ))}
-            
-            {/* Only show "Mostra mais" button if there are more tags to display */}
-            {availableTags.length > visibleTagCount && (
-              <button 
-                className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 border border-green-500"
-                onClick={() => {
-                  // Toggle between showing all tags and just the first row
-                  const tagsContainer = document.getElementById('all-tags-container');
-                  if (tagsContainer) {
-                    tagsContainer.classList.toggle('hidden');
-                    
-                    // Change button text
-                    const showAllButton = document.getElementById('show-all-button');
-                    if (showAllButton) {
-                      showAllButton.textContent = 
-                        tagsContainer.classList.contains('hidden') 
-                          ? '+ Mostra mais'
-                          : '- Mostra menos';
-                    }
-                  }
-                }}
-              >
-                <span id="show-all-button">+ Mostra mais</span>
-              </button>
-            )}
-          </div>
-          
-          {/* All components container (initially hidden) */}
-          <div id="all-tags-container" className="hidden mt-3">
-            <div className="flex flex-wrap gap-2">
-              {availableTags.slice(visibleTagCount).map((tag: string) => (
+          {/* Components in a horizontal scrollable area */}
+          <div className="relative">
+            <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+              <div className="flex flex-nowrap gap-2 min-w-full">
                 <button
-                  key={`all-tag-${tag}`}
-                  onClick={() => handleTagFilterChange(tag)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedTags.includes(tag)
-                      ? 'bg-green-600 text-white'
+                  onClick={() => setSelectedTags([])}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+                    selectedTags.length === 0 
+                      ? 'bg-green-600 text-white' 
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
                 >
-                  {tag}
+                  {t('filters.all')}
                 </button>
-              ))}
+                
+                {/* Show all available components in a scrollable list */}
+                {availableTags.map((tag: string) => (
+                  <button
+                    key={`tag-${tag}`}
+                    onClick={() => handleTagFilterChange(tag)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+                      selectedTags.includes(tag)
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
             </div>
+            
+            {/* Gradient fades on sides to indicate scrollable content */}
+            <div className="absolute top-0 bottom-0 left-0 w-6 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+            <div className="absolute top-0 bottom-0 right-0 w-6 bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
           </div>
         </div>
       </div>
