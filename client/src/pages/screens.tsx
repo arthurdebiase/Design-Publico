@@ -25,7 +25,7 @@ export default function ScreensPage() {
   const [allScreens, setAllScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [filteredScreens, setFilteredScreens] = useState<Array<Screen & { app?: App }>>([]);
   const [apps, setApps] = useState<App[]>([]);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [tagCounts, setTagCounts] = useState<{[key: string]: number}>({});
@@ -79,7 +79,7 @@ export default function ScreensPage() {
     // Get tag from query params
     const tagParam = params.get('tag');
     if (tagParam && availableTags.includes(tagParam)) {
-      setSelectedTags([tagParam]);
+      setSelectedTag(tagParam);
     }
     
     // Get category from query params
@@ -96,18 +96,18 @@ export default function ScreensPage() {
     }
   }, [search, availableTags, availableCategories]);
   
-  // Filter screens when selectedTags or selectedCategories change
+  // Filter screens when selectedTag or selectedCategories change
   useEffect(() => {
     if (allScreens.length === 0) return;
     
     let filtered = [...allScreens];
     
-    if (selectedTags.length > 0) {
+    if (selectedTag) {
       filtered = filtered.filter(screen => {
         if (!screen.tags || !Array.isArray(screen.tags)) return false;
         
-        // At least one of the selected tags must be present in the screen's tags
-        return selectedTags.some(tag => screen.tags && screen.tags.includes(tag));
+        // Selected tag must be present in the screen's tags
+        return screen.tags.includes(selectedTag);
       });
     }
     
@@ -464,7 +464,7 @@ export default function ScreensPage() {
                   key={`tag-tab-${tag}`}
                   onClick={() => handleTagFilterChange(tag)}
                   className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
-                    selectedTags.includes(tag)
+                    selectedTag === tag
                       ? 'bg-green-600 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
@@ -570,44 +570,7 @@ export default function ScreensPage() {
         </div>
       </div>
       
-      {/* Active filter chips below filters */}
-      {(selectedTags.length > 0) && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          {/* Componente filter chips */}
-          {selectedTags.map(tag => (
-            <div 
-              key={`chip-tag-${tag}`}
-              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm"
-            >
-              <span>{tag}</span>
-              <button 
-                onClick={() => handleRemoveTag(tag)}
-                className="rounded-full hover:bg-blue-200 p-1 transition-colors"
-                aria-label={`${t('filters.filter')}: ${tag}`}
-              >
-                <X className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
-          
-          {/* Category filter chips removed */}
-          
-          {/* Clear all filters button (shown only when multiple filters are active) */}
-          {selectedTags.length > 1 && (
-            <button
-              onClick={() => {
-                setSelectedTags([]);
-                setSelectedCategories([]);
-              }}
-              className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
-              aria-label={t('filters.clearFilters')}
-            >
-              <span>{t('filters.clearFilters')}</span>
-              <X className="h-3 w-3 ml-1" />
-            </button>
-          )}
-        </div>
-      )}
+      {/* Removed active filter chips as requested */}
       
       {filteredScreens.length > 0 ? (
         <div 
