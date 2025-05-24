@@ -42,7 +42,14 @@
     "noResults": "No results found",
     "tryAdjusting": "Try adjusting your filters to find more results",
     "removeFilter": "Remove filter",
-    "sections": "Sections"
+    "sections": "Sections",
+    "orderBy": "Order by",
+    "latestUpdated": "Recent updates",
+    "moreScreens": "More screens", 
+    "mostViewed": "Most viewed",
+    "noOrder": "Default",
+    "someAppsHidden": "Some apps may be hidden",
+    "tryRefreshing": "Try refreshing the page or come back later"
   },
   "app": {
     "visit": "Visit",
