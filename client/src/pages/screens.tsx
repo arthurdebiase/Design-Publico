@@ -408,9 +408,9 @@ export default function ScreensPage() {
           </div>
         )}
       
-        {/* Component tabs - similar to category tabs on apps page */}
+        {/* Component tabs - with in-line "show more" button */}
         <div className="mb-4">
-          {/* First row of components */}
+          {/* Components on a single line */}
           <div className="flex flex-wrap gap-2 mb-2">
             <button
               onClick={() => setSelectedTags([])}
@@ -438,9 +438,9 @@ export default function ScreensPage() {
               </button>
             ))}
             
-            {/* Show all button as last tag in the first row */}
+            {/* "Mostra mais" button as the last item in the component tabs */}
             <button 
-              className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 hover:bg-gray-100 border border-green-500"
+              className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 border border-green-500"
               onClick={() => {
                 // Toggle between showing all tags and just the first row
                 const tagsContainer = document.getElementById('all-tags-container');
@@ -452,13 +452,13 @@ export default function ScreensPage() {
                   if (showAllButton) {
                     showAllButton.textContent = 
                       tagsContainer.classList.contains('hidden') 
-                        ? '+ ' + t('filters.showAll')
-                        : '- ' + t('filters.showLess');
+                        ? '+ Mostra mais'
+                        : '- Mostra menos';
                   }
                 }
               }}
             >
-              <span id="show-all-button">+ {t('filters.showAll')}</span>
+              <span id="show-all-button">+ Mostra mais</span>
             </button>
           </div>
           
