@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Jusbrasil",
+    "description": "Aplicativo para consulta de processos jurídicos e acompanhamento de ações.",
+    "thumbnailUrl": "https://placehold.co/300x200/e2e8f0/64748b?text=Jusbrasil",
+    "logo": "https://placehold.co/100x100/e2e8f0/64748b?text=JB",
+    "type": "Federal",
+    "category": "Cidadania",
+    "platform": "Cross-platform",
+    "language": "Portuguese",
+    "screenCount": 0,
+    "url": "https://example.com/jusbrasil",
+    "slug": "jusbrasil",
+    "status": "Planejado",
+    "airtableId": "rec14"
+  },
+  {
+    "name": "Resultados Médicos",
+    "description": "Aplicativo para consulta de resultados de exames e laudos médicos.",
+    "thumbnailUrl": "https://placehold.co/300x200/e2e8f0/64748b?text=Resultados",
+    "logo": "https://placehold.co/100x100/e2e8f0/64748b?text=RM",
+    "type": "Federal",
+    "category": "Saúde",
+    "platform": "iOS",
+    "language": "Portuguese",
+    "screenCount": 0,
+    "url": "https://example.com/resultados",
+    "slug": "resultados-medicos",
+    "status": "Planejado",
+    "airtableId": "rec15"
+  },
+  {
+    "name": "MEI Fácil",
+    "description": "Aplicativo para microempreendedores individuais gerenciarem suas obrigações fiscais.",
+    "thumbnailUrl": "https://placehold.co/300x200/e2e8f0/64748b?text=MEI+Fácil",
+    "logo": "https://placehold.co/100x100/e2e8f0/64748b?text=MEI",
+    "type": "Federal",
+    "category": "Finanças",
+    "platform": "Cross-platform",
+    "language": "Portuguese",
+    "screenCount": 0,
+    "url": "https://example.com/meifacil",
+    "slug": "mei-facil",
+    "status": "Planejado",
+    "airtableId": "rec17"
+  },
+  {
+    "name": "Conecta Cidadão",
+    "description": "Aplicativo de conexão direta entre cidadãos e serviços públicos municipais.",
+    "thumbnailUrl": "https://placehold.co/300x200/e2e8f0/64748b?text=Conecta+Cidadão",
+    "logo": "https://placehold.co/100x100/e2e8f0/64748b?text=CC",
+    "type": "Municipal",
+    "category": "Portal",
+    "platform": "Cross-platform",
+    "language": "Portuguese",
+    "screenCount": 0,
+    "url": "https://example.com/conectacidadao",
+    "slug": "conecta-cidadao",
+    "status": "Planejado",
+    "airtableId": "rec16"
+  }
+]

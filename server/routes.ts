@@ -434,76 +434,11 @@ Crawl-delay: 2`);
       // Get all apps from the regular storage
       let apps = await storage.getApps({ type, platform, search });
       
-      // Add planned apps manually for demo purposes
-      const plannedApps = [
-        {
-          id: 101,
-          name: "Jusbrasil",
-          description: "Aplicativo para consulta de processos jurídicos e acompanhamento de ações.",
-          thumbnailUrl: "https://via.placeholder.com/300x200?text=Jusbrasil",
-          logo: "https://via.placeholder.com/100x100?text=JB",
-          cloudinaryLogo: null,
-          type: "Federal",
-          category: "Cidadania",
-          platform: "Cross-platform",
-          language: "Portuguese",
-          screenCount: 0,
-          url: "https://example.com/jusbrasil",
-          slug: "jusbrasil",
-          status: "Planejado",
-          airtableId: "rec14",
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        {
-          id: 102,
-          name: "Resultados",
-          description: "Aplicativo para consulta de resultados de exames e laudos médicos.",
-          thumbnailUrl: "https://via.placeholder.com/300x200?text=Resultados",
-          logo: "https://via.placeholder.com/100x100?text=RE",
-          cloudinaryLogo: null,
-          type: "Federal",
-          category: "Saúde",
-          platform: "iOS",
-          language: "Portuguese",
-          screenCount: 0,
-          url: "https://example.com/resultados",
-          slug: "resultados",
-          status: "Planejado",
-          airtableId: "rec15",
-          createdAt: new Date(),
-          updatedAt: new Date()
-        },
-        {
-          id: 103,
-          name: "MEI Fácil",
-          description: "Aplicativo para microempreendedores individuais gerenciarem suas obrigações fiscais.",
-          thumbnailUrl: "https://via.placeholder.com/300x200?text=MEI+Fácil", 
-          logo: "https://via.placeholder.com/100x100?text=MEI",
-          cloudinaryLogo: null,
-          type: "Federal",
-          category: "Finanças",
-          platform: "Cross-platform",
-          language: "Portuguese",
-          screenCount: 0,
-          url: "https://example.com/meifacil",
-          slug: "mei-facil",
-          status: "Planejado",
-          airtableId: "rec17",
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-      ];
-      
-      // Combine regular apps with planned apps
-      const allApps = [...apps, ...plannedApps];
-      
       // Log the complete list of apps for debugging
-      console.log(`Returning ${allApps.length} apps from storage (${apps.length} regular + ${plannedApps.length} planned)`);
-      console.log(`App statuses: ${allApps.map(app => app.status).join(', ')}`);
+      console.log(`Returning ${apps.length} apps from primary storage`);
       
       // Return all apps including those with "Planejado" status
-      return res.json(allApps);
+      return res.json(apps);
       
       // This code is now unreachable since we return above, but keeping for reference
       // If process.env.NOTION_INTEGRATION_SECRET && process.env.NOTION_PAGE_URL {
