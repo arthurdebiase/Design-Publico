@@ -414,6 +414,8 @@ Crawl-delay: 2`);
     try {
       await storage.syncFromAirtable(AIRTABLE_API_KEY, AIRTABLE_BASE_ID);
       console.log("Initial Airtable sync completed successfully.");
+      
+      // Background sync is already set up elsewhere
     } catch (error) {
       console.error("Failed to perform initial Airtable sync:", error);
     }
