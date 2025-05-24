@@ -392,7 +392,33 @@ export default function ScreensPage() {
             </DropdownMenu>
           </div>
 
-          {/* Category filter removed as requested */}
+          {/* Category tabs for easier navigation - matching the apps page */}
+          <div className="flex flex-wrap gap-2 mt-4 w-full">
+            <button
+              onClick={() => setSelectedCategories([])}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedCategories.length === 0 
+                  ? 'bg-green-600 text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('filters.all')}
+            </button>
+            
+            {availableCategories.map((category) => (
+              <button
+                key={`cat-tab-${category}`}
+                onClick={() => handleCategoryFilterChange(category)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  selectedCategories.includes(category)
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
         
         {/* Screen counter - updated format "X de XX telas" */}
