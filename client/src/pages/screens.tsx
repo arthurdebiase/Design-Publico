@@ -353,83 +353,105 @@ export default function ScreensPage() {
         <h1 className="text-3xl font-bold mb-2">{t('screens.allScreens')}</h1>
       </div>
       
+      {/* Component tabs - similar to category tabs on apps page */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <button
+          onClick={() => setSelectedTags([])}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            selectedTags.length === 0 
+              ? 'bg-green-600 text-white' 
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          {t('filters.all')}
+        </button>
+        
+        {availableTags.map((tag: string) => (
+          <button
+            key={`tag-tab-${tag}`}
+            onClick={() => handleTagFilterChange(tag)}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              selectedTags.includes(tag)
+                ? 'bg-green-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+      
+      {/* Order dropdown and screen counter in same row */}
       <div className="mb-4 flex flex-wrap items-center justify-between">
         <div className="flex flex-wrap gap-4 items-center">
-          {/* Componentes filter dropdown */}
-          <div className="flex items-center">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="outline" 
-                  className="flex items-center gap-2"
-                  aria-label={t('filters.filterByComponents')}
-                  aria-haspopup="true"
-                >
-                  {t('filters.components')}
-                  <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                <DropdownMenuLabel>{t('filters.components')}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className={selectedTags.length === 0 ? "bg-accent/50" : ""}
-                  onClick={() => handleTagFilterChange(null)}
-                >
-                  {t('filters.all')} {t('filters.components')}
-                </DropdownMenuItem>
-                {availableTags.map((tag: string, index: number) => (
-                  <DropdownMenuItem
-                    key={`tag-${index}-${tag}`}
-                    className={selectedTags.includes(tag) ? "bg-accent/50" : ""}
-                    onClick={() => handleTagFilterChange(tag)}
-                  >
-                    <span>{tag}</span>
-                    {selectedTags.includes(tag) && <Check className="ml-auto h-4 w-4" />}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* Filter tabs - first row for components dropdown */}
-          <div className="flex flex-wrap gap-2 mt-4 w-full">
-            <button
-              onClick={() => {
-                setSelectedTags([]);
-                setSelectedCategories([]);
-              }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedTags.length === 0 && selectedCategories.length === 0
-                  ? 'bg-green-600 text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {t('filters.all')}
-            </button>
-            
-            {/* Category tabs similar to the apps page */}
-            {availableCategories.map((category) => (
-              <button
-                key={`cat-tab-${category}`}
-                onClick={() => handleCategoryFilterChange(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  selectedCategories.includes(category)
-                    ? 'bg-green-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+          {/* Order by dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2"
+                aria-label={t('filters.orderBy')}
+                aria-haspopup="true"
               >
-                {category}
-              </button>
-            ))}
-          </div>
+                {t('filters.orderBy')}
+                <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuLabel>{t('filters.orderBy')}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => {/* Implement order logic */}}>
+                {t('filters.orderNewest')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {/* Implement order logic */}}>
+                {t('filters.orderByApp')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => {/* Implement order logic */}}>
+                {t('filters.orderByCategory')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Category filter dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2"
+                aria-label={t('filters.filterByCategory')}
+                aria-haspopup="true"
+              >
+                {t('filters.categories')}
+                <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
+              <DropdownMenuLabel>{t('filters.categories')}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
+                onClick={() => handleCategoryFilterChange(null)}
+              >
+                {t('filters.all')} {t('filters.categories')}
+              </DropdownMenuItem>
+              {availableCategories.map((category: string, index: number) => (
+                <DropdownMenuItem
+                  key={`cat-${index}-${category}`}
+                  className={selectedCategories.includes(category) ? "bg-accent/50" : ""}
+                  onClick={() => handleCategoryFilterChange(category)}
+                >
+                  <span>{category}</span>
+                  {selectedCategories.includes(category) && <Check className="ml-auto h-4 w-4" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         
         {/* Screen counter - updated format "X de XX telas" */}
-        <div className="text-gray-600 font-medium flex flex-col items-end">
-          <span>{t('filters.showing')}</span>
+        <div className="text-gray-600 font-medium">
           <span className="font-semibold">
-            {Math.min(displayedScreenCount, filteredScreens.length)} {t('screens.of')} {filteredScreens.length} {t('filters.screens')}
+            {t('filters.showing')} {Math.min(displayedScreenCount, filteredScreens.length)} {t('screens.of')} {filteredScreens.length} {t('filters.screens')}
           </span>
         </div>
       </div>
