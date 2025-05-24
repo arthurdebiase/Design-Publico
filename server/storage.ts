@@ -237,7 +237,10 @@ export class MemStorage implements IStorage {
         return [];
       }
       
-      // Fetch category data from the dedicated category table in Airtable
+      // Fetch category data from the correct category table name in Airtable
+      console.log(`Fetching categories from Airtable base: ${baseId}`);
+      
+      // Based on the screenshot, the correct table name is "category" and view is likely "Grid view"
       const response = await axios.get(
         `https://api.airtable.com/v0/${baseId}/category`,
         {
@@ -250,6 +253,12 @@ export class MemStorage implements IStorage {
           timeout: 10000, // 10 second timeout
         }
       );
+      
+      console.log(`Received category response status: ${response.status}`);
+      // Log first record for debugging if any records exist
+      if (response.data && response.data.records && response.data.records.length > 0) {
+        console.log(`First category record fields: ${JSON.stringify(Object.keys(response.data.records[0].fields))}`);
+      }
       
       if (!response.data || !response.data.records) {
         console.error("Invalid response format from Airtable categories API");
