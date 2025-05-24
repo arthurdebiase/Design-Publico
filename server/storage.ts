@@ -79,6 +79,10 @@ export class MemStorage implements IStorage {
 
   // Apps
   async getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]> {
+    // Add the planned apps if they don't exist yet
+    this.addPlannedApps();
+
+    // Get all apps including those with "Planejado" status
     let result = Array.from(this.apps.values());
 
     if (filters) {
