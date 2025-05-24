@@ -405,27 +405,30 @@ export default function ScreensPage() {
           </div>
         )}
       
-        {/* Component tags with horizontal scroll - simplified without arrows */}
+        {/* Component tags with horizontal scroll - tab style with green bottom divider */}
         <div className="mb-4 relative">
           {/* Simple horizontal scrollable container */}
           <div className="flex items-center">
             {/* Scrollable container with visible scrollbar */}
             <div 
               id="tags-scroll-container"
-              className="flex items-center overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent w-full" 
+              className="flex items-center overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent w-full border-b border-gray-200" 
             >
-              {/* All tags in a horizontal scroll (removed "Todos" option) */}
+              {/* All tags in a horizontal scroll (tab style, no "Todos" option) */}
               {availableTags.map((tag: string) => (
                 <button
                   key={`tag-tab-${tag}`}
                   onClick={() => handleTagFilterChange(tag)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex-shrink-0 mr-2 ${
+                  className={`px-4 py-2 text-sm font-medium transition-colors flex-shrink-0 mr-2 relative ${
                     selectedTag === tag
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'text-green-600 font-semibold'
+                      : 'text-gray-700 hover:text-gray-900'
                   }`}
                 >
                   {tag}
+                  {selectedTag === tag && (
+                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-600 rounded-t-sm"></div>
+                  )}
                 </button>
               ))}
             </div>
