@@ -7,19 +7,34 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { createSlug } from "@/lib/slugUtils";
+import { useTranslation } from 'react-i18next';
+import { Calendar, Clock } from "lucide-react";
 
 interface AppCardProps {
   app: App;
   isPriority?: boolean;
+  isPlanned?: boolean;
 }
 
-function AppScreenImage({ appId, appName, isPriority = false }: { appId: string, appName?: string, isPriority?: boolean }) {
+function AppScreenImage({ appId, appName, isPriority = false, isPlanned = false }: { appId: string, appName?: string, isPriority?: boolean, isPlanned?: boolean }) {
   const { data: screens, isLoading, error } = useQuery({
     queryKey: [`/api/apps/${appId}/screens`],
     queryFn: () => fetchScreensByAppId(appId),
   });
   const [, navigate] = useLocation();
   const isMobile = useIsMobile();
+  const { t } = useTranslation();
+
+  // Check if it's explicitly a planned app
+  if (isPlanned) {
+    return (
+      <div className="w-full h-full bg-amber-50 flex flex-col items-center justify-center p-4">
+        <Calendar className="w-8 h-8 text-amber-500 mb-2" />
+        <p className="text-amber-800 text-sm font-medium text-center">Em breve</p>
+        <p className="text-amber-700 text-xs text-center mt-1">Aplicativo planejado</p>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <Skeleton className="w-full h-full" />;
@@ -83,9 +98,13 @@ function AppScreenImage({ appId, appName, isPriority = false }: { appId: string,
   );
 }
 
-export default function AppCard({ app, isPriority = false }: AppCardProps) {
+export default function AppCard({ app, isPriority = false, isPlanned = false }: AppCardProps) {
   const isMobile = useIsMobile();
   const [, navigate] = useLocation();
+  const { t } = useTranslation();
+  
+  // Check if app is planned (either via prop or app status)
+  const appIsPlanned = isPlanned || app.status === "Planejado";
   
   // Responsive heights that maintain a compact aspect ratio with larger image size
   const cardHeight = isMobile ? "h-auto" : "h-auto";

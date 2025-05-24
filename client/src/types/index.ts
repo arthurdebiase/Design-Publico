@@ -15,6 +15,7 @@ export interface App {
   language?: string;
   screenCount: number;
   url?: string;
+  status?: string; // "Publicado" or "Planejado"
   createdAt: string;
   updatedAt: string;
 }
