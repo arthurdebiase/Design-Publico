@@ -115,20 +115,15 @@ export default function Home() {
     return filtered;
   }, [apps, selectedCategories, sortBy]);
   
-  // Handle category filter change
+  // Handle category filter change - now as single selection only
   const handleCategoryFilterChange = (category: string | null) => {
     if (category === null) {
+      // If "Todos" or current category is clicked again, clear selection
       setSelectedCategories([]);
-    } else if (selectedCategories.includes(category)) {
-      setSelectedCategories(selectedCategories.filter(c => c !== category));
     } else {
-      setSelectedCategories([...selectedCategories, category]);
+      // Replace the current selection with the new category
+      setSelectedCategories([category]);
     }
-  };
-  
-  // Handle remove category
-  const handleRemoveCategory = (category: string) => {
-    setSelectedCategories(selectedCategories.filter(c => c !== category));
   };
   
   return (
@@ -238,41 +233,7 @@ export default function Home() {
           </div>
         </div>
         
-        {/* Active filter chips */}
-        {selectedCategories.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {/* Category filter chips */}
-            {selectedCategories.map(category => (
-              <div 
-                key={`chip-category-${category}`}
-                className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm"
-              >
-                <span>{category}</span>
-                <button 
-                  onClick={() => handleRemoveCategory(category)}
-                  className="rounded-full hover:bg-purple-200 p-1 transition-colors"
-                  aria-label={`${t('filters.clearFilters')}: ${category}`}
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            ))}
-            
-            {/* Clear all filters button (shown only when multiple filters are active) */}
-            {selectedCategories.length > 1 && (
-              <button
-                onClick={() => {
-                  setSelectedCategories([]);
-                }}
-                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm flex items-center gap-1 shadow-sm hover:bg-gray-200"
-                aria-label={t('filters.clearFilters')}
-              >
-                <span>{t('filters.clearFilters')}</span>
-                <X className="h-3 w-3 ml-1" />
-              </button>
-            )}
-          </div>
-        )}
+        {/* Removed filter tag chips as requested */}
         
         <div>
           {isLoading ? (
