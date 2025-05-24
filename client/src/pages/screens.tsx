@@ -353,32 +353,61 @@ export default function ScreensPage() {
         <h1 className="text-3xl font-bold mb-2">{t('screens.allScreens')}</h1>
       </div>
       
-      {/* Component tabs - similar to category tabs on apps page */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        <button
-          onClick={() => setSelectedTags([])}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-            selectedTags.length === 0 
-              ? 'bg-green-600 text-white' 
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          {t('filters.all')}
-        </button>
-        
-        {availableTags.map((tag: string) => (
+      {/* Search bar for components */}
+      <div className="relative mb-4">
+        <div className="relative flex items-center mb-3">
+          <input
+            type="text"
+            placeholder={t('filters.searchComponents')}
+            className="w-full md:w-1/2 lg:w-1/3 px-4 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            onChange={(e) => {
+              const searchTerm = e.target.value.toLowerCase();
+              if (searchTerm === '') {
+                setSelectedTags([]);
+              } else {
+                const matchedTags = availableTags.filter(tag => 
+                  tag.toLowerCase().includes(searchTerm)
+                );
+                if (matchedTags.length === 1) {
+                  setSelectedTags([matchedTags[0]]);
+                }
+              }
+            }}
+          />
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+      
+        {/* Component tabs - similar to category tabs on apps page */}
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
-            key={`tag-tab-${tag}`}
-            onClick={() => handleTagFilterChange(tag)}
+            onClick={() => setSelectedTags([])}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              selectedTags.includes(tag)
-                ? 'bg-green-600 text-white'
+              selectedTags.length === 0 
+                ? 'bg-green-600 text-white' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            {tag}
+            {t('filters.all')}
           </button>
-        ))}
+          
+          {availableTags.map((tag: string) => (
+            <button
+              key={`tag-tab-${tag}`}
+              onClick={() => handleTagFilterChange(tag)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                selectedTags.includes(tag)
+                  ? 'bg-green-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
       </div>
       
       {/* Order dropdown and screen counter in same row */}
