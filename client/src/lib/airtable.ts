@@ -1,5 +1,5 @@
 import { apiRequest } from "./queryClient";
-import { App, Screen, AppType, Platform } from "@/types";
+import { App, Screen, AppType, Platform, Category } from "@/types";
 
 /**
  * Fetch a list of all apps, optionally filtered
@@ -128,6 +128,44 @@ export async function fetchScreensByAppId(appId: string): Promise<Screen[]> {
   } catch (error) {
     console.error(`Error fetching screens for app with ID ${appId}:`, error);
     // Return empty array instead of throwing to prevent UI breakage
+    return [];
+  }
+}
+
+/**
+ * Fetch categories with their icon attachments
+ * 
+ * @returns A promise resolving to an array of Category objects with icons
+ */
+export async function fetchCategories(): Promise<Category[]> {
+  try {
+    const url = `/api/categories?_t=${Date.now()}`;
+    
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(url, {
+      credentials: "include",
+      signal: controller.signal,
+      headers: {
+        'Pragma': 'no-cache',
+        'Cache-Control': 'no-cache, no-store, must-revalidate'
+      }
+    });
+    
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch categories: ${response.statusText}`);
+    }
+
+    const categories = await response.json();
+    
+    console.log(`Successfully loaded ${categories.length} categories with icons`);
+    
+    return categories;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
     return [];
   }
 }

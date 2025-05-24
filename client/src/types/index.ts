@@ -2,6 +2,13 @@
 export type AppType = 'Federal' | 'Municipal' | 'State' | '';
 export type Platform = 'iOS' | 'Android' | 'Web' | 'Cross-platform' | '';
 
+// Category with icon attachment
+export interface Category {
+  id: string;
+  name: string;
+  iconUrl?: string; // URL for the category icon from Airtable attachments
+}
+
 export interface App {
   id: string;
   name: string;
