@@ -138,7 +138,7 @@ export default function ScreensPage() {
     
     setFilteredScreens(filtered);
     // Mantém o mesmo número de telas exibidas, sem redefinir
-  }, [selectedTags, selectedCategories, allScreens]);
+  }, [selectedTag, selectedCategories, allScreens]);
 
   // Otimização: uso de Promise.all para paralelizar requisições
   // e melhorar o TBT (Total Blocking Time)
