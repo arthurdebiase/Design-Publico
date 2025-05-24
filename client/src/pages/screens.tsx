@@ -433,9 +433,9 @@ export default function ScreensPage() {
           </div>
         )}
       
-        {/* Component tabs - with in-line "show more" button */}
+        {/* Component tags menu - displayed as a full menu over the content */}
         <div className="mb-4">
-          {/* Components on a single line - responsive: show more components on larger screens */}
+          {/* First row of components with show/hide toggle */}
           <div className="flex flex-wrap gap-2 mb-2">
             <button
               onClick={() => setSelectedTags([])}
@@ -448,7 +448,7 @@ export default function ScreensPage() {
               {t('filters.all')}
             </button>
             
-            {/* Show a variable number of components based on screen size */}
+            {/* Show first few components based on screen size */}
             {availableTags.slice(0, visibleTagCount).map((tag: string) => (
               <button
                 key={`tag-tab-${tag}`}
@@ -463,7 +463,7 @@ export default function ScreensPage() {
               </button>
             ))}
             
-            {/* Only show "Mostra mais" button if there are more tags to display */}
+            {/* "Mostra mais/menos" toggle button */}
             {availableTags.length > visibleTagCount && (
               <button 
                 className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 border border-green-500"
@@ -489,22 +489,64 @@ export default function ScreensPage() {
             )}
           </div>
           
-          {/* All components container (initially hidden) */}
-          <div id="all-tags-container" className="hidden mt-3">
-            <div className="flex flex-wrap gap-2">
-              {availableTags.slice(visibleTagCount).map((tag: string) => (
-                <button
-                  key={`all-tag-${tag}`}
-                  onClick={() => handleTagFilterChange(tag)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedTags.includes(tag)
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+          {/* All components container - when expanded shows as a menu over the content */}
+          <div id="all-tags-container" className="hidden">
+            <div className="fixed inset-0 bg-black bg-opacity-5 z-10" onClick={() => {
+              const tagsContainer = document.getElementById('all-tags-container');
+              if (tagsContainer) {
+                tagsContainer.classList.add('hidden');
+                const showAllButton = document.getElementById('show-all-button');
+                if (showAllButton) {
+                  showAllButton.textContent = '+ Mostra mais';
+                }
+              }
+            }}></div>
+            <div className="relative bg-white p-4 rounded-lg shadow-lg z-20 border border-gray-200">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-medium">Componentes</h3>
+                <button 
+                  className="text-gray-500 hover:text-gray-700"
+                  onClick={() => {
+                    const tagsContainer = document.getElementById('all-tags-container');
+                    if (tagsContainer) {
+                      tagsContainer.classList.add('hidden');
+                      const showAllButton = document.getElementById('show-all-button');
+                      if (showAllButton) {
+                        showAllButton.textContent = '+ Mostra mais';
+                      }
+                    }
+                  }}
                 >
-                  {tag}
+                  <span className="sr-only">Fechar</span>
+                  <X size={18} />
                 </button>
-              ))}
+              </div>
+              <div className="flex flex-wrap gap-2 max-h-[70vh] overflow-y-auto">
+                {availableTags.map((tag: string) => (
+                  <button
+                    key={`menu-tag-${tag}`}
+                    onClick={() => {
+                      handleTagFilterChange(tag);
+                      // Auto-close the menu after selection
+                      const tagsContainer = document.getElementById('all-tags-container');
+                      if (tagsContainer) {
+                        tagsContainer.classList.add('hidden');
+                        const showAllButton = document.getElementById('show-all-button');
+                        if (showAllButton) {
+                          showAllButton.textContent = '+ Mostra mais';
+                        }
+                      }
+                    }}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      selectedTags.includes(tag)
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
