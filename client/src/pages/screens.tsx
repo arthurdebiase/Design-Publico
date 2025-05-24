@@ -425,22 +425,6 @@ export default function ScreensPage() {
                       : 'text-gray-700 hover:text-gray-900'
                   }`}
                 >
-                  {/* Component icons */}
-                  {tag === "Botão" && <span className="inline-block w-5 h-5 mr-1">🔘</span>}
-                  {tag === "Card" && <span className="inline-block w-5 h-5 mr-1">🃏</span>}
-                  {tag === "Carousel" && <span className="inline-block w-5 h-5 mr-1">🔄</span>}
-                  {tag === "Checkbox" && <span className="inline-block w-5 h-5 mr-1">✅</span>}
-                  {tag === "Dialog" && <span className="inline-block w-5 h-5 mr-1">💬</span>}
-                  {tag === "Form" && <span className="inline-block w-5 h-5 mr-1">📝</span>}
-                  {tag === "Header" && <span className="inline-block w-5 h-5 mr-1">📑</span>}
-                  {tag === "Input" && <span className="inline-block w-5 h-5 mr-1">⌨️</span>}
-                  {tag === "List" && <span className="inline-block w-5 h-5 mr-1">📋</span>}
-                  {tag === "Menu" && <span className="inline-block w-5 h-5 mr-1">📜</span>}
-                  {tag === "Navigation" && <span className="inline-block w-5 h-5 mr-1">🧭</span>}
-                  {tag === "Onboarding" && <span className="inline-block w-5 h-5 mr-1">🚀</span>}
-                  {tag === "Picker" && <span className="inline-block w-5 h-5 mr-1">🎯</span>}
-                  {tag === "Tab" && <span className="inline-block w-5 h-5 mr-1">📑</span>}
-                  {tag === "Table" && <span className="inline-block w-5 h-5 mr-1">🗃️</span>}
                   {tag}
                   {selectedTag === tag && (
                     <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-600 rounded-t-sm"></div>
@@ -503,7 +487,7 @@ export default function ScreensPage() {
                 className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
                 onClick={() => handleCategoryFilterChange(null)}
               >
-                {t('filters.categories')}
+                {t('filters.all')} {t('filters.categories')}
               </DropdownMenuItem>
               {availableCategories.map((category: string, index: number) => (
                 <DropdownMenuItem
