@@ -59,7 +59,15 @@
     "notFound": "Aplicativo não encontrado",
     "notFoundDesc": "O aplicativo que você está procurando pode ter sido removido ou não existe.",
     "goBack": "Voltar para a galeria",
-    "screens": "telas"
+    "screens": "telas",
+    "planned": "Aplicativo Planejado",
+    "comingSoon": "Em Breve",
+    "plannedDesc": "Este aplicativo está em fase de planejamento e estará disponível em breve."
+  },
+  "appDetail": {
+    "plannedApp": "Aplicativo Planejado",
+    "plannedAppDescription": "Este aplicativo está em fase de planejamento e será disponibilizado em breve. Ainda não existem telas disponíveis para visualização.",
+    "stayTuned": "Fique atento para atualizações!"
   },
   "screens": {
     "title": "Telas",

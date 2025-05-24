@@ -59,7 +59,15 @@
     "notFound": "Application not found",
     "notFoundDesc": "The application you're looking for might have been removed or doesn't exist.",
     "goBack": "Go back to gallery",
-    "screens": "screens"
+    "screens": "screens",
+    "planned": "Planned App",
+    "comingSoon": "Coming Soon",
+    "plannedDesc": "This app is still in planning stages and will be available soon."
+  },
+  "appDetail": {
+    "plannedApp": "Planned App",
+    "plannedAppDescription": "This app is still in planning stages and will be available soon. No screens are available for viewing yet.",
+    "stayTuned": "Stay tuned for updates!"
   },
   "screens": {
     "title": "Screens",

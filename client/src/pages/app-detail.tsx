@@ -9,7 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Bookmark, 
          Apple, TabletSmartphone, Globe, Tag, 
-         FileText, Smartphone, ChevronDown, Check, X } from "lucide-react";
+         FileText, Smartphone, ChevronDown, Check, X, Calendar, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
