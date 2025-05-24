@@ -148,39 +148,54 @@ export default function Home() {
         {/* Filter section */}
         <div className="mb-4 flex flex-wrap items-center justify-between">
           <div className="flex flex-wrap gap-4 items-center">
-            {/* Additional filters can go here */}
+            {/* Order by dropdown */}
             <div className="flex items-center">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button 
                     variant="outline" 
                     className="flex items-center gap-2"
-                    aria-label="Mais filtros"
+                    aria-label="Ordenar por"
                     aria-haspopup="true"
                   >
-                    {t('filters.moreFilters')}
+                    {t('filters.orderBy')}
                     <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-                  <DropdownMenuLabel>{t('filters.category')}</DropdownMenuLabel>
+                <DropdownMenuContent align="start" className="w-56">
+                  <DropdownMenuLabel>{t('filters.orderBy')}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
-                    className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
-                    onClick={() => setSelectedCategories([])}
+                    onClick={() => {
+                      // Order by latest updated
+                      const sortedApps = [...(filteredApps || [])].sort((a, b) => 
+                        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+                      );
+                      setFilteredApps(sortedApps);
+                    }}
                   >
-                    {t('filters.all')} {t('filters.category')}
+                    <span>{t('filters.latestUpdated')}</span>
                   </DropdownMenuItem>
-                  {availableCategories && availableCategories.map((category: string, index: number) => (
-                    <DropdownMenuItem
-                      key={`category-${index}-${category}`}
-                      className={selectedCategories.includes(category) ? "bg-accent/50" : ""}
-                      onClick={() => handleCategoryFilterChange(category)}
-                    >
-                      <span>{category}</span>
-                      {selectedCategories.includes(category) && <Check className="ml-auto h-4 w-4" />}
-                    </DropdownMenuItem>
-                  ))}
+                  <DropdownMenuItem
+                    onClick={() => {
+                      // Order by most screens (would need a count from backend)
+                      // For now just simulate with random order for demonstration
+                      const sortedApps = [...(filteredApps || [])].sort(() => Math.random() - 0.5);
+                      setFilteredApps(sortedApps);
+                    }}
+                  >
+                    <span>{t('filters.moreScreens')}</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      // Order by most viewed (would need a count from backend)
+                      // For now just simulate with random order for demonstration
+                      const sortedApps = [...(filteredApps || [])].sort(() => Math.random() - 0.5);
+                      setFilteredApps(sortedApps);
+                    }}
+                  >
+                    <span>{t('filters.mostViewed')}</span>
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
