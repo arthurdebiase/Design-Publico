@@ -44,6 +44,31 @@ export default function ScreensPage() {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   
+  // State for responsive tag display
+  const [visibleTagCount, setVisibleTagCount] = useState(6);
+  
+  // Set visible tags based on screen size
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1280) {
+        setVisibleTagCount(12); // Large screens - show more components
+      } else if (window.innerWidth >= 768) {
+        setVisibleTagCount(9);  // Medium screens
+      } else {
+        setVisibleTagCount(6);  // Small/mobile screens
+      }
+    };
+    
+    // Initial setup
+    handleResize();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  
   // Parse query parameters from URL
   const parseQueryParams = () => {
     if (!search) return;
@@ -410,7 +435,7 @@ export default function ScreensPage() {
       
         {/* Component tabs - with in-line "show more" button */}
         <div className="mb-4">
-          {/* Components on a single line */}
+          {/* Components on a single line - responsive: show more components on larger screens */}
           <div className="flex flex-wrap gap-2 mb-2">
             <button
               onClick={() => setSelectedTags([])}
@@ -423,8 +448,8 @@ export default function ScreensPage() {
               {t('filters.all')}
             </button>
             
-            {/* Show just the first 6 components */}
-            {availableTags.slice(0, 6).map((tag: string) => (
+            {/* Show a variable number of components based on screen size */}
+            {availableTags.slice(0, visibleTagCount).map((tag: string) => (
               <button
                 key={`tag-tab-${tag}`}
                 onClick={() => handleTagFilterChange(tag)}
@@ -438,34 +463,36 @@ export default function ScreensPage() {
               </button>
             ))}
             
-            {/* "Mostra mais" button as the last item in the component tabs */}
-            <button 
-              className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 border border-green-500"
-              onClick={() => {
-                // Toggle between showing all tags and just the first row
-                const tagsContainer = document.getElementById('all-tags-container');
-                if (tagsContainer) {
-                  tagsContainer.classList.toggle('hidden');
-                  
-                  // Change button text
-                  const showAllButton = document.getElementById('show-all-button');
-                  if (showAllButton) {
-                    showAllButton.textContent = 
-                      tagsContainer.classList.contains('hidden') 
-                        ? '+ Mostra mais'
-                        : '- Mostra menos';
+            {/* Only show "Mostra mais" button if there are more tags to display */}
+            {availableTags.length > visibleTagCount && (
+              <button 
+                className="px-4 py-2 rounded-full text-sm font-medium text-green-600 hover:text-green-800 border border-green-500"
+                onClick={() => {
+                  // Toggle between showing all tags and just the first row
+                  const tagsContainer = document.getElementById('all-tags-container');
+                  if (tagsContainer) {
+                    tagsContainer.classList.toggle('hidden');
+                    
+                    // Change button text
+                    const showAllButton = document.getElementById('show-all-button');
+                    if (showAllButton) {
+                      showAllButton.textContent = 
+                        tagsContainer.classList.contains('hidden') 
+                          ? '+ Mostra mais'
+                          : '- Mostra menos';
+                    }
                   }
-                }
-              }}
-            >
-              <span id="show-all-button">+ Mostra mais</span>
-            </button>
+                }}
+              >
+                <span id="show-all-button">+ Mostra mais</span>
+              </button>
+            )}
           </div>
           
           {/* All components container (initially hidden) */}
           <div id="all-tags-container" className="hidden mt-3">
             <div className="flex flex-wrap gap-2">
-              {availableTags.slice(6).map((tag: string) => (
+              {availableTags.slice(visibleTagCount).map((tag: string) => (
                 <button
                   key={`all-tag-${tag}`}
                   onClick={() => handleTagFilterChange(tag)}
