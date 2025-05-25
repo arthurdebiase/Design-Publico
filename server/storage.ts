@@ -920,11 +920,18 @@ export class MemStorage implements IStorage {
         
         // Get country from the apps table record if available
         let country = null;
+        let status = "Visible"; // Default status is "Visible"
         if (appRecordId && allAppRecords) {
           const appRecord = allAppRecords.find(record => record.id === appRecordId);
-          if (appRecord && appRecord.fields && appRecord.fields.country) {
-            country = appRecord.fields.country;
-            console.log(`DEBUG: Found country for app ${appName}: ${country}`);
+          if (appRecord && appRecord.fields) {
+            if (appRecord.fields.country) {
+              country = appRecord.fields.country;
+              console.log(`DEBUG: Found country for app ${appName}: ${country}`);
+            }
+            if (appRecord.fields.status) {
+              status = appRecord.fields.status;
+              console.log(`DEBUG: Found status for app ${appName}: ${status}`);
+            }
           }
         }
         
@@ -941,6 +948,7 @@ export class MemStorage implements IStorage {
           country: country, // Country from Airtable record
           screenCount: records.length,
           url: fields.url || null, // No external URL by default
+          status: status, // Status from Airtable record (Visible, Hide, Planejado)
           airtableId: firstRecord.id,
         };
 

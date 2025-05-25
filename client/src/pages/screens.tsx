@@ -180,7 +180,8 @@ export default function ScreensPage() {
       }
       
       // Check app status - filter out apps with status "Planejado" or "Hide"
-      if (screen.app?.status === "Planejado" || screen.app?.status === "Hide") return false;
+      const appStatus = screen.app?.status as string | undefined;
+      if (appStatus === "Planejado" || appStatus === "Hide") return false;
       
       return true;
     });
