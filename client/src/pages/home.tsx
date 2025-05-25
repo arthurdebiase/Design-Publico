@@ -203,8 +203,7 @@ export default function Home() {
         return <span className="inline-block w-full h-full">💼</span>;
       case "Trabalhos":
         return <span className="inline-block w-full h-full">💼</span>;
-      case "Mobilidade":
-        return <span className="inline-block w-full h-full">🚗</span>;
+      // Removed hardcoded Mobilidade category
       case "Segurança":
         return <span className="inline-block w-full h-full">🔒</span>;
       case "Internacional":
@@ -226,14 +225,8 @@ export default function Home() {
     }
     
     // Fallback to category field
-    if (app.category === "Finanças") return "Finanças";
-    if (app.category === "Cidadania") return "Cidadania"; 
-    if (app.category === "Saúde") return "Saúde";
-    if (app.category === "Logística") return "Logística";
-    if (app.category === "Trabalho" || app.category === "Trabalhos") return "Trabalho"; // Use consistent "Trabalho" category
-    if (app.category === "Portal") return "Portal";
-    if (app.category === "Mobilidade") return "Mobilidade";
-    if (app.category === "Planejado") return "Planejado"; // Include Planejado category
+    // Return the category directly from Airtable data
+    if (app.category) return app.category;
     
     // Status-based categorization
     if (app.status === "Planejado") return "Planejado";
@@ -258,7 +251,7 @@ export default function Home() {
       return "Trabalho"; // Match Airtable category exactly
     }
     if (app.name === "Carteira Digital de Transito") {
-      return "Mobilidade"; // Assign to a more appropriate category
+      return "Cidadania"; // Assign to an existing category
     }
     if (app.name === "Meu SUS Digital") {
       return "Saúde";
