@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronDown, X, Clock, Grid, Eye } from "lucide-react";
-import starsIcon from "../assets/stars-icon.svg";
+// Using root project image instead of local SVG
 import { useTranslation } from 'react-i18next';
 
 export default function Home() {
@@ -149,10 +149,10 @@ export default function Home() {
   const getCategoryIcon = (category: string): React.ReactNode => {
     // Special case for "Todos" button
     if (category === "Todos") {
-      // Stars icon for "Todos" category
+      // Yellow stars image for "Todos" category
       return (
         <img 
-          src={starsIcon} 
+          src="/image-SJcxLxIC8lH8u7d9CvcOGIULgEz7wX.png" 
           alt="Todos" 
           className="w-10 h-10 mx-auto"
           aria-hidden="true"
