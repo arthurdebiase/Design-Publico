@@ -58,9 +58,20 @@ export default function Home() {
     if (categoryParam) {
       // Map English category name from URL to Portuguese internal category name
       const categoryEntries = Object.entries(t('categories', { returnObjects: true }) as Record<string, string>);
-      const matchingCategory = categoryEntries.find(([_, englishName]) => 
-        englishName.toLowerCase() === categoryParam.toLowerCase()
-      );
+      
+      // Normalize the category from URL by removing accents and special characters
+      const normalizedCategoryParam = categoryParam.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+      
+      // Find matching category by comparing normalized versions
+      const matchingCategory = categoryEntries.find(([_, englishName]) => {
+        const normalizedEnglishName = englishName.toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+        
+        return normalizedEnglishName === normalizedCategoryParam;
+      });
       
       if (matchingCategory && availableCategories.includes(matchingCategory[0])) {
         setSelectedCategories([matchingCategory[0]]);
@@ -75,7 +86,15 @@ export default function Home() {
     
     if (category) {
       // Use English category names in the URL for better sharing
-      const englishCategory = t(`categories.${category}`);
+      let englishCategory = t(`categories.${category}`);
+      
+      // Remove accents and special characters for better URL compatibility
+      englishCategory = englishCategory
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")  // Remove accents
+        .replace(/[^\w\s-]/g, "")         // Remove special characters
+        .trim();
+      
       url.searchParams.set('category', englishCategory);
     } else {
       url.searchParams.delete('category');
