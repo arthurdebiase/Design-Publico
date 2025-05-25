@@ -147,19 +147,6 @@ export default function Home() {
   
   // Get category icon based on category name
   const getCategoryIcon = (category: string): React.ReactNode => {
-    // Special case for "Todos" button
-    if (category === "Todos") {
-      // Yellow stars image for "Todos" category
-      return (
-        <img 
-          src="/image-SJcxLxIC8lH8u7d9CvcOGIULgEz7wX.png" 
-          alt="Todos" 
-          className="w-10 h-10 mx-auto"
-          aria-hidden="true"
-        />
-      );
-    }
-    
     // Check if we have an icon URL for this category from the Airtable data
     if (categoryIcons[category]) {
       return (
