@@ -260,7 +260,7 @@ export default function Home() {
                     container.scrollBy({ left: -200, behavior: 'smooth' });
                   }
                 }}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100 transition-opacity"
+                className="absolute left-0 top-0 bottom-0 z-10 bg-white/80 shadow-md px-2 hover:bg-gray-100 transition-opacity flex items-center h-full"
                 aria-label="Scroll left"
               >
                 <ChevronDown className="h-5 w-5 transform -rotate-90" />
@@ -268,10 +268,10 @@ export default function Home() {
             )}
             
             <div 
-              className="overflow-x-auto category-scroll pb-2 px-8"
+              className="overflow-x-auto category-scroll pb-2 pl-0 pr-8"
               onScroll={handleCategoryScroll}
             >
-              <div className="flex space-x-2 min-w-max">
+              <div className="flex space-x-2 min-w-max pl-0">
                 {/* Removed "Todos" button as requested */}
                 
                 {availableCategories && availableCategories.map((category, index) => (
@@ -303,7 +303,7 @@ export default function Home() {
                     container.scrollBy({ left: 200, behavior: 'smooth' });
                   }
                 }}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100 transition-opacity"
+                className="absolute right-0 top-0 bottom-0 z-10 bg-white/80 shadow-md px-2 hover:bg-gray-100 transition-opacity flex items-center h-full"
                 aria-label="Scroll right"
               >
                 <ChevronDown className="h-5 w-5 transform rotate-90" />
