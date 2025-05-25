@@ -573,7 +573,7 @@ export default function ScreensPage() {
                 aria-label={t('filters.filterByCategory')}
                 aria-haspopup="true"
               >
-                {t('filters.categories')}
+                {t('filters.filterByCategory')}
                 <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
               </Button>
             </DropdownMenuTrigger>
