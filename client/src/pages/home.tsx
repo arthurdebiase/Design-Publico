@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Check, ChevronDown, X, Clock, Grid, Eye } from "lucide-react";
+import starsIcon from "../assets/stars-icon.svg";
 import { useTranslation } from 'react-i18next';
 
 export default function Home() {
@@ -148,21 +149,14 @@ export default function Home() {
   const getCategoryIcon = (category: string): React.ReactNode => {
     // Special case for "Todos" button
     if (category === "Todos") {
-      // Custom SVG icon for "Todos" - magnifying glass icon
+      // Stars icon for "Todos" category
       return (
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          strokeWidth="2" 
-          strokeLinecap="round" 
-          strokeLinejoin="round" 
+        <img 
+          src={starsIcon} 
+          alt="Todos" 
           className="w-10 h-10 mx-auto"
-        >
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
+          aria-hidden="true"
+        />
       );
     }
     
