@@ -244,7 +244,8 @@ export default function ScreensPage() {
         // Isso reduz significativamente o tempo de carregamento e o TBT
         const fetchedScreensPromises = fetchedApps.map(async (app) => {
           // Skip fetching screens for planned apps or apps with status "Hide"
-          if (app.status === "Planejado" || app.status === "Hide" ||
+          const appStatus = app.status as string | undefined;
+          if (appStatus === "Planejado" || appStatus === "Hide" ||
               app.category === "Planejado" || 
               (Array.isArray(app.category) && app.category.includes("Planejado"))) {
             return [];
