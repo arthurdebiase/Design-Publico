@@ -28,10 +28,8 @@ function AppScreenImage({ appId, appName, isPriority = false, isPlanned = false 
   // Check if it's explicitly a planned app
   if (isPlanned) {
     return (
-      <div className="w-full h-full bg-amber-50 flex flex-col items-center justify-center p-4">
-        <Calendar className="w-8 h-8 text-amber-500 mb-2" />
-        <p className="text-amber-800 text-sm font-medium text-center">Em breve</p>
-        <p className="text-amber-700 text-xs text-center mt-1">Aplicativo planejado</p>
+      <div className="w-full h-full bg-gray-50 flex items-center justify-center p-4">
+        {/* Keep only the minimal gray background without text or icons */}
       </div>
     );
   }
