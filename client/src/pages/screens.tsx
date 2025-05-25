@@ -480,18 +480,19 @@ export default function ScreensPage() {
               </svg>
             </button>
             
-            {/* Scrollable container with hidden scrollbar */}
+            {/* Scrollable container with hidden scrollbar, organized in 2-row grid */}
             <div 
               id="tags-scroll-container"
-              className="flex flex-wrap items-center overflow-x-auto pb-2 scrollbar-none w-full border-b border-gray-200 mx-8 px-2" 
+              className="grid grid-rows-2 grid-flow-col gap-2 overflow-x-auto pb-2 scrollbar-none w-full border-b border-gray-200 mx-8 px-2 auto-cols-max" 
               onScroll={() => updateDots()}
+              style={{ gridAutoColumns: "min-content" }}
             >
               {/* All tags in a grid layout with two rows */}
               {availableTags.map((tag: string) => (
                 <button
                   key={`tag-tab-${tag}`}
                   onClick={() => handleTagFilterChange(tag)}
-                  className={`px-4 py-2 text-sm font-medium transition-colors flex-shrink-0 mr-2 mb-2 relative rounded-md ${
+                  className={`px-4 py-2 text-sm font-medium transition-colors flex-shrink-0 relative rounded-md ${
                     selectedTag === tag
                       ? 'bg-gray-200 text-green-600 font-semibold'
                       : 'bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-150'
