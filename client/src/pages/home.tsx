@@ -46,15 +46,39 @@ export default function Home() {
   
   // Extract available categories and their icons
   useEffect(() => {
+    if (!apps || apps.length === 0) return;
+
+    // Function to get categories that actually have apps
+    const getActiveCategories = () => {
+      if (!apps || apps.length === 0) return [];
+      
+      // Get all unique categories that have at least one app
+      const usedCategories = new Set<string>();
+      apps.forEach(app => {
+        const appCategory = getAppCategory(app);
+        if (appCategory) {
+          usedCategories.add(appCategory);
+        }
+      });
+      
+      return Array.from(usedCategories);
+    };
+
     if (categoriesData && categoriesData.length > 0) {
-      // Extract category names from the API response
-      const categoryNames = categoriesData.map((cat: any) => cat.name);
-      setAvailableCategories(categoryNames);
+      // Get categories that actually have apps
+      const activeCategories = getActiveCategories();
+      
+      // Filter the category data to only include categories with apps
+      const filteredCategoryNames = categoriesData
+        .map((cat: any) => cat.name)
+        .filter(name => activeCategories.includes(name));
+      
+      setAvailableCategories(filteredCategoryNames);
       
       // Create a map of category names to their icon URLs
       const iconMap: Record<string, string> = {};
       categoriesData.forEach((cat: any) => {
-        if (cat.name && cat.iconUrl) {
+        if (cat.name && cat.iconUrl && activeCategories.includes(cat.name)) {
           iconMap[cat.name] = cat.iconUrl;
         }
       });
@@ -63,10 +87,15 @@ export default function Home() {
       // By default, no filter should be active (empty array of selected categories)
       setSelectedCategories([]);
       
-      console.log("Available categories with icons:", categoryNames);
+      console.log("Available categories with icons:", filteredCategoryNames);
     } else if (apps && apps.length > 0) {
-      // Fallback to predefined categories if API fails
-      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"];
+      // Get active categories even for fallback
+      const activeCategories = getActiveCategories();
+      
+      // Fallback to predefined categories if API fails, but only show ones with apps
+      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"]
+        .filter(cat => activeCategories.includes(cat));
+      
       setAvailableCategories(predefinedCategories);
       
       // By default, no filter should be active (empty array of selected categories)
