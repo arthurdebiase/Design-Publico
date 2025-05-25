@@ -111,13 +111,17 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
   // Use aspect ratio to maintain proper proportions with better size
   const imageContainerStyle = { aspectRatio: "9/14" };
   
-  // Add badge class for planned apps
+  // Add badge class and disabled styling for planned apps
   const cardClass = appIsPlanned 
-    ? "bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-4 flex flex-col border border-amber-200"
+    ? "bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all cursor-default mb-4 flex flex-col border border-gray-200 opacity-70"
     : "bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-4 flex flex-col";
   
   const handleCardClick = (e: React.MouseEvent) => {
     e.preventDefault();
+    // Don't navigate if the app is planned
+    if (appIsPlanned) {
+      return;
+    }
     const appSlug = createSlug(app.name);
     navigate(`/app/${appSlug}`);
   };
@@ -149,8 +153,8 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
             isPlanned={appIsPlanned} 
           />
           {appIsPlanned && (
-            <div className="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs px-2 py-1 m-2 rounded-full">
-              Em breve
+            <div className="absolute top-0 right-0 bg-gray-200 text-gray-600 text-xs px-2 py-1 m-2 rounded-full">
+              Planejado
             </div>
           )}
         </div>
