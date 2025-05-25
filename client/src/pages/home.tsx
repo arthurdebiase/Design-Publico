@@ -306,20 +306,20 @@ export default function Home() {
             )}
             
             <div 
-              className="overflow-x-auto category-scroll pb-2 pl-0 pr-8"
+              className="overflow-x-auto category-scroll pl-0 pr-8 border-b border-gray-200"
               onScroll={handleCategoryScroll}
             >
-              <div className="flex space-x-2 min-w-max pl-0">
+              <div className="flex space-x-6 min-w-max pl-0">
                 {/* Removed "Todos" button as requested */}
                 
                 {availableCategories && availableCategories.map((category, index) => (
                   <button
                     key={`tab-${index}-${category}`}
                     onClick={() => handleCategoryFilterChange(category)}
-                    className={`px-4 py-3 rounded-md whitespace-nowrap transition-all flex flex-col items-center ${
+                    className={`px-4 py-3 whitespace-nowrap transition-all flex flex-col items-center relative ${
                       selectedCategories.includes(category) 
-                        ? 'bg-primary text-white shadow-md' 
-                        : 'bg-gray-100 hover:bg-gray-200'
+                        ? 'text-primary font-medium' 
+                        : 'text-gray-600 hover:text-gray-900'
                     }`}
                     aria-label={category}
                   >
@@ -327,6 +327,9 @@ export default function Home() {
                       {getCategoryIcon(category)}
                     </div>
                     <span>{category}</span>
+                    {selectedCategories.includes(category) && (
+                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+                    )}
                   </button>
                 ))}
               </div>
