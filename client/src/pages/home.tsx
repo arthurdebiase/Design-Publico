@@ -306,7 +306,7 @@ export default function Home() {
             )}
             
             <div 
-              className="overflow-x-auto category-scroll pl-0 pr-8 border-b border-gray-200 scrollbar-hide"
+              className="overflow-x-auto category-scroll pl-0 pr-8 border-b border-gray-100 scrollbar-hide"
               onScroll={handleCategoryScroll}
             >
               <div className="flex space-x-6 min-w-max pl-0">
@@ -328,7 +328,7 @@ export default function Home() {
                     </div>
                     <span>{category}</span>
                     {selectedCategories.includes(category) && (
-                      <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary"></div>
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
                     )}
                   </button>
                 ))}
