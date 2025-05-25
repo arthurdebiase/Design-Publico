@@ -180,7 +180,7 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
                 {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
               </h3>
               <p className="text-xs text-gray-500 truncate">
-                {Array.isArray(app.category) ? app.category[0] : (app.category || app.type)}
+                {app.category || app.type}
               </p>
             </div>
           </div>
