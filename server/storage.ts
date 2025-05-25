@@ -160,6 +160,7 @@ export class MemStorage implements IStorage {
       url: insertApp.url ?? null,
       slug: slug, // Include the slug
       airtableId: insertApp.airtableId,
+      country: insertApp.country ?? "Brasil", // Include country, default to Brasil
       createdAt: now,
       updatedAt: now,
     };
