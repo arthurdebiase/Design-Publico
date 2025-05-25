@@ -19,7 +19,7 @@ export async function startMigration(req: Request, res: Response) {
     const maxRecords = parseInt(req.query.maxRecords as string) || 100;
     const batchSize = parseInt(req.query.batchSize as string) || 10;
     const delayBetweenBatches = parseInt(req.query.delayBetweenBatches as string) || 1000;
-    const migrationType = (req.query.type as string) || 'screens'; // Default to screens if not specified
+    const migrationType = (req.query.type as string) || 'screens'; // Can be 'screens', 'logos', or 'categories'
 
     // Start migration process
     console.log(`Starting migration of ${migrationType} with: maxRecords=${maxRecords}, batchSize=${batchSize}, delay=${delayBetweenBatches}ms`);

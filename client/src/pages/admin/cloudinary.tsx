@@ -156,8 +156,9 @@ export default function CloudinaryAdminPage() {
                   >
                     <option value="screens">Screen Images</option>
                     <option value="logos">App Logos</option>
+                    <option value="categories">Category Icons</option>
                   </select>
-                  <p className="text-xs text-gray-500">Select whether to migrate screen images or app logos</p>
+                  <p className="text-xs text-gray-500">Select the type of images to migrate from Airtable to Cloudinary</p>
                 </div>
               </div>
 

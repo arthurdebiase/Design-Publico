@@ -132,9 +132,21 @@ async function updateRecordWithCloudinaryUrl(
   migrationType = 'screens'
 ): Promise<boolean> {
   // Determine which table and field to update based on migration type
-  const tableName = migrationType === 'screens' ? SCREENS_TABLE : APPS_TABLE;
-  const importingField = migrationType === 'screens' ? SCREENS_IMPORTING_FIELD : APPS_IMPORTING_FIELD;
-  const itemType = migrationType === 'screens' ? 'screen' : 'app logo';
+  let tableName, importingField, itemType;
+  
+  if (migrationType === 'screens') {
+    tableName = SCREENS_TABLE;
+    importingField = SCREENS_IMPORTING_FIELD;
+    itemType = 'screen';
+  } else if (migrationType === 'categories') {
+    tableName = CATEGORY_TABLE;
+    importingField = CATEGORY_IMPORTING_FIELD;
+    itemType = 'category icon';
+  } else { // logos
+    tableName = APPS_TABLE;
+    importingField = APPS_IMPORTING_FIELD;
+    itemType = 'app logo';
+  }
   
   const url = `${AIRTABLE_API_URL}/${AIRTABLE_BASE_ID}/${tableName}/${recordId}`;
   
@@ -290,7 +302,13 @@ async function processBatch(records: AirtableRecord[], migrationType = 'screens'
         itemTitle = itemName;
       }
       
-      console.log(`Using ${migrationType === 'screens' ? 'screen' : 'logo'} title: ${itemTitle}`);
+      // Use appropriate item type in log messages
+      let typeLabel = 'item';
+      if (migrationType === 'screens') typeLabel = 'screen';
+      else if (migrationType === 'categories') typeLabel = 'category icon';
+      else typeLabel = 'logo';
+      
+      console.log(`Using ${typeLabel} title: ${itemTitle}`);
       
       // Get the first attachment from the record using the appropriate field
       const attachment = record.fields[attachmentField][0];
@@ -342,7 +360,15 @@ export async function migrateAirtableImagesToCloudinary(
 ): Promise<{ total: number, success: number, failed: number }> {
   // Get the migration type from options (defaulting to screens if not specified)
   const migrationType = options.migrationType || 'screens';
-  const itemType = migrationType === 'screens' ? 'screen images' : 'app logos';
+  let itemType;
+  
+  if (migrationType === 'screens') {
+    itemType = 'screen images';
+  } else if (migrationType === 'categories') {
+    itemType = 'category icons';
+  } else { // logos
+    itemType = 'app logos';
+  }
   
   console.log(`Starting migration of Airtable ${itemType} to Cloudinary...`);
   
