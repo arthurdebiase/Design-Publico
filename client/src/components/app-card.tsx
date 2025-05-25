@@ -8,6 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ResponsiveImage } from "@/components/ui/responsive-image";
 import { createSlug } from "@/lib/slugUtils";
 import { useTranslation } from 'react-i18next';
+import i18n from '@/i18n';
 import { Calendar, Clock } from "lucide-react";
 
 interface AppCardProps {
@@ -197,7 +198,7 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
                 {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
               </h3>
               <p className="text-xs text-gray-500 truncate flex items-center">
-                {app.country || "Brasil"}
+                {app.country || (app.status === "Internacional" ? "Internacional" : "Brasil")}
               </p>
             </div>
           </div>
