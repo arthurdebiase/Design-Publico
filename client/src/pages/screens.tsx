@@ -664,8 +664,38 @@ export default function ScreensPage() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          {/* Category filter dropdown removed as requested */}
+          
+          {/* Country filter dropdown */}
+          {availableCountries.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  className={`flex items-center gap-2 ${selectedCountry ? 'bg-green-50 border-green-500 text-green-700' : ''}`}
+                  aria-label={t('filters.country')}
+                  aria-haspopup="true"
+                >
+                  {selectedCountry || t('filters.country')}
+                  <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuLabel>{t('filters.country')}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleCountryFilterChange(null)}>
+                  {t('filters.allCountries')}
+                  {!selectedCountry && <Check className="h-4 w-4 ml-2" />}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                {availableCountries.map(country => (
+                  <DropdownMenuItem key={country} onClick={() => handleCountryFilterChange(country)}>
+                    {country}
+                    {selectedCountry === country && <Check className="h-4 w-4 ml-2" />}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
         
         {/* Screen counter - updated format "X de XX telas" */}
