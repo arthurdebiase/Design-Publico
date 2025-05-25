@@ -367,6 +367,19 @@ export default function Home() {
       console.log("Sorting by views");
     }
     
+    // Final step: Always move Planejado apps to the end, regardless of other sorting
+    filtered = [...filtered].sort((a, b) => {
+      const aIsPlanned = a.status === "Planejado" || a.category === "Planejado";
+      const bIsPlanned = b.status === "Planejado" || b.category === "Planejado";
+      
+      // If a is planned and b is not, a comes after b
+      if (aIsPlanned && !bIsPlanned) return 1;
+      // If a is not planned and b is, a comes before b
+      if (!aIsPlanned && bIsPlanned) return -1;
+      // If both are planned or both are not planned, maintain their current order
+      return 0;
+    });
+    
     return filtered;
   }, [apps, selectedCategories, sortBy]);
   
