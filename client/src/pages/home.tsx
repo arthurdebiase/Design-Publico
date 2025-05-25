@@ -78,7 +78,12 @@ export default function Home() {
       // Create a map of category names to their icon URLs
       const iconMap: Record<string, string> = {};
       categoriesData.forEach((cat: any) => {
-        if (cat.name && cat.iconUrl && activeCategories.includes(cat.name)) {
+        // Include "Todos" category icon regardless of active status
+        if (cat.name === "Todos" && cat.iconUrl) {
+          iconMap[cat.name] = cat.iconUrl;
+        }
+        // For other categories, only include if they have apps
+        else if (cat.name && cat.iconUrl && activeCategories.includes(cat.name)) {
           iconMap[cat.name] = cat.iconUrl;
         }
       });
