@@ -23,6 +23,7 @@ export interface App {
   screenCount: number;
   url?: string;
   status?: string; // "Publicado" or "Planejado"
+  country?: string; // Country where the app is from, default is "Brasil"
   createdAt: string;
   updatedAt: string;
 }

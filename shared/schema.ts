@@ -15,6 +15,7 @@ export const apps = pgTable("apps", {
   categories: text("categories").array(), // Multiple categories from the Airtable 'categories' column
   platform: text("platform").notNull(), // iOS, Android, Web, Cross-platform
   language: text("language"),
+  country: text("country"), // Country where the app is from
   screenCount: integer("screen_count").notNull().default(0),
   url: text("url"),
   slug: text("slug"),  // URL-friendly version of the name

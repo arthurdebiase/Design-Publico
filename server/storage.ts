@@ -918,6 +918,16 @@ export class MemStorage implements IStorage {
           console.log(`DEBUG: Using Cloudinary logo URL for ${appName}: ${cloudinaryLogoUrl}`);
         }
         
+        // Get country from the apps table record if available
+        let country = null;
+        if (appRecordId && allAppRecords) {
+          const appRecord = allAppRecords.find(record => record.id === appRecordId);
+          if (appRecord && appRecord.fields && appRecord.fields.country) {
+            country = appRecord.fields.country;
+            console.log(`DEBUG: Found country for app ${appName}: ${country}`);
+          }
+        }
+        
         const appData: InsertApp = {
           name: appName,
           description: fields.description || `Collection of design screens from ${appName}`,
@@ -928,6 +938,7 @@ export class MemStorage implements IStorage {
           category: appCategory || fields[APP_CATEGORY_FIELD] || "Government", // Use mapped category
           platform: fields.platform || "iOS", // Default platform
           language: fields.language || null, // Default language can be null
+          country: country, // Country from Airtable record
           screenCount: records.length,
           url: fields.url || null, // No external URL by default
           airtableId: firstRecord.id,
