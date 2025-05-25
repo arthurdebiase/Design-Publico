@@ -18,14 +18,6 @@ export default function ScreenThumbnail({ screen, onClick, isPriority = false, i
       handleClick();
     }
   };
-  
-  // Check if this screen is from a planned app
-  const isPlannedApp = screen.app && (
-    screen.app.status === "Planejado" || 
-    screen.app.category === "Planejado" ||
-    (typeof screen.app.category === 'string' && screen.app.category.includes("Planejado")) ||
-    (Array.isArray(screen.app.category) && screen.app.category.includes("Planejado"))
-  );
 
   // Dimensões fixas para evitar layout shift (CLS)
   // Imagens de aplicativo normalmente têm proporção 9:16
@@ -54,7 +46,7 @@ export default function ScreenThumbnail({ screen, onClick, isPriority = false, i
           cloudinarySrc={screen.cloudinaryUrl} // Use Cloudinary URL when available for reliable hosting
           alt={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
           aria-label={screen.altText || `${screen.name || 'Screen view'} - ${screen.description || 'Design interface example'}`}
-          className={`w-full object-contain ${isPlannedApp ? 'opacity-50' : ''}`}
+          className="w-full object-contain"
           style={{ width: "auto", margin: "0 auto", maxHeight: "450px" }}
           placeholderClassName="absolute inset-0 flex items-center justify-center"
           sizes="(min-width: 1280px) 20vw, (min-width: 768px) 33vw, 50vw"
