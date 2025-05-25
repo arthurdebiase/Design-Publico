@@ -60,10 +60,8 @@ export default function Home() {
       });
       setCategoryIcons(iconMap);
       
-      // Set the first category as selected by default since we removed the "Todos" button
-      if (categoryNames.length > 0 && selectedCategories.length === 0) {
-        setSelectedCategories([categoryNames[0]]);
-      }
+      // By default, no filter should be active (empty array of selected categories)
+      setSelectedCategories([]);
       
       console.log("Available categories with icons:", categoryNames);
     } else if (apps && apps.length > 0) {
@@ -71,14 +69,12 @@ export default function Home() {
       const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"];
       setAvailableCategories(predefinedCategories);
       
-      // Set the first category as selected by default
-      if (predefinedCategories.length > 0 && selectedCategories.length === 0) {
-        setSelectedCategories([predefinedCategories[0]]);
-      }
+      // By default, no filter should be active (empty array of selected categories)
+      setSelectedCategories([]);
       
       console.log("Using fallback categories:", predefinedCategories);
     }
-  }, [categoriesData, apps, selectedCategories.length]);
+  }, [categoriesData, apps]);
   
   // Get category icon based on category name
   const getCategoryIcon = (category: string): React.ReactNode => {
@@ -220,28 +216,58 @@ export default function Home() {
         
         {/* Category Tabs */}
         <div className="mb-8">
-          <div className="overflow-x-auto pb-2">
-            <div className="flex space-x-1 min-w-max">
-              {/* Removed "Todos" button as requested */}
-              
-              {availableCategories && availableCategories.map((category, index) => (
-                <button
-                  key={`tab-${index}-${category}`}
-                  onClick={() => handleCategoryFilterChange(category)}
-                  className={`px-4 py-3 rounded-md whitespace-nowrap transition-all flex flex-col items-center ${
-                    selectedCategories.includes(category) 
-                      ? 'bg-primary text-white shadow-md' 
-                      : 'bg-gray-100 hover:bg-gray-200'
-                  }`}
-                  aria-label={category}
-                >
-                  <div className="inline-block w-8 h-8 mb-1">
-                    {getCategoryIcon(category)}
-                  </div>
-                  <span>{category}</span>
-                </button>
-              ))}
+          <div className="relative">
+            {/* Left arrow for horizontal scroll */}
+            <button 
+              onClick={() => {
+                const container = document.querySelector('.category-scroll');
+                if (container) {
+                  container.scrollBy({ left: -200, behavior: 'smooth' });
+                }
+              }}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100"
+              aria-label="Scroll left"
+            >
+              <ChevronDown className="h-5 w-5 transform -rotate-90" />
+            </button>
+            
+            <div className="overflow-x-auto category-scroll pb-2 px-8">
+              <div className="flex space-x-2 min-w-max">
+                {/* Removed "Todos" button as requested */}
+                
+                {availableCategories && availableCategories.map((category, index) => (
+                  <button
+                    key={`tab-${index}-${category}`}
+                    onClick={() => handleCategoryFilterChange(category)}
+                    className={`px-4 py-3 rounded-md whitespace-nowrap transition-all flex flex-col items-center ${
+                      selectedCategories.includes(category) 
+                        ? 'bg-primary text-white shadow-md' 
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                    aria-label={category}
+                  >
+                    <div className="inline-block w-10 h-10 mb-1">
+                      {getCategoryIcon(category)}
+                    </div>
+                    <span>{category}</span>
+                  </button>
+                ))}
+              </div>
             </div>
+            
+            {/* Right arrow for horizontal scroll */}
+            <button 
+              onClick={() => {
+                const container = document.querySelector('.category-scroll');
+                if (container) {
+                  container.scrollBy({ left: 200, behavior: 'smooth' });
+                }
+              }}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100"
+              aria-label="Scroll right"
+            >
+              <ChevronDown className="h-5 w-5 transform rotate-90" />
+            </button>
           </div>
         </div>
         
