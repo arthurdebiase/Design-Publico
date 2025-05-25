@@ -310,8 +310,15 @@ export default function Home() {
       
       // Special handling for Planejado category
       if (selectedCategories.includes("Planejado")) {
-        // If Planejado is selected, show all apps with status "Planejado"
-        if (app.status === "Planejado") {
+        // Return any app that has:
+        // 1. The "Planejado" status, OR
+        // 2. "Planejado" in its category field, OR
+        // 3. "Planejado" in its categories array
+        if (
+          app.status === "Planejado" || 
+          app.category === "Planejado" ||
+          (app.categories && Array.isArray(app.categories) && app.categories.includes("Planejado"))
+        ) {
           return true;
         }
       }
