@@ -85,7 +85,7 @@ export default function ScreensPage() {
     }
   }, []);
   
-  // Set visible tags based on screen size
+  // Set visible tags based on screen size and initialize pagination dots
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1280) {
@@ -95,6 +95,9 @@ export default function ScreensPage() {
       } else {
         setVisibleTagCount(6);  // Small/mobile screens
       }
+      
+      // Update pagination dots on resize
+      updateDots();
     };
     
     // Initial setup
@@ -103,9 +106,17 @@ export default function ScreensPage() {
     // Add event listener for window resize
     window.addEventListener('resize', handleResize);
     
+    // Initialize dots after DOM is ready
+    const timer = setTimeout(() => {
+      updateDots();
+    }, 500);
+    
     // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer);
+    };
+  }, [updateDots]);
   
   // Parse query parameters from URL
   const parseQueryParams = () => {
