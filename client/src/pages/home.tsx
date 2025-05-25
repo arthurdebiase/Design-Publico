@@ -522,7 +522,7 @@ export default function Home() {
                 </button>
                 
                 {availableCategories && availableCategories
-                  .filter(category => category !== "Mobilidade" && category !== "Planejado") // Filter out Mobilidade and Planejado categories
+                  .filter(category => category !== "Mobilidade") // Filter out Mobilidade category
                   .map((category, index) => (
                   <button
                     key={`tab-${index}-${category}`}
