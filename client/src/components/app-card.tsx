@@ -179,7 +179,9 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
               <h3 id={`app-name-${app.id}`} className="font-medium truncate" title={app.name}>
                 {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
               </h3>
-              <p className="text-xs text-gray-500 truncate">{app.category || app.type}</p>
+              <p className="text-xs text-gray-500 truncate">
+                {Array.isArray(app.category) ? app.category[0] : (app.category || app.type)}
+              </p>
             </div>
           </div>
         </div>
