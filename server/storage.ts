@@ -83,6 +83,13 @@ export class MemStorage implements IStorage {
   // Apps
   async getApps(filters?: { type?: string; platform?: string; search?: string }): Promise<App[]> {
     let result = Array.from(this.apps.values());
+    
+    // Filter out apps with "Hide" status
+    result = result.filter(app => {
+      // Cast status to string or use undefined if not present
+      const appStatus = app.status as string | undefined;
+      return appStatus !== "Hide";
+    });
 
     if (filters) {
       if (filters.type) {
