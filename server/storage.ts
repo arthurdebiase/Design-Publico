@@ -278,12 +278,20 @@ export class MemStorage implements IStorage {
       const categories = records.map((record: any) => {
         const name = record.fields.Name || "";
         
-        // Get the icon URL from attachments
+        // First check for Cloudinary URL in the "importing" field
         let iconUrl = null;
-        if (record.fields.Attachments && 
+        
+        // Prioritize Cloudinary URL if available
+        if (record.fields.importing && typeof record.fields.importing === 'string') {
+          iconUrl = record.fields.importing;
+          console.log(`Using Cloudinary URL for category "${name}": ${iconUrl}`);
+        }
+        // Fallback to Airtable attachment if no Cloudinary URL
+        else if (record.fields.Attachments && 
             Array.isArray(record.fields.Attachments) && 
             record.fields.Attachments.length > 0) {
           iconUrl = record.fields.Attachments[0].url;
+          console.log(`Using Airtable attachment URL for category "${name}": ${iconUrl}`);
         }
         
         return {
