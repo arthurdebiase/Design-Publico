@@ -623,28 +623,8 @@ export default function Home() {
             </div>
           </div>
           
-          {/* App counter and share button */}
+          {/* App counter */}
           <div className="flex gap-4 items-center">
-            {selectedCategories.length === 1 && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  setShowShareTooltip(true);
-                  setTimeout(() => setShowShareTooltip(false), 2000);
-                }}
-              >
-                <Share2 className="h-4 w-4" />
-                <span>{t('filters.shareCategory')}</span>
-                {showShareTooltip && (
-                  <div className="absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded">
-                    {t('filters.linkCopied')}
-                  </div>
-                )}
-              </Button>
-            )}
             <div className="text-gray-600 font-medium flex flex-col items-end">
               <span>{t('filters.showing')}</span>
               <span className="font-semibold">{filteredApps?.length || 0} {t('header.apps').toLowerCase()}</span>
