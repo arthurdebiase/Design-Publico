@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Loader2, FileText, Maximize2, ChevronDown, Filter, X, Check, Link2, Copy, ExternalLink } from 'lucide-react';
 import { Screen, App } from '@shared/schema';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,44 @@ export default function ScreensPage() {
   
   // State for responsive tag display
   const [visibleTagCount, setVisibleTagCount] = useState(6);
+  
+  // Function to update pagination dots
+  const updateDots = useCallback(() => {
+    const container = document.getElementById('tags-scroll-container');
+    const dotsContainer = document.getElementById('pagination-dots');
+    
+    if (!container || !dotsContainer) return;
+    
+    // Calculate how many "pages" we have
+    const containerWidth = container.clientWidth;
+    const scrollWidth = container.scrollWidth;
+    const numDots = Math.ceil(scrollWidth / containerWidth);
+    
+    // Clear existing dots
+    dotsContainer.innerHTML = '';
+    
+    // Calculate which dot should be active
+    const scrollPosition = container.scrollLeft;
+    const activeDotIndex = Math.floor(scrollPosition / containerWidth);
+    
+    // Create dots
+    for (let i = 0; i < numDots; i++) {
+      const dot = document.createElement('div');
+      dot.className = i === activeDotIndex 
+        ? 'h-2 w-2 rounded-full bg-green-600' 
+        : 'h-2 w-2 rounded-full bg-gray-300';
+      
+      // Add click handler to scroll to that position
+      dot.addEventListener('click', () => {
+        container.scrollTo({
+          left: i * containerWidth,
+          behavior: 'smooth'
+        });
+      });
+      
+      dotsContainer.appendChild(dot);
+    }
+  }, []);
   
   // Set visible tags based on screen size
   useEffect(() => {
@@ -255,6 +293,11 @@ export default function ScreensPage() {
         setAvailableCategories(sortedCategories);
         setAllScreens(randomizedScreens);
         setFilteredScreens(randomizedScreens);
+        
+        // Initialize pagination dots after a short delay to ensure DOM is ready
+        setTimeout(() => {
+          updateDots();
+        }, 500);
       } catch (err) {
         console.error('Error fetching screens:', err);
         setError('Failed to load screens. Please try again later.');
@@ -405,14 +448,32 @@ export default function ScreensPage() {
           </div>
         )}
       
-        {/* Component tags with horizontal scroll - tab style with green bottom divider */}
+        {/* Component tags with horizontal scroll - tab style with green bottom divider and grey background */}
         <div className="mb-4 relative">
-          {/* Simple horizontal scrollable container */}
-          <div className="flex items-center">
-            {/* Scrollable container with visible scrollbar */}
+          {/* Navigation arrows */}
+          <div className="flex items-center relative">
+            {/* Left arrow button */}
+            <button 
+              className="absolute left-0 z-10 flex items-center justify-center h-8 w-8 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                const container = document.getElementById('tags-scroll-container');
+                if (container) {
+                  container.scrollBy({ left: -200, behavior: 'smooth' });
+                  updateDots();
+                }
+              }}
+              aria-label="Scroll left"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            
+            {/* Scrollable container with hidden scrollbar and grey background */}
             <div 
               id="tags-scroll-container"
-              className="flex items-center overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent w-full border-b border-gray-200" 
+              className="flex items-center overflow-x-auto pb-2 scrollbar-none w-full border-b border-gray-200 bg-gray-100 rounded-t-lg mx-8 px-2" 
+              onScroll={() => updateDots()}
             >
               {/* All tags in a horizontal scroll (tab style, no "Todos" option) */}
               {availableTags.map((tag: string) => (
@@ -431,6 +492,30 @@ export default function ScreensPage() {
                   )}
                 </button>
               ))}
+            </div>
+            
+            {/* Right arrow button */}
+            <button 
+              className="absolute right-0 z-10 flex items-center justify-center h-8 w-8 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+              onClick={() => {
+                const container = document.getElementById('tags-scroll-container');
+                if (container) {
+                  container.scrollBy({ left: 200, behavior: 'smooth' });
+                  updateDots();
+                }
+              }}
+              aria-label="Scroll right"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+          
+          {/* Pagination dots */}
+          <div className="flex justify-center mt-2">
+            <div id="pagination-dots" className="flex space-x-1">
+              {/* Dots will be added dynamically by the updateDots function */}
             </div>
           </div>
         </div>
