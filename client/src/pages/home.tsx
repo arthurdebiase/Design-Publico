@@ -203,7 +203,8 @@ export default function Home() {
         return <span className="inline-block w-full h-full">💼</span>;
       case "Trabalhos":
         return <span className="inline-block w-full h-full">💼</span>;
-      // Removed hardcoded Mobilidade category
+      case "Mobilidade":
+        return <span className="inline-block w-full h-full">🚗</span>;
       case "Segurança":
         return <span className="inline-block w-full h-full">🔒</span>;
       case "Internacional":
@@ -225,20 +226,27 @@ export default function Home() {
     }
     
     // Fallback to category field
-    // Return the category directly from Airtable data
-    if (app.category) return app.category;
+    if (app.category === "Finanças") return "Finanças";
+    if (app.category === "Cidadania") return "Cidadania"; 
+    if (app.category === "Saúde") return "Saúde";
+    if (app.category === "Logística") return "Logística";
+    if (app.category === "Trabalho" || app.category === "Trabalhos") return "Trabalho"; // Use consistent "Trabalho" category
+    if (app.category === "Portal") return "Portal";
+    if (app.category === "Mobilidade") return "Mobilidade";
+    if (app.category === "Planejado") return "Planejado"; // Include Planejado category
     
     // Status-based categorization
     if (app.status === "Planejado") return "Planejado";
     
     // Country-based categorization for international apps
     if (app.country && app.country !== "Brasil") {
-      // All non-Brazilian apps should be categorized properly
-      // using the Airtable categories
-      if (app.category === "Government") return "Cidadania";
+      // For Finnish apps in the screenshot
       if (app.country === "Finlândia") return "Internacional";
+      // For Estonian apps in the screenshot
       if (app.country === "Estônia") return "Internacional";
+      // For UK apps in the screenshot
       if (app.country === "Reino Unido") return "Internacional";
+      // Return "Internacional" for any non-Brazilian app
       return "Internacional";
     }
     
@@ -250,7 +258,7 @@ export default function Home() {
       return "Trabalho"; // Match Airtable category exactly
     }
     if (app.name === "Carteira Digital de Transito") {
-      return "Cidadania"; // Assign to an existing category
+      return "Mobilidade"; // Assign to a more appropriate category
     }
     if (app.name === "Meu SUS Digital") {
       return "Saúde";
