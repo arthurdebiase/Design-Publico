@@ -276,13 +276,19 @@ export default function Home() {
       return "Portal";
     }
     if (app.name === "GOV.UK") {
-      return "Internacional";
+      // Mark GOV.UK as a planned app
+      app.status = "Planejado";
+      return "Planejado";
     }
     if (app.name === "Kela" || app.name === "Suomi.fi" || app.name === "Kanta") {
-      return "Internacional";
+      // Mark Finnish apps as planned
+      app.status = "Planejado";
+      return "Planejado";
     }
     if (app.name === "Eesti.ee" || app.name === "e-Residency") {
-      return "Internacional";
+      // Mark Estonian apps as planned
+      app.status = "Planejado";
+      return "Planejado";
     }
     
     // Fallback to type-based categorization
