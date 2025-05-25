@@ -159,32 +159,6 @@ export default function ScreensPage() {
     
     let filtered = [...allScreens];
     
-    // Filter out screens with "Planejado" category
-    filtered = filtered.filter(screen => {
-      // Check screen category
-      if (screen.category) {
-        if (typeof screen.category === 'string') {
-          if (screen.category === "Planejado") return false;
-        } else if (Array.isArray(screen.category)) {
-          if (screen.category.includes("Planejado")) return false;
-        }
-      }
-      
-      // Check app category
-      if (screen.app?.category) {
-        if (typeof screen.app.category === 'string') {
-          if (screen.app.category === "Planejado") return false;
-        } else if (Array.isArray(screen.app.category)) {
-          if (screen.app.category.includes("Planejado")) return false;
-        }
-      }
-      
-      // Check app status
-      if (screen.app?.status === "Planejado") return false;
-      
-      return true;
-    });
-    
     if (selectedTag) {
       filtered = filtered.filter(screen => {
         if (!screen.tags || !Array.isArray(screen.tags)) return false;
@@ -242,12 +216,6 @@ export default function ScreensPage() {
         // Otimização: Fetch all screens in parallel with Promise.all
         // Isso reduz significativamente o tempo de carregamento e o TBT
         const fetchedScreensPromises = fetchedApps.map(async (app) => {
-          // Skip fetching screens for planned apps
-          if (app.status === "Planejado" || app.category === "Planejado" || 
-              (Array.isArray(app.category) && app.category.includes("Planejado"))) {
-            return [];
-          }
-          
           const screensResponse = await fetch(`/api/apps/${app.id}/screens`);
           const appScreens = await screensResponse.json();
           
@@ -265,22 +233,7 @@ export default function ScreensPage() {
         const screensByApp = await Promise.all(fetchedScreensPromises);
         
         // Combina todos os arrays de telas em um único array
-        let fetchedScreens = screensByApp.flat();
-        
-        // Filter out any screens with "Planejado" category directly
-        fetchedScreens = fetchedScreens.filter(screen => {
-          // Check screen category
-          if (screen.category) {
-            if (typeof screen.category === 'string') {
-              if (screen.category === "Planejado") return false;
-            } else if (Array.isArray(screen.category)) {
-              if (screen.category.includes("Planejado")) return false;
-            }
-          }
-          
-          // If we get here, screen is not "Planejado"
-          return true;
-        });
+        const fetchedScreens = screensByApp.flat();
         
         // Armazenar o número total de telas do Airtable
         setTotalAirtableScreens(fetchedScreens.length);
