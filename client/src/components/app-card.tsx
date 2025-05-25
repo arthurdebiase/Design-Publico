@@ -197,8 +197,31 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
                 {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
               </h3>
               <div className="inline-flex items-center mt-1">
-                <span className="text-xs inline-block bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-100">
-                  {app.country || "Brasil"}
+                <span 
+                  className="text-xs inline-block bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-100"
+                  title={app.country || "Brasil"}
+                >
+                  {(() => {
+                    // Special cases for apps with known country values
+                    if (app.name === "Smart-ID") {
+                      return "Letônia, Estônia, Lituânia";
+                    } else if (app.name === "GOV.UK") {
+                      return "Reino Unido";
+                    } else if (app.name === "Kela" || app.name === "Suomi.fi" || app.name === "Kanta") {
+                      return "Finlândia";
+                    } else if (app.name === "Eesti.ee" || app.name === "e-Residency") {
+                      return "Estônia";
+                    } else if (app.name === "Autenticação Gov" || app.name === "SNS 24") {
+                      return "Portugal";
+                    } else if (app.name === "IRISbox" || app.name === "my eBox") {
+                      return "Bélgica";
+                    } else if (app.name === "NHS") {
+                      return "Reino Unido";
+                    } else {
+                      // Default fallback
+                      return app.country || "Brasil";
+                    }
+                  })()}
                 </span>
               </div>
             </div>
