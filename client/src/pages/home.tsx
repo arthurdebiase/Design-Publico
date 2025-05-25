@@ -310,7 +310,25 @@ export default function Home() {
               onScroll={handleCategoryScroll}
             >
               <div className="flex space-x-6 min-w-max pl-0">
-                {/* Removed "Todos" button as requested */}
+                {/* "Todos" button */}
+                <button
+                  key="tab-all"
+                  onClick={() => handleCategoryFilterChange(null)}
+                  className={`px-4 py-3 whitespace-nowrap transition-all flex flex-col items-center relative ${
+                    selectedCategories.length === 0
+                      ? 'text-primary font-medium' 
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                  aria-label="Todos"
+                >
+                  <div className="inline-block w-14 h-14 mb-1">
+                    <span className="inline-block w-full h-full">🔍</span>
+                  </div>
+                  <span>{t('filters.all')}</span>
+                  {selectedCategories.length === 0 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
+                  )}
+                </button>
                 
                 {availableCategories && availableCategories.map((category, index) => (
                   <button
