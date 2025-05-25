@@ -564,40 +564,7 @@ export default function ScreensPage() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Category filter dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                variant="outline" 
-                className="flex items-center gap-2"
-                aria-label={t('filters.filterByCategory')}
-                aria-haspopup="true"
-              >
-                {t('filters.categories')}
-                <ChevronDown className="h-4 w-4 ml-2" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-56 max-h-[300px] overflow-auto">
-              <DropdownMenuLabel>{t('filters.categories')}</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className={selectedCategories.length === 0 ? "bg-accent/50" : ""}
-                onClick={() => handleCategoryFilterChange(null)}
-              >
-                {t('filters.all')} {t('filters.categories')}
-              </DropdownMenuItem>
-              {availableCategories.map((category: string, index: number) => (
-                <DropdownMenuItem
-                  key={`cat-${index}-${category}`}
-                  className={selectedCategories.includes(category) ? "bg-accent/50" : ""}
-                  onClick={() => handleCategoryFilterChange(category)}
-                >
-                  <span>{category}</span>
-                  {selectedCategories.includes(category) && <Check className="ml-auto h-4 w-4" />}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {/* Category filter dropdown removed as requested */}
         </div>
         
         {/* Screen counter - updated format "X de XX telas" */}
