@@ -190,7 +190,7 @@ export default function Home() {
     if (app.category === "Cidadania") return "Cidadania"; 
     if (app.category === "Saúde") return "Saúde";
     if (app.category === "Logística") return "Logística";
-    if (app.category === "Trabalho" || app.category === "Trabalhos") return "Trabalhos"; // Handle both "Trabalho" and "Trabalhos"
+    if (app.category === "Trabalho" || app.category === "Trabalhos") return "Trabalho"; // Use consistent "Trabalho" category
     if (app.category === "Portal") return "Portal";
     
     // Name-based overrides for specific apps we know about
@@ -198,7 +198,10 @@ export default function Home() {
       return "Finanças";
     }
     if (app.name === "Carteira de Trabalho Digital") {
-      return "Trabalhos"; // Updated to match "Trabalhos"
+      return "Trabalho"; // Match Airtable category exactly
+    }
+    if (app.name === "Carteira Digital de Transito") {
+      return "Mobilidade"; // Assign to a more appropriate category
     }
     if (app.name === "Meu SUS Digital") {
       return "Saúde";
@@ -208,6 +211,12 @@ export default function Home() {
     }
     if (app.name === "e-Título") {
       return "Cidadania";
+    }
+    if (app.name === "gov.br") {
+      return "Portal";
+    }
+    if (app.name === "Conecta Recife") {
+      return "Portal";
     }
     
     // Fallback to type-based categorization
