@@ -146,6 +146,12 @@ export default function ScreensPage() {
     if (categoryParam && availableCategories.includes(categoryParam)) {
       setSelectedCategories([categoryParam]);
     }
+    
+    // Get country from query params
+    const countryParam = params.get('country');
+    if (countryParam && availableCountries.includes(countryParam)) {
+      setSelectedCountry(countryParam);
+    }
   };
   
   // Apply URL query parameters when the page loads and data is available
@@ -155,7 +161,7 @@ export default function ScreensPage() {
     }
   }, [search, availableTags, availableCategories]);
   
-  // Filter screens when selectedTag or selectedCategories change
+  // Filter screens when selectedTag, selectedCategories, or selectedCountry change
   useEffect(() => {
     if (allScreens.length === 0) return;
     
@@ -222,9 +228,20 @@ export default function ScreensPage() {
       });
     }
     
+    // Filter by country if a country is selected
+    if (selectedCountry) {
+      filtered = filtered.filter(screen => {
+        // Only check app's country since screens don't have country property
+        if (screen.app?.country) {
+          return screen.app.country === selectedCountry;
+        }
+        return false;
+      });
+    }
+
     setFilteredScreens(filtered);
     // Mantém o mesmo número de telas exibidas, sem redefinir
-  }, [selectedTag, selectedCategories, allScreens]);
+  }, [selectedTag, selectedCategories, selectedCountry, allScreens]);
 
   // Otimização: uso de Promise.all para paralelizar requisições
   // e melhorar o TBT (Total Blocking Time)
@@ -421,6 +438,20 @@ export default function ScreensPage() {
     }
   };
   
+  const handleCountryFilterChange = (country: string | null) => {
+    if (country === null) {
+      // Clear selected country
+      setSelectedCountry(null);
+    } else {
+      // Toggle country - select if not current, clear if already selected
+      if (selectedCountry === country) {
+        setSelectedCountry(null); // Deselect if clicked on the currently selected country
+      } else {
+        setSelectedCountry(country); // Select the new country
+      }
+    }
+  };
+
   const handleCategoryFilterChange = (category: string | null) => {
     if (category === null) {
       // Clear all categories
