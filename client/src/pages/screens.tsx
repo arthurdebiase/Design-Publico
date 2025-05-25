@@ -536,12 +536,7 @@ export default function ScreensPage() {
             )}
           </div>
           
-          {/* Pagination dots */}
-          <div className="flex justify-center mt-2">
-            <div id="pagination-dots" className="flex space-x-1">
-              {/* Dots will be added dynamically by the updateDots function */}
-            </div>
-          </div>
+          {/* Pagination dots removed as requested */}
         </div>
       </div>
       
