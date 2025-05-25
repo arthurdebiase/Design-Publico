@@ -47,6 +47,10 @@ export default function ScreensPage() {
   // State for responsive tag display
   const [visibleTagCount, setVisibleTagCount] = useState(6);
   
+  // State to track scroll navigation visibility
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  
   // Function to update pagination dots
   const updateDots = useCallback(() => {
     const container = document.getElementById('tags-scroll-container');
@@ -65,6 +69,10 @@ export default function ScreensPage() {
     // Calculate which dot should be active
     const scrollPosition = container.scrollLeft;
     const activeDotIndex = Math.floor(scrollPosition / containerWidth);
+    
+    // Update arrow visibility
+    setShowLeftArrow(scrollPosition > 10); // Show left arrow if not at the start
+    setShowRightArrow(scrollPosition < scrollWidth - containerWidth - 10); // Show right arrow if not at the end
     
     // Create dots
     for (let i = 0; i < numDots; i++) {
@@ -463,22 +471,24 @@ export default function ScreensPage() {
         <div className="mb-4 relative">
           {/* Navigation arrows */}
           <div className="flex items-center relative">
-            {/* Left arrow button */}
-            <button 
-              className="absolute left-0 z-10 flex items-center justify-center h-8 w-8 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
-              onClick={() => {
-                const container = document.getElementById('tags-scroll-container');
-                if (container) {
-                  container.scrollBy({ left: -200, behavior: 'smooth' });
-                  updateDots();
-                }
-              }}
-              aria-label="Scroll left"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+            {/* Left arrow button - only shown when not at the start */}
+            {showLeftArrow && (
+              <button 
+                className="absolute left-0 z-10 flex items-center justify-center h-8 w-8 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+                onClick={() => {
+                  const container = document.getElementById('tags-scroll-container');
+                  if (container) {
+                    container.scrollBy({ left: -200, behavior: 'smooth' });
+                    updateDots();
+                  }
+                }}
+                aria-label="Scroll left"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
             
             {/* Scrollable container with hidden scrollbar, organized in 2-row grid */}
             <div 
@@ -506,22 +516,24 @@ export default function ScreensPage() {
               ))}
             </div>
             
-            {/* Right arrow button */}
-            <button 
-              className="absolute right-0 z-10 flex items-center justify-center h-8 w-8 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
-              onClick={() => {
-                const container = document.getElementById('tags-scroll-container');
-                if (container) {
-                  container.scrollBy({ left: 200, behavior: 'smooth' });
-                  updateDots();
-                }
-              }}
-              aria-label="Scroll right"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            {/* Right arrow button - only shown when not at the end */}
+            {showRightArrow && (
+              <button 
+                className="absolute right-0 z-10 flex items-center justify-center h-8 w-8 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+                onClick={() => {
+                  const container = document.getElementById('tags-scroll-container');
+                  if (container) {
+                    container.scrollBy({ left: 200, behavior: 'smooth' });
+                    updateDots();
+                  }
+                }}
+                aria-label="Scroll right"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
           </div>
           
           {/* Pagination dots */}
