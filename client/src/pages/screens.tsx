@@ -323,10 +323,28 @@ export default function ScreensPage() {
         
         console.log('Available categories:', sortedCategories);
         
+        // Filter out screens from planned apps right at the initial loading stage
+        // to ensure they never appear in the gallery
+        const nonPlannedScreens = randomizedScreens.filter(screen => {
+          // Skip screens from "Planejado" apps
+          if (screen.app) {
+            // Check if app is planned based on status or category
+            const isPlanned = 
+              screen.app.status === "Planejado" || 
+              screen.app.category === "Planejado" ||
+              (typeof screen.app.category === 'string' && screen.app.category.includes("Planejado")) ||
+              (Array.isArray(screen.app.category) && screen.app.category.includes("Planejado"));
+            
+            // Only keep screens from non-planned apps
+            return !isPlanned;
+          }
+          return true;
+        });
+        
         setAvailableTags(sortedTags);
         setAvailableCategories(sortedCategories);
-        setAllScreens(randomizedScreens);
-        setFilteredScreens(randomizedScreens);
+        setAllScreens(nonPlannedScreens);
+        setFilteredScreens(nonPlannedScreens);
         
         // Initialize pagination dots after a short delay to ensure DOM is ready
         setTimeout(() => {
