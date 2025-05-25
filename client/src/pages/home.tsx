@@ -444,7 +444,9 @@ export default function Home() {
                   )}
                 </button>
                 
-                {availableCategories && availableCategories.map((category, index) => (
+                {availableCategories && availableCategories
+                  .filter(category => category !== "Mobilidade") // Filter out Mobilidade category
+                  .map((category, index) => (
                   <button
                     key={`tab-${index}-${category}`}
                     onClick={() => handleCategoryFilterChange(category)}
