@@ -306,7 +306,7 @@ export default function Home() {
             )}
             
             <div 
-              className="overflow-x-auto category-scroll pl-0 pr-8 border-b border-gray-200"
+              className="overflow-x-auto category-scroll pl-0 pr-8 border-b border-gray-200 scrollbar-hide"
               onScroll={handleCategoryScroll}
             >
               <div className="flex space-x-6 min-w-max pl-0">

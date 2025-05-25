@@ -21,22 +21,13 @@
     @apply no-underline;
   }
   
-  /* Minimalist scrollbar styling for category scroll */
-  .category-scroll {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  /* Hide scrollbar for category scroll while maintaining functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
   }
   
-  .category-scroll::-webkit-scrollbar {
-    height: 4px;
-  }
-  
-  .category-scroll::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  
-  .category-scroll::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
   }
 }
