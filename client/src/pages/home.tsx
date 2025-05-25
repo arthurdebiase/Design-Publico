@@ -308,6 +308,14 @@ export default function Home() {
         console.log(`App: ${app.name}, Category: ${app.category}, Type: ${app.type}, Assigned Category: ${appCategory}`);
       }
       
+      // Special handling for Planejado category
+      if (selectedCategories.includes("Planejado")) {
+        // If Planejado is selected, show all apps with status "Planejado"
+        if (app.status === "Planejado") {
+          return true;
+        }
+      }
+      
       // Check if the app's category is included in the selected categories
       return selectedCategories.includes(appCategory);
     });
