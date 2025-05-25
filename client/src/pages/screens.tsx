@@ -159,6 +159,32 @@ export default function ScreensPage() {
     
     let filtered = [...allScreens];
     
+    // Filter out screens with "Planejado" category
+    filtered = filtered.filter(screen => {
+      // Check screen category
+      if (screen.category) {
+        if (typeof screen.category === 'string') {
+          if (screen.category === "Planejado") return false;
+        } else if (Array.isArray(screen.category)) {
+          if (screen.category.includes("Planejado")) return false;
+        }
+      }
+      
+      // Check app category
+      if (screen.app?.category) {
+        if (typeof screen.app.category === 'string') {
+          if (screen.app.category === "Planejado") return false;
+        } else if (Array.isArray(screen.app.category)) {
+          if (screen.app.category.includes("Planejado")) return false;
+        }
+      }
+      
+      // Check app status
+      if (screen.app?.status === "Planejado") return false;
+      
+      return true;
+    });
+    
     if (selectedTag) {
       filtered = filtered.filter(screen => {
         if (!screen.tags || !Array.isArray(screen.tags)) return false;
