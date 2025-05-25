@@ -50,13 +50,23 @@ export default function Home() {
   
   // Parse URL parameters for category filtering
   useEffect(() => {
+    if (!availableCategories.length) return;
+    
     const urlParams = new URLSearchParams(window.location.search);
     const categoryParam = urlParams.get('category');
     
-    if (categoryParam && availableCategories.includes(categoryParam)) {
-      setSelectedCategories([categoryParam]);
+    if (categoryParam) {
+      // Map English category name from URL to Portuguese internal category name
+      const categoryEntries = Object.entries(t('categories', { returnObjects: true }) as Record<string, string>);
+      const matchingCategory = categoryEntries.find(([_, englishName]) => 
+        englishName.toLowerCase() === categoryParam.toLowerCase()
+      );
+      
+      if (matchingCategory && availableCategories.includes(matchingCategory[0])) {
+        setSelectedCategories([matchingCategory[0]]);
+      }
     }
-  }, [availableCategories]);
+  }, [availableCategories, t]);
 
   // Update URL when selected category changes
   useEffect(() => {
@@ -64,14 +74,16 @@ export default function Home() {
     const url = new URL(window.location.href);
     
     if (category) {
-      url.searchParams.set('category', category);
+      // Use English category names in the URL for better sharing
+      const englishCategory = t(`categories.${category}`);
+      url.searchParams.set('category', englishCategory);
     } else {
       url.searchParams.delete('category');
     }
     
     // Update browser URL without reloading the page
     window.history.replaceState({}, '', url);
-  }, [selectedCategories]);
+  }, [selectedCategories, t]);
 
   // Extract available categories and their icons
   useEffect(() => {
