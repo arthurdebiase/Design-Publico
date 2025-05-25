@@ -25,14 +25,9 @@ function AppScreenImage({ appId, appName, isPriority = false, isPlanned = false 
   const isMobile = useIsMobile();
   const { t } = useTranslation();
 
-  // Check if it's explicitly a planned app
-  if (isPlanned) {
-    return (
-      <div className="w-full h-full bg-gray-50 flex items-center justify-center p-4">
-        {/* Keep only the minimal gray background without text or icons */}
-      </div>
-    );
-  }
+  // We no longer need a special placeholder for planned apps
+  // Instead, we'll show the actual screen image with reduced opacity
+  // The placeholder is removed so the component will proceed to show the actual image
 
   if (isLoading) {
     return <Skeleton className="w-full h-full" />;
@@ -56,13 +51,13 @@ function AppScreenImage({ appId, appName, isPriority = false, isPlanned = false 
         height: "calc(100% - 16px)"
       }}>
         <div 
-          className="h-full w-full flex items-center justify-center cursor-pointer"
-          onClick={() => navigate(`/app/${appId}`)}
+          className={`h-full w-full flex items-center justify-center ${isPlanned ? 'cursor-default' : 'cursor-pointer'}`}
+          onClick={() => !isPlanned && navigate(`/app/${appId}`)}
           role="button"
-          tabIndex={0}
+          tabIndex={isPlanned ? -1 : 0}
           aria-label={`View ${appName || 'app'} details`}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (!isPlanned && (e.key === 'Enter' || e.key === ' ')) {
               navigate(`/app/${appId}`);
             }
           }}
@@ -71,7 +66,7 @@ function AppScreenImage({ appId, appName, isPriority = false, isPlanned = false 
             src={firstScreen.imageUrl}
             cloudinarySrc={firstScreen.cloudinaryUrl} // Use Cloudinary URL when available for reliable hosting
             alt={`${appName ? appName + ': ' : ''}${firstScreen.name || 'Screen view'} - ${firstScreen.description || 'User interface example'}`}
-            className="w-full h-full object-contain transition-transform hover:scale-[1.01]"
+            className={`w-full h-full object-contain ${isPlanned ? 'opacity-50' : 'transition-transform hover:scale-[1.01]'}`}
             style={{ 
               objectFit: "contain",
               objectPosition: "center"

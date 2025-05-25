@@ -368,8 +368,26 @@ export default function Home() {
     
     // Final step: Always move Planejado apps to the end, regardless of other sorting
     filtered = [...filtered].sort((a, b) => {
-      const aIsPlanned = a.status === "Planejado" || a.category === "Planejado";
-      const bIsPlanned = b.status === "Planejado" || b.category === "Planejado";
+      // More comprehensive check for "Planejado" status 
+      const aIsPlanned = 
+        a.status === "Planejado" || 
+        a.category === "Planejado" ||
+        // Include the specific list of international apps that should be marked as planned
+        (a.name && [
+          "GOV.UK", "Kela", "Suomi.fi", "Kanta", "Eesti.ee", "e-Residency",
+          "Smart-ID", "Autenticação Gov", "SNS 24", "IRISbox", "my eBox",
+          "NHS", "MEI", "Zona Azul Digital Recife"
+        ].includes(a.name));
+      
+      const bIsPlanned = 
+        b.status === "Planejado" || 
+        b.category === "Planejado" ||
+        // Include the specific list of international apps that should be marked as planned 
+        (b.name && [
+          "GOV.UK", "Kela", "Suomi.fi", "Kanta", "Eesti.ee", "e-Residency",
+          "Smart-ID", "Autenticação Gov", "SNS 24", "IRISbox", "my eBox",
+          "NHS", "MEI", "Zona Azul Digital Recife"
+        ].includes(b.name));
       
       // If a is planned and b is not, a comes after b
       if (aIsPlanned && !bIsPlanned) return 1;
