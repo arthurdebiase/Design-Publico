@@ -218,8 +218,33 @@ export default function About() {
                 </div>
                 
                 <div className="bg-gray-50 p-8 rounded-lg border border-gray-100 flex flex-col items-center justify-center">
-                  <div className="bg-[#00944026] p-4 rounded-full mb-4">
-                    <FolderTree className="h-8 w-8 text-[#009440]" />
+                  <div className="mb-4 flex items-center justify-center">
+                    {/* Display a grid of category icons if available */}
+                    {availableCategories && availableCategories.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-1">
+                        {availableCategories.slice(0, Math.min(6, availableCategories.length)).map((category, index) => (
+                          <div 
+                            key={index} 
+                            className="w-8 h-8 flex items-center justify-center bg-white rounded-full border border-gray-100 overflow-hidden"
+                          >
+                            {categoryIcons && categoryIcons[category] ? (
+                              <img 
+                                src={categoryIcons[category]} 
+                                alt={`${category} icon`} 
+                                className="w-6 h-6 object-contain"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <FolderTree className="h-4 w-4 text-[#009440]" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="bg-[#00944026] p-4 rounded-full">
+                        <FolderTree className="h-8 w-8 text-[#009440]" />
+                      </div>
+                    )}
                   </div>
                   <CounterAnimation end={totalCategories} className="text-4xl font-bold mb-2" />
                   <p className="text-gray-600">{t('about.stats.categories')}</p>
