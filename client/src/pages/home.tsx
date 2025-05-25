@@ -309,22 +309,37 @@ export default function Home() {
       // Get the appropriate category for this app
       const appCategory = getAppCategory(app);
       
-      // Log for debugging
-      if (selectedCategories.includes("Finanças")) {
-        console.log(`App: ${app.name}, Category: ${app.category}, Type: ${app.type}, Assigned Category: ${appCategory}`);
-      }
-      
       // Special handling for Planejado category
       if (selectedCategories.includes("Planejado")) {
-        // Return any app that has:
-        // 1. The "Planejado" status, OR
-        // 2. "Planejado" in its category field, OR
-        // 3. "Planejado" in its categories array
+        // Check if this app should be categorized as Planejado
+        // Look for "Planejado" in various places
         if (
+          // Check direct status field
           app.status === "Planejado" || 
+          // Check category field
           app.category === "Planejado" ||
-          (app.categories && Array.isArray(app.categories) && app.categories.includes("Planejado"))
+          // Check categories array
+          (app.categories && Array.isArray(app.categories) && app.categories.includes("Planejado")) ||
+          // Mark international apps from specific countries as Planejado
+          (app.name && (
+            app.name === "GOV.UK" || 
+            app.name === "Kela" || 
+            app.name === "Suomi.fi" || 
+            app.name === "Kanta" ||
+            app.name === "Eesti.ee" || 
+            app.name === "e-Residency" ||
+            app.name === "Smart-ID" ||
+            app.name === "Autenticação Gov" ||
+            app.name === "SNS 24" ||
+            app.name === "IRISbox" ||
+            app.name === "my eBox" ||
+            app.name === "NHS" ||
+            app.name === "MEI" ||
+            app.name === "Zona Azul Digital Recife"
+          ))
         ) {
+          // Set the app's status to Planejado for consistency
+          app.status = "Planejado";
           return true;
         }
       }
