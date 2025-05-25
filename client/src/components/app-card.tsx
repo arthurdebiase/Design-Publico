@@ -167,7 +167,7 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
           />
           {appIsPlanned && (
             <div className="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs font-medium px-2 py-1 m-2 rounded-full">
-              Planejado
+              {i18n.language === 'en' ? 'Planned' : 'Planejado'}
             </div>
           )}
         </div>
