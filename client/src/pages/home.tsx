@@ -170,12 +170,18 @@ export default function Home() {
         return <span className="inline-block w-full h-full">🌐</span>;
       case "Saúde":
         return <span className="inline-block w-full h-full">❤️</span>;
+      case "Trabalho":
+        return <span className="inline-block w-full h-full">💼</span>;
       case "Trabalhos":
         return <span className="inline-block w-full h-full">💼</span>;
       case "Mobilidade":
         return <span className="inline-block w-full h-full">🚗</span>;
       case "Segurança":
         return <span className="inline-block w-full h-full">🔒</span>;
+      case "Internacional":
+        return <span className="inline-block w-full h-full">🌍</span>;
+      case "Planejado":
+        return <span className="inline-block w-full h-full">🕒</span>;
       default:
         return <span className="inline-block w-full h-full">📱</span>;
     }
@@ -197,6 +203,23 @@ export default function Home() {
     if (app.category === "Logística") return "Logística";
     if (app.category === "Trabalho" || app.category === "Trabalhos") return "Trabalho"; // Use consistent "Trabalho" category
     if (app.category === "Portal") return "Portal";
+    if (app.category === "Mobilidade") return "Mobilidade";
+    if (app.category === "Planejado") return "Planejado"; // Include Planejado category
+    
+    // Status-based categorization
+    if (app.status === "Planejado") return "Planejado";
+    
+    // Country-based categorization for international apps
+    if (app.country && app.country !== "Brasil") {
+      // For Finnish apps in the screenshot
+      if (app.country === "Finlândia") return "Internacional";
+      // For Estonian apps in the screenshot
+      if (app.country === "Estônia") return "Internacional";
+      // For UK apps in the screenshot
+      if (app.country === "Reino Unido") return "Internacional";
+      // Return "Internacional" for any non-Brazilian app
+      return "Internacional";
+    }
     
     // Name-based overrides for specific apps we know about
     if (app.name === "CAIXA" || app.name === "Meu INSS" || app.name === "Tesouro Direto") {
@@ -222,6 +245,15 @@ export default function Home() {
     }
     if (app.name === "Conecta Recife") {
       return "Portal";
+    }
+    if (app.name === "GOV.UK") {
+      return "Internacional";
+    }
+    if (app.name === "Kela" || app.name === "Suomi.fi" || app.name === "Kanta") {
+      return "Internacional";
+    }
+    if (app.name === "Eesti.ee" || app.name === "e-Residency") {
+      return "Internacional";
     }
     
     // Fallback to type-based categorization
