@@ -493,7 +493,7 @@ export default function ScreensPage() {
             {/* Scrollable container with hidden scrollbar, organized in 2-row grid */}
             <div 
               id="tags-scroll-container"
-              className="grid grid-rows-2 grid-flow-col gap-2 overflow-x-auto pb-2 scrollbar-none w-full border-b border-gray-200 mx-8 px-2 auto-cols-max" 
+              className="grid grid-rows-2 grid-flow-col gap-2 overflow-x-auto pb-2 scrollbar-none w-full border-b border-gray-200 pr-8 pl-0 auto-cols-max" 
               onScroll={() => updateDots()}
               style={{ gridAutoColumns: "min-content" }}
             >
