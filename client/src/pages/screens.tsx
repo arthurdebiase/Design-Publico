@@ -157,7 +157,22 @@ export default function ScreensPage() {
   useEffect(() => {
     if (allScreens.length === 0) return;
     
-    let filtered = [...allScreens];
+    // First filter out screens from planned apps
+    let filtered = allScreens.filter(screen => {
+      // Skip screens from "Planejado" apps
+      if (screen.app) {
+        // Check if app is planned based on status or category
+        const isPlanned = 
+          screen.app.status === "Planejado" || 
+          screen.app.category === "Planejado" ||
+          (typeof screen.app.category === 'string' && screen.app.category.includes("Planejado")) ||
+          (Array.isArray(screen.app.category) && screen.app.category.includes("Planejado"));
+        
+        // Only keep screens from non-planned apps
+        return !isPlanned;
+      }
+      return true;
+    });
     
     if (selectedTag) {
       filtered = filtered.filter(screen => {
