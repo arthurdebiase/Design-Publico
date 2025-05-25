@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Layers, Monitor, Tag, Smartphone, FolderTree } from "lucide-react";
 import { App, Screen } from "@/types";
+import { fetchCategories } from "@/lib/airtable";
 import { useEffect, useState, useRef, createContext, useContext } from "react";
 
 // Create a context to share the animation state
@@ -62,6 +63,8 @@ export default function About() {
   const [totalCategories, setTotalCategories] = useState<number>(0);
   const [totalScreens, setTotalScreens] = useState<number>(0);
   const [shouldAnimate, setShouldAnimate] = useState<boolean>(false);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [categoryIcons, setCategoryIcons] = useState<Record<string, string>>({});
   const statsRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -69,6 +72,12 @@ export default function About() {
   const { data: apps = [] } = useQuery<App[]>({
     queryKey: ['/api/apps'],
     // The QueryClient default settings will handle the request
+  });
+
+  // Fetch categories directly from the API
+  const { data: categoriesData } = useQuery({
+    queryKey: ['/api/categories'],
+    queryFn: fetchCategories
   });
 
   const totalApps = apps.length;
@@ -95,30 +104,37 @@ export default function About() {
     };
   }, []);
   
-  // Calculate total screens, unique tags and categories - optimized to fetch in parallel
+  // Update category data when fetched from API
+  useEffect(() => {
+    if (categoriesData && categoriesData.length > 0) {
+      // Set the correct total number of categories from Airtable
+      setTotalCategories(categoriesData.length);
+      
+      // Extract category names and their icons
+      const categoryNames = categoriesData.map(cat => cat.name);
+      setAvailableCategories(categoryNames);
+      
+      // Create a map of category names to their icon URLs
+      const iconMap: Record<string, string> = {};
+      categoriesData.forEach(cat => {
+        if (cat.name && cat.iconUrl) {
+          iconMap[cat.name] = cat.iconUrl;
+        }
+      });
+      setCategoryIcons(iconMap);
+      
+      console.log(`Updated categories from Airtable: found ${categoriesData.length} categories`);
+    }
+  }, [categoriesData]);
+
+  // Calculate total screens and unique tags - optimized to fetch in parallel
   useEffect(() => {
     const fetchData = async () => {
       if (!apps.length) return;
       
       const tags = new Set<string>();
-      const categories = new Set<string>();
       let screenCount = 0;
       
-      // Pre-fetch all app categories
-      apps.forEach(app => {
-        if (app.category) {
-          if (typeof app.category === 'string' && app.category.trim()) {
-            categories.add(app.category.trim());
-          } else if (Array.isArray(app.category)) {
-            app.category.forEach(cat => {
-              if (cat && typeof cat === 'string' && cat.trim()) {
-                categories.add(cat.trim());
-              }
-            });
-          }
-        }
-      });
-
       try {
         // Fetch all screens in parallel instead of sequentially
         const fetchPromises = apps.map(app => 
@@ -139,37 +155,23 @@ export default function About() {
             // Count screens
             screenCount += appScreens.length;
             
-            // Extract tags & categories
+            // Extract tags
             appScreens.forEach(screen => {
               // Extract tags
               if (screen.tags && Array.isArray(screen.tags)) {
-                screen.tags.forEach(tag => {
+                screen.tags.forEach((tag: string) => {
                   if (tag && typeof tag === 'string' && tag.trim()) {
                     tags.add(tag.trim());
                   }
                 });
               }
-              
-              // Extract categories - handle both string and array of strings
-              if (screen.category) {
-                if (typeof screen.category === 'string' && screen.category.trim()) {
-                  categories.add(screen.category.trim());
-                } else if (Array.isArray(screen.category)) {
-                  screen.category.forEach(cat => {
-                    if (cat && typeof cat === 'string' && cat.trim()) {
-                      categories.add(cat.trim());
-                    }
-                  });
-                }
-              }
             });
           }
         });
         
-        // Update all state values at once
+        // Update screen count and tags
         setTotalScreens(screenCount);
         setTotalTags(tags.size);
-        setTotalCategories(categories.size);
         
       } catch (error) {
         console.error("Error fetching data:", error);
