@@ -103,8 +103,28 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
   const [, navigate] = useLocation();
   const { t } = useTranslation();
   
-  // Check if app is planned (either via prop or app status)
-  const appIsPlanned = isPlanned || app.status === "Planejado";
+  // Check all possible ways an app could be planned
+  const appIsPlanned = 
+    isPlanned || 
+    app.status === "Planejado" || 
+    app.category === "Planejado" ||
+    // Explicitly check for international apps that should be marked as "Planejado"
+    (app.name && [
+      "GOV.UK", 
+      "Kela", 
+      "Suomi.fi", 
+      "Kanta",
+      "Eesti.ee", 
+      "e-Residency",
+      "Smart-ID",
+      "Autenticação Gov",
+      "SNS 24",
+      "IRISbox",
+      "my eBox",
+      "NHS",
+      "MEI",
+      "Zona Azul Digital Recife"
+    ].includes(app.name));
   
   // Responsive heights that maintain a compact aspect ratio with larger image size
   const cardHeight = isMobile ? "h-auto" : "h-auto";
@@ -113,7 +133,7 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
   
   // Add badge class and disabled styling for planned apps
   const cardClass = appIsPlanned 
-    ? "bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all cursor-default mb-4 flex flex-col border border-gray-200 opacity-70"
+    ? "bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all cursor-default mb-4 flex flex-col border border-gray-200 opacity-85"
     : "bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer mb-4 flex flex-col";
   
   const handleCardClick = (e: React.MouseEvent) => {
@@ -153,7 +173,7 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
             isPlanned={appIsPlanned} 
           />
           {appIsPlanned && (
-            <div className="absolute top-0 right-0 bg-gray-200 text-gray-600 text-xs px-2 py-1 m-2 rounded-full">
+            <div className="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs font-medium px-2 py-1 m-2 rounded-full">
               Planejado
             </div>
           )}
