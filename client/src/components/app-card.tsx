@@ -196,9 +196,11 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
               <h3 id={`app-name-${app.id}`} className="font-medium truncate" title={app.name}>
                 {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
               </h3>
-              <p className="text-xs text-gray-500 truncate flex items-center">
-                {app.country || "Brasil"}
-              </p>
+              <div className="inline-flex items-center mt-1">
+                <span className="text-xs inline-block bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded border border-blue-100">
+                  {app.country || "Brasil"}
+                </span>
+              </div>
             </div>
           </div>
         </div>
