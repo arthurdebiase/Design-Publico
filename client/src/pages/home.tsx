@@ -98,8 +98,9 @@ export default function Home() {
       // Get active categories even for fallback
       const activeCategories = getActiveCategories();
       
-      // Use all active categories instead of a predefined list
-      const predefinedCategories = activeCategories;
+      // Fallback to predefined categories if API fails, but only show ones with apps
+      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"]
+        .filter(cat => activeCategories.includes(cat));
       
       setAvailableCategories(predefinedCategories);
       
