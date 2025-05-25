@@ -27,10 +27,12 @@ export default function ScreensPage() {
   const [apps, setApps] = useState<App[]>([]);
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [availableTags, setAvailableTags] = useState<string[]>([]);
   const [tagCounts, setTagCounts] = useState<{[key: string]: number}>({});
   const [popularTags, setPopularTags] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [availableCountries, setAvailableCountries] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -305,10 +307,11 @@ export default function ScreensPage() {
         
         const randomizedScreens = shuffleArray(fetchedScreens);
         
-        // Otimização: extração de tags e categorias em uma única passagem
+        // Otimização: extração de tags, categorias e países em uma única passagem
         // evitando múltiplos loops e manipulação de arrays
         const tags = new Set<string>();
         const categories = new Set<string>();
+        const countries = new Set<string>();
         
         // Processamento em Web Worker não é ideal aqui pois precisa de estado compartilhado
         // mas podemos otimizar o loop para ser mais eficiente
@@ -350,16 +353,26 @@ export default function ScreensPage() {
               }
             }
           }
+          
+          // Extract countries from the app
+          if (screen.app?.country) {
+            const country = screen.app.country;
+            if (typeof country === 'string' && country.trim()) {
+              countries.add(country.trim());
+            }
+          }
         });
         
         // Convertendo Set para Array apenas uma vez no final, para economizar operações
         const sortedTags = Array.from(tags).sort();
         const sortedCategories = Array.from(categories).sort();
+        const sortedCountries = Array.from(countries).sort();
         
         console.log('Available categories:', sortedCategories);
         
         setAvailableTags(sortedTags);
         setAvailableCategories(sortedCategories);
+        setAvailableCountries(sortedCountries);
         setAllScreens(randomizedScreens);
         setFilteredScreens(randomizedScreens);
         
