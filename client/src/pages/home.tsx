@@ -77,7 +77,7 @@ export default function Home() {
         <img 
           src={categoryIcons[category]} 
           alt={`${category} icon`} 
-          className="inline-block w-5 h-5 mr-2 object-contain"
+          className="w-full h-full object-contain"
           loading="lazy"
         />
       );
@@ -86,23 +86,23 @@ export default function Home() {
     // Fallback to emoji icons if no Airtable icon is available
     switch (category) {
       case "Cidadania":
-        return <span className="inline-block w-5 h-5 mr-2">👤</span>;
+        return <span className="inline-block w-full h-full">👤</span>;
       case "Finanças":
-        return <span className="inline-block w-5 h-5 mr-2">💰</span>;
+        return <span className="inline-block w-full h-full">💰</span>;
       case "Logística":
-        return <span className="inline-block w-5 h-5 mr-2">🚚</span>;
+        return <span className="inline-block w-full h-full">🚚</span>;
       case "Portal":
-        return <span className="inline-block w-5 h-5 mr-2">🌐</span>;
+        return <span className="inline-block w-full h-full">🌐</span>;
       case "Saúde":
-        return <span className="inline-block w-5 h-5 mr-2">❤️</span>;
-      case "Trabalho":
-        return <span className="inline-block w-5 h-5 mr-2">💼</span>;
+        return <span className="inline-block w-full h-full">❤️</span>;
+      case "Trabalhos":
+        return <span className="inline-block w-full h-full">💼</span>;
       case "Mobilidade":
-        return <span className="inline-block w-5 h-5 mr-2">🚗</span>;
+        return <span className="inline-block w-full h-full">🚗</span>;
       case "Segurança":
-        return <span className="inline-block w-5 h-5 mr-2">🔒</span>;
+        return <span className="inline-block w-full h-full">🔒</span>;
       default:
-        return <span className="inline-block w-5 h-5 mr-2">📱</span>;
+        return <span className="inline-block w-full h-full">📱</span>;
     }
   };
   
@@ -213,30 +213,32 @@ export default function Home() {
             <div className="flex space-x-1 min-w-max">
               <button
                 onClick={() => setSelectedCategories([])}
-                className={`px-4 py-2 rounded-full transition-all flex items-center ${
+                className={`px-4 py-3 rounded-full transition-all flex flex-col items-center ${
                   selectedCategories.length === 0 
                     ? 'bg-primary text-white shadow-md' 
                     : 'bg-gray-100 hover:bg-gray-200'
                 }`}
                 aria-label={t('filters.all')}
               >
-                <span className="inline-block w-5 h-5 mr-1">📱</span>
-                {t('filters.all')}
+                <span className="inline-block w-6 h-6 mb-1">📱</span>
+                <span>{t('filters.all')}</span>
               </button>
               
               {availableCategories && availableCategories.map((category, index) => (
                 <button
                   key={`tab-${index}-${category}`}
                   onClick={() => handleCategoryFilterChange(category)}
-                  className={`px-4 py-2 rounded-full whitespace-nowrap transition-all flex items-center ${
+                  className={`px-4 py-3 rounded-full whitespace-nowrap transition-all flex flex-col items-center ${
                     selectedCategories.includes(category) 
                       ? 'bg-primary text-white shadow-md' 
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
                   aria-label={category}
                 >
-                  {getCategoryIcon(category)}
-                  {category}
+                  <div className="inline-block w-6 h-6 mb-1">
+                    {getCategoryIcon(category)}
+                  </div>
+                  <span>{category}</span>
                 </button>
               ))}
             </div>
