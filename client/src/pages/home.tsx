@@ -476,7 +476,7 @@ export default function Home() {
             <>
               {/* Grid with more columns to show more apps per row */}
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {filteredApps && filteredApps.map((app, index) => (
+                {filteredApps && filteredApps.filter(app => app.type !== 'Planejado' && !app.name.includes('Planejado')).map((app, index) => (
                   <AppCard key={app.id} app={app} isPriority={index < 8} />
                 ))}
               </div>
@@ -487,6 +487,22 @@ export default function Home() {
                 <div className="bg-white p-8 rounded-lg text-center">
                   <h3 className="font-medium text-lg mb-2">{t('filters.noResults')}</h3>
                   <p className="text-gray-500">{t('filters.tryAdjusting')}</p>
+                </div>
+              )}
+              
+              {/* Planned apps section */}
+              {filteredApps && filteredApps.filter(app => app.type === 'Planejado' || app.name.includes('Planejado')).length > 0 && (
+                <div className="mt-12 mb-8">
+                  <h2 className="text-2xl font-bold mb-6 text-gray-900">Em breve</h2>
+                  <p className="text-gray-600 mb-8">
+                    Aplicativos que estarão disponíveis em breve na plataforma. Estamos trabalhando para adicionar mais telas e informações.
+                  </p>
+                  
+                  <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                    {filteredApps.filter(app => app.type === 'Planejado' || app.name.includes('Planejado')).map((app, index) => (
+                      <AppCard key={`planned-${app.id}`} app={app} isPlanned={true} />
+                    ))}
+                  </div>
                 </div>
               )}
             </>
