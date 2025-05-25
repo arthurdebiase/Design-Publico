@@ -145,5 +145,14 @@
     "Android": "Android",
     "Web": "Web",
     "Cross-platform": "Cross-platform"
+  },
+  "categories": {
+    "Todos": "All",
+    "Finanças": "Finance",
+    "Trabalho": "Work",
+    "Saúde": "Health",
+    "Cidadania": "Citizenship",
+    "Portal": "Portal",
+    "Logística": "Logistics"
   }
 }

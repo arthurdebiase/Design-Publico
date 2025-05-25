@@ -350,7 +350,7 @@ export default function Home() {
                     <div className="inline-block w-14 h-14 mb-1">
                       {getCategoryIcon(category)}
                     </div>
-                    <span>{category}</span>
+                    <span>{t(`categories.${category}`)}</span>
                     {selectedCategories.includes(category) && (
                       <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></div>
                     )}
