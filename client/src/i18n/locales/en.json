@@ -49,7 +49,9 @@
     "mostViewed": "Most viewed",
     "noOrder": "Default",
     "someAppsHidden": "Some apps may be hidden",
-    "tryRefreshing": "Try refreshing the page or come back later"
+    "tryRefreshing": "Try refreshing the page or come back later",
+    "shareCategory": "Share this view",
+    "linkCopied": "Link copied to clipboard!"
   },
   "app": {
     "visit": "Visit",

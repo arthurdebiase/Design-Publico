@@ -5,16 +5,19 @@ import AppCard from "@/components/app-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Check, ChevronDown, X, Clock, Grid, Eye } from "lucide-react";
+import { Check, ChevronDown, X, Clock, Grid, Eye, Share2 } from "lucide-react";
 // Using root project image instead of local SVG
 import { useTranslation } from 'react-i18next';
+import { useLocation, useRoute } from "wouter";
 
 export default function Home() {
   const { t } = useTranslation();
+  const [location, setLocation] = useLocation();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [categoryIcons, setCategoryIcons] = useState<Record<string, string>>({});
   const [sortBy, setSortBy] = useState<string>("none"); // Track the current sort method
+  const [showShareTooltip, setShowShareTooltip] = useState(false);
   
   // Enhanced query with retry logic and better error handling
   const { isLoading, error, data: apps } = useQuery({
@@ -45,6 +48,31 @@ export default function Home() {
     staleTime: 60000 // Consider data fresh for 1 minute
   });
   
+  // Parse URL parameters for category filtering
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    
+    if (categoryParam && availableCategories.includes(categoryParam)) {
+      setSelectedCategories([categoryParam]);
+    }
+  }, [availableCategories]);
+
+  // Update URL when selected category changes
+  useEffect(() => {
+    const category = selectedCategories.length === 1 ? selectedCategories[0] : null;
+    const url = new URL(window.location.href);
+    
+    if (category) {
+      url.searchParams.set('category', category);
+    } else {
+      url.searchParams.delete('category');
+    }
+    
+    // Update browser URL without reloading the page
+    window.history.replaceState({}, '', url);
+  }, [selectedCategories]);
+
   // Extract available categories and their icons
   useEffect(() => {
     if (!apps || apps.length === 0) return;
@@ -564,10 +592,32 @@ export default function Home() {
             </div>
           </div>
           
-          {/* App counter */}
-          <div className="text-gray-600 font-medium flex flex-col items-end">
-            <span>{t('filters.showing')}</span>
-            <span className="font-semibold">{filteredApps?.length || 0} {t('header.apps').toLowerCase()}</span>
+          {/* App counter and share button */}
+          <div className="flex gap-4 items-center">
+            {selectedCategories.length === 1 && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  setShowShareTooltip(true);
+                  setTimeout(() => setShowShareTooltip(false), 2000);
+                }}
+              >
+                <Share2 className="h-4 w-4" />
+                <span>{t('filters.shareCategory')}</span>
+                {showShareTooltip && (
+                  <div className="absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded">
+                    {t('filters.linkCopied')}
+                  </div>
+                )}
+              </Button>
+            )}
+            <div className="text-gray-600 font-medium flex flex-col items-end">
+              <span>{t('filters.showing')}</span>
+              <span className="font-semibold">{filteredApps?.length || 0} {t('header.apps').toLowerCase()}</span>
+            </div>
           </div>
         </div>
         

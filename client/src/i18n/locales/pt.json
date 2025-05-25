@@ -49,7 +49,9 @@
     "mostViewed": "Mais visualizados",
     "noOrder": "Padrão",
     "someAppsHidden": "Alguns aplicativos podem estar ocultos",
-    "tryRefreshing": "Tente atualizar a página ou voltar mais tarde"
+    "tryRefreshing": "Tente atualizar a página ou voltar mais tarde",
+    "shareCategory": "Compartilhar esta visualização",
+    "linkCopied": "Link copiado para a área de transferência!"
   },
   "app": {
     "visit": "Visitar",
