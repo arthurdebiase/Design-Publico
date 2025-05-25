@@ -66,7 +66,7 @@ export default function Home() {
       console.log("Available categories with icons:", categoryNames);
     } else if (apps && apps.length > 0) {
       // Fallback to predefined categories if API fails
-      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalhos"];
+      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"];
       setAvailableCategories(predefinedCategories);
       
       // By default, no filter should be active (empty array of selected categories)
