@@ -180,7 +180,7 @@ export default function AppCard({ app, isPriority = false, isPlanned = false }: 
                 {app.name.length > 20 ? `${app.name.substring(0, 20)}...` : app.name}
               </h3>
               <p className="text-xs text-gray-500 truncate flex items-center">
-                <span className="font-medium mr-1">País:</span> {app.country || "Brasil"}
+                {app.country || "Brasil"}
               </p>
             </div>
           </div>
