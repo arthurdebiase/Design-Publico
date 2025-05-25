@@ -60,14 +60,25 @@ export default function Home() {
       });
       setCategoryIcons(iconMap);
       
+      // Set the first category as selected by default since we removed the "Todos" button
+      if (categoryNames.length > 0 && selectedCategories.length === 0) {
+        setSelectedCategories([categoryNames[0]]);
+      }
+      
       console.log("Available categories with icons:", categoryNames);
     } else if (apps && apps.length > 0) {
       // Fallback to predefined categories if API fails
       const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"];
       setAvailableCategories(predefinedCategories);
+      
+      // Set the first category as selected by default
+      if (predefinedCategories.length > 0 && selectedCategories.length === 0) {
+        setSelectedCategories([predefinedCategories[0]]);
+      }
+      
       console.log("Using fallback categories:", predefinedCategories);
     }
-  }, [categoriesData, apps]);
+  }, [categoriesData, apps, selectedCategories.length]);
   
   // Get category icon based on category name
   const getCategoryIcon = (category: string): React.ReactNode => {
@@ -211,31 +222,20 @@ export default function Home() {
         <div className="mb-8">
           <div className="overflow-x-auto pb-2">
             <div className="flex space-x-1 min-w-max">
-              <button
-                onClick={() => setSelectedCategories([])}
-                className={`px-4 py-3 rounded-full transition-all flex flex-col items-center ${
-                  selectedCategories.length === 0 
-                    ? 'bg-primary text-white shadow-md' 
-                    : 'bg-gray-100 hover:bg-gray-200'
-                }`}
-                aria-label={t('filters.all')}
-              >
-                <span className="inline-block w-6 h-6 mb-1">📱</span>
-                <span>{t('filters.all')}</span>
-              </button>
+              {/* Removed "Todos" button as requested */}
               
               {availableCategories && availableCategories.map((category, index) => (
                 <button
                   key={`tab-${index}-${category}`}
                   onClick={() => handleCategoryFilterChange(category)}
-                  className={`px-4 py-3 rounded-full whitespace-nowrap transition-all flex flex-col items-center ${
+                  className={`px-4 py-3 rounded-md whitespace-nowrap transition-all flex flex-col items-center ${
                     selectedCategories.includes(category) 
                       ? 'bg-primary text-white shadow-md' 
                       : 'bg-gray-100 hover:bg-gray-200'
                   }`}
                   aria-label={category}
                 >
-                  <div className="inline-block w-6 h-6 mb-1">
+                  <div className="inline-block w-8 h-8 mb-1">
                     {getCategoryIcon(category)}
                   </div>
                   <span>{category}</span>
