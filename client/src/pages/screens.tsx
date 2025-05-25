@@ -711,52 +711,7 @@ export default function ScreensPage() {
         </div>
       )}
       
-      {/* Próximos passos section - Shows planned apps */}
-      <section className="mt-16 mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">Próximos passos</h2>
-        <p className="text-gray-600 mb-8">
-          Confira os aplicativos que estarão disponíveis em breve na plataforma. Estamos trabalhando para adicionar mais telas e informações.
-        </p>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-          {apps.filter(app => app.type === 'Planejado' || app.name.includes('Planejado')).map(app => (
-            <div key={`planned-${app.id}`} className="border border-gray-200 rounded-lg p-4 flex flex-col items-center hover:shadow-md transition-shadow">
-              <div className="w-16 h-16 flex items-center justify-center bg-gray-100 rounded-full mb-3 overflow-hidden">
-                {app.logo || app.cloudinaryLogo ? (
-                  <ResponsiveImage
-                    src={app.logo || ''}
-                    cloudinarySrc={app.cloudinaryLogo || ''}
-                    alt={`${app.name} Logo`}
-                    className="w-12 h-12 object-contain"
-                    widths={[48, 96]}
-                    quality={90}
-                    placeholder={
-                      <div className="w-12 h-12 flex items-center justify-center bg-gray-200" style={{ aspectRatio: '1/1' }}>
-                        <span className="sr-only">Loading logo for {app.name}</span>
-                      </div>
-                    }
-                  />
-                ) : (
-                  <Smartphone className="w-8 h-8 text-gray-400" />
-                )}
-              </div>
-              
-              <h3 className="font-medium text-center mb-1 text-gray-900">{app.name}</h3>
-              
-              <div className="flex items-center justify-center gap-1 mt-1">
-                <Tag className="h-3 w-3 text-amber-500" />
-                <span className="text-xs text-amber-600 font-medium">Planejado</span>
-              </div>
-              
-              {app.category && (
-                <span className="mt-2 text-xs px-2 py-1 bg-gray-100 rounded-full text-gray-600">
-                  {app.category}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Próximos passos section removed as requested */}
       
       {currentApp && currentAppScreens.length > 0 && (
         <ScreenModal
