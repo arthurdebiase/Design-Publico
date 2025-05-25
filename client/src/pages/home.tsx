@@ -260,7 +260,7 @@ export default function Home() {
                     container.scrollBy({ left: -200, behavior: 'smooth' });
                   }
                 }}
-                className="absolute left-0 top-0 bottom-0 z-10 bg-white shadow-md px-2 hover:bg-gray-100 transition-opacity flex items-center h-full"
+                className="absolute left-0 top-0 bottom-0 z-10 bg-white px-2 hover:bg-gray-100 transition-opacity flex items-center h-full"
                 aria-label="Scroll left"
               >
                 <ChevronDown className="h-5 w-5 transform rotate-90" />
@@ -303,7 +303,7 @@ export default function Home() {
                     container.scrollBy({ left: 200, behavior: 'smooth' });
                   }
                 }}
-                className="absolute right-0 top-0 bottom-0 z-10 bg-white shadow-md px-2 hover:bg-gray-100 transition-opacity flex items-center h-full"
+                className="absolute right-0 top-0 bottom-0 z-10 bg-white px-2 hover:bg-gray-100 transition-opacity flex items-center h-full"
                 aria-label="Scroll right"
               >
                 <ChevronDown className="h-5 w-5 transform -rotate-90" />
