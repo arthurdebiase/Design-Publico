@@ -141,6 +141,23 @@ export default function Home() {
   
   // Get category icon based on category name
   const getCategoryIcon = (category: string): React.ReactNode => {
+    // Special case for "Todos" button
+    if (category === "Todos") {
+      // Check if we have a "Todos" icon from Airtable
+      if (categoryIcons["Todos"]) {
+        return (
+          <img 
+            src={categoryIcons["Todos"]} 
+            alt="Todos icon" 
+            className="w-full h-full object-contain"
+            loading="lazy"
+          />
+        );
+      }
+      // Fallback to magnifying glass emoji
+      return <span className="inline-block w-full h-full">🔍</span>;
+    }
+    
     // Check if we have an icon URL for this category from the Airtable data
     if (categoryIcons[category]) {
       return (
@@ -322,7 +339,7 @@ export default function Home() {
                   aria-label="Todos"
                 >
                   <div className="inline-block w-14 h-14 mb-1">
-                    <span className="inline-block w-full h-full">🔍</span>
+                    {getCategoryIcon("Todos")}
                   </div>
                   <span>{t('filters.all')}</span>
                   {selectedCategories.length === 0 && (
