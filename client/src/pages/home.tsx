@@ -69,12 +69,28 @@ export default function Home() {
       // Get categories that actually have apps
       const activeCategories = getActiveCategories();
       
-      // Filter the category data to only include categories with apps
+      // Make sure "Planejado" category is always included
+      if (!activeCategories.includes("Planejado")) {
+        activeCategories.push("Planejado");
+      }
+      
+      // Make sure "Internacional" category is always included if there are non-Brazilian apps
+      if (!activeCategories.includes("Internacional")) {
+        const hasInternationalApps = apps.some(app => app.country && app.country !== "Brasil");
+        if (hasInternationalApps) {
+          activeCategories.push("Internacional");
+        }
+      }
+      
+      // Filter the category data to include categories with apps and also ensure special categories are present
       const filteredCategoryNames = categoriesData
         .map((cat: any) => cat.name)
-        .filter(name => activeCategories.includes(name));
+        .filter((name: string) => activeCategories.includes(name));
       
-      setAvailableCategories(filteredCategoryNames);
+      // Make sure we include all active categories, even if not in Airtable data
+      const allCategories = Array.from(new Set([...filteredCategoryNames, ...activeCategories]));
+      
+      setAvailableCategories(allCategories);
       
       // Create a map of category names to their icon URLs
       const iconMap: Record<string, string> = {};
@@ -97,6 +113,19 @@ export default function Home() {
     } else if (apps && apps.length > 0) {
       // Get active categories even for fallback
       const activeCategories = getActiveCategories();
+      
+      // Make sure "Planejado" category is always included
+      if (!activeCategories.includes("Planejado")) {
+        activeCategories.push("Planejado");
+      }
+      
+      // Make sure "Internacional" category is always included if there are non-Brazilian apps
+      if (!activeCategories.includes("Internacional")) {
+        const hasInternationalApps = apps.some(app => app.country && app.country !== "Brasil");
+        if (hasInternationalApps) {
+          activeCategories.push("Internacional");
+        }
+      }
       
       // Use all active categories instead of a predefined list
       const predefinedCategories = activeCategories;
