@@ -76,6 +76,40 @@ export default function Home() {
     }
   }, [categoriesData, apps]);
   
+  // State for tracking scroll arrows visibility
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  
+  // Handle scroll event to update arrow visibility
+  const handleCategoryScroll = () => {
+    const container = document.querySelector('.category-scroll') as HTMLElement;
+    if (container) {
+      // Show left arrow only if scrolled right
+      setShowLeftArrow(container.scrollLeft > 20);
+      
+      // Show right arrow only if there's more content to scroll
+      const isEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 20;
+      setShowRightArrow(!isEnd);
+    }
+  };
+  
+  // Add scroll event listener
+  useEffect(() => {
+    const container = document.querySelector('.category-scroll');
+    if (container) {
+      container.addEventListener('scroll', handleCategoryScroll);
+      // Initial check
+      handleCategoryScroll();
+    }
+    
+    return () => {
+      const container = document.querySelector('.category-scroll');
+      if (container) {
+        container.removeEventListener('scroll', handleCategoryScroll);
+      }
+    };
+  }, [availableCategories]);
+  
   // Get category icon based on category name
   const getCategoryIcon = (category: string): React.ReactNode => {
     // Check if we have an icon URL for this category from the Airtable data
@@ -217,21 +251,26 @@ export default function Home() {
         {/* Category Tabs */}
         <div className="mb-8">
           <div className="relative">
-            {/* Left arrow for horizontal scroll */}
-            <button 
-              onClick={() => {
-                const container = document.querySelector('.category-scroll');
-                if (container) {
-                  container.scrollBy({ left: -200, behavior: 'smooth' });
-                }
-              }}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100"
-              aria-label="Scroll left"
-            >
-              <ChevronDown className="h-5 w-5 transform -rotate-90" />
-            </button>
+            {/* Left arrow for horizontal scroll - hidden at start */}
+            {showLeftArrow && (
+              <button 
+                onClick={() => {
+                  const container = document.querySelector('.category-scroll');
+                  if (container) {
+                    container.scrollBy({ left: -200, behavior: 'smooth' });
+                  }
+                }}
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100 transition-opacity"
+                aria-label="Scroll left"
+              >
+                <ChevronDown className="h-5 w-5 transform -rotate-90" />
+              </button>
+            )}
             
-            <div className="overflow-x-auto category-scroll pb-2 px-8">
+            <div 
+              className="overflow-x-auto category-scroll pb-2 px-8"
+              onScroll={handleCategoryScroll}
+            >
               <div className="flex space-x-2 min-w-max">
                 {/* Removed "Todos" button as requested */}
                 
@@ -255,19 +294,21 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Right arrow for horizontal scroll */}
-            <button 
-              onClick={() => {
-                const container = document.querySelector('.category-scroll');
-                if (container) {
-                  container.scrollBy({ left: 200, behavior: 'smooth' });
-                }
-              }}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100"
-              aria-label="Scroll right"
-            >
-              <ChevronDown className="h-5 w-5 transform rotate-90" />
-            </button>
+            {/* Right arrow for horizontal scroll - hidden at end */}
+            {showRightArrow && (
+              <button 
+                onClick={() => {
+                  const container = document.querySelector('.category-scroll');
+                  if (container) {
+                    container.scrollBy({ left: 200, behavior: 'smooth' });
+                  }
+                }}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/80 shadow-md rounded-full p-2 hover:bg-gray-100 transition-opacity"
+                aria-label="Scroll right"
+              >
+                <ChevronDown className="h-5 w-5 transform rotate-90" />
+              </button>
+            )}
           </div>
         </div>
         
