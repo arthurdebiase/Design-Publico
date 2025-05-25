@@ -26,9 +26,10 @@ export async function fetchApps(filters?: {
       }
     }
 
-    // Add a timestamp to prevent caching issues in production
+    // Add a more aggressive cache busting mechanism with random value and timestamp
     const cacheBuster = new URLSearchParams();
     cacheBuster.append("_t", Date.now().toString());
+    cacheBuster.append("_r", Math.random().toString(36).substring(2, 15));
     url += url.includes('?') ? `&${cacheBuster.toString()}` : `?${cacheBuster.toString()}`;
 
     // Use a longer timeout for the fetch operation (10 seconds)
