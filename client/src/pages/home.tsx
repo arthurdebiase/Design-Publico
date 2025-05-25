@@ -203,8 +203,7 @@ export default function Home() {
         return <span className="inline-block w-full h-full">💼</span>;
       case "Trabalhos":
         return <span className="inline-block w-full h-full">💼</span>;
-      case "Mobilidade":
-        return <span className="inline-block w-full h-full">🚗</span>;
+      // Removed Mobilidade category as requested
       case "Segurança":
         return <span className="inline-block w-full h-full">🔒</span>;
       case "Internacional":
@@ -232,7 +231,7 @@ export default function Home() {
     if (app.category === "Logística") return "Logística";
     if (app.category === "Trabalho" || app.category === "Trabalhos") return "Trabalho"; // Use consistent "Trabalho" category
     if (app.category === "Portal") return "Portal";
-    if (app.category === "Mobilidade") return "Mobilidade";
+    // Removed Mobilidade category as requested
     if (app.category === "Planejado") return "Planejado"; // Include Planejado category
     
     // Status-based categorization
