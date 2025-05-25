@@ -233,13 +233,12 @@ export default function Home() {
     
     // Country-based categorization for international apps
     if (app.country && app.country !== "Brasil") {
-      // For Finnish apps in the screenshot
+      // All non-Brazilian apps should be categorized properly
+      // using the Airtable categories
+      if (app.category === "Government") return "Cidadania";
       if (app.country === "Finlândia") return "Internacional";
-      // For Estonian apps in the screenshot
       if (app.country === "Estônia") return "Internacional";
-      // For UK apps in the screenshot
       if (app.country === "Reino Unido") return "Internacional";
-      // Return "Internacional" for any non-Brazilian app
       return "Internacional";
     }
     
