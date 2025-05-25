@@ -160,7 +160,6 @@ export class MemStorage implements IStorage {
       url: insertApp.url ?? null,
       slug: slug, // Include the slug
       airtableId: insertApp.airtableId,
-      country: insertApp.country ?? "Brasil", // Include country, default to Brasil
       createdAt: now,
       updatedAt: now,
     };
@@ -541,20 +540,13 @@ export class MemStorage implements IStorage {
       const appIdToNameMap = new Map<string, string>();
       const appIdToCategoryMap = new Map<string, string>();
       const appIdToTypeMap = new Map<string, string>();
-      const appIdToCountryMap = new Map<string, string>();
 
-      // First extract all app names, categories, types, countries, and IDs from the apps table
+      // First extract all app names, categories, types, and IDs from the apps table
       for (const record of allAppRecords) {
         const fields = record.fields;
 
         // Get app name
         const appName = fields.name || null;
-        
-        // Store country information if available
-        if (fields.country) {
-          appIdToCountryMap.set(record.id, fields.country);
-          console.log(`DEBUG: Mapping country for app ${appName}: ${fields.country}`);
-        }
 
         if (appName) {
           // Map record ID to app name
@@ -926,27 +918,14 @@ export class MemStorage implements IStorage {
           console.log(`DEBUG: Using Cloudinary logo URL for ${appName}: ${cloudinaryLogoUrl}`);
         }
         
-        // Get country from the apps table record if available using our map
+        // Get country from the apps table record if available
         let country = null;
-        if (appRecordId && appIdToCountryMap.has(appRecordId)) {
-          country = appIdToCountryMap.get(appRecordId) || null;
-          console.log(`DEBUG: Found country for app ${appName} from mapping: ${country}`);
-        } else if (appRecordId && allAppRecords) {
-          // Fallback to direct lookup if mapping failed
+        if (appRecordId && allAppRecords) {
           const appRecord = allAppRecords.find(record => record.id === appRecordId);
           if (appRecord && appRecord.fields && appRecord.fields.country) {
             country = appRecord.fields.country;
-            console.log(`DEBUG: Found country for app ${appName} from direct lookup: ${country}`);
+            console.log(`DEBUG: Found country for app ${appName}: ${country}`);
           }
-        }
-        
-        // Special case handling for specific apps
-        if (appName === "Smart-ID" && !country) {
-          country = "Letônia, Estônia, Lituânia";
-          console.log(`DEBUG: Setting special country for Smart-ID: ${country}`);
-        } else if (appName === "GOV.UK" && !country) {
-          country = "Reino Unido";
-          console.log(`DEBUG: Setting special country for GOV.UK: ${country}`);
         }
         
         const appData: InsertApp = {
