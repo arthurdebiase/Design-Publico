@@ -480,26 +480,26 @@ export default function ScreensPage() {
               </svg>
             </button>
             
-            {/* Scrollable container with hidden scrollbar and grey background */}
+            {/* Scrollable container with hidden scrollbar */}
             <div 
               id="tags-scroll-container"
-              className="flex items-center overflow-x-auto pb-2 scrollbar-none w-full border-b border-gray-200 bg-gray-100 rounded-t-lg mx-8 px-2" 
+              className="flex flex-wrap items-center overflow-x-auto pb-2 scrollbar-none w-full border-b border-gray-200 mx-8 px-2" 
               onScroll={() => updateDots()}
             >
-              {/* All tags in a horizontal scroll (tab style, no "Todos" option) */}
+              {/* All tags in a grid layout with two rows */}
               {availableTags.map((tag: string) => (
                 <button
                   key={`tag-tab-${tag}`}
                   onClick={() => handleTagFilterChange(tag)}
-                  className={`px-4 py-2 text-sm font-medium transition-colors flex-shrink-0 mr-2 relative ${
+                  className={`px-4 py-2 text-sm font-medium transition-colors flex-shrink-0 mr-2 mb-2 relative rounded-md ${
                     selectedTag === tag
-                      ? 'text-green-600 font-semibold'
-                      : 'text-gray-700 hover:text-gray-900'
+                      ? 'bg-gray-200 text-green-600 font-semibold'
+                      : 'bg-gray-100 text-gray-700 hover:text-gray-900 hover:bg-gray-150'
                   }`}
                 >
                   {tag}
                   {selectedTag === tag && (
-                    <div className="absolute bottom-0 left-0 w-full h-0.5 bg-green-600 rounded-t-sm"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-600 rounded-t-sm"></div>
                   )}
                 </button>
               ))}
