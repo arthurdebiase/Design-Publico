@@ -378,9 +378,6 @@ export default function Home() {
               </div>
             </div>
             
-            {/* White gradient fade effect on the right side */}
-            <div className="absolute right-8 top-0 bottom-0 w-16 bg-gradient-to-r from-transparent to-white pointer-events-none z-0"></div>
-            
             {/* Right arrow for horizontal scroll - hidden at end */}
             {showRightArrow && (
               <button 

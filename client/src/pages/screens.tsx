@@ -506,9 +506,6 @@ export default function ScreensPage() {
               ))}
             </div>
             
-            {/* White gradient fade effect on the right side */}
-            <div className="absolute right-8 top-0 bottom-0 w-16 bg-gradient-to-r from-transparent to-white pointer-events-none z-0"></div>
-            
             {/* Right arrow button */}
             <button 
               className="absolute right-0 z-10 flex items-center justify-center h-8 w-8 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
