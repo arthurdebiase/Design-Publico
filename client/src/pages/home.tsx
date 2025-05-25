@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchApps } from "@/lib/airtable";
 import AppCard from "@/components/app-card";
@@ -66,7 +66,7 @@ export default function Home() {
       console.log("Available categories with icons:", categoryNames);
     } else if (apps && apps.length > 0) {
       // Fallback to predefined categories if API fails
-      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalhos"];
+      const predefinedCategories = ["Cidadania", "Finanças", "Logística", "Portal", "Saúde", "Trabalho"];
       setAvailableCategories(predefinedCategories);
       
       // By default, no filter should be active (empty array of selected categories)
@@ -76,13 +76,9 @@ export default function Home() {
     }
   }, [categoriesData, apps]);
   
-  // State for tracking scroll arrows visibility and drag functionality
+  // State for tracking scroll arrows visibility
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   
   // Handle scroll event to update arrow visibility
   const handleCategoryScroll = () => {
@@ -97,78 +93,22 @@ export default function Home() {
     }
   };
   
-  // Handle mouse/touch events for dragging
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollContainerRef.current) return;
-    
-    setIsDragging(true);
-    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
-  };
-  
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.cursor = 'grab';
-    }
-  };
-  
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return;
-    
-    e.preventDefault();
-    const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Adjust speed factor as needed
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-  };
-  
-  // Touch events for mobile
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!scrollContainerRef.current) return;
-    
-    setIsDragging(true);
-    setStartX(e.touches[0].pageX - scrollContainerRef.current.offsetLeft);
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
-  };
-  
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return;
-    
-    const x = e.touches[0].pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2;
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  // Add scroll event listener and cleanup dragging events
+  // Add scroll event listener
   useEffect(() => {
-    const container = scrollContainerRef.current;
+    const container = document.querySelector('.category-scroll');
     if (container) {
       container.addEventListener('scroll', handleCategoryScroll);
       // Initial check
       handleCategoryScroll();
     }
     
-    // Add global event listeners to handle dragging ending outside the container
-    const handleGlobalMouseUp = () => {
-      if (isDragging) {
-        setIsDragging(false);
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.style.cursor = 'grab';
-        }
-      }
-    };
-    
-    document.addEventListener('mouseup', handleGlobalMouseUp);
-    document.addEventListener('touchend', handleGlobalMouseUp);
-    
     return () => {
+      const container = document.querySelector('.category-scroll');
       if (container) {
         container.removeEventListener('scroll', handleCategoryScroll);
       }
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
-      document.removeEventListener('touchend', handleGlobalMouseUp);
     };
-  }, [availableCategories, isDragging]);
+  }, [availableCategories]);
   
   // Get category icon based on category name
   const getCategoryIcon = (category: string): React.ReactNode => {
@@ -328,16 +268,8 @@ export default function Home() {
             )}
             
             <div 
-              ref={scrollContainerRef}
-              className="overflow-x-auto category-scroll pb-2 pl-0 pr-8 cursor-grab"
+              className="overflow-x-auto category-scroll pb-2 pl-0 pr-8"
               onScroll={handleCategoryScroll}
-              onMouseDown={handleMouseDown}
-              onMouseUp={handleMouseUp}
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseUp}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleMouseUp}
             >
               <div className="flex space-x-2 min-w-max pl-0">
                 {/* Removed "Todos" button as requested */}
