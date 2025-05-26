@@ -5,6 +5,7 @@ import {
   screens as screensTable
 } from "@shared/schema";
 import axios from "axios";
+import { idObfuscator } from "./id-obfuscator";
 
 // Interface for storage operations
 export interface IStorage {
@@ -110,7 +111,11 @@ export class MemStorage implements IStorage {
       }
     }
 
-    return result;
+    // Obfuscate internal record IDs before returning
+    return result.map(app => ({
+      ...app,
+      airtableId: app.airtableId ? idObfuscator.obfuscate(app.airtableId) : undefined
+    }));
   }
 
   async getAppById(id: number): Promise<App | undefined> {
@@ -188,7 +193,11 @@ export class MemStorage implements IStorage {
         return a.order - b.order;
       });
 
-    return result;
+    // Obfuscate internal record IDs before returning
+    return result.map(screen => ({
+      ...screen,
+      airtableId: screen.airtableId ? idObfuscator.obfuscate(screen.airtableId) : undefined
+    }));
   }
 
   async createScreen(insertScreen: InsertScreen): Promise<Screen> {
