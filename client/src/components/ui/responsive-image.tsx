@@ -83,8 +83,9 @@ export function ResponsiveImage({
   const [hasError, setHasError] = useState(false);
   
   // Determine if we should use Cloudinary URL (reliable) or Airtable URL (via proxy)
-  const useCloudinary = !!cloudinarySrc && cloudinarySrc.length > 0;
-  const actualSrc = useCloudinary ? cloudinarySrc : src;
+  // Always prefer Cloudinary URLs when available as they're more reliable
+  const useCloudinary = !!cloudinarySrc && cloudinarySrc.trim().length > 0;
+  const actualSrc = useCloudinary ? cloudinarySrc.trim() : src;
   
   // Generate srcset based on provided widths
   const generateSrcSet = () => {
