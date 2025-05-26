@@ -241,10 +241,14 @@ Crawl-delay: 2`);
       
       const response = await axios.get(airtableUrl, {
         responseType: 'arraybuffer',
+        timeout: 10000, // 10 second timeout
         headers: {
           'Accept': 'image/*',
-          'Cache-Control': 'no-cache'
-        }
+          'Cache-Control': 'no-cache',
+          'User-Agent': 'Mozilla/5.0 (compatible; DesignPublico/1.0)'
+        },
+        maxRedirects: 5,
+        validateStatus: (status) => status >= 200 && status < 300
       });
       
       // Get the original image data
