@@ -111,11 +111,11 @@ export class MemStorage implements IStorage {
       }
     }
 
-    // Obfuscate internal record IDs before returning
-    return result.map(app => ({
-      ...app,
-      airtableId: app.airtableId ? idObfuscator.obfuscate(app.airtableId) : undefined
-    }));
+    // Remove internal Airtable record IDs completely from API responses for security
+    return result.map(app => {
+      const { airtableId, ...appWithoutInternalId } = app;
+      return appWithoutInternalId;
+    });
   }
 
   async getAppById(id: number): Promise<App | undefined> {
@@ -193,11 +193,11 @@ export class MemStorage implements IStorage {
         return a.order - b.order;
       });
 
-    // Obfuscate internal record IDs before returning
-    return result.map(screen => ({
-      ...screen,
-      airtableId: screen.airtableId ? idObfuscator.obfuscate(screen.airtableId) : undefined
-    }));
+    // Remove internal Airtable record IDs completely from API responses for security
+    return result.map(screen => {
+      const { airtableId, ...screenWithoutInternalId } = screen;
+      return screenWithoutInternalId;
+    });
   }
 
   async createScreen(insertScreen: InsertScreen): Promise<Screen> {
