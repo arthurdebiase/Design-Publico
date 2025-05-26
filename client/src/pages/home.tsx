@@ -246,32 +246,8 @@ export default function Home() {
       );
     }
     
-    // Fallback to emoji icons if no Airtable icon is available
-    switch (category) {
-      case "Cidadania":
-        return <span className="inline-block w-full h-full">👤</span>;
-      case "Finanças":
-        return <span className="inline-block w-full h-full">💰</span>;
-      case "Logística":
-        return <span className="inline-block w-full h-full">🚚</span>;
-      case "Portal":
-        return <span className="inline-block w-full h-full">🌐</span>;
-      case "Saúde":
-        return <span className="inline-block w-full h-full">❤️</span>;
-      case "Trabalho":
-        return <span className="inline-block w-full h-full">💼</span>;
-      case "Trabalhos":
-        return <span className="inline-block w-full h-full">💼</span>;
-      // Removed Mobilidade category as requested
-      case "Segurança":
-        return <span className="inline-block w-full h-full">🔒</span>;
-      case "Internacional":
-        return <span className="inline-block w-full h-full">🌍</span>;
-      case "Planejado":
-        return <span className="inline-block w-full h-full">🕒</span>;
-      default:
-        return <span className="inline-block w-full h-full">📱</span>;
-    }
+    // Fallback to gray skeleton placeholder if no Airtable icon is available
+    return <Skeleton className="w-full h-full rounded-lg" />;
   };
   
   // Direct category mapping from app data - uses both categories array and category field
